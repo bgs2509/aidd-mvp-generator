@@ -1,0 +1,110 @@
+# Docker Compose — базовая конфигурация
+# {project_name} MVP
+#
+# Использование:
+#   docker compose up -d
+#   docker compose logs -f
+#   docker compose down
+
+version: "3.8"
+
+services:
+  # === Business API ===
+  {context}-api:
+    build:
+      context: ./services/{context}_api
+      dockerfile: Dockerfile
+    container_name: {context}-api
+    restart: unless-stopped
+    ports:
+      - "${API_PORT:-8000}:8000"
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - DEBUG=${DEBUG:-false}
+      - DATA_API_URL=http://{context}-data:8001
+    depends_on:
+      {context}-data:
+        condition: service_healthy
+    networks:
+      - {context}-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8000/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # === Data API (PostgreSQL) ===
+  {context}-data:
+    build:
+      context: ./services/{context}_data
+      dockerfile: Dockerfile
+    container_name: {context}-data
+    restart: unless-stopped
+    ports:
+      - "${DATA_API_PORT:-8001}:8001"
+    environment:
+      - ENVIRONMENT=${ENVIRONMENT:-development}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - DATABASE_URL=postgresql+asyncpg://${POSTGRES_USER:-app}:${POSTGRES_PASSWORD:-secret}@postgres:5432/${POSTGRES_DB:-{context}_db}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - {context}-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import httpx; httpx.get('http://localhost:8001/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # === PostgreSQL ===
+  postgres:
+    image: postgres:15-alpine
+    container_name: {context}-postgres
+    restart: unless-stopped
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER:-app}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-secret}
+      - POSTGRES_DB=${POSTGRES_DB:-{context}_db}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - {context}-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-app} -d ${POSTGRES_DB:-{context}_db}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # === Redis (опционально) ===
+  redis:
+    image: redis:7-alpine
+    container_name: {context}-redis
+    restart: unless-stopped
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - {context}-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - with-redis
+
+networks:
+  {context}-network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

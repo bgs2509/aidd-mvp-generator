@@ -1,0 +1,98 @@
+# Docker Compose — конфигурация для разработки
+# {project_name} MVP — Development
+#
+# Использование:
+#   docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
+#
+# Особенности dev-режима:
+#   - Hot reload через volumes
+#   - Расширенное логирование
+#   - Открытые порты для отладки
+
+version: "3.8"
+
+services:
+  # === Business API (dev) ===
+  {context}-api:
+    build:
+      context: ./services/{context}_api
+      dockerfile: Dockerfile
+      target: builder  # Используем stage с dev-зависимостями
+    volumes:
+      - ./services/{context}_api/src:/app/src:ro
+    environment:
+      - ENVIRONMENT=development
+      - LOG_LEVEL=DEBUG
+      - DEBUG=true
+      - RELOAD=true
+    command: >
+      python -m uvicorn src.main:app
+      --host 0.0.0.0
+      --port 8000
+      --reload
+      --reload-dir /app/src
+
+  # === Data API (dev) ===
+  {context}-data:
+    build:
+      context: ./services/{context}_data
+      dockerfile: Dockerfile
+      target: builder
+    volumes:
+      - ./services/{context}_data/src:/app/src:ro
+    environment:
+      - ENVIRONMENT=development
+      - LOG_LEVEL=DEBUG
+      - DEBUG=true
+      - RELOAD=true
+    command: >
+      python -m uvicorn src.main:app
+      --host 0.0.0.0
+      --port 8001
+      --reload
+      --reload-dir /app/src
+
+  # === PostgreSQL (dev) ===
+  postgres:
+    ports:
+      - "5432:5432"  # Открыт для локальных инструментов
+
+  # === pgAdmin (только dev) ===
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: {context}-pgadmin
+    restart: unless-stopped
+    ports:
+      - "${PGADMIN_PORT:-5050}:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL:-admin@example.com}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD:-admin}
+      - PGADMIN_CONFIG_SERVER_MODE=False
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+    networks:
+      - {context}-network
+    depends_on:
+      - postgres
+    profiles:
+      - tools
+
+  # === Redis Commander (только dev) ===
+  redis-commander:
+    image: rediscommander/redis-commander:latest
+    container_name: {context}-redis-commander
+    restart: unless-stopped
+    ports:
+      - "${REDIS_COMMANDER_PORT:-8081}:8081"
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    networks:
+      - {context}-network
+    depends_on:
+      - redis
+    profiles:
+      - tools
+      - with-redis
+
+volumes:
+  pgadmin_data:

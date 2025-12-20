@@ -1,0 +1,45 @@
+# Dockerfile для {context}_bot
+# Telegram Bot сервис на Aiogram
+
+# === Этап сборки ===
+FROM python:3.11-slim as builder
+
+WORKDIR /app
+
+# Установка системных зависимостей
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+# Копирование и установка зависимостей
+COPY requirements.txt .
+RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
+
+
+# === Финальный образ ===
+FROM python:3.11-slim
+
+WORKDIR /app
+
+# Создание непривилегированного пользователя
+RUN groupadd --gid 1000 appgroup \
+    && useradd --uid 1000 --gid appgroup --shell /bin/bash appuser
+
+# Копирование wheels из этапа сборки
+COPY --from=builder /app/wheels /wheels
+RUN pip install --no-cache-dir /wheels/* \
+    && rm -rf /wheels
+
+# Копирование кода приложения
+COPY --chown=appuser:appgroup src/ ./src/
+
+# Переключение на непривилегированного пользователя
+USER appuser
+
+# Переменные окружения
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONPATH=/app
+
+# Запуск бота
+CMD ["python", "-m", "src.main"]

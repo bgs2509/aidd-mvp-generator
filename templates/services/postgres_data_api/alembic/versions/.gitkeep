@@ -1,0 +1,2 @@
+# Директория для миграций Alembic
+# Миграции создаются командой: alembic revision --autogenerate -m "описание"
