@@ -1,0 +1,137 @@
+{
+  "$schema": "https://claude.ai/schemas/settings.json",
+  "description": "Настройки AIDD-MVP Generator для Claude Code",
+
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Проверка: файл прочитан перед редактированием'"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo 'Файл изменён'"
+          }
+        ]
+      }
+    ]
+  },
+
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Glob(**)",
+      "Grep(**)",
+      "Bash(git *)",
+      "Bash(make *)",
+      "Bash(docker *)",
+      "Bash(pytest *)",
+      "Bash(ls *)",
+      "Bash(mkdir *)",
+      "Edit(**/*.py)",
+      "Edit(**/*.md)",
+      "Edit(**/*.yml)",
+      "Edit(**/*.yaml)",
+      "Edit(**/*.json)",
+      "Edit(**/*.toml)",
+      "Edit(**/Dockerfile)",
+      "Edit(**/Makefile)",
+      "Write(**/*.py)",
+      "Write(**/*.md)",
+      "Write(**/*.yml)",
+      "Write(**/*.yaml)",
+      "Write(**/*.json)",
+      "Write(**/*.toml)",
+      "Write(**/Dockerfile)",
+      "Write(**/Makefile)"
+    ],
+    "deny": [
+      "Edit(**/.env)",
+      "Edit(**/*.secret)",
+      "Edit(**/*credentials*)",
+      "Write(**/.env)",
+      "Write(**/*.secret)",
+      "Write(**/*credentials*)",
+      "Bash(rm -rf *)",
+      "Bash(sudo *)"
+    ]
+  },
+
+  "agents": {
+    "directory": ".claude/agents",
+    "roles": [
+      "analyst",
+      "researcher",
+      "architect",
+      "implementer",
+      "reviewer",
+      "qa",
+      "validator"
+    ]
+  },
+
+  "commands": {
+    "directory": ".claude/commands",
+    "available": [
+      "idea",
+      "research",
+      "plan",
+      "feature-plan",
+      "generate",
+      "review",
+      "test",
+      "validate",
+      "deploy"
+    ]
+  },
+
+  "workflow": {
+    "mode": "strict",
+    "gates": {
+      "PRD_READY": {
+        "required_before": ["plan", "feature-plan"],
+        "check": "docs/prd/*.md exists"
+      },
+      "RESEARCH_DONE": {
+        "required_before": ["plan", "feature-plan"],
+        "check": "research completed"
+      },
+      "PLAN_APPROVED": {
+        "required_before": ["generate"],
+        "check": "user approval required"
+      },
+      "IMPLEMENT_OK": {
+        "required_before": ["review"],
+        "check": "code generated, tests pass"
+      },
+      "REVIEW_OK": {
+        "required_before": ["test"],
+        "check": "code review passed"
+      },
+      "QA_PASSED": {
+        "required_before": ["validate"],
+        "check": "coverage >= 75%, no critical bugs"
+      },
+      "ALL_GATES_PASSED": {
+        "required_before": ["deploy"],
+        "check": "all previous gates passed"
+      }
+    }
+  },
+
+  "documentation": {
+    "language": "ru",
+    "docstring_style": "google",
+    "comments_language": "ru"
+  }
+}
