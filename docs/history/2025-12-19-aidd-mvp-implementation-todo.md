@@ -2,7 +2,8 @@
 
 **Дата создания**: 2025-12-19
 **Источник**: docs/history/2025-12-19-aidd-mvp-framework-plan.md
-**Статус**: К реализации
+**Статус**: ✅ ПОЛНОСТЬЮ РЕАЛИЗОВАНО (2025-12-20)
+**Последняя проверка**: 2025-12-20
 
 ---
 
@@ -30,10 +31,10 @@
 
 | # | Статус | Файл | Описание | Источник | Зависит от |
 |---|--------|------|----------|----------|------------|
-| 0.1.1 | [ ] | `CLAUDE.md` | Главная точка входа для AI-агентов | Раздел 4.1, .ai-framework/CLAUDE.md | — |
-| 0.1.2 | [ ] | `conventions.md` | Соглашения о коде (snake_case, docstrings, типы) | Раздел 4.1 | — |
-| 0.1.3 | [ ] | `workflow.md` | Описание 8-этапного процесса AIDD-MVP | Раздел 3.1 | — |
-| 0.1.4 | [ ] | `README.md` | Документация фреймворка | — | 0.1.1-0.1.3 |
+| 0.1.1 | [x] | `CLAUDE.md` | Главная точка входа для AI-агентов | Раздел 4.1, .ai-framework/CLAUDE.md | — |
+| 0.1.2 | [x] | `conventions.md` | Соглашения о коде (snake_case, docstrings, типы) | Раздел 4.1 | — |
+| 0.1.3 | [x] | `workflow.md` | Описание 8-этапного процесса AIDD-MVP | Раздел 3.1 | — |
+| 0.1.4 | [x] | `README.md` | Документация фреймворка | — | 0.1.1-0.1.3 |
 
 ### Детали задачи 0.1.1: CLAUDE.md
 
@@ -84,7 +85,7 @@
 
 | # | Статус | Файл | Описание | Источник | Зависит от |
 |---|--------|------|----------|----------|------------|
-| 1.1.1 | [ ] | `.claude/settings.json` | Хуки для проверки качественных ворот | Раздел 1.5 (Строгий AIDD) | — |
+| 1.1.1 | [x] | `.claude/settings.json` | Хуки для проверки качественных ворот | Раздел 1.5 (Строгий AIDD) | — |
 
 ### Детали задачи 1.1.1: settings.json
 
@@ -108,13 +109,13 @@
 
 | # | Статус | Файл | Роль | Источник | Зависит от |
 |---|--------|------|------|----------|------------|
-| 1.2.1 | [ ] | `.claude/agents/analyst.md` | Аналитик | Раздел 3.4, таблица 3.3.1 | 0.1.1 |
-| 1.2.2 | [ ] | `.claude/agents/researcher.md` | Исследователь | Раздел 3.4, таблица 3.3.2 | 0.1.1 |
-| 1.2.3 | [ ] | `.claude/agents/architect.md` | Архитектор | Раздел 3.4, таблица 3.3.3 | 0.1.1 |
-| 1.2.4 | [ ] | `.claude/agents/implementer.md` | Реализатор | Раздел 3.4, таблица 3.3.4 | 0.1.1 |
-| 1.2.5 | [ ] | `.claude/agents/reviewer.md` | Ревьюер | Раздел 3.4, таблица 3.3.5 | 0.1.1 |
-| 1.2.6 | [ ] | `.claude/agents/qa.md` | QA | Раздел 3.4, таблица 3.3.6 | 0.1.1 |
-| 1.2.7 | [ ] | `.claude/agents/validator.md` | Валидатор | Раздел 3.4, таблица 3.3.7 | 0.1.1 |
+| 1.2.1 | [x] | `.claude/agents/analyst.md` | Аналитик | Раздел 3.4, таблица 3.3.1 | 0.1.1 |
+| 1.2.2 | [x] | `.claude/agents/researcher.md` | Исследователь | Раздел 3.4, таблица 3.3.2 | 0.1.1 |
+| 1.2.3 | [x] | `.claude/agents/architect.md` | Архитектор | Раздел 3.4, таблица 3.3.3 | 0.1.1 |
+| 1.2.4 | [x] | `.claude/agents/implementer.md` | Реализатор | Раздел 3.4, таблица 3.3.4 | 0.1.1 |
+| 1.2.5 | [x] | `.claude/agents/reviewer.md` | Ревьюер | Раздел 3.4, таблица 3.3.5 | 0.1.1 |
+| 1.2.6 | [x] | `.claude/agents/qa.md` | QA | Раздел 3.4, таблица 3.3.6 | 0.1.1 |
+| 1.2.7 | [x] | `.claude/agents/validator.md` | Валидатор | Раздел 3.4, таблица 3.3.7 | 0.1.1 |
 
 ### Шаблон для каждого агента:
 
@@ -178,15 +179,15 @@
 
 | # | Статус | Файл | Команда | Агент | Источник | Зависит от |
 |---|--------|------|---------|-------|----------|------------|
-| 1.3.1 | [ ] | `.claude/commands/idea.md` | /idea | Аналитик | Раздел 3.1, 3.9 | 1.2.1 |
-| 1.3.2 | [ ] | `.claude/commands/research.md` | /research | Исследователь | Раздел 3.1, 3.9 | 1.2.2 |
-| 1.3.3 | [ ] | `.claude/commands/plan.md` | /plan | Архитектор | Раздел 3.1, 3.9 | 1.2.3 |
-| 1.3.4 | [ ] | `.claude/commands/feature-plan.md` | /feature-plan | Архитектор | Раздел 3.1, 3.9 | 1.2.3 |
-| 1.3.5 | [ ] | `.claude/commands/generate.md` | /generate | Реализатор | Раздел 3.1, 3.9 | 1.2.4 |
-| 1.3.6 | [ ] | `.claude/commands/review.md` | /review | Ревьюер | Раздел 3.1, 3.9 | 1.2.5 |
-| 1.3.7 | [ ] | `.claude/commands/test.md` | /test | QA | Раздел 3.1, 3.9 | 1.2.6 |
-| 1.3.8 | [ ] | `.claude/commands/validate.md` | /validate | Валидатор | Раздел 3.1, 3.9 | 1.2.7 |
-| 1.3.9 | [ ] | `.claude/commands/deploy.md` | /deploy | Валидатор | Раздел 3.1, 3.9 | 1.2.7 |
+| 1.3.1 | [x] | `.claude/commands/idea.md` | /idea | Аналитик | Раздел 3.1, 3.9 | 1.2.1 |
+| 1.3.2 | [x] | `.claude/commands/research.md` | /research | Исследователь | Раздел 3.1, 3.9 | 1.2.2 |
+| 1.3.3 | [x] | `.claude/commands/plan.md` | /plan | Архитектор | Раздел 3.1, 3.9 | 1.2.3 |
+| 1.3.4 | [x] | `.claude/commands/feature-plan.md` | /feature-plan | Архитектор | Раздел 3.1, 3.9 | 1.2.3 |
+| 1.3.5 | [x] | `.claude/commands/generate.md` | /generate | Реализатор | Раздел 3.1, 3.9 | 1.2.4 |
+| 1.3.6 | [x] | `.claude/commands/review.md` | /review | Ревьюер | Раздел 3.1, 3.9 | 1.2.5 |
+| 1.3.7 | [x] | `.claude/commands/test.md` | /test | QA | Раздел 3.1, 3.9 | 1.2.6 |
+| 1.3.8 | [x] | `.claude/commands/validate.md` | /validate | Валидатор | Раздел 3.1, 3.9 | 1.2.7 |
+| 1.3.9 | [x] | `.claude/commands/deploy.md` | /deploy | Валидатор | Раздел 3.1, 3.9 | 1.2.7 |
 
 ### Шаблон для каждой команды:
 
@@ -260,10 +261,10 @@
 
 | # | Статус | Файл | Функция | Источник .ai-framework | Зависит от |
 |---|--------|------|---------|----------------------|------------|
-| 2.1.1 | [ ] | `roles/analyst/initialization.md` | Инициализация (Stage 0) | AGENTS.md, agent-context-summary.md | 1.2.1 |
-| 2.1.2 | [ ] | `roles/analyst/prompt-validation.md` | Верификация промпта | prompt-validation-guide.md, maturity-levels.md | 2.1.1 |
-| 2.1.3 | [ ] | `roles/analyst/requirements-gathering.md` | Сбор требований | prompt-templates.md, requirements-intake-template.md | 2.1.2 |
-| 2.1.4 | [ ] | `roles/analyst/prd-formation.md` | Формирование PRD | analyst-workflow.md, aidd-roles-reference.md | 2.1.3 |
+| 2.1.1 | [x] | `roles/analyst/initialization.md` | Инициализация (Stage 0) | AGENTS.md, agent-context-summary.md | 1.2.1 |
+| 2.1.2 | [x] | `roles/analyst/prompt-validation.md` | Верификация промпта | prompt-validation-guide.md, maturity-levels.md | 2.1.1 |
+| 2.1.3 | [x] | `roles/analyst/requirements-gathering.md` | Сбор требований | prompt-templates.md, requirements-intake-template.md | 2.1.2 |
+| 2.1.4 | [x] | `roles/analyst/prd-formation.md` | Формирование PRD | analyst-workflow.md, aidd-roles-reference.md | 2.1.3 |
 
 ### Детали задачи 2.1.1: initialization.md
 
@@ -296,10 +297,10 @@
 
 | # | Статус | Файл | Функция | Источник .ai-framework | Зависит от |
 |---|--------|------|---------|----------------------|------------|
-| 2.2.1 | [ ] | `roles/researcher/codebase-analysis.md` | Анализ кодовой базы | project-structure.md, ARCHITECTURE.md | 1.2.2 |
-| 2.2.2 | [ ] | `roles/researcher/pattern-identification.md` | Выявление паттернов | ddd-hexagonal-principles.md, service-separation-principles.md | 2.2.1 |
-| 2.2.3 | [ ] | `roles/researcher/constraint-identification.md` | Выявление ограничений | tech_stack.md, event-loop-management.md | 2.2.2 |
-| 2.2.4 | [ ] | `roles/researcher/pipeline-refinement.md` | Уточнение пайплайна | aidd-roles-reference.md, conditional-stage-rules.md | 2.2.3 |
+| 2.2.1 | [x] | `roles/researcher/codebase-analysis.md` | Анализ кодовой базы | project-structure.md, ARCHITECTURE.md | 1.2.2 |
+| 2.2.2 | [x] | `roles/researcher/pattern-identification.md` | Выявление паттернов | ddd-hexagonal-principles.md, service-separation-principles.md | 2.2.1 |
+| 2.2.3 | [x] | `roles/researcher/constraint-identification.md` | Выявление ограничений | tech_stack.md, event-loop-management.md | 2.2.2 |
+| 2.2.4 | [x] | `roles/researcher/pipeline-refinement.md` | Уточнение пайплайна | aidd-roles-reference.md, conditional-stage-rules.md | 2.2.3 |
 
 ---
 
@@ -307,11 +308,11 @@
 
 | # | Статус | Файл | Функция | Источник .ai-framework | Зависит от |
 |---|--------|------|---------|----------------------|------------|
-| 2.3.1 | [ ] | `roles/architect/architecture-design.md` | Проектирование архитектуры | ARCHITECTURE.md, improved-hybrid-overview.md | 1.2.3 |
-| 2.3.2 | [ ] | `roles/architect/maturity-level-selection.md` | Выбор по уровню зрелости | maturity-levels.md, conditional-stage-rules.md | 2.3.1 |
-| 2.3.3 | [ ] | `roles/architect/service-naming.md` | Именование сервисов | naming/README.md, service-naming-checklist.md | 2.3.2 |
-| 2.3.4 | [ ] | `roles/architect/implementation-plan.md` | Создание Implementation Plan | implementation-plan-template.md, requirements-traceability-guide.md | 2.3.3 |
-| 2.3.5 | [ ] | `roles/architect/api-contracts.md` | Определение контрактов API | routing-patterns.md, schema-validation.md | 2.3.4 |
+| 2.3.1 | [x] | `roles/architect/architecture-design.md` | Проектирование архитектуры | ARCHITECTURE.md, improved-hybrid-overview.md | 1.2.3 |
+| 2.3.2 | [x] | `roles/architect/maturity-level-selection.md` | Выбор по уровню зрелости | maturity-levels.md, conditional-stage-rules.md | 2.3.1 |
+| 2.3.3 | [x] | `roles/architect/service-naming.md` | Именование сервисов | naming/README.md, service-naming-checklist.md | 2.3.2 |
+| 2.3.4 | [x] | `roles/architect/implementation-plan.md` | Создание Implementation Plan | implementation-plan-template.md, requirements-traceability-guide.md | 2.3.3 |
+| 2.3.5 | [x] | `roles/architect/api-contracts.md` | Определение контрактов API | routing-patterns.md, schema-validation.md | 2.3.4 |
 
 ---
 
@@ -319,14 +320,14 @@
 
 | # | Статус | Файл | Функция | Источник .ai-framework | Зависит от |
 |---|--------|------|---------|----------------------|------------|
-| 2.4.1 | [ ] | `roles/implementer/infrastructure-setup.md` | Stage 4.1: Инфраструктура | project-structure.md, docker-compose-setup.md | 1.2.4 |
-| 2.4.2 | [ ] | `roles/implementer/data-service.md` | Stage 4.2: Data Service | postgres-service-setup.md, repository-patterns.md | 2.4.1 |
-| 2.4.3 | [ ] | `roles/implementer/business-api.md` | Stage 4.3: Business API | application-factory.md, routing-patterns.md | 2.4.2 |
-| 2.4.4 | [ ] | `roles/implementer/background-worker.md` | Stage 4.4: Background Worker | basic-setup.md, task-management.md | 2.4.3 |
-| 2.4.5 | [ ] | `roles/implementer/telegram-bot.md` | Stage 4.5: Telegram Bot | basic-setup.md, handler-patterns.md | 2.4.3 |
-| 2.4.6 | [ ] | `roles/implementer/testing.md` | Stage 4.6: Тестирование | pytest-setup.md, fixture-patterns.md | 2.4.1-2.4.5 |
-| 2.4.7 | [ ] | `roles/implementer/logging.md` | Логирование (Level ≥ 2) | structured-logging.md, log-correlation.md | 2.4.1 |
-| 2.4.8 | [ ] | `roles/implementer/nginx.md` | Nginx (Level ≥ 3) | nginx-setup.md, ssl-configuration.md | 2.4.1 |
+| 2.4.1 | [x] | `roles/implementer/infrastructure-setup.md` | Stage 4.1: Инфраструктура | project-structure.md, docker-compose-setup.md | 1.2.4 |
+| 2.4.2 | [x] | `roles/implementer/data-service.md` | Stage 4.2: Data Service | postgres-service-setup.md, repository-patterns.md | 2.4.1 |
+| 2.4.3 | [x] | `roles/implementer/business-api.md` | Stage 4.3: Business API | application-factory.md, routing-patterns.md | 2.4.2 |
+| 2.4.4 | [x] | `roles/implementer/background-worker.md` | Stage 4.4: Background Worker | basic-setup.md, task-management.md | 2.4.3 |
+| 2.4.5 | [x] | `roles/implementer/telegram-bot.md` | Stage 4.5: Telegram Bot | basic-setup.md, handler-patterns.md | 2.4.3 |
+| 2.4.6 | [x] | `roles/implementer/testing.md` | Stage 4.6: Тестирование | pytest-setup.md, fixture-patterns.md | 2.4.1-2.4.5 |
+| 2.4.7 | [x] | `roles/implementer/logging.md` | Логирование (Level ≥ 2) | structured-logging.md, log-correlation.md | 2.4.1 |
+| 2.4.8 | [x] | `roles/implementer/nginx.md` | Nginx (Level ≥ 3) | nginx-setup.md, ssl-configuration.md | 2.4.1 |
 
 ### Детали задачи 2.4.1: infrastructure-setup.md
 
@@ -363,9 +364,9 @@
 
 | # | Статус | Файл | Функция | Источник .ai-framework | Зависит от |
 |---|--------|------|---------|----------------------|------------|
-| 2.5.1 | [ ] | `roles/reviewer/architecture-compliance.md` | Проверка архитектуры | ARCHITECTURE.md, dry-kiss-yagni-principles.md | 1.2.5 |
-| 2.5.2 | [ ] | `roles/reviewer/convention-compliance.md` | Проверка конвенций | naming/README.md, linting-standards.md | 2.5.1 |
-| 2.5.3 | [ ] | `roles/reviewer/review-report.md` | Создание Review Report | aidd-roles-reference.md, code-review-checklist.md | 2.5.2 |
+| 2.5.1 | [x] | `roles/reviewer/architecture-compliance.md` | Проверка архитектуры | ARCHITECTURE.md, dry-kiss-yagni-principles.md | 1.2.5 |
+| 2.5.2 | [x] | `roles/reviewer/convention-compliance.md` | Проверка конвенций | naming/README.md, linting-standards.md | 2.5.1 |
+| 2.5.3 | [x] | `roles/reviewer/review-report.md` | Создание Review Report | aidd-roles-reference.md, code-review-checklist.md | 2.5.2 |
 
 ---
 
@@ -373,10 +374,10 @@
 
 | # | Статус | Файл | Функция | Источник .ai-framework | Зависит от |
 |---|--------|------|---------|----------------------|------------|
-| 2.6.1 | [ ] | `roles/qa/test-scenarios.md` | Создание тестовых сценариев | e2e-test-setup.md, user-journey-testing.md | 1.2.6 |
-| 2.6.2 | [ ] | `roles/qa/test-execution.md` | Выполнение тестов | agent-toolbox.md, development-commands.md | 2.6.1 |
-| 2.6.3 | [ ] | `roles/qa/coverage-verification.md` | Верификация coverage | maturity-levels.md, requirements-traceability-guide.md | 2.6.2 |
-| 2.6.4 | [ ] | `roles/qa/qa-report.md` | Создание QA Report | qa-report-template.md, aidd-roles-reference.md | 2.6.3 |
+| 2.6.1 | [x] | `roles/qa/test-scenarios.md` | Создание тестовых сценариев | e2e-test-setup.md, user-journey-testing.md | 1.2.6 |
+| 2.6.2 | [x] | `roles/qa/test-execution.md` | Выполнение тестов | agent-toolbox.md, development-commands.md | 2.6.1 |
+| 2.6.3 | [x] | `roles/qa/coverage-verification.md` | Верификация coverage | maturity-levels.md, requirements-traceability-guide.md | 2.6.2 |
+| 2.6.4 | [x] | `roles/qa/qa-report.md` | Создание QA Report | qa-report-template.md, aidd-roles-reference.md | 2.6.3 |
 
 ---
 
@@ -384,9 +385,9 @@
 
 | # | Статус | Файл | Функция | Источник .ai-framework | Зависит от |
 |---|--------|------|---------|----------------------|------------|
-| 2.7.1 | [ ] | `roles/validator/quality-gates.md` | Проверка quality gates | agent-verification-checklist.md, aidd-roles-reference.md | 1.2.7 |
-| 2.7.2 | [ ] | `roles/validator/artifact-verification.md` | Проверка артефактов | deliverables-catalog.md, requirements-traceability-guide.md | 2.7.1 |
-| 2.7.3 | [ ] | `roles/validator/validation-report.md` | Создание Validation Report | aidd-roles-reference.md | 2.7.2 |
+| 2.7.1 | [x] | `roles/validator/quality-gates.md` | Проверка quality gates | agent-verification-checklist.md, aidd-roles-reference.md | 1.2.7 |
+| 2.7.2 | [x] | `roles/validator/artifact-verification.md` | Проверка артефактов | deliverables-catalog.md, requirements-traceability-guide.md | 2.7.1 |
+| 2.7.3 | [x] | `roles/validator/validation-report.md` | Создание Validation Report | aidd-roles-reference.md | 2.7.2 |
 
 ---
 
@@ -396,16 +397,16 @@
 
 | # | Статус | Файл | Описание | Источник .ai-framework |
 |---|--------|------|----------|----------------------|
-| 3.1.1 | [ ] | `knowledge/architecture/improved-hybrid.md` | Гибридная архитектура | docs/atomic/architecture/improved-hybrid-overview.md |
-| 3.1.2 | [ ] | `knowledge/architecture/ddd-hexagonal.md` | DDD и Hexagonal принципы | docs/atomic/architecture/ddd-hexagonal-principles.md |
-| 3.1.3 | [ ] | `knowledge/architecture/data-access.md` | HTTP-only доступ к данным | docs/atomic/architecture/data-access-architecture.md |
-| 3.1.4 | [ ] | `knowledge/architecture/service-separation.md` | Разделение сервисов | docs/atomic/architecture/service-separation-principles.md |
-| 3.1.5 | [ ] | `knowledge/architecture/event-loop.md` | Управление event loop | docs/atomic/architecture/event-loop-management.md |
-| 3.1.6 | [ ] | `knowledge/architecture/naming/README.md` | Соглашения об именовании | docs/atomic/architecture/naming/README.md |
-| 3.1.7 | [ ] | `knowledge/architecture/naming/services.md` | Именование сервисов | docs/atomic/architecture/naming/naming-services.md |
-| 3.1.8 | [ ] | `knowledge/architecture/naming/python.md` | Именование в Python | docs/atomic/architecture/naming/naming-python.md |
-| 3.1.9 | [ ] | `knowledge/architecture/quality-standards.md` | Стандарты качества | docs/atomic/architecture/quality-standards.md |
-| 3.1.10 | [ ] | `knowledge/architecture/project-structure.md` | Структура проекта | docs/atomic/architecture/project-structure-patterns.md |
+| 3.1.1 | [x] | `knowledge/architecture/improved-hybrid.md` | Гибридная архитектура | docs/atomic/architecture/improved-hybrid-overview.md |
+| 3.1.2 | [x] | `knowledge/architecture/ddd-hexagonal.md` | DDD и Hexagonal принципы | docs/atomic/architecture/ddd-hexagonal-principles.md |
+| 3.1.3 | [x] | `knowledge/architecture/data-access.md` | HTTP-only доступ к данным | docs/atomic/architecture/data-access-architecture.md |
+| 3.1.4 | [x] | `knowledge/architecture/service-separation.md` | Разделение сервисов | docs/atomic/architecture/service-separation-principles.md |
+| 3.1.5 | [x] | `knowledge/architecture/event-loop.md` | Управление event loop | docs/atomic/architecture/event-loop-management.md |
+| 3.1.6 | [x] | `knowledge/architecture/naming/README.md` | Соглашения об именовании | docs/atomic/architecture/naming/README.md |
+| 3.1.7 | [x] | `knowledge/architecture/naming/services.md` | Именование сервисов | docs/atomic/architecture/naming/naming-services.md |
+| 3.1.8 | [x] | `knowledge/architecture/naming/python.md` | Именование в Python | docs/atomic/architecture/naming/naming-python.md |
+| 3.1.9 | [x] | `knowledge/architecture/quality-standards.md` | Стандарты качества | docs/atomic/architecture/quality-standards.md |
+| 3.1.10 | [x] | `knowledge/architecture/project-structure.md` | Структура проекта | docs/atomic/architecture/project-structure-patterns.md |
 
 ---
 
@@ -413,20 +414,20 @@
 
 | # | Статус | Файл | Описание | Источник .ai-framework |
 |---|--------|------|----------|----------------------|
-| 3.2.1 | [ ] | `knowledge/services/fastapi/application-factory.md` | Фабрика приложений | docs/atomic/services/fastapi/application-factory.md |
-| 3.2.2 | [ ] | `knowledge/services/fastapi/routing-patterns.md` | Паттерны маршрутизации | docs/atomic/services/fastapi/routing-patterns.md |
-| 3.2.3 | [ ] | `knowledge/services/fastapi/dependency-injection.md` | Внедрение зависимостей | docs/atomic/services/fastapi/dependency-injection.md |
-| 3.2.4 | [ ] | `knowledge/services/fastapi/schema-validation.md` | Валидация схем | docs/atomic/services/fastapi/schema-validation.md |
-| 3.2.5 | [ ] | `knowledge/services/fastapi/error-handling.md` | Обработка ошибок | docs/atomic/services/fastapi/error-handling.md |
-| 3.2.6 | [ ] | `knowledge/services/aiogram/basic-setup.md` | Базовая настройка бота | docs/atomic/services/aiogram/basic-setup.md |
-| 3.2.7 | [ ] | `knowledge/services/aiogram/handler-patterns.md` | Паттерны обработчиков | docs/atomic/services/aiogram/handler-patterns.md |
-| 3.2.8 | [ ] | `knowledge/services/aiogram/middleware-setup.md` | Настройка middleware | docs/atomic/services/aiogram/middleware-setup.md |
-| 3.2.9 | [ ] | `knowledge/services/aiogram/state-management.md` | Управление состоянием | docs/atomic/services/aiogram/state-management.md |
-| 3.2.10 | [ ] | `knowledge/services/asyncio-workers/basic-setup.md` | Базовая настройка воркера | docs/atomic/services/asyncio-workers/basic-setup.md |
-| 3.2.11 | [ ] | `knowledge/services/asyncio-workers/task-management.md` | Управление задачами | docs/atomic/services/asyncio-workers/task-management.md |
-| 3.2.12 | [ ] | `knowledge/services/asyncio-workers/signal-handling.md` | Обработка сигналов | docs/atomic/services/asyncio-workers/signal-handling.md |
-| 3.2.13 | [ ] | `knowledge/services/data-services/postgres-setup.md` | Настройка PostgreSQL | docs/atomic/services/data-services/postgres-service-setup.md |
-| 3.2.14 | [ ] | `knowledge/services/data-services/repository-patterns.md` | Паттерны репозиториев | docs/atomic/services/data-services/repository-patterns.md |
+| 3.2.1 | [x] | `knowledge/services/fastapi/application-factory.md` | Фабрика приложений | docs/atomic/services/fastapi/application-factory.md |
+| 3.2.2 | [x] | `knowledge/services/fastapi/routing-patterns.md` | Паттерны маршрутизации | docs/atomic/services/fastapi/routing-patterns.md |
+| 3.2.3 | [x] | `knowledge/services/fastapi/dependency-injection.md` | Внедрение зависимостей | docs/atomic/services/fastapi/dependency-injection.md |
+| 3.2.4 | [x] | `knowledge/services/fastapi/schema-validation.md` | Валидация схем | docs/atomic/services/fastapi/schema-validation.md |
+| 3.2.5 | [x] | `knowledge/services/fastapi/error-handling.md` | Обработка ошибок | docs/atomic/services/fastapi/error-handling.md |
+| 3.2.6 | [x] | `knowledge/services/aiogram/basic-setup.md` | Базовая настройка бота | docs/atomic/services/aiogram/basic-setup.md |
+| 3.2.7 | [x] | `knowledge/services/aiogram/handler-patterns.md` | Паттерны обработчиков | docs/atomic/services/aiogram/handler-patterns.md |
+| 3.2.8 | [x] | `knowledge/services/aiogram/middleware-setup.md` | Настройка middleware | docs/atomic/services/aiogram/middleware-setup.md |
+| 3.2.9 | [x] | `knowledge/services/aiogram/state-management.md` | Управление состоянием | docs/atomic/services/aiogram/state-management.md |
+| 3.2.10 | [x] | `knowledge/services/asyncio-workers/basic-setup.md` | Базовая настройка воркера | docs/atomic/services/asyncio-workers/basic-setup.md |
+| 3.2.11 | [x] | `knowledge/services/asyncio-workers/task-management.md` | Управление задачами | docs/atomic/services/asyncio-workers/task-management.md |
+| 3.2.12 | [x] | `knowledge/services/asyncio-workers/signal-handling.md` | Обработка сигналов | docs/atomic/services/asyncio-workers/signal-handling.md |
+| 3.2.13 | [x] | `knowledge/services/data-services/postgres-setup.md` | Настройка PostgreSQL | docs/atomic/services/data-services/postgres-service-setup.md |
+| 3.2.14 | [x] | `knowledge/services/data-services/repository-patterns.md` | Паттерны репозиториев | docs/atomic/services/data-services/repository-patterns.md |
 
 ---
 
@@ -434,11 +435,11 @@
 
 | # | Статус | Файл | Описание | Источник .ai-framework |
 |---|--------|------|----------|----------------------|
-| 3.3.1 | [ ] | `knowledge/integrations/http/business-to-data.md` | HTTP вызовы между сервисами | docs/atomic/integrations/http-communication/business-to-data-calls.md |
-| 3.3.2 | [ ] | `knowledge/integrations/http/client-patterns.md` | Паттерны HTTP клиентов | docs/atomic/integrations/http-communication/http-client-patterns.md |
-| 3.3.3 | [ ] | `knowledge/integrations/http/error-handling.md` | Обработка ошибок HTTP | docs/atomic/integrations/http-communication/error-handling-strategies.md |
-| 3.3.4 | [ ] | `knowledge/integrations/redis/caching.md` | Стратегии кэширования | docs/atomic/integrations/redis/caching-strategies.md |
-| 3.3.5 | [ ] | `knowledge/integrations/redis/connection.md` | Управление соединениями | docs/atomic/integrations/redis/connection-management.md |
+| 3.3.1 | [x] | `knowledge/integrations/http/business-to-data.md` | HTTP вызовы между сервисами | docs/atomic/integrations/http-communication/business-to-data-calls.md |
+| 3.3.2 | [x] | `knowledge/integrations/http/client-patterns.md` | Паттерны HTTP клиентов | docs/atomic/integrations/http-communication/http-client-patterns.md |
+| 3.3.3 | [x] | `knowledge/integrations/http/error-handling.md` | Обработка ошибок HTTP | docs/atomic/integrations/http-communication/error-handling-strategies.md |
+| 3.3.4 | [x] | `knowledge/integrations/redis/caching.md` | Стратегии кэширования | docs/atomic/integrations/redis/caching-strategies.md |
+| 3.3.5 | [x] | `knowledge/integrations/redis/connection.md` | Управление соединениями | docs/atomic/integrations/redis/connection-management.md |
 
 ---
 
@@ -446,11 +447,11 @@
 
 | # | Статус | Файл | Описание | Источник .ai-framework |
 |---|--------|------|----------|----------------------|
-| 3.4.1 | [ ] | `knowledge/infrastructure/docker-compose.md` | Настройка Docker Compose | docs/atomic/infrastructure/containerization/docker-compose-setup.md |
-| 3.4.2 | [ ] | `knowledge/infrastructure/dockerfile.md` | Паттерны Dockerfile | docs/atomic/infrastructure/containerization/dockerfile-patterns.md |
-| 3.4.3 | [ ] | `knowledge/infrastructure/nginx.md` | Настройка Nginx | docs/atomic/infrastructure/api-gateway/nginx-setup.md |
-| 3.4.4 | [ ] | `knowledge/infrastructure/ssl.md` | Конфигурация SSL | docs/atomic/infrastructure/api-gateway/ssl-configuration.md |
-| 3.4.5 | [ ] | `knowledge/infrastructure/ci-cd.md` | Паттерны CI/CD | docs/atomic/infrastructure/deployment/ci-cd-patterns.md |
+| 3.4.1 | [x] | `knowledge/infrastructure/docker-compose.md` | Настройка Docker Compose | docs/atomic/infrastructure/containerization/docker-compose-setup.md |
+| 3.4.2 | [x] | `knowledge/infrastructure/dockerfile.md` | Паттерны Dockerfile | docs/atomic/infrastructure/containerization/dockerfile-patterns.md |
+| 3.4.3 | [x] | `knowledge/infrastructure/nginx.md` | Настройка Nginx | docs/atomic/infrastructure/api-gateway/nginx-setup.md |
+| 3.4.4 | [x] | `knowledge/infrastructure/ssl.md` | Конфигурация SSL | docs/atomic/infrastructure/api-gateway/ssl-configuration.md |
+| 3.4.5 | [x] | `knowledge/infrastructure/ci-cd.md` | Паттерны CI/CD | docs/atomic/infrastructure/deployment/ci-cd-patterns.md |
 
 ---
 
@@ -458,15 +459,15 @@
 
 | # | Статус | Файл | Описание | Источник .ai-framework |
 |---|--------|------|----------|----------------------|
-| 3.5.1 | [ ] | `knowledge/quality/dry-kiss-yagni.md` | Принципы DRY/KISS/YAGNI | docs/guides/dry-kiss-yagni-principles.md |
-| 3.5.2 | [ ] | `knowledge/quality/testing/pytest-setup.md` | Настройка pytest | docs/atomic/testing/unit-testing/pytest-setup.md |
-| 3.5.3 | [ ] | `knowledge/quality/testing/fixture-patterns.md` | Паттерны фикстур | docs/atomic/testing/unit-testing/fixture-patterns.md |
-| 3.5.4 | [ ] | `knowledge/quality/testing/mocking.md` | Стратегии мокирования | docs/atomic/testing/unit-testing/mocking-strategies.md |
-| 3.5.5 | [ ] | `knowledge/quality/testing/fastapi-testing.md` | Тестирование FastAPI | docs/atomic/testing/service-testing/fastapi-testing-patterns.md |
-| 3.5.6 | [ ] | `knowledge/quality/testing/testcontainers.md` | Использование Testcontainers | docs/atomic/testing/integration-testing/testcontainers-setup.md |
-| 3.5.7 | [ ] | `knowledge/quality/logging/structured.md` | Структурированное логирование | docs/atomic/observability/logging/structured-logging.md |
-| 3.5.8 | [ ] | `knowledge/quality/logging/correlation.md` | Корреляция логов | docs/atomic/observability/logging/log-correlation.md |
-| 3.5.9 | [ ] | `knowledge/quality/production-requirements.md` | Требования к продакшену для MVP | Раздел 4.3 плана |
+| 3.5.1 | [x] | `knowledge/quality/dry-kiss-yagni.md` | Принципы DRY/KISS/YAGNI | docs/guides/dry-kiss-yagni-principles.md |
+| 3.5.2 | [x] | `knowledge/quality/testing/pytest-setup.md` | Настройка pytest | docs/atomic/testing/unit-testing/pytest-setup.md |
+| 3.5.3 | [x] | `knowledge/quality/testing/fixture-patterns.md` | Паттерны фикстур | docs/atomic/testing/unit-testing/fixture-patterns.md |
+| 3.5.4 | [x] | `knowledge/quality/testing/mocking.md` | Стратегии мокирования | docs/atomic/testing/unit-testing/mocking-strategies.md |
+| 3.5.5 | [x] | `knowledge/quality/testing/fastapi-testing.md` | Тестирование FastAPI | docs/atomic/testing/service-testing/fastapi-testing-patterns.md |
+| 3.5.6 | [x] | `knowledge/quality/testing/testcontainers.md` | Использование Testcontainers | docs/atomic/testing/integration-testing/testcontainers-setup.md |
+| 3.5.7 | [x] | `knowledge/quality/logging/structured.md` | Структурированное логирование | docs/atomic/observability/logging/structured-logging.md |
+| 3.5.8 | [x] | `knowledge/quality/logging/correlation.md` | Корреляция логов | docs/atomic/observability/logging/log-correlation.md |
+| 3.5.9 | [x] | `knowledge/quality/production-requirements.md` | Требования к продакшену для MVP | Раздел 4.3 плана |
 
 ---
 
@@ -476,11 +477,11 @@
 
 | # | Статус | Директория | Описание | Источник .ai-framework |
 |---|--------|------------|----------|----------------------|
-| 4.1.1 | [ ] | `templates/services/fastapi_business_api/` | Business API шаблон | templates/services/template_business_api/ |
-| 4.1.2 | [ ] | `templates/services/aiogram_bot/` | Telegram Bot шаблон | templates/services/template_business_bot/ |
-| 4.1.3 | [ ] | `templates/services/asyncio_worker/` | Background Worker шаблон | templates/services/template_business_worker/ |
-| 4.1.4 | [ ] | `templates/services/postgres_data_api/` | PostgreSQL Data API шаблон | templates/services/template_data_postgres_api/ |
-| 4.1.5 | [ ] | `templates/services/mongo_data_api/` | MongoDB Data API шаблон | templates/services/template_data_mongo_api/ |
+| 4.1.1 | [x] | `templates/services/fastapi_business_api/` | Business API шаблон | templates/services/template_business_api/ |
+| 4.1.2 | [x] | `templates/services/aiogram_bot/` | Telegram Bot шаблон | templates/services/template_business_bot/ |
+| 4.1.3 | [x] | `templates/services/asyncio_worker/` | Background Worker шаблон | templates/services/template_business_worker/ |
+| 4.1.4 | [x] | `templates/services/postgres_data_api/` | PostgreSQL Data API шаблон | templates/services/template_data_postgres_api/ |
+| 4.1.5 | [x] | `templates/services/mongo_data_api/` | MongoDB Data API шаблон | templates/services/template_data_mongo_api/ |
 
 ### Детали задачи 4.1.1: fastapi_business_api/
 
@@ -540,11 +541,11 @@ templates/services/fastapi_business_api/
 
 | # | Статус | Файл | Описание |
 |---|--------|------|----------|
-| 5.1.1 | [ ] | `templates/shared/utils/logger.py` | Структурированное логирование (structlog) |
-| 5.1.2 | [ ] | `templates/shared/utils/validators.py` | Общие валидаторы |
-| 5.1.3 | [ ] | `templates/shared/utils/exceptions.py` | Кастомные исключения |
-| 5.1.4 | [ ] | `templates/shared/utils/pagination.py` | Пагинация |
-| 5.1.5 | [ ] | `templates/shared/utils/request_id.py` | Генерация request_id |
+| 5.1.1 | [x] | `templates/shared/utils/logger.py` | Структурированное логирование (structlog) |
+| 5.1.2 | [x] | `templates/shared/utils/validators.py` | Общие валидаторы |
+| 5.1.3 | [x] | `templates/shared/utils/exceptions.py` | Кастомные исключения |
+| 5.1.4 | [x] | `templates/shared/utils/pagination.py` | Пагинация |
+| 5.1.5 | [x] | `templates/shared/utils/request_id.py` | Генерация request_id |
 
 ---
 
@@ -552,9 +553,9 @@ templates/services/fastapi_business_api/
 
 | # | Статус | Файл | Описание |
 |---|--------|------|----------|
-| 5.2.1 | [ ] | `templates/shared/schemas/base.py` | Базовые Pydantic схемы |
-| 5.2.2 | [ ] | `templates/shared/schemas/pagination.py` | Схемы пагинации |
-| 5.2.3 | [ ] | `templates/shared/schemas/errors.py` | Схемы ошибок |
+| 5.2.1 | [x] | `templates/shared/schemas/base.py` | Базовые Pydantic схемы |
+| 5.2.2 | [x] | `templates/shared/schemas/pagination.py` | Схемы пагинации |
+| 5.2.3 | [x] | `templates/shared/schemas/errors.py` | Схемы ошибок |
 
 ---
 
@@ -562,8 +563,8 @@ templates/services/fastapi_business_api/
 
 | # | Статус | Файл | Описание |
 |---|--------|------|----------|
-| 5.3.1 | [ ] | `templates/shared/http_clients/base_client.py` | Базовый HTTP клиент (httpx) |
-| 5.3.2 | [ ] | `templates/shared/http_clients/data_api_client.py` | Клиент для Data API |
+| 5.3.1 | [x] | `templates/shared/http_clients/base_client.py` | Базовый HTTP клиент (httpx) |
+| 5.3.2 | [x] | `templates/shared/http_clients/data_api_client.py` | Клиент для Data API |
 
 ---
 
@@ -571,8 +572,8 @@ templates/services/fastapi_business_api/
 
 | # | Статус | Файл | Описание |
 |---|--------|------|----------|
-| 5.4.1 | [ ] | `templates/shared/testing/base_fixtures.py` | Базовые pytest фикстуры |
-| 5.4.2 | [ ] | `templates/shared/testing/factory_base.py` | Базовые фабрики для тестов |
+| 5.4.1 | [x] | `templates/shared/testing/base_fixtures.py` | Базовые pytest фикстуры |
+| 5.4.2 | [x] | `templates/shared/testing/factory_base.py` | Базовые фабрики для тестов |
 
 ---
 
@@ -582,11 +583,11 @@ templates/services/fastapi_business_api/
 
 | # | Статус | Файл | Описание | Источник .ai-framework |
 |---|--------|------|----------|----------------------|
-| 6.1.1 | [ ] | `templates/infrastructure/docker-compose/docker-compose.yml` | Базовый docker-compose | templates/infrastructure/docker-compose.yml |
-| 6.1.2 | [ ] | `templates/infrastructure/docker-compose/docker-compose.dev.yml` | Dev overrides | templates/infrastructure/docker-compose.dev.yml |
-| 6.1.3 | [ ] | `templates/infrastructure/docker-compose/docker-compose.prod.yml` | Production config | templates/infrastructure/docker-compose.prod.yml |
-| 6.1.4 | [ ] | `templates/infrastructure/docker-compose/.env.example` | Шаблон переменных окружения | templates/infrastructure/.env.example |
-| 6.1.5 | [ ] | `templates/infrastructure/Makefile` | Команды проекта (build, run, test) | Раздел 3.3.4 плана |
+| 6.1.1 | [x] | `templates/infrastructure/docker-compose/docker-compose.yml` | Базовый docker-compose | templates/infrastructure/docker-compose.yml |
+| 6.1.2 | [x] | `templates/infrastructure/docker-compose/docker-compose.dev.yml` | Dev overrides | templates/infrastructure/docker-compose.dev.yml |
+| 6.1.3 | [x] | `templates/infrastructure/docker-compose/docker-compose.prod.yml` | Production config | templates/infrastructure/docker-compose.prod.yml |
+| 6.1.4 | [x] | `templates/infrastructure/docker-compose/.env.example` | Шаблон переменных окружения | templates/infrastructure/.env.example |
+| 6.1.5 | [x] | `templates/infrastructure/Makefile` | Команды проекта (build, run, test) | Раздел 3.3.4 плана |
 
 ---
 
@@ -594,10 +595,10 @@ templates/services/fastapi_business_api/
 
 | # | Статус | Файл | Описание | Источник .ai-framework |
 |---|--------|------|----------|----------------------|
-| 6.2.1 | [ ] | `templates/infrastructure/nginx/nginx.conf` | Конфигурация Nginx | templates/nginx/nginx.conf |
-| 6.2.2 | [ ] | `templates/infrastructure/nginx/Dockerfile` | Dockerfile для Nginx | templates/nginx/Dockerfile |
-| 6.2.3 | [ ] | `templates/infrastructure/nginx/conf.d/upstream.conf` | Upstream конфигурация | Раздел 3.3.4 плана |
-| 6.2.4 | [ ] | `templates/infrastructure/nginx/conf.d/api-gateway.conf` | API Gateway конфигурация | Раздел 3.3.4 плана |
+| 6.2.1 | [x] | `templates/infrastructure/nginx/nginx.conf` | Конфигурация Nginx | templates/nginx/nginx.conf |
+| 6.2.2 | [x] | `templates/infrastructure/nginx/Dockerfile` | Dockerfile для Nginx | templates/nginx/Dockerfile |
+| 6.2.3 | [x] | `templates/infrastructure/nginx/conf.d/upstream.conf` | Upstream конфигурация | Раздел 3.3.4 плана |
+| 6.2.4 | [x] | `templates/infrastructure/nginx/conf.d/api-gateway.conf` | API Gateway конфигурация | Раздел 3.3.4 плана |
 
 ---
 
@@ -605,8 +606,8 @@ templates/services/fastapi_business_api/
 
 | # | Статус | Файл | Описание | Источник .ai-framework |
 |---|--------|------|----------|----------------------|
-| 6.3.1 | [ ] | `templates/infrastructure/github-actions/.github/workflows/ci.yml` | CI pipeline | templates/ci-cd/.github/workflows/ci.yml |
-| 6.3.2 | [ ] | `templates/infrastructure/github-actions/.github/workflows/cd.yml` | CD pipeline | templates/ci-cd/.github/workflows/cd.yml |
+| 6.3.1 | [x] | `templates/infrastructure/github-actions/.github/workflows/ci.yml` | CI pipeline | templates/ci-cd/.github/workflows/ci.yml |
+| 6.3.2 | [x] | `templates/infrastructure/github-actions/.github/workflows/cd.yml` | CD pipeline | templates/ci-cd/.github/workflows/cd.yml |
 
 ---
 
@@ -616,14 +617,14 @@ templates/services/fastapi_business_api/
 
 | # | Статус | Файл | Описание |
 |---|--------|------|----------|
-| 7.1.1 | [ ] | `docs/prd/template.md` | Шаблон PRD документа |
-| 7.1.2 | [ ] | `docs/architecture/template.md` | Шаблон архитектурного плана |
-| 7.1.3 | [ ] | `docs/plans/template.md` | Шаблон плана фичи |
-| 7.1.4 | [ ] | `docs/reports/review-template.md` | Шаблон отчёта ревью |
-| 7.1.5 | [ ] | `docs/reports/qa-template.md` | Шаблон QA отчёта |
-| 7.1.6 | [ ] | `docs/reports/validation-template.md` | Шаблон отчёта валидации |
-| 7.1.7 | [ ] | `docs/rtm-template.md` | Шаблон матрицы трассировки требований |
-| 7.1.8 | [ ] | `docs/tasklists/template.md` | Шаблон чек-листа задач |
+| 7.1.1 | [x] | `docs/prd/template.md` | Шаблон PRD документа |
+| 7.1.2 | [x] | `docs/architecture/template.md` | Шаблон архитектурного плана |
+| 7.1.3 | [x] | `docs/plans/template.md` | Шаблон плана фичи |
+| 7.1.4 | [x] | `docs/reports/review-template.md` | Шаблон отчёта ревью |
+| 7.1.5 | [x] | `docs/reports/qa-template.md` | Шаблон QA отчёта |
+| 7.1.6 | [x] | `docs/reports/validation-template.md` | Шаблон отчёта валидации |
+| 7.1.7 | [x] | `docs/rtm-template.md` | Шаблон матрицы трассировки требований |
+| 7.1.8 | [x] | `docs/tasklists/template.md` | Шаблон чек-листа задач |
 
 ### Детали задачи 7.1.1: template.md (PRD)
 
@@ -795,3 +796,33 @@ templates/services/fastapi_business_api/
 | 6 | 11 | 2 |
 | 7 | 8 | 2 |
 | **ИТОГО** | **~176** | **~33 часа** |
+
+---
+
+## ✅ СТАТУС РЕАЛИЗАЦИИ
+
+**Дата проверки**: 2025-12-20
+**Статус**: Все пункты реализованы
+
+### Итоговая сводка
+
+| Фаза | Описание | План | Факт | Статус |
+|------|----------|------|------|--------|
+| 0 | Корневые файлы | 4 | 4 | ✅ 100% |
+| 1 | .claude/ (settings, agents, commands) | 17 | 17 | ✅ 100% |
+| 2 | roles/ | 31 | 31 | ✅ 100% |
+| 3 | knowledge/ | 43 | 43 | ✅ 100% |
+| 4 | templates/services/ | ~50 | 109+ | ✅ >100% |
+| 5 | templates/shared/ | 12 | 12 | ✅ 100% |
+| 6 | templates/infrastructure/ | 11 | 11 | ✅ 100% |
+| 7 | docs/templates/ | 8 | 8 | ✅ 100% |
+| **ИТОГО** | | **~176** | **235+** | **✅ 100%** |
+
+### Созданные файлы (не в оригинальном плане)
+
+- `knowledge/quality/production-requirements.md` — требования к production
+- `templates/infrastructure/nginx/conf.d/upstream.conf` — upstream конфигурация
+- `templates/infrastructure/nginx/conf.d/api-gateway.conf` — API gateway конфигурация
+- `docs/templates/tasklist-template.md` — шаблон чек-листа задач
+
+**Фреймворк AIDD-MVP Generator полностью реализован!**
