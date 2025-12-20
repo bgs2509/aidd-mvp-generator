@@ -1,3 +1,8 @@
+---
+allowed-tools: Read(*), Glob(*), Grep(*), Bash(pytest :*), Bash(make :*), Edit(**/*.md), Write(**/*.md)
+description: Запуск тестов и проверка покрытия кода
+---
+
 # Команда: /test
 
 > Запускает QA для тестирования и верификации.

@@ -1,3 +1,10 @@
+---
+name: implementer
+description: Реализатор — генерация кода на основе утверждённого плана
+tools: Read, Glob, Grep, Edit, Write, Bash
+model: inherit
+---
+
 # Роль: Реализатор
 
 > **Назначение**: Генерация кода на основе утверждённого плана.

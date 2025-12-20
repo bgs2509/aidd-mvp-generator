@@ -1,3 +1,8 @@
+---
+allowed-tools: Read(*), Glob(*), Grep(*), Bash(make :*), Bash(docker :*), Bash(curl :*)
+description: Сборка и запуск Docker-контейнеров
+---
+
 # Команда: /deploy
 
 > Запускает Валидатора для деплоя приложения.

@@ -1,3 +1,8 @@
+---
+allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md)
+description: Код-ревью сгенерированного кода
+---
+
 # Команда: /review
 
 > Запускает Ревьюера для код-ревью.

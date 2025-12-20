@@ -1,3 +1,8 @@
+---
+allowed-tools: Read(*), Glob(*), Grep(*), Edit(**), Write(**), Bash(make :*), Bash(docker :*), Bash(pytest :*)
+description: Генерация кода на основе утверждённого плана
+---
+
 # Команда: /generate
 
 > Запускает Реализатора для генерации кода.
