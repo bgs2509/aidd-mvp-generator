@@ -2,6 +2,8 @@
 
 > **Философия**: VERIFY BEFORE ACT — Проверяй перед действием.
 > **Принцип**: Артефакты = Память. Не полагаемся на контекст чата.
+>
+> Полный список артефактов: [docs/NAVIGATION.md](docs/NAVIGATION.md#сводная-таблица)
 
 ---
 
@@ -144,6 +146,8 @@
 | 6 | QA | `/test` | QA | `QA_PASSED` | `reports/qa-report.md` |
 | 7 | Валидация | `/validate` | Валидатор | `ALL_GATES_PASSED` | `rtm.md` |
 | 8 | Деплой | `/deploy` | Валидатор | `DEPLOYED` | Работающее приложение |
+
+> Файлы команд: [docs/INDEX.md](docs/INDEX.md#slash-команды)
 
 ### Принцип блокировки
 
@@ -321,8 +325,8 @@ claude
 # 3. Начать работу
 /idea "Создать сервис бронирования столиков в ресторанах"
 
-# 4. Следовать пайплайну
-# /idea → /research → /plan → /generate → /review → /test → /validate → /deploy
+# 4. Следовать пайплайну (этапы 0-8)
+# /init → /idea → /research → /plan → /generate → /review → /test → /validate → /deploy
 ```
 
 ### Добавление фичи (FEATURE)

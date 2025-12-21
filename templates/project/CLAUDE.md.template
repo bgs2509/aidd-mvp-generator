@@ -13,7 +13,7 @@
 | Документ | Путь | Назначение |
 |----------|------|------------|
 | Фреймворк | [.aidd/CLAUDE.md](.aidd/CLAUDE.md) | Правила и процесс разработки |
-| Workflow | [.aidd/workflow.md](.aidd/workflow.md) | 8-этапный процесс |
+| Workflow | [.aidd/workflow.md](.aidd/workflow.md) | Пайплайн (этапы 0-8) |
 | Conventions | [.aidd/conventions.md](.aidd/conventions.md) | Соглашения о коде |
 
 ---
@@ -24,8 +24,8 @@
 # Описать идею (CREATE) или фичу (FEATURE)
 /idea "{{PROJECT_DESCRIPTION}}"
 
-# Следовать 8-этапному процессу
-/research → /plan → /generate → /review → /test → /validate → /deploy
+# Следовать пайплайну (этапы 0-8)
+/init → /idea → /research → /plan → /generate → /review → /test → /validate → /deploy
 ```
 
 ---
