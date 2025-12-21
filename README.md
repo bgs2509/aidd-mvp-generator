@@ -36,33 +36,38 @@
 - Python 3.11+
 - Docker & Docker Compose
 - Claude Code CLI
+- Git 2.40+
 
-### Создание нового MVP
+### Установка фреймворка (рекомендуется)
 
 ```bash
-# 1. Клонировать фреймворк
-git clone https://github.com/your-org/aidd-mvp-generator.git
-cd aidd-mvp-generator
+# 1. Создать и инициализировать целевой проект
+mkdir restaurant-booking && cd restaurant-booking
+git init
 
-# 2. Запустить Claude Code
+# 2. Подключить фреймворк как Git Submodule
+git submodule add https://github.com/your-org/aidd-mvp-generator.git .aidd
+git submodule update --init --recursive
+
+# 3. Создать точку входа для AI
+echo "# Restaurant Booking\n\nСм. .aidd/CLAUDE.md для работы с AI." > CLAUDE.md
+
+# 4. Запустить Claude Code
 claude
-
-# 3. Описать идею проекта
 /idea "Создать сервис бронирования столиков в ресторанах"
 
-# 4. Следовать процессу (8 этапов)
-# Claude Code автоматически проведёт через все этапы
+# 5. Следовать 8-этапному процессу
+# /idea → /research → /plan → /generate → /review → /test → /validate → /deploy
 
-# 5. Запустить сгенерированный проект
-cd generated-project/
+# 6. Запустить сгенерированный проект
 make build && make up
 ```
 
 ### Добавление фичи в существующий проект
 
 ```bash
-# 1. Перейти в директорию проекта
-cd my-existing-project/
+# 1. Перейти в директорию проекта (где уже есть .aidd/)
+cd my-existing-project
 
 # 2. Запустить Claude Code
 claude

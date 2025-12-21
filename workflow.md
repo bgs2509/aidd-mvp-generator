@@ -71,7 +71,18 @@ AIDD-MVP Generator использует 8-этапный конвейер раз
 ## Bootstrap: Инициализация целевого проекта
 
 > **ВАЖНО**: Артефакты создаются в ЦЕЛЕВОМ ПРОЕКТЕ, не в генераторе!
-> Подробнее: [docs/target-project-structure.md](docs/target-project-structure.md)
+> Фреймворк должен быть подключен как Git Submodule в `.aidd/`
+> Подробнее: [CLAUDE.md → Интеграция](CLAUDE.md#интеграция-фреймворка-в-проект)
+
+### Предварительные условия
+
+Перед запуском `/idea` фреймворк должен быть подключен:
+
+```bash
+# Если фреймворк ещё не подключен
+git submodule add https://github.com/your-org/aidd-mvp-generator.git .aidd
+git submodule update --init --recursive
+```
 
 ### Автоматическая инициализация при `/idea`
 
