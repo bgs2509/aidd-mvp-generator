@@ -977,8 +977,8 @@ def version_artifact(artifact_path: Path) -> Path:
 |----------|----------|
 | [CLAUDE.md](CLAUDE.md) | Главная точка входа |
 | [conventions.md](conventions.md) | Соглашения о коде |
-| [.claude/agents/](/.claude/agents/) | Определения AI-ролей |
-| [.claude/commands/](/.claude/commands/) | Определения команд |
+| [.claude/agents/](.claude/agents/) | Определения AI-ролей |
+| [.claude/commands/](.claude/commands/) | Определения команд |
 
 ---
 
