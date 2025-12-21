@@ -11,7 +11,7 @@
 |------|----------|--------------|
 | [CLAUDE.md](../CLAUDE.md) | Главная точка входа | Первым делом |
 | [conventions.md](../conventions.md) | Соглашения о коде | При написании кода |
-| [workflow.md](../workflow.md) | 8-этапный процесс | При выполнении команд |
+| [workflow.md](../workflow.md) | 9-этапный процесс (0-8) | При выполнении команд |
 
 ---
 
@@ -79,11 +79,12 @@
 
 ### Сервисы
 
-| Файл | Описание |
-|------|----------|
-| [knowledge/services/fastapi.md](../knowledge/services/fastapi.md) | FastAPI сервисы |
-| [knowledge/services/aiogram.md](../knowledge/services/aiogram.md) | Telegram боты |
-| [knowledge/services/asyncio-workers.md](../knowledge/services/asyncio-workers.md) | Background workers |
+| Директория | Описание |
+|------------|----------|
+| [knowledge/services/fastapi/](../knowledge/services/fastapi/) | FastAPI сервисы |
+| [knowledge/services/aiogram/](../knowledge/services/aiogram/) | Telegram боты |
+| [knowledge/services/asyncio-workers/](../knowledge/services/asyncio-workers/) | Background workers |
+| [knowledge/services/data-services/](../knowledge/services/data-services/) | Data API сервисы |
 
 ### Качество
 

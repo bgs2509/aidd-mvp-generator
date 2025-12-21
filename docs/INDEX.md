@@ -99,6 +99,13 @@
 |--------|-------------------|---------------------------|
 | PRD | [templates/documents/prd-template.md](../templates/documents/prd-template.md) | `ai-docs/docs/prd/{name}-prd.md` |
 | Архитектура | [templates/documents/architecture-template.md](../templates/documents/architecture-template.md) | `ai-docs/docs/architecture/{name}-plan.md` |
+| План фичи (FEATURE) | [templates/documents/feature-plan-template.md](../templates/documents/feature-plan-template.md) | `ai-docs/docs/plans/{feature}-plan.md` |
+| План реализации | [templates/documents/implementation-plan-template.md](../templates/documents/implementation-plan-template.md) | `ai-docs/docs/architecture/{name}-impl.md` |
+| Отчёт ревью | [templates/documents/review-report-template.md](../templates/documents/review-report-template.md) | `ai-docs/docs/reports/review-report.md` |
+| Отчёт QA | [templates/documents/qa-report-template.md](../templates/documents/qa-report-template.md) | `ai-docs/docs/reports/qa-report.md` |
+| Отчёт валидации | [templates/documents/validation-report-template.md](../templates/documents/validation-report-template.md) | `ai-docs/docs/reports/validation-report.md` |
+| RTM | [templates/documents/rtm-template.md](../templates/documents/rtm-template.md) | `ai-docs/docs/rtm.md` |
+| Состояние пайплайна | [templates/documents/pipeline-state-template.json](../templates/documents/pipeline-state-template.json) | `.pipeline-state.json` |
 
 ---
 
