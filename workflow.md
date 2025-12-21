@@ -68,6 +68,39 @@ AIDD-MVP Generator использует 8-этапный конвейер раз
 
 ---
 
+## Bootstrap: Инициализация целевого проекта
+
+> **ВАЖНО**: Артефакты создаются в ЦЕЛЕВОМ ПРОЕКТЕ, не в генераторе!
+> Подробнее: [docs/target-project-structure.md](docs/target-project-structure.md)
+
+### Автоматическая инициализация при `/idea`
+
+При первом запуске `/idea` AI-агент выполняет:
+
+```bash
+# 1. Создание структуры артефактов
+mkdir -p ai-docs/docs/{prd,architecture,plans,reports}
+
+# 2. Инициализация состояния пайплайна
+cat > .pipeline-state.json << 'EOF'
+{
+  "project_name": "",
+  "mode": "CREATE",
+  "current_stage": 1,
+  "gates": {}
+}
+EOF
+```
+
+### Определение режима
+
+| Признак | Режим |
+|---------|-------|
+| Есть `services/` или `docker-compose.yml` | **FEATURE** |
+| Пустая директория или нет признаков проекта | **CREATE** |
+
+---
+
 ## Этапы процесса
 
 ### Этап 1: Идея → PRD
@@ -77,7 +110,7 @@ AIDD-MVP Generator использует 8-этапный конвейер раз
 | **Команда** | `/idea "описание"` |
 | **Агент** | Аналитик |
 | **Вход** | Описание идеи от пользователя |
-| **Выход** | `docs/prd/{name}-prd.md` |
+| **Выход** | `ai-docs/docs/prd/{name}-prd.md` |
 | **Ворота** | `PRD_READY` |
 
 **Критерии прохождения ворот PRD_READY**:
@@ -86,10 +119,10 @@ AIDD-MVP Generator использует 8-этапный конвейер раз
 - [ ] Определены критерии приёмки
 - [ ] Нет блокирующих открытых вопросов
 
-**Артефакты**:
+**Артефакты** (в целевом проекте):
 ```
-docs/
-└── prd/
+{project-name}/
+└── ai-docs/docs/prd/
     └── booking-restaurant-prd.md
 ```
 
@@ -123,7 +156,7 @@ docs/
 | **Команда** | `/plan` (CREATE) или `/feature-plan` (FEATURE) |
 | **Агент** | Архитектор |
 | **Вход** | PRD, результаты исследования |
-| **Выход** | `docs/architecture/{name}-plan.md` |
+| **Выход** | `ai-docs/docs/architecture/{name}-plan.md` |
 | **Ворота** | `PLAN_APPROVED` |
 
 **Критерии прохождения ворот PLAN_APPROVED**:
@@ -134,13 +167,14 @@ docs/
 
 **Важно**: Этот этап ТРЕБУЕТ явного подтверждения от пользователя!
 
-**Артефакты**:
+**Артефакты** (в целевом проекте):
 ```
-docs/
-├── architecture/
-│   └── booking-restaurant-plan.md
-└── plans/
-    └── notification-feature-plan.md  # для FEATURE
+{project-name}/
+└── ai-docs/docs/
+    ├── architecture/
+    │   └── booking-restaurant-plan.md
+    └── plans/
+        └── notification-feature-plan.md  # для FEATURE
 ```
 
 ---
@@ -181,7 +215,7 @@ docs/
 | **Команда** | `/review` |
 | **Агент** | Ревьюер |
 | **Вход** | Сгенерированный код |
-| **Выход** | `docs/reports/review-report.md` |
+| **Выход** | `ai-docs/docs/reports/review-report.md` |
 | **Ворота** | `REVIEW_OK` |
 
 **Критерии прохождения ворот REVIEW_OK**:
@@ -190,10 +224,10 @@ docs/
 - [ ] Нет критических замечаний
 - [ ] DRY/KISS/YAGNI соблюдены
 
-**Артефакты**:
+**Артефакты** (в целевом проекте):
 ```
-docs/
-└── reports/
+{project-name}/
+└── ai-docs/docs/reports/
     └── review-report.md
 ```
 
@@ -206,7 +240,7 @@ docs/
 | **Команда** | `/test` |
 | **Агент** | QA |
 | **Вход** | Код после ревью |
-| **Выход** | `docs/reports/qa-report.md` |
+| **Выход** | `ai-docs/docs/reports/qa-report.md` |
 | **Ворота** | `QA_PASSED` |
 
 **Критерии прохождения ворот QA_PASSED**:
@@ -215,10 +249,10 @@ docs/
 - [ ] Нет критических багов
 - [ ] Требования из PRD проверены
 
-**Артефакты**:
+**Артефакты** (в целевом проекте):
 ```
-docs/
-└── reports/
+{project-name}/
+└── ai-docs/docs/reports/
     └── qa-report.md
 ```
 
@@ -231,7 +265,7 @@ docs/
 | **Команда** | `/validate` |
 | **Агент** | Валидатор |
 | **Вход** | Все артефакты проекта |
-| **Выход** | `docs/reports/validation-report.md` |
+| **Выход** | `ai-docs/docs/reports/validation-report.md` |
 | **Ворота** | `ALL_GATES_PASSED` |
 
 **Критерии прохождения ворот ALL_GATES_PASSED**:
@@ -240,12 +274,13 @@ docs/
 - [ ] RTM (Requirements Traceability Matrix) актуальна
 - [ ] Проект готов к деплою
 
-**Артефакты**:
+**Артефакты** (в целевом проекте):
 ```
-docs/
-├── reports/
-│   └── validation-report.md
-└── rtm.md  # Матрица трассировки требований
+{project-name}/
+└── ai-docs/docs/
+    ├── reports/
+    │   └── validation-report.md
+    └── rtm.md  # Матрица трассировки требований
 ```
 
 ---
@@ -294,28 +329,31 @@ make logs
 
 ---
 
-## Артефакты по этапам
+## Артефакты по этапам (в целевом проекте)
+
+> **ВАЖНО**: Все артефакты создаются в ЦЕЛЕВОМ ПРОЕКТЕ, не в генераторе!
 
 ```
-docs/
-├── prd/
-│   └── {name}-prd.md           # Этап 1: PRD документ
+{project-name}/                      ← Целевой проект
 │
-├── architecture/
-│   └── {name}-plan.md          # Этап 3: Архитектурный план
+├── .pipeline-state.json             # Состояние пайплайна
 │
-├── plans/
-│   └── {feature}-plan.md       # Этап 3: План фичи (FEATURE)
-│
-├── reports/
-│   ├── review-report.md        # Этап 5: Отчёт ревью
-│   ├── qa-report.md            # Этап 6: Отчёт QA
-│   └── validation-report.md    # Этап 7: Отчёт валидации
-│
-├── tasklists/
-│   └── {name}-tasks.md         # Чек-лист задач
-│
-└── rtm.md                      # Матрица трассировки требований
+└── ai-docs/docs/
+    ├── prd/
+    │   └── {name}-prd.md            # Этап 1: PRD документ
+    │
+    ├── architecture/
+    │   └── {name}-plan.md           # Этап 3: Архитектурный план
+    │
+    ├── plans/
+    │   └── {feature}-plan.md        # Этап 3: План фичи (FEATURE)
+    │
+    ├── reports/
+    │   ├── review-report.md         # Этап 5: Отчёт ревью
+    │   ├── qa-report.md             # Этап 6: Отчёт QA
+    │   └── validation-report.md     # Этап 7: Отчёт валидации
+    │
+    └── rtm.md                       # Матрица трассировки требований
 ```
 
 ---

@@ -109,12 +109,42 @@ aidd-mvp-generator/
 │   ├── shared/            ← Общие компоненты
 │   └── infrastructure/    ← Docker, Nginx, GitHub Actions
 │
-└── docs/                  ← Шаблоны документов
-    ├── prd/               ← Шаблон PRD
-    ├── architecture/      ← Шаблон архитектуры
-    ├── plans/             ← Шаблон плана фичи
-    └── reports/           ← Шаблоны отчётов
+└── docs/                  ← Документация ГЕНЕРАТОРА
+    ├── templates/         ← Шаблоны документов для целевого проекта
+    │   ├── prd-template.md
+    │   └── architecture-template.md
+    ├── target-project-structure.md  ← Структура целевого проекта
+    └── history/           ← История изменений генератора
 ```
+
+---
+
+## Генератор vs Целевой проект
+
+> **КРИТИЧЕСКИ ВАЖНО**: Это ДВА РАЗНЫХ проекта!
+
+| Аспект | Генератор (aidd-mvp-generator) | Целевой проект ({project-name}) |
+|--------|--------------------------------|--------------------------------|
+| **Назначение** | Фреймворк, инструкции | Приложение, код |
+| **Содержит** | Шаблоны, knowledge base | Сервисы, артефакты |
+| **Артефакты** | `docs/templates/*.md` | `ai-docs/docs/prd/*.md` |
+| **Создаётся** | Один раз | Каждый раз при `/idea` |
+
+### Пути артефактов (ТОЛЬКО в целевом проекте!)
+
+```
+{project-name}/                    ← Целевой проект
+├── ai-docs/docs/
+│   ├── prd/{name}-prd.md         ← PRD документ
+│   ├── architecture/{name}-plan.md  ← План архитектуры
+│   ├── plans/{feature}-plan.md   ← План фичи
+│   ├── reports/                  ← Отчёты
+│   └── rtm.md                    ← RTM
+├── services/                     ← Код сервисов
+└── .pipeline-state.json          ← Состояние пайплайна
+```
+
+**Подробнее**: [docs/target-project-structure.md](docs/target-project-structure.md)
 
 ---
 

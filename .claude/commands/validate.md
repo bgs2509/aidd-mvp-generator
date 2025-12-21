@@ -41,12 +41,12 @@ description: Финальная проверка всех качественны
 
 ---
 
-## Выходные артефакты
+## Выходные артефакты (в целевом проекте)
 
 | Артефакт | Путь |
 |----------|------|
-| Отчёт валидации | `docs/reports/validation-report.md` |
-| RTM | `docs/rtm.md` |
+| Отчёт валидации | `ai-docs/docs/reports/validation-report.md` |
+| RTM | `ai-docs/docs/rtm.md` |
 
 ---
 
