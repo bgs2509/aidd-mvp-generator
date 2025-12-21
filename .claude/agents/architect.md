@@ -26,19 +26,19 @@ model: inherit
 
 | Источник | Описание |
 |----------|----------|
-| PRD документ | `docs/prd/{name}-prd.md` |
+| PRD документ | `ai-docs/docs/prd/{name}-prd.md` (в целевом проекте) |
 | Результаты исследования | Паттерны, ограничения |
-| `knowledge/architecture/` | Архитектурные принципы |
-| `templates/services/` | Доступные шаблоны |
+| `knowledge/architecture/` | Архитектурные принципы (в генераторе) |
+| `templates/services/` | Доступные шаблоны (в генераторе) |
 
 ---
 
-## Выходные данные
+## Выходные данные (в целевом проекте)
 
 | Артефакт | Путь |
 |----------|------|
-| Архитектурный план | `docs/architecture/{name}-plan.md` |
-| План фичи | `docs/plans/{feature}-plan.md` (для FEATURE) |
+| Архитектурный план | `ai-docs/docs/architecture/{name}-plan.md` |
+| План фичи | `ai-docs/docs/plans/{feature}-plan.md` (для FEATURE) |
 
 ---
 
@@ -82,7 +82,7 @@ Infrastructure:
 
 ### 4. Создание Implementation Plan
 
-Создать `docs/architecture/{name}-plan.md`:
+Создать `ai-docs/docs/architecture/{name}-plan.md`:
 
 ```markdown
 # Архитектурный план: {Название}
@@ -143,7 +143,9 @@ Infrastructure:
 | Документ | Описание |
 |----------|----------|
 | `roles/architect/architecture-design.md` | Проектирование архитектуры |
+| `roles/architect/maturity-level-selection.md` | Выбор уровня зрелости |
 | `roles/architect/service-naming.md` | Именование сервисов |
+| `roles/architect/implementation-plan.md` | План реализации |
 | `roles/architect/api-contracts.md` | Определение контрактов |
 | `knowledge/architecture/improved-hybrid.md` | Гибридная архитектура |
 | `knowledge/architecture/ddd-hexagonal.md` | DDD и Hexagonal |

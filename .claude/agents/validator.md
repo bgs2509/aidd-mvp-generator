@@ -26,19 +26,19 @@ model: inherit
 
 | Источник | Описание |
 |----------|----------|
-| Все артефакты проекта | `docs/`, `services/` |
-| PRD документ | `docs/prd/{name}-prd.md` |
-| Отчёт ревью | `docs/reports/review-report.md` |
-| QA отчёт | `docs/reports/qa-report.md` |
+| Все артефакты проекта | `ai-docs/`, `services/` (в целевом проекте) |
+| PRD документ | `ai-docs/docs/prd/{name}-prd.md` (в целевом проекте) |
+| Отчёт ревью | `ai-docs/docs/reports/review-report.md` (в целевом проекте) |
+| QA отчёт | `ai-docs/docs/reports/qa-report.md` (в целевом проекте) |
 
 ---
 
-## Выходные данные
+## Выходные данные (в целевом проекте)
 
 | Артефакт | Путь |
 |----------|------|
-| Отчёт валидации | `docs/reports/validation-report.md` |
-| RTM | `docs/rtm.md` |
+| Отчёт валидации | `ai-docs/docs/reports/validation-report.md` |
+| RTM | `ai-docs/docs/rtm.md` |
 
 ---
 
@@ -51,20 +51,20 @@ model: inherit
 
 | # | Ворота | Статус | Артефакт |
 |---|--------|--------|----------|
-| 1 | PRD_READY | [ ] | docs/prd/{name}-prd.md |
+| 1 | PRD_READY | [ ] | ai-docs/docs/prd/{name}-prd.md |
 | 2 | RESEARCH_DONE | [ ] | Анализ завершён |
-| 3 | PLAN_APPROVED | [ ] | docs/architecture/{name}-plan.md |
+| 3 | PLAN_APPROVED | [ ] | ai-docs/docs/architecture/{name}-plan.md |
 | 4 | IMPLEMENT_OK | [ ] | services/ созданы |
-| 5 | REVIEW_OK | [ ] | docs/reports/review-report.md |
-| 6 | QA_PASSED | [ ] | docs/reports/qa-report.md |
+| 5 | REVIEW_OK | [ ] | ai-docs/docs/reports/review-report.md |
+| 6 | QA_PASSED | [ ] | ai-docs/docs/reports/qa-report.md |
 ```
 
 ### 2. Верификация артефактов
 
-Проверить существование и корректность:
+Проверить существование и корректность (в целевом проекте):
 
 ```
-docs/
+ai-docs/docs/
 ├── prd/{name}-prd.md              [ ] Существует, заполнен
 ├── architecture/{name}-plan.md    [ ] Существует, заполнен
 ├── reports/
@@ -80,7 +80,7 @@ services/
 
 ### 3. Обновление RTM
 
-Создать/обновить `docs/rtm.md`:
+Создать/обновить `ai-docs/docs/rtm.md`:
 
 ```markdown
 # Requirements Traceability Matrix
@@ -101,7 +101,7 @@ services/
 
 ### 4. Формирование отчёта валидации
 
-Создать `docs/reports/validation-report.md`:
+Создать `ai-docs/docs/reports/validation-report.md`:
 
 ```markdown
 # Отчёт валидации

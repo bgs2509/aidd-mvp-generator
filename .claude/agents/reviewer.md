@@ -26,18 +26,18 @@ model: inherit
 
 | Источник | Описание |
 |----------|----------|
-| Сгенерированный код | `services/` |
-| Архитектурный план | `docs/architecture/{name}-plan.md` |
-| `conventions.md` | Соглашения о коде |
-| `knowledge/quality/dry-kiss-yagni.md` | Принципы качества |
+| Сгенерированный код | `services/` (в целевом проекте) |
+| Архитектурный план | `ai-docs/docs/architecture/{name}-plan.md` (в целевом проекте) |
+| `conventions.md` | Соглашения о коде (в генераторе) |
+| `knowledge/quality/dry-kiss-yagni.md` | Принципы качества (в генераторе) |
 
 ---
 
-## Выходные данные
+## Выходные данные (в целевом проекте)
 
 | Артефакт | Путь |
 |----------|------|
-| Отчёт ревью | `docs/reports/review-report.md` |
+| Отчёт ревью | `ai-docs/docs/reports/review-report.md` |
 
 ---
 
@@ -87,7 +87,7 @@ Grep: похожие блоки кода
 
 ### 4. Формирование отчёта
 
-Создать `docs/reports/review-report.md`:
+Создать `ai-docs/docs/reports/review-report.md`:
 
 ```markdown
 # Отчёт код-ревью

@@ -27,18 +27,18 @@ QA отвечает за:
 
 | Источник | Описание |
 |----------|----------|
-| PRD документ | `docs/prd/{name}-prd.md` |
-| Код после ревью | `services/` |
-| Существующие тесты | `services/*/tests/` |
-| `knowledge/quality/testing/` | Документация по тестированию |
+| PRD документ | `ai-docs/docs/prd/{name}-prd.md` (в целевом проекте) |
+| Код после ревью | `services/` (в целевом проекте) |
+| Существующие тесты | `services/*/tests/` (в целевом проекте) |
+| `knowledge/quality/testing/` | Документация по тестированию (в генераторе) |
 
 ---
 
-## Выходные данные
+## Выходные данные (в целевом проекте)
 
 | Артефакт | Путь |
 |----------|------|
-| QA отчёт | `docs/reports/qa-report.md` |
+| QA отчёт | `ai-docs/docs/reports/qa-report.md` |
 
 ---
 
@@ -96,7 +96,7 @@ make test
 
 ### 5. Формирование QA отчёта
 
-Создать `docs/reports/qa-report.md`:
+Создать `ai-docs/docs/reports/qa-report.md`:
 
 ```markdown
 # QA Отчёт

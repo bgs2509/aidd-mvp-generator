@@ -26,10 +26,10 @@ model: inherit
 
 | Источник | Описание |
 |----------|----------|
-| PRD документ | `docs/prd/{name}-prd.md` |
+| PRD документ | `ai-docs/docs/prd/{name}-prd.md` (в целевом проекте) |
 | Существующий код | Для режима FEATURE |
 | `CLAUDE.md` | Контекст фреймворка |
-| `knowledge/architecture/` | Архитектурные принципы |
+| `knowledge/architecture/` | Архитектурные принципы (в генераторе) |
 
 ---
 
@@ -118,6 +118,7 @@ Grep: "from.*import"
 | `roles/researcher/codebase-analysis.md` | Анализ кодовой базы |
 | `roles/researcher/pattern-identification.md` | Выявление паттернов |
 | `roles/researcher/constraint-identification.md` | Выявление ограничений |
+| `roles/researcher/pipeline-refinement.md` | Уточнение пайплайна |
 | `knowledge/architecture/ddd-hexagonal.md` | DDD и Hexagonal принципы |
 
 ---

@@ -26,11 +26,11 @@ model: inherit
 
 | Источник | Описание |
 |----------|----------|
-| Архитектурный план | `docs/architecture/{name}-plan.md` |
-| `templates/services/` | Шаблоны сервисов |
-| `templates/shared/` | Общие компоненты |
-| `templates/infrastructure/` | Шаблоны инфраструктуры |
-| `conventions.md` | Соглашения о коде |
+| Архитектурный план | `ai-docs/docs/architecture/{name}-plan.md` (в целевом проекте) |
+| `templates/services/` | Шаблоны сервисов (в генераторе) |
+| `templates/shared/` | Общие компоненты (в генераторе) |
+| `templates/infrastructure/` | Шаблоны инфраструктуры (в генераторе) |
+| `conventions.md` | Соглашения о коде (в генераторе) |
 
 ---
 
@@ -147,8 +147,11 @@ def test_{что}_{сценарий}_{результат}():
 | `roles/implementer/infrastructure-setup.md` | Настройка инфраструктуры |
 | `roles/implementer/data-service.md` | Создание Data Service |
 | `roles/implementer/business-api.md` | Создание Business API |
+| `roles/implementer/background-worker.md` | Создание Background Worker |
 | `roles/implementer/telegram-bot.md` | Создание Telegram Bot |
 | `roles/implementer/testing.md` | Написание тестов |
+| `roles/implementer/logging.md` | Настройка логирования |
+| `roles/implementer/nginx.md` | Настройка Nginx |
 | `knowledge/services/` | Документация по сервисам |
 
 ---
