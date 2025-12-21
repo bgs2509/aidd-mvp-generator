@@ -12,7 +12,7 @@
 | [CLAUDE.md](../CLAUDE.md) | Главная точка входа | Первым |
 | [initialization.md](initialization.md) | Алгоритм инициализации (4 фазы) | При запуске команды |
 | [conventions.md](../conventions.md) | Соглашения о коде | При написании кода |
-| [workflow.md](../workflow.md) | 8-этапный процесс | При работе с пайплайном |
+| [workflow.md](../workflow.md) | Пайплайн (этапы 0-8) | При работе с пайплайном |
 
 ---
 
@@ -45,43 +45,51 @@
 | `/validate` | [.claude/commands/validate.md](../.claude/commands/validate.md) | Валидация |
 | `/deploy` | [.claude/commands/deploy.md](../.claude/commands/deploy.md) | Деплой |
 
+> Обзор пайплайна: [CLAUDE.md](../CLAUDE.md#9-этапный-пайплайн)
+
 ---
 
 ## База знаний
+
+> Индекс knowledge base: [knowledge/README.md](../knowledge/README.md)
 
 ### Архитектура
 | Файл | Тема |
 |------|------|
 | [knowledge/architecture/ddd-hexagonal.md](../knowledge/architecture/ddd-hexagonal.md) | DDD/Hexagonal архитектура |
-| [knowledge/architecture/http-only.md](../knowledge/architecture/http-only.md) | HTTP-only принцип |
 | [knowledge/architecture/project-structure.md](../knowledge/architecture/project-structure.md) | Структура проекта |
-| [knowledge/architecture/maturity-levels.md](../knowledge/architecture/maturity-levels.md) | Уровни зрелости |
+| [knowledge/architecture/service-separation.md](../knowledge/architecture/service-separation.md) | Разделение сервисов |
+| [knowledge/architecture/data-access.md](../knowledge/architecture/data-access.md) | Доступ к данным |
 
 ### Сервисы
-| Файл | Тема |
-|------|------|
-| [knowledge/services/fastapi.md](../knowledge/services/fastapi.md) | FastAPI сервисы |
-| [knowledge/services/aiogram.md](../knowledge/services/aiogram.md) | Telegram боты |
-| [knowledge/services/workers.md](../knowledge/services/workers.md) | Background workers |
+| Папка | Тема |
+|-------|------|
+| [knowledge/services/fastapi/](../knowledge/services/fastapi/) | FastAPI сервисы (5 файлов) |
+| [knowledge/services/aiogram/](../knowledge/services/aiogram/) | Telegram боты (4 файла) |
+| [knowledge/services/asyncio-workers/](../knowledge/services/asyncio-workers/) | Background workers (3 файла) |
+| [knowledge/services/data-services/](../knowledge/services/data-services/) | Data Services (2 файла) |
 
 ### Интеграции
-| Файл | Тема |
-|------|------|
-| [knowledge/integrations/http-clients.md](../knowledge/integrations/http-clients.md) | HTTP клиенты |
-| [knowledge/integrations/redis.md](../knowledge/integrations/redis.md) | Redis интеграция |
+| Папка | Тема |
+|-------|------|
+| [knowledge/integrations/http/](../knowledge/integrations/http/) | HTTP клиенты (3 файла) |
+| [knowledge/integrations/redis/](../knowledge/integrations/redis/) | Redis интеграция (2 файла) |
 
 ### Инфраструктура
 | Файл | Тема |
 |------|------|
-| [knowledge/infrastructure/docker.md](../knowledge/infrastructure/docker.md) | Docker контейнеры |
+| [knowledge/infrastructure/docker-compose.md](../knowledge/infrastructure/docker-compose.md) | Docker Compose |
+| [knowledge/infrastructure/dockerfile.md](../knowledge/infrastructure/dockerfile.md) | Dockerfile |
 | [knowledge/infrastructure/nginx.md](../knowledge/infrastructure/nginx.md) | Nginx gateway |
-| [knowledge/infrastructure/github-actions.md](../knowledge/infrastructure/github-actions.md) | CI/CD |
+| [knowledge/infrastructure/ci-cd.md](../knowledge/infrastructure/ci-cd.md) | CI/CD |
 
 ### Качество
-| Файл | Тема |
+| Путь | Тема |
 |------|------|
-| [knowledge/quality/testing.md](../knowledge/quality/testing.md) | Тестирование |
-| [knowledge/quality/logging.md](../knowledge/quality/logging.md) | Логирование |
+| [knowledge/quality/testing/](../knowledge/quality/testing/) | Тестирование (5 файлов) |
+| [knowledge/quality/logging/](../knowledge/quality/logging/) | Логирование (2 файла) |
+| [knowledge/quality/dry-kiss-yagni.md](../knowledge/quality/dry-kiss-yagni.md) | Принципы DRY/KISS/YAGNI |
+| [knowledge/quality/production-requirements.md](../knowledge/quality/production-requirements.md) | Production требования |
 
 ---
 
@@ -209,5 +217,5 @@
 
 ---
 
-**Версия**: 1.2
+**Версия**: 2.0
 **Обновлён**: 2025-12-21
