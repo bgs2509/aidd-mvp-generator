@@ -133,7 +133,7 @@ model: inherit
 | `roles/analyst/prompt-validation.md` | Валидация промпта |
 | `roles/analyst/requirements-gathering.md` | Сбор требований |
 | `roles/analyst/prd-formation.md` | Формирование PRD |
-| `docs/prd/template.md` | Шаблон PRD |
+| `docs/templates/prd-template.md` | Шаблон PRD |
 
 ---
 
