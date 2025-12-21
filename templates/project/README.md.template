@@ -1,0 +1,249 @@
+# {{PROJECT_NAME}}
+
+{{PROJECT_DESCRIPTION}}
+
+---
+
+## Статус
+
+| Параметр | Значение |
+|----------|----------|
+| Версия | 0.1.0 |
+| Статус | В разработке |
+| Лицензия | MIT |
+
+---
+
+## Технологии
+
+- **Python** 3.11+
+- **FastAPI** — REST API
+- **PostgreSQL** / **MongoDB** — база данных
+- **Redis** — кэширование (опционально)
+- **Docker** — контейнеризация
+- **Nginx** — reverse proxy
+
+---
+
+## Быстрый старт
+
+### Требования
+
+- Docker & Docker Compose
+- Python 3.11+ (для локальной разработки)
+- Git
+
+### Установка
+
+```bash
+# 1. Клонировать репозиторий
+git clone {{REPO_URL}}
+cd {{PROJECT_SLUG}}
+
+# 2. Скопировать конфигурацию
+cp .env.example .env
+# Отредактировать .env
+
+# 3. Запустить сервисы
+make up
+
+# 4. Проверить статус
+make status
+```
+
+### Разработка
+
+```bash
+# Запуск в dev-режиме
+make dev
+
+# Запуск тестов
+make test
+
+# Проверка кода
+make lint
+
+# Просмотр логов
+make logs
+```
+
+---
+
+## Структура проекта
+
+```
+{{PROJECT_SLUG}}/
+├── services/                 # Микросервисы
+│   ├── {{SERVICE_NAME}}_api/ # Business API
+│   └── {{SERVICE_NAME}}_data/# Data API
+│
+├── docs/api/                 # API документация
+│   └── openapi.yaml
+│
+├── nginx/                    # Nginx конфигурация
+├── docker-compose.yml        # Docker Compose
+├── docker-compose.dev.yml    # Dev конфигурация
+├── Makefile                  # Команды сборки
+└── .env.example              # Пример переменных
+```
+
+---
+
+## API
+
+### Endpoints
+
+После запуска API доступен по адресу: `http://localhost:8000`
+
+| Метод | Путь | Описание |
+|-------|------|----------|
+| GET | `/health` | Проверка здоровья |
+| GET | `/docs` | Swagger документация |
+| GET | `/redoc` | ReDoc документация |
+
+### Документация
+
+- Swagger UI: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+- OpenAPI: http://localhost:8000/openapi.json
+
+---
+
+## Конфигурация
+
+### Переменные окружения
+
+| Переменная | Описание | Значение по умолчанию |
+|------------|----------|----------------------|
+| `DATABASE_URL` | URL базы данных | `postgresql://...` |
+| `REDIS_URL` | URL Redis | `redis://localhost:6379` |
+| `LOG_LEVEL` | Уровень логирования | `INFO` |
+| `DEBUG` | Режим отладки | `false` |
+
+### Пример .env
+
+```env
+# Database
+DATABASE_URL=postgresql://user:pass@localhost:5432/dbname
+
+# Redis
+REDIS_URL=redis://localhost:6379/0
+
+# Application
+LOG_LEVEL=INFO
+DEBUG=false
+```
+
+---
+
+## Тестирование
+
+```bash
+# Все тесты
+make test
+
+# С покрытием
+make test-cov
+
+# Конкретный сервис
+make test SERVICE=api
+```
+
+### Требования к покрытию
+
+- Минимум: **75%**
+- Целевое: **85%**
+
+---
+
+## Деплой
+
+### Docker Compose (production)
+
+```bash
+# Сборка образов
+make build
+
+# Запуск
+docker-compose -f docker-compose.yml up -d
+
+# Проверка
+docker-compose ps
+```
+
+### Мониторинг
+
+```bash
+# Логи всех сервисов
+make logs
+
+# Логи конкретного сервиса
+docker-compose logs -f api
+```
+
+---
+
+## Разработка
+
+### Локальный запуск без Docker
+
+```bash
+# 1. Создать виртуальное окружение
+python -m venv .venv
+source .venv/bin/activate
+
+# 2. Установить зависимости
+cd services/{{SERVICE_NAME}}_api
+pip install -e ".[dev]"
+
+# 3. Запустить
+uvicorn api.main:app --reload
+```
+
+### Структура сервиса
+
+```
+{{SERVICE_NAME}}_api/
+├── api/              # HTTP слой (роуты, схемы)
+├── application/      # Бизнес-логика (сервисы, use cases)
+├── domain/           # Доменные модели
+├── infrastructure/   # Инфраструктура (клиенты, репозитории)
+├── tests/            # Тесты
+├── Dockerfile
+└── pyproject.toml
+```
+
+---
+
+## Вклад в проект
+
+1. Fork репозитория
+2. Создать feature branch: `git checkout -b feature/amazing-feature`
+3. Commit изменений: `git commit -m 'Add amazing feature'`
+4. Push в branch: `git push origin feature/amazing-feature`
+5. Открыть Pull Request
+
+### Стиль кода
+
+- Форматирование: `black`, `isort`
+- Линтинг: `ruff`
+- Type hints: обязательны
+- Docstrings: Google-style
+
+---
+
+## Лицензия
+
+MIT License — см. [LICENSE](LICENSE)
+
+---
+
+## Контакты
+
+- **Автор**: {{AUTHOR}}
+- **Email**: {{EMAIL}}
+- **Issues**: {{REPO_URL}}/issues
+
+---
+
+*Сгенерировано с помощью [AIDD-MVP Generator](https://github.com/your-org/aidd-mvp-generator)*

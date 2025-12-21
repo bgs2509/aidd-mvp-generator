@@ -1,0 +1,162 @@
+# {{PROJECT_NAME}}
+
+> **Тип**: Целевой проект, использующий AIDD-MVP Generator
+> **Создан**: {{CREATED_DATE}}
+> **Режим**: {{MODE}}
+
+---
+
+## Точка входа
+
+Этот проект использует фреймворк **AIDD-MVP Generator**, подключённый как Git Submodule.
+
+| Документ | Путь | Назначение |
+|----------|------|------------|
+| Фреймворк | [.aidd/CLAUDE.md](.aidd/CLAUDE.md) | Правила и процесс разработки |
+| Workflow | [.aidd/workflow.md](.aidd/workflow.md) | 8-этапный процесс |
+| Conventions | [.aidd/conventions.md](.aidd/conventions.md) | Соглашения о коде |
+
+---
+
+## Быстрый старт
+
+```bash
+# Описать идею (CREATE) или фичу (FEATURE)
+/idea "{{PROJECT_DESCRIPTION}}"
+
+# Следовать 8-этапному процессу
+/research → /plan → /generate → /review → /test → /validate → /deploy
+```
+
+---
+
+## Состояние проекта
+
+| Параметр | Значение |
+|----------|----------|
+| Текущий этап | См. `.pipeline-state.json` |
+| Режим | {{MODE}} |
+| Пройденные ворота | См. `.pipeline-state.json` |
+
+---
+
+## Структура проекта
+
+```
+{{PROJECT_NAME}}/
+├── .aidd/                    ← Фреймворк (Git Submodule, НЕ МОДИФИЦИРОВАТЬ)
+├── CLAUDE.md                 ← Этот файл
+├── README.md                 ← Документация проекта
+├── .pipeline-state.json      ← Состояние пайплайна
+│
+├── ai-docs/docs/             ← AI-генерируемые документы
+│   ├── prd/                  ← PRD документы
+│   ├── architecture/         ← Архитектурные планы
+│   ├── plans/                ← Планы фич
+│   └── reports/              ← Отчёты
+│
+├── services/                 ← Сервисы (генерируются на этапе 4)
+│   ├── {name}_api/           ← Business API
+│   ├── {name}_data/          ← Data API
+│   └── ...
+│
+├── docs/api/                 ← API документация
+│   └── openapi.yaml
+│
+├── nginx/                    ← Nginx конфигурация
+├── docker-compose.yml        ← Docker Compose
+├── Makefile                  ← Команды сборки
+└── .env.example              ← Пример переменных окружения
+```
+
+Подробнее: [.aidd/docs/target-project-structure.md](.aidd/docs/target-project-structure.md)
+
+---
+
+## Специфика проекта
+
+<!-- Заполняется по мере разработки -->
+
+### Технологии
+
+| Компонент | Технология |
+|-----------|------------|
+| Backend | Python 3.11+, FastAPI |
+| Database | {{DATABASE}} |
+| Cache | Redis (опционально) |
+| Bot | Aiogram 3.x (если есть) |
+
+### Внешние интеграции
+
+<!-- Добавить по мере необходимости -->
+- [ ] Telegram Bot API
+- [ ] Email сервис
+- [ ] Платёжная система
+
+### Переменные окружения
+
+```env
+# Основные
+DATABASE_URL=
+REDIS_URL=
+
+# Специфичные для проекта
+# (добавить по мере разработки)
+```
+
+---
+
+## Артефакты
+
+| Этап | Артефакт | Путь |
+|------|----------|------|
+| 1. Идея | PRD | `ai-docs/docs/prd/{{PROJECT_SLUG}}-prd.md` |
+| 2. Исследование | Research Report | `ai-docs/docs/reports/research-report.md` |
+| 3. Архитектура | Architecture Plan | `ai-docs/docs/architecture/{{PROJECT_SLUG}}-plan.md` |
+| 4. Реализация | Код сервисов | `services/` |
+| 5. Ревью | Review Report | `ai-docs/docs/reports/review-report.md` |
+| 6. QA | QA Report | `ai-docs/docs/reports/qa-report.md` |
+| 7. Валидация | Validation Report | `ai-docs/docs/reports/validation-report.md` |
+| 8. Деплой | Deployment | Docker Compose |
+
+---
+
+## Команды
+
+### Разработка
+
+```bash
+make up          # Запустить все сервисы
+make down        # Остановить
+make logs        # Просмотр логов
+make test        # Запуск тестов
+make lint        # Проверка кода
+```
+
+### AI-ассистент
+
+```bash
+/idea "..."      # Создать PRD
+/research        # Исследовать кодовую базу
+/plan            # Создать архитектурный план (CREATE)
+/feature-plan    # Создать план фичи (FEATURE)
+/generate        # Сгенерировать код
+/review          # Провести ревью
+/test            # Запустить тесты
+/validate        # Проверить все ворота
+/deploy          # Деплой
+```
+
+---
+
+## Правила для AI
+
+1. **Читать сначала контекст ЦП** (этот файл, .pipeline-state.json, ai-docs/)
+2. **Затем инструкции фреймворка** (.aidd/)
+3. **Не модифицировать .aidd/** — это read-only submodule
+4. **Проверять ворота** перед переходом к следующему этапу
+5. **Генерировать код** только в `services/` и корне проекта
+
+---
+
+**Версия шаблона**: 1.0
