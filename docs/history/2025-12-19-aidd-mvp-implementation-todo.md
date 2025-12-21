@@ -815,7 +815,7 @@ templates/services/fastapi_business_api/
 | 4 | templates/services/ | ~50 | 109+ | ✅ >100% |
 | 5 | templates/shared/ | 12 | 12 | ✅ 100% |
 | 6 | templates/infrastructure/ | 11 | 11 | ✅ 100% |
-| 7 | docs/templates/ | 8 | 8 | ✅ 100% |
+| 7 | templates/documents/ | 8 | 8 | ✅ 100% |
 | **ИТОГО** | | **~176** | **235+** | **✅ 100%** |
 
 ### Созданные файлы (не в оригинальном плане)
@@ -823,6 +823,6 @@ templates/services/fastapi_business_api/
 - `knowledge/quality/production-requirements.md` — требования к production
 - `templates/infrastructure/nginx/conf.d/upstream.conf` — upstream конфигурация
 - `templates/infrastructure/nginx/conf.d/api-gateway.conf` — API gateway конфигурация
-- `docs/templates/tasklist-template.md` — шаблон чек-листа задач
+- `templates/documents/tasklist-template.md` — шаблон чек-листа задач
 
 **Фреймворк AIDD-MVP Generator полностью реализован!**

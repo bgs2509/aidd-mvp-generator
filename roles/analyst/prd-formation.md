@@ -204,4 +204,4 @@ ai-docs/docs/prd/{feature-name}-feature-prd.md
 |----------|----------|
 | `.ai-framework/docs/workflows/analyst-workflow.md` | Workflow аналитика |
 | `.ai-framework/docs/reference/aidd-roles-reference.md` | Справочник ролей |
-| `docs/templates/prd-template.md` | Шаблон PRD |
+| `templates/documents/prd-template.md` | Шаблон PRD |

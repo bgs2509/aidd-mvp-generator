@@ -330,5 +330,5 @@ ai-docs/docs/test-scenarios.md
 
 | Документ | Описание |
 |----------|----------|
-| `docs/templates/prd-template.md` | Шаблон PRD |
-| `docs/rtm-template.md` | Шаблон RTM |
+| `templates/documents/prd-template.md` | Шаблон PRD |
+| `templates/documents/rtm-template.md` | Шаблон RTM |

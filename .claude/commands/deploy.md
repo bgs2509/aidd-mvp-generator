@@ -33,6 +33,44 @@ description: Сборка и запуск Docker-контейнеров
 
 ---
 
+## Порядок чтения файлов
+
+> **Принцип**: Сначала контекст ЦП, потом инструкции фреймворка.
+> **Подробнее**: [docs/initialization.md](../../docs/initialization.md)
+
+### Фаза 1: Контекст целевого проекта
+
+| # | Файл | Условие | Зачем |
+|---|------|---------|-------|
+| 1 | `./CLAUDE.md` | Если существует | Специфика проекта |
+| 2 | `./.pipeline-state.json` | Обязательно | ВСЕ ворота |
+| 3 | `./docker-compose.yml` | Обязательно | Инфраструктура |
+| 4 | `./Makefile` | Обязательно | Команды сборки |
+
+### Фаза 2: Предусловия
+
+| Ворота | Проверка |
+|--------|----------|
+| `ALL_GATES_PASSED` | `.pipeline-state.json → gates.ALL_GATES_PASSED.passed == true` |
+| Все предыдущие | PRD_READY, RESEARCH_DONE, PLAN_APPROVED, IMPLEMENT_OK, REVIEW_OK, QA_PASSED |
+
+### Фаза 3: Инструкции фреймворка
+
+| # | Файл | Зачем |
+|---|------|-------|
+| 5 | `.aidd/CLAUDE.md` | Правила фреймворка |
+| 6 | `.aidd/workflow.md` | Процесс и ворота |
+| 7 | `.aidd/.claude/commands/deploy.md` | Этот файл |
+| 8 | `.aidd/.claude/agents/validator.md` | Инструкции роли |
+
+### Фаза 4: База знаний
+
+| # | Файл | Условие |
+|---|------|---------|
+| 9 | `.aidd/knowledge/infrastructure/docker.md` | Docker практики |
+
+---
+
 ## Предусловия
 
 | Ворота | Требование |

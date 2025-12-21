@@ -59,11 +59,11 @@
 
 | Шаблон (в генераторе) | Создаёт (в целевом проекте) |
 |-----------------------|-----------------------------|
-| [docs/templates/prd-template.md](templates/prd-template.md) | `ai-docs/docs/prd/{name}-prd.md` |
-| [docs/templates/architecture-template.md](templates/architecture-template.md) | `ai-docs/docs/architecture/{name}-plan.md` |
-| [docs/templates/feature-plan-template.md](templates/feature-plan-template.md) | `ai-docs/docs/plans/{feature}-plan.md` |
-| [docs/templates/rtm-template.md](templates/rtm-template.md) | `ai-docs/docs/rtm.md` |
-| [docs/templates/pipeline-state-template.json](templates/pipeline-state-template.json) | `.pipeline-state.json` |
+| [templates/documents/prd-template.md](../templates/documents/prd-template.md) | `ai-docs/docs/prd/{name}-prd.md` |
+| [templates/documents/architecture-template.md](../templates/documents/architecture-template.md) | `ai-docs/docs/architecture/{name}-plan.md` |
+| [templates/documents/feature-plan-template.md](../templates/documents/feature-plan-template.md) | `ai-docs/docs/plans/{feature}-plan.md` |
+| [templates/documents/rtm-template.md](../templates/documents/rtm-template.md) | `ai-docs/docs/rtm.md` |
+| [templates/documents/pipeline-state-template.json](../templates/documents/pipeline-state-template.json) | `.pipeline-state.json` |
 
 ---
 
@@ -121,7 +121,7 @@
 
 | Файл | Описание |
 |------|----------|
-| [docs/templates/template-map.md](templates/template-map.md) | Карта шаблонов |
+| [templates/documents/template-map.md](../templates/documents/template-map.md) | Карта шаблонов |
 | [docs/reference/deliverables-catalog.md](reference/deliverables-catalog.md) | Каталог артефактов |
 
 ---

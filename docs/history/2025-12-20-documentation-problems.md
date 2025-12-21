@@ -79,7 +79,7 @@ docs/
 
 **Фактическое расположение**:
 ```
-docs/templates/prd-template.md  ← Реальный файл
+templates/documents/prd-template.md  ← Реальный файл
 ```
 
 **Затронутые документы**:
@@ -831,7 +831,7 @@ templates/
 |--------|--------|---------|
 | Описание процесса | Полное (workflow.md:50-54) | 4 строки (workflow.md:56-67) |
 | Команда планирования | `/plan` — детальное | `/feature-plan` — минимальное |
-| Шаблон плана | docs/templates/architecture-template.md | ❌ НЕТ |
+| Шаблон плана | templates/documents/architecture-template.md | ❌ НЕТ |
 | Интеграция с существующим кодом | N/A | ❌ Не описана |
 | Обновление артефактов | N/A | ❌ Не описано |
 
@@ -973,7 +973,7 @@ def check_prerequisites(command: str) -> bool:
 ### P-014: Несогласованность именования файлов
 
 **Тип**: Несогласованность
-**Файлы**: `conventions.md`, `docs/templates/`
+**Файлы**: `conventions.md`, `templates/documents/`
 
 **Описание**:
 Соглашения указывают разные стили именования:
@@ -984,7 +984,7 @@ def check_prerequisites(command: str) -> bool:
 | Конфиги | kebab-case | docker-compose.yml |
 ```
 
-**Реальные файлы в docs/templates/**:
+**Реальные файлы в templates/documents/**:
 ```
 prd-template.md           ← kebab-case ✓
 architecture-template.md  ← kebab-case ✓
@@ -1030,7 +1030,7 @@ roles/implementer/data-service.md   ← kebab-case ✓
 ### P-027: RTM не имеет шаблона
 
 **Тип**: Неполнота документации
-**Файлы**: `.claude/agents/validator.md`, `docs/templates/`
+**Файлы**: `.claude/agents/validator.md`, `templates/documents/`
 
 **Описание**:
 Валидатор должен создать RTM (Requirements Traceability Matrix), но **шаблон отсутствует**:
@@ -1043,7 +1043,7 @@ roles/implementer/data-service.md   ← kebab-case ✓
 
 **Проверка шаблонов**:
 ```
-docs/templates/
+templates/documents/
 ├── prd-template.md           ← Есть
 ├── architecture-template.md  ← Есть
 ├── qa-report-template.md     ← Есть
@@ -1149,7 +1149,7 @@ CLAUDE.md
 ### P-030: Конфликт пути tasklists/
 
 **Тип**: Несогласованность
-**Файлы**: `workflow.md`, `docs/templates/tasklist-template.md`
+**Файлы**: `workflow.md`, `templates/documents/tasklist-template.md`
 
 **Описание**:
 workflow.md упоминает `docs/tasklists/`, но:
@@ -1164,7 +1164,7 @@ docs/
 **Реальность**:
 ```
 ❌ docs/tasklists/       — НЕ СУЩЕСТВУЕТ
-✓ docs/templates/tasklist-template.md — СУЩЕСТВУЕТ
+✓ templates/documents/tasklist-template.md — СУЩЕСТВУЕТ
 ```
 
 **Несогласованность**:
@@ -1304,7 +1304,7 @@ docs/tasklists/
 | `CLAUDE.md` | 3 |
 | `.claude/settings.json` | 2 |
 | `templates/` | 3 |
-| `docs/templates/` | 2 |
+| `templates/documents/` | 2 |
 
 ---
 

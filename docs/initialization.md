@@ -36,7 +36,7 @@
 │                                                                     │
 │  ФАЗА 4: Шаблоны и база знаний (по необходимости)                  │
 │  ────────────────────────────────────────────────                   │
-│  10. .aidd/docs/templates/   ← Если артефакт не существует          │
+│  10. .aidd/templates/documents/  ← Если артефакт не существует       │
 │  11. .aidd/knowledge/        ← По теме команды                      │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
@@ -241,10 +241,10 @@ read(role_file)
 ```python
 # Читать шаблон ТОЛЬКО если артефакт не существует
 if command == "/idea" and not existing_artifacts["prd"]:
-    read(".aidd/docs/templates/prd-template.md")
+    read(".aidd/templates/documents/prd-template.md")
 
 if command == "/plan" and not existing_artifacts["plan"]:
-    read(".aidd/docs/templates/architecture-template.md")
+    read(".aidd/templates/documents/architecture-template.md")
 ```
 
 ### 4.2 База знаний
@@ -433,7 +433,7 @@ read(".aidd/.claude/agents/analyst.md")
 
 # ФАЗА 4: Шаблоны
 if not artifacts:  # PRD не существует
-    read(".aidd/docs/templates/prd-template.md")
+    read(".aidd/templates/documents/prd-template.md")
 
 # Определение режима
 mode = detect_mode(state, {"prd": artifacts, "services": False})

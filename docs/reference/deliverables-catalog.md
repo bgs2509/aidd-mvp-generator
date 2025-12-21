@@ -9,8 +9,8 @@
 
 ```
 ГЕНЕРАТОР (шаблоны)              →    ЦЕЛЕВОЙ ПРОЕКТ (артефакты)
-docs/templates/prd-template.md   →    ai-docs/docs/prd/{name}-prd.md
-docs/templates/architecture-*.md →    ai-docs/docs/architecture/{name}-plan.md
+templates/documents/prd-template.md   →    ai-docs/docs/prd/{name}-prd.md
+templates/documents/architecture-*.md →    ai-docs/docs/architecture/{name}-plan.md
 templates/services/*             →    services/{name}_{type}/
 ```
 
@@ -24,7 +24,7 @@ templates/services/*             →    services/{name}_{type}/
 |----------|----------|
 | **Команда** | `/idea` |
 | **Агент** | Аналитик |
-| **Шаблон (генератор)** | `docs/templates/prd-template.md` |
+| **Шаблон (генератор)** | `templates/documents/prd-template.md` |
 | **Путь (целевой проект)** | `ai-docs/docs/prd/{name}-prd.md` |
 | **Ворота** | `PRD_READY` |
 
@@ -65,7 +65,7 @@ templates/services/*             →    services/{name}_{type}/
 |----------|----------|
 | **Команда** | `/plan` |
 | **Агент** | Архитектор |
-| **Шаблон (генератор)** | `docs/templates/architecture-template.md` |
+| **Шаблон (генератор)** | `templates/documents/architecture-template.md` |
 | **Путь (целевой проект)** | `ai-docs/docs/architecture/{name}-plan.md` |
 | **Ворота** | `PLAN_APPROVED` |
 
@@ -75,7 +75,7 @@ templates/services/*             →    services/{name}_{type}/
 |----------|----------|
 | **Команда** | `/feature-plan` |
 | **Агент** | Архитектор |
-| **Шаблон (генератор)** | `docs/templates/feature-plan-template.md` |
+| **Шаблон (генератор)** | `templates/documents/feature-plan-template.md` |
 | **Путь (целевой проект)** | `ai-docs/docs/plans/{feature}-plan.md` |
 | **Ворота** | `PLAN_APPROVED` |
 
@@ -180,7 +180,7 @@ templates/services/*             →    services/{name}_{type}/
 
 | Параметр | Значение |
 |----------|----------|
-| **Шаблон (генератор)** | `docs/templates/rtm-template.md` |
+| **Шаблон (генератор)** | `templates/documents/rtm-template.md` |
 | **Путь (целевой проект)** | `ai-docs/docs/rtm.md` |
 
 **Критерии готовности**:
@@ -215,7 +215,7 @@ templates/services/*             →    services/{name}_{type}/
 
 | Параметр | Значение |
 |----------|----------|
-| **Шаблон (генератор)** | `docs/templates/pipeline-state-template.json` |
+| **Шаблон (генератор)** | `templates/documents/pipeline-state-template.json` |
 | **Путь (целевой проект)** | `.pipeline-state.json` |
 
 **Назначение**: Хранит текущее состояние пайплайна, пройденные ворота, пути артефактов.

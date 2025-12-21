@@ -38,11 +38,11 @@
 
 | Файл | Указанный путь |
 |------|----------------|
-| `docs/templates/README.md` | `ai-docs/prd/{name}-prd.md` |
-| `docs/templates/README.md` | `ai-docs/architecture/{name}.md` |
-| `docs/templates/README.md` | `ai-docs/plans/{name}.md` |
-| `docs/templates/README.md` | `ai-docs/reports/` |
-| `docs/templates/README.md` | `ai-docs/rtm.md` |
+| `templates/documents/README.md` | `ai-docs/prd/{name}-prd.md` |
+| `templates/documents/README.md` | `ai-docs/architecture/{name}.md` |
+| `templates/documents/README.md` | `ai-docs/plans/{name}.md` |
+| `templates/documents/README.md` | `ai-docs/reports/` |
+| `templates/documents/README.md` | `ai-docs/rtm.md` |
 | `.claude/agents/analyst.md` | `docs/prd/{name}-prd.md` |
 | `workflow.md` | `docs/prd/{name}-prd.md` |
 | `roles/analyst/prd-formation.md` | `docs/prd/` |
@@ -50,8 +50,8 @@
 **Затронутые файлы (16 штук):**
 
 ```
-docs/templates/README.md
-docs/templates/validation-report-template.md
+templates/documents/README.md
+templates/documents/validation-report-template.md
 knowledge/architecture/project-structure.md
 roles/validator/validation-report.md
 roles/validator/artifact-verification.md
@@ -98,7 +98,7 @@ docs/
 
 **Задачи:**
 
-- [ ] **1.1** Обновить `docs/templates/README.md`:
+- [ ] **1.1** Обновить `templates/documents/README.md`:
   - Заменить все `ai-docs/` на `docs/`
 
 - [ ] **1.2** Обновить файлы в `roles/`:
@@ -116,7 +116,7 @@ docs/
 
 - [ ] **1.3** Обновить `knowledge/architecture/project-structure.md`
 
-- [ ] **1.4** Обновить `docs/templates/validation-report-template.md`
+- [ ] **1.4** Обновить `templates/documents/validation-report-template.md`
 
 - [ ] **1.5** Создать директории:
   ```bash
@@ -296,7 +296,7 @@ REQUEST_LATENCY = Histogram(
 **Реальное расположение шаблона:**
 
 ```
-docs/templates/prd-template.md  ← Шаблон здесь
+templates/documents/prd-template.md  ← Шаблон здесь
 ```
 
 **Влияние:**
@@ -313,13 +313,13 @@ docs/templates/prd-template.md  ← Шаблон здесь
 - [ ] **3.1** Обновить `.claude/agents/analyst.md`:
   ```
   БЫЛО:  docs/prd/template.md
-  СТАЛО: docs/templates/prd-template.md
+  СТАЛО: templates/documents/prd-template.md
   ```
 
 - [ ] **3.2** Обновить `roles/analyst/prd-formation.md`:
   ```
   БЫЛО:  docs/prd/template.md
-  СТАЛО: docs/templates/prd-template.md
+  СТАЛО: templates/documents/prd-template.md
   ```
 
 - [ ] **3.3** Проверить другие файлы на сломанные ссылки:
@@ -827,7 +827,7 @@ Requirements Traceability Matrix (RTM) упоминается с разными 
 
 | Файл | Указанный путь |
 |------|----------------|
-| `docs/templates/README.md` | `ai-docs/rtm.md` |
+| `templates/documents/README.md` | `ai-docs/rtm.md` |
 | `workflow.md` | `docs/rtm.md` |
 | `.claude/agents/analyst.md` | `docs/rtm.md` |
 
@@ -839,7 +839,7 @@ Requirements Traceability Matrix (RTM) упоминается с разными 
 
 **Задачи:**
 
-- [ ] **7.1** Обновить `docs/templates/README.md`:
+- [ ] **7.1** Обновить `templates/documents/README.md`:
   ```
   БЫЛО:  ai-docs/rtm.md
   СТАЛО: docs/rtm.md
@@ -856,7 +856,7 @@ Requirements Traceability Matrix (RTM) упоминается с разными 
 
 ### Описание проблемы
 
-Шаблоны в `docs/templates/` и `templates/services/` не имеют версий.
+Шаблоны в `templates/documents/` и `templates/services/` не имеют версий.
 При изменении шаблона нет возможности отследить историю.
 
 **Влияние:**
@@ -873,7 +873,7 @@ Requirements Traceability Matrix (RTM) упоминается с разными 
   **Последнее обновление**: 2025-12-19
   ```
 
-- [ ] **8.2** Создать `docs/templates/CHANGELOG.md`
+- [ ] **8.2** Создать `templates/documents/CHANGELOG.md`
 
 - [ ] **8.3** Добавить версию в шаблоны сервисов:
   ```python
@@ -971,10 +971,10 @@ Requirements Traceability Matrix (RTM) упоминается с разными 
 ## Критические
 
 - [ ] **#1** Унификация путей (16 файлов)
-  - [ ] 1.1 docs/templates/README.md
+  - [ ] 1.1 templates/documents/README.md
   - [ ] 1.2 roles/ (11 файлов)
   - [ ] 1.3 knowledge/architecture/project-structure.md
-  - [ ] 1.4 docs/templates/validation-report-template.md
+  - [ ] 1.4 templates/documents/validation-report-template.md
   - [ ] 1.5 Создать директории
 
 - [ ] **#2** Создать metrics.md

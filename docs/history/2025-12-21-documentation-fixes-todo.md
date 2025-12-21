@@ -98,7 +98,7 @@ ls -la docs/prd/ docs/architecture/ docs/plans/ docs/reports/ docs/tasklists/
 **Зависит от**: P-001
 
 #### Проблема
-Агент Аналитик ссылается на `docs/prd/template.md`, но файл находится в `docs/templates/prd-template.md`.
+Агент Аналитик ссылается на `docs/prd/template.md`, но файл находится в `templates/documents/prd-template.md`.
 
 #### Решение
 
@@ -110,19 +110,19 @@ ls -la docs/prd/ docs/architecture/ docs/plans/ docs/reports/ docs/tasklists/
 | `docs/prd/template.md` | Шаблон PRD |
 
 # Стало:
-| `docs/templates/prd-template.md` | Шаблон PRD |
+| `templates/documents/prd-template.md` | Шаблон PRD |
 ```
 
 **Шаг 2**: Обновить `docs/history/2025-12-19-aidd-mvp-framework-plan.md`
 ```markdown
 # Найти и заменить:
-docs/prd/template.md → docs/templates/prd-template.md
+docs/prd/template.md → templates/documents/prd-template.md
 ```
 
 **Шаг 3**: Обновить `docs/history/2025-12-19-aidd-mvp-implementation-todo.md`
 ```markdown
 # Найти и заменить:
-docs/prd/template.md → docs/templates/prd-template.md
+docs/prd/template.md → templates/documents/prd-template.md
 ```
 
 #### Файлы для изменения
@@ -335,7 +335,7 @@ grep -r "docs/prd/template.md" --include="*.md"
 | `validate.md` | /validate | Валидатор | 7 |
 | `deploy.md` | /deploy | Валидатор | 8 |
 
-### docs/templates/
+### templates/documents/
 
 | Файл | Используется в | Создаётся командой |
 |------|----------------|-------------------|
@@ -404,7 +404,7 @@ cat docs/INDEX.md | head -50
 
 ```bash
 # Создать шаблон
-touch docs/templates/pipeline-state-template.md
+touch templates/documents/pipeline-state-template.md
 ```
 
 **Шаг 2**: Определить формат `.pipeline-state.json`
@@ -501,14 +501,14 @@ touch docs/templates/pipeline-state-template.md
 ```
 
 #### Файлы для создания/изменения
-- [ ] Создать `docs/templates/pipeline-state-template.json`
+- [ ] Создать `templates/documents/pipeline-state-template.json`
 - [ ] Обновить `workflow.md` — добавить секцию о состоянии
 - [ ] Обновить `.claude/commands/idea.md` — создание state
 - [ ] Обновить все команды — чтение/запись state
 
 #### Проверка
 ```bash
-cat docs/templates/pipeline-state-template.json | jq .
+cat templates/documents/pipeline-state-template.json | jq .
 ```
 
 ---
@@ -968,7 +968,7 @@ Navigation Matrix из .ai-framework/ полезна, но не адаптиро
 | Понять контекст | CLAUDE.md | — |
 | Изучить процесс | workflow.md (секция 1) | — |
 | Изучить роль | .claude/agents/analyst.md | — |
-| Изучить шаблон | docs/templates/prd-template.md | — |
+| Изучить шаблон | templates/documents/prd-template.md | — |
 | Создать PRD | — | docs/prd/{name}-prd.md |
 
 ### Этап 2: Исследование
@@ -985,7 +985,7 @@ Navigation Matrix из .ai-framework/ полезна, но не адаптиро
 |------------|-------------------|----------------------|
 | Прочитать PRD | docs/prd/{name}-prd.md | — |
 | Изучить роль | .claude/agents/architect.md | — |
-| Изучить шаблон | docs/templates/architecture-template.md | — |
+| Изучить шаблон | templates/documents/architecture-template.md | — |
 | Изучить принципы | knowledge/architecture/*.md | — |
 | Создать план | — | docs/architecture/{name}-plan.md |
 
@@ -1014,7 +1014,7 @@ Navigation Matrix из .ai-framework/ полезна, но не адаптиро
 | Что делать | Какие файлы читать | Какие файлы создавать |
 |------------|-------------------|----------------------|
 | Изучить роль | .claude/agents/qa.md | — |
-| Изучить шаблон | docs/templates/qa-report-template.md | — |
+| Изучить шаблон | templates/documents/qa-report-template.md | — |
 | Запустить тесты | tests/**/*.py | — |
 | Создать отчёт | — | docs/reports/qa-{name}.md |
 
@@ -1229,13 +1229,13 @@ def determine_mode() -> str:
 
 | Артефакт | Путь | Шаблон |
 |----------|------|--------|
-| PRD | `docs/prd/{project}-prd.md` | docs/templates/prd-template.md |
-| Архитектурный план | `docs/architecture/{project}-plan.md` | docs/templates/architecture-template.md |
+| PRD | `docs/prd/{project}-prd.md` | templates/documents/prd-template.md |
+| Архитектурный план | `docs/architecture/{project}-plan.md` | templates/documents/architecture-template.md |
 | План фичи | `docs/plans/{feature}-plan.md` | — |
 | Отчёт ревью | `docs/reports/review-{project}.md` | — |
-| Отчёт QA | `docs/reports/qa-{project}.md` | docs/templates/qa-report-template.md |
+| Отчёт QA | `docs/reports/qa-{project}.md` | templates/documents/qa-report-template.md |
 | RTM | `docs/rtm.md` | — |
-| Tasklist | `docs/tasklists/{project}-tasks.md` | docs/templates/tasklist-template.md |
+| Tasklist | `docs/tasklists/{project}-tasks.md` | templates/documents/tasklist-template.md |
 | Состояние | `.pipeline-state.json` | — |
 
 > **ВАЖНО**: Все пути относительны к корню проекта.
@@ -1349,7 +1349,7 @@ def determine_mode() -> str:
 
 **Шаг 2**: Создать шаблон плана фичи
 
-Создать `docs/templates/feature-plan-template.md`:
+Создать `templates/documents/feature-plan-template.md`:
 
 ```markdown
 # План фичи: {название}
@@ -1436,7 +1436,7 @@ def determine_mode() -> str:
 
 #### Файлы для изменения
 - [ ] `.claude/commands/feature-plan.md` — расширить
-- [ ] Создать `docs/templates/feature-plan-template.md`
+- [ ] Создать `templates/documents/feature-plan-template.md`
 
 ---
 
@@ -1613,7 +1613,7 @@ done
 
 ```markdown
 # analyst.md — исправить:
-| `docs/prd/template.md` | → | `docs/templates/prd-template.md` |
+| `docs/prd/template.md` | → | `templates/documents/prd-template.md` |
 ```
 
 **Шаг 3**: Добавить проверку в CI (опционально)
@@ -1996,7 +1996,7 @@ services:
 
 #### Решение
 
-**Шаг 1**: Создать docs/templates/rtm-template.md
+**Шаг 1**: Создать templates/documents/rtm-template.md
 
 ```markdown
 # Requirements Traceability Matrix (RTM)
@@ -2060,7 +2060,7 @@ services:
 ```
 
 #### Файлы для создания
-- [ ] `docs/templates/rtm-template.md`
+- [ ] `templates/documents/rtm-template.md`
 
 ---
 
@@ -2087,8 +2087,8 @@ services:
 ```
 
 #### Файлы для изменения
-- [ ] `docs/templates/prd-template.md` — добавить историю
-- [ ] `docs/templates/architecture-template.md` — добавить историю
+- [ ] `templates/documents/prd-template.md` — добавить историю
+- [ ] `templates/documents/architecture-template.md` — добавить историю
 
 ---
 

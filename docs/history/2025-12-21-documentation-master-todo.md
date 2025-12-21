@@ -100,7 +100,7 @@ aidd-mvp-generator/           ← ФРЕЙМВОРК
 
 Документация (workflow.md, CLAUDE.md, commands, agents) указывает пути артефактов `docs/prd/`, `docs/architecture/` как будто они находятся В ГЕНЕРАТОРЕ. Но:
 
-1. **Генератор** содержит только `docs/templates/` (шаблоны) и `docs/history/`
+1. **Генератор** содержит только `templates/documents/` (шаблоны) и `docs/history/`
 2. **Целевой проект** содержит `ai-docs/docs/prd/`, `ai-docs/docs/architecture/` (артефакты)
 
 **Несогласованности:**
@@ -170,7 +170,7 @@ aidd-mvp-generator/           ← ФРЕЙМВОРК
 **Приоритет**: 🔴 CRITICAL | **Тип**: Битая ссылка
 
 #### Проблема
-Ссылка `docs/prd/template.md` битая. Реальный файл: `docs/templates/prd-template.md`
+Ссылка `docs/prd/template.md` битая. Реальный файл: `templates/documents/prd-template.md`
 
 #### Решение
 
@@ -182,7 +182,7 @@ aidd-mvp-generator/           ← ФРЕЙМВОРК
 
 **Замена:**
 ```
-docs/prd/template.md → docs/templates/prd-template.md
+docs/prd/template.md → templates/documents/prd-template.md
 ```
 
 #### Проверка
@@ -276,8 +276,8 @@ grep -r "docs/prd/template.md" --include="*.md"
 ## Шаблоны документов (для целевого проекта)
 | Файл | Создаёт | Путь в целевом проекте |
 |------|---------|------------------------|
-| docs/templates/prd-template.md | /idea | ai-docs/docs/prd/{name}-prd.md |
-| docs/templates/architecture-template.md | /plan | ai-docs/docs/architecture/{name}-plan.md |
+| templates/documents/prd-template.md | /idea | ai-docs/docs/prd/{name}-prd.md |
+| templates/documents/architecture-template.md | /plan | ai-docs/docs/architecture/{name}-plan.md |
 ```
 
 ---
@@ -293,7 +293,7 @@ grep -r "docs/prd/template.md" --include="*.md"
 
 | # | Задача | Статус | Дата |
 |---|--------|--------|------|
-| 20.1 | [ ] Создать `docs/templates/pipeline-state-template.json` | ⬜ Ожидает | |
+| 20.1 | [ ] Создать `templates/documents/pipeline-state-template.json` | ⬜ Ожидает | |
 | 20.2 | [ ] Добавить секцию "Состояние пайплайна" в workflow.md | ⬜ Ожидает | |
 | 20.3 | [ ] Обновить `/idea` — создание state В ЦЕЛЕВОМ ПРОЕКТЕ | ⬜ Ожидает | |
 | 20.4 | [ ] Обновить все команды — чтение/запись state | ⬜ Ожидает | |
@@ -533,7 +533,7 @@ Navigation Matrix из .ai-framework/ полезна, но не адаптиро
 | Понять контекст | CLAUDE.md | — |
 | Изучить процесс | workflow.md | — |
 | Изучить роль | .claude/agents/analyst.md | — |
-| Изучить шаблон | docs/templates/prd-template.md | — |
+| Изучить шаблон | templates/documents/prd-template.md | — |
 | Создать PRD | — | ai-docs/docs/prd/{name}-prd.md |
 | Обновить state | — | .pipeline-state.json |
 ```
@@ -597,8 +597,8 @@ def determine_mode() -> str:
 ## Пути в ГЕНЕРАТОРЕ (этот репозиторий)
 | Тип | Путь |
 |-----|------|
-| Шаблон PRD | docs/templates/prd-template.md |
-| Шаблон архитектуры | docs/templates/architecture-template.md |
+| Шаблон PRD | templates/documents/prd-template.md |
+| Шаблон архитектуры | templates/documents/architecture-template.md |
 | Агенты | .claude/agents/*.md |
 | Команды | .claude/commands/*.md |
 
@@ -621,7 +621,7 @@ def determine_mode() -> str:
 | # | Задача | Статус | Дата |
 |---|--------|--------|------|
 | 8.1 | [ ] Расширить `.claude/commands/feature-plan.md` | ⬜ Ожидает | |
-| 8.2 | [ ] Создать `docs/templates/feature-plan-template.md` | ⬜ Ожидает | |
+| 8.2 | [ ] Создать `templates/documents/feature-plan-template.md` | ⬜ Ожидает | |
 
 ---
 
@@ -729,7 +729,7 @@ def determine_mode() -> str:
 ### [ ] P-027: RTM не имеет шаблона
 | # | Задача | Статус | Дата |
 |---|--------|--------|------|
-| 27.1 | [ ] Создать `docs/templates/rtm-template.md` | ⬜ Ожидает | |
+| 27.1 | [ ] Создать `templates/documents/rtm-template.md` | ⬜ Ожидает | |
 
 ### [ ] P-028: Нет версионирования артефактов
 | # | Задача | Статус | Дата |
@@ -778,7 +778,7 @@ def determine_mode() -> str:
 ## Этап 1: Идея
 
 ### PRD документ
-- **Шаблон (в генераторе)**: docs/templates/prd-template.md
+- **Шаблон (в генераторе)**: templates/documents/prd-template.md
 - **Путь (в целевом проекте)**: ai-docs/docs/prd/{name}-prd.md
 - **Критерии готовности**: ...
 ```

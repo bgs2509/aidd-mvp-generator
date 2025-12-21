@@ -34,6 +34,7 @@
 
 | Команда | Файл | Описание |
 |---------|------|----------|
+| `/init` | [.claude/commands/init.md](../.claude/commands/init.md) | Bootstrap (инициализация ЦП) |
 | `/idea` | [.claude/commands/idea.md](../.claude/commands/idea.md) | Создание PRD |
 | `/research` | [.claude/commands/research.md](../.claude/commands/research.md) | Исследование |
 | `/plan` | [.claude/commands/plan.md](../.claude/commands/plan.md) | Архитектура (CREATE) |
@@ -88,8 +89,8 @@
 
 | Шаблон | Путь в генераторе | Создаёт в целевом проекте |
 |--------|-------------------|---------------------------|
-| PRD | [docs/templates/prd-template.md](templates/prd-template.md) | `ai-docs/docs/prd/{name}-prd.md` |
-| Архитектура | [docs/templates/architecture-template.md](templates/architecture-template.md) | `ai-docs/docs/architecture/{name}-plan.md` |
+| PRD | [templates/documents/prd-template.md](../templates/documents/prd-template.md) | `ai-docs/docs/prd/{name}-prd.md` |
+| Архитектура | [templates/documents/architecture-template.md](../templates/documents/architecture-template.md) | `ai-docs/docs/architecture/{name}-plan.md` |
 
 ---
 
@@ -112,6 +113,19 @@
 | Docker | [templates/infrastructure/docker/](../templates/infrastructure/docker/) |
 | Nginx | [templates/infrastructure/nginx/](../templates/infrastructure/nginx/) |
 | GitHub Actions | [templates/infrastructure/github-actions/](../templates/infrastructure/github-actions/) |
+
+---
+
+## Шаблоны проекта (корневые файлы ЦП)
+
+> Файлы, создаваемые в корне целевого проекта при `/init`.
+
+| Шаблон | Путь в генераторе | Создаёт в ЦП | Назначение |
+|--------|-------------------|--------------|------------|
+| CLAUDE.md | [templates/project/CLAUDE.md.template](../templates/project/CLAUDE.md.template) | `./CLAUDE.md` | Точка входа для AI |
+| README.md | [templates/project/README.md.template](../templates/project/README.md.template) | `./README.md` | Документация проекта |
+| .gitignore | [templates/project/.gitignore.template](../templates/project/.gitignore.template) | `./.gitignore` | Игнорируемые файлы |
+| .env.example | [templates/project/.env.example.template](../templates/project/.env.example.template) | `./.env.example` | Пример переменных окружения |
 
 ---
 
@@ -180,8 +194,9 @@
 | Порядок чтения файлов | [initialization.md](initialization.md) → "Таблица порядка чтения" |
 | Критерии ЦП vs Фреймворк | [initialization.md](initialization.md) → "Критерии определения источника" |
 | Инструкции роли | `.claude/agents/{role}.md` |
-| Шаблон документа | `docs/templates/*.md` |
+| Шаблон документа | `templates/documents/*.md` |
 | Шаблон сервиса | `templates/services/*/` |
+| Шаблон файлов ЦП | `templates/project/*.template` |
 
 ---
 
@@ -189,9 +204,10 @@
 
 - [initialization.md](initialization.md) — Алгоритм инициализации (4 фазы)
 - [NAVIGATION.md](NAVIGATION.md) — Навигационная матрица по этапам
+- [PIPELINE-TREE.md](PIPELINE-TREE.md) — Дерево всех пайплайнов
 - [target-project-structure.md](target-project-structure.md) — Структура целевого проекта
 
 ---
 
-**Версия**: 1.1
+**Версия**: 1.2
 **Обновлён**: 2025-12-21

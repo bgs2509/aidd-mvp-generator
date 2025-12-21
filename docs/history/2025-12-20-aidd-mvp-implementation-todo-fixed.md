@@ -414,7 +414,7 @@ model: inherit
 > Фазы 4-7 содержат templates/ и docs/ — проверено, существует 136+ файлов.
 > См. оригинальный файл `2025-12-19-aidd-mvp-implementation-todo.md` для деталей.
 
-**Статус**: [x] Реализовано (136 файлов в templates/, 8 файлов в docs/templates/)
+**Статус**: [x] Реализовано (136 файлов в templates/, 8 файлов в templates/documents/)
 
 ---
 
@@ -446,7 +446,7 @@ model: inherit
 1. `CLAUDE.md` — без него AI не поймёт контекст ✅
 2. `conventions.md` — соглашения о коде ✅
 3. `.claude/commands/idea.md` — первая команда пайплайна ✅
-4. `docs/templates/prd-template.md` — шаблон для генерации PRD ✅
+4. `templates/documents/prd-template.md` — шаблон для генерации PRD ✅
 
 **Критический путь полностью реализован!**
 

@@ -523,7 +523,7 @@ User Input: /idea "Добавить систему уведомлений по e
 │   8. roles/analyst/requirements-gathering.md                             │
 │   9. roles/analyst/prd-formation.md                                      │
 │  10. knowledge/architecture/ddd-hexagonal.md                             │
-│  11. docs/templates/prd-template.md                                      │
+│  11. templates/documents/prd-template.md                                      │
 └──────────────────────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -694,7 +694,7 @@ User Input: /idea "Добавить систему уведомлений по e
 │   8. knowledge/architecture/ddd-hexagonal.md                             │
 │   9. knowledge/architecture/http-only-communication.md                   │
 │  10. docs/prd/{name}-prd.md                                              │
-│  11. docs/templates/architecture-template.md                             │
+│  11. templates/documents/architecture-template.md                             │
 └──────────────────────────────────────────────────────────────────────────┘
                               │
                               ▼
@@ -1654,7 +1654,7 @@ User Input: /idea "Добавить систему уведомлений по e
 |       | .claude/agents/analyst.md | |
 |       | roles/analyst/*.md | |
 |       | knowledge/architecture/ | |
-|       | docs/templates/prd-template.md | |
+|       | templates/documents/prd-template.md | |
 
 ### Для роли: Исследователь
 
