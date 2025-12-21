@@ -13,7 +13,7 @@
 templates/services/              →    services/{name}_{type}/
 templates/shared/                →    services/{name}_api/src/shared/
 templates/infrastructure/        →    {project-name}/
-docs/templates/                  →    ai-docs/docs/
+templates/documents/                  →    ai-docs/docs/
 ```
 
 ---
@@ -99,7 +99,7 @@ docs/templates/                  →    ai-docs/docs/
 
 ## Шаблоны документов
 
-### docs/templates/
+### templates/documents/
 
 | Шаблон генератора | Результат в целевом проекте | Этап |
 |-------------------|----------------------------|------|
@@ -166,7 +166,7 @@ templates/
 │   ├── Makefile               ─────→  Makefile
 │   └── github-actions/        ─────→  .github/workflows/
 │
-└── docs/templates/
+└── templates/documents/
     ├── prd-template.md        ─────→  ai-docs/docs/prd/*.md
     ├── architecture-template.md ───→  ai-docs/docs/architecture/*.md
     └── rtm-template.md        ─────→  ai-docs/docs/rtm.md
