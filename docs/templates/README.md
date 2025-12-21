@@ -24,7 +24,7 @@
 /idea "Описание проекта или фичи"
 ```
 
-**Выходной файл**: `ai-docs/prd/{name}-prd.md`
+**Выходной файл** (целевой проект): `ai-docs/docs/prd/{name}-prd.md`
 
 ### 2. Architecture Template
 
@@ -34,7 +34,7 @@
 /plan
 ```
 
-**Выходной файл**: `ai-docs/architecture/{name}-architecture.md`
+**Выходной файл** (целевой проект): `ai-docs/docs/architecture/{name}-plan.md`
 
 ### 3. Implementation Plan Template
 
@@ -46,7 +46,7 @@
 /feature-plan
 ```
 
-**Выходной файл**: `ai-docs/plans/{name}-plan.md`
+**Выходной файл** (целевой проект): `ai-docs/docs/plans/{name}-plan.md`
 
 ### 4. Review Report Template
 
@@ -56,7 +56,7 @@
 /review
 ```
 
-**Выходной файл**: `ai-docs/reports/review-{name}.md`
+**Выходной файл** (целевой проект): `ai-docs/docs/reports/review-{name}.md`
 
 ### 5. QA Report Template
 
@@ -66,7 +66,7 @@
 /test
 ```
 
-**Выходной файл**: `ai-docs/reports/qa-{name}.md`
+**Выходной файл** (целевой проект): `ai-docs/docs/reports/qa-{name}.md`
 
 ### 6. Validation Report Template
 
@@ -76,31 +76,33 @@
 /validate
 ```
 
-**Выходной файл**: `ai-docs/reports/validation-{name}.md`
+**Выходной файл** (целевой проект): `ai-docs/docs/reports/validation-{name}.md`
 
 ### 7. RTM Template
 
 Обновляется всеми агентами для трассировки требований:
 
-**Файл**: `ai-docs/rtm.md`
+**Файл** (целевой проект): `ai-docs/docs/rtm.md`
 
-## Структура директории ai-docs
+## Структура директории ai-docs (в целевом проекте)
 
 ```
-ai-docs/
-├── prd/
-│   ├── {project}-prd.md
-│   └── {feature}-prd.md
-├── architecture/
-│   └── {project}-architecture.md
-├── plans/
-│   ├── {project}-implementation-plan.md
-│   └── {feature}-plan.md
-├── reports/
-│   ├── review-{name}.md
-│   ├── qa-{name}.md
-│   └── validation-{name}.md
-└── rtm.md
+{целевой-проект}/
+└── ai-docs/
+    └── docs/
+        ├── prd/
+        │   ├── {project}-prd.md
+        │   └── {feature}-prd.md
+        ├── architecture/
+        │   └── {project}-plan.md
+        ├── plans/
+        │   ├── {project}-implementation-plan.md
+        │   └── {feature}-plan.md
+        ├── reports/
+        │   ├── review-{name}.md
+        │   ├── qa-{name}.md
+        │   └── validation-{name}.md
+        └── rtm.md
 ```
 
 ## Placeholders

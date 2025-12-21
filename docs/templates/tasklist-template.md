@@ -11,9 +11,9 @@
 
 **Цель**: {Краткое описание цели чек-листа}
 
-**Связанные документы**:
-- PRD: `docs/prd/{name}-prd.md`
-- План: `docs/architecture/{name}-plan.md`
+**Связанные документы** (в целевом проекте):
+- PRD: `ai-docs/docs/prd/{name}-prd.md`
+- План: `ai-docs/docs/architecture/{name}-plan.md`
 
 ---
 

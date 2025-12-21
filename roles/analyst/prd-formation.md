@@ -166,19 +166,19 @@
 
 ---
 
-## Путь сохранения
+## Путь сохранения (в целевом проекте)
 
 ```
-docs/prd/{project-name}-prd.md
+ai-docs/docs/prd/{project-name}-prd.md
 
 Примеры:
-- docs/prd/booking-restaurant-prd.md
-- docs/prd/personal-finance-prd.md
+- ai-docs/docs/prd/booking-restaurant-prd.md
+- ai-docs/docs/prd/personal-finance-prd.md
 ```
 
 Для режима FEATURE:
 ```
-docs/prd/{feature-name}-feature-prd.md
+ai-docs/docs/prd/{feature-name}-feature-prd.md
 ```
 
 ---
@@ -194,7 +194,7 @@ docs/prd/{feature-name}-feature-prd.md
 - [ ] Секция 7 (RTM) инициализирована
 - [ ] Все ID уникальны
 - [ ] Все Must-требования имеют критерии приёмки
-- [ ] Документ сохранён в `docs/prd/`
+- [ ] Документ сохранён в `ai-docs/docs/prd/` (целевой проект)
 
 ---
 

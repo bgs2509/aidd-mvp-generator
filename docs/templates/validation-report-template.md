@@ -39,12 +39,12 @@
 
 | Артефакт | Путь | Существует | Актуален | Полный |
 |----------|------|------------|----------|--------|
-| PRD | ai-docs/prd/{name}.md | ✅/❌ | ✅/❌ | ✅/❌ |
-| Architecture | ai-docs/architecture/{name}.md | ✅/❌ | ✅/❌ | ✅/❌ |
-| Implementation Plan | ai-docs/plans/{name}.md | ✅/❌ | ✅/❌ | ✅/❌ |
-| Review Report | ai-docs/reports/review-{name}.md | ✅/❌ | ✅/❌ | ✅/❌ |
-| QA Report | ai-docs/reports/qa-{name}.md | ✅/❌ | ✅/❌ | ✅/❌ |
-| RTM | ai-docs/rtm.md | ✅/❌ | ✅/❌ | ✅/❌ |
+| PRD | ai-docs/docs/prd/{name}-prd.md | ✅/❌ | ✅/❌ | ✅/❌ |
+| Architecture | ai-docs/docs/architecture/{name}-plan.md | ✅/❌ | ✅/❌ | ✅/❌ |
+| Implementation Plan | ai-docs/docs/plans/{name}-plan.md | ✅/❌ | ✅/❌ | ✅/❌ |
+| Review Report | ai-docs/docs/reports/review-{name}.md | ✅/❌ | ✅/❌ | ✅/❌ |
+| QA Report | ai-docs/docs/reports/qa-{name}.md | ✅/❌ | ✅/❌ | ✅/❌ |
+| RTM | ai-docs/docs/rtm.md | ✅/❌ | ✅/❌ | ✅/❌ |
 
 ### 2.2 Код
 
