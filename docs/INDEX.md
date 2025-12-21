@@ -10,6 +10,7 @@
 | Файл | Назначение | Когда читать |
 |------|-----------|--------------|
 | [CLAUDE.md](../CLAUDE.md) | Главная точка входа | Первым |
+| [initialization.md](initialization.md) | Алгоритм инициализации (4 фазы) | При запуске команды |
 | [conventions.md](../conventions.md) | Соглашения о коде | При написании кода |
 | [workflow.md](../workflow.md) | 8-этапный процесс | При работе с пайплайном |
 
@@ -172,9 +173,12 @@
 | Ищу | Смотреть |
 |----|----------|
 | Как начать проект | [CLAUDE.md](../CLAUDE.md) → Быстрый старт |
+| Алгоритм инициализации | [initialization.md](initialization.md) |
 | Какие файлы создавать | [target-project-structure.md](target-project-structure.md) |
 | Правила кода | [conventions.md](../conventions.md) |
 | Этапы процесса | [workflow.md](../workflow.md) |
+| Порядок чтения файлов | [initialization.md](initialization.md) → "Таблица порядка чтения" |
+| Критерии ЦП vs Фреймворк | [initialization.md](initialization.md) → "Критерии определения источника" |
 | Инструкции роли | `.claude/agents/{role}.md` |
 | Шаблон документа | `docs/templates/*.md` |
 | Шаблон сервиса | `templates/services/*/` |
@@ -183,10 +187,11 @@
 
 ## См. также
 
+- [initialization.md](initialization.md) — Алгоритм инициализации (4 фазы)
 - [NAVIGATION.md](NAVIGATION.md) — Навигационная матрица по этапам
 - [target-project-structure.md](target-project-structure.md) — Структура целевого проекта
 
 ---
 
-**Версия**: 1.0
-**Создан**: 2025-12-21
+**Версия**: 1.1
+**Обновлён**: 2025-12-21
