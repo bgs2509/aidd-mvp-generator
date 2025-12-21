@@ -215,6 +215,14 @@
 
 ---
 
+## Аудит документации
+
+| Шаблон | Назначение |
+|--------|-----------|
+| [audit/templates/comprehensive-audit.md](audit/templates/comprehensive-audit.md) | Комплексный аудит (12 smoke tests, 16 objectives) |
+
+---
+
 ## См. также
 
 - [initialization.md](initialization.md) — Алгоритм инициализации (4 фазы)
