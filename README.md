@@ -56,8 +56,8 @@ echo "# Restaurant Booking\n\nСм. .aidd/CLAUDE.md для работы с AI." 
 claude
 /idea "Создать сервис бронирования столиков в ресторанах"
 
-# 5. Следовать 8-этапному процессу
-# /idea → /research → /plan → /generate → /review → /test → /validate → /deploy
+# 5. Следовать 9-этапному процессу (этапы 0-8)
+# /init → /idea → /research → /plan → /generate → /review → /test → /validate → /deploy
 
 # 6. Запустить сгенерированный проект
 make build && make up
@@ -82,7 +82,7 @@ claude
 
 ## Процесс разработки
 
-8-этапный конвейер с качественными воротами:
+9-этапный пайплайн (этапы 0-8) с качественными воротами:
 
 ```
 ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐
@@ -168,7 +168,7 @@ aidd-mvp-generator/
 |----------|----------|
 | [CLAUDE.md](CLAUDE.md) | Главная точка входа для AI-агентов |
 | [conventions.md](conventions.md) | Соглашения о коде и стиле |
-| [workflow.md](workflow.md) | 8-этапный процесс разработки |
+| [workflow.md](workflow.md) | 9-этапный процесс разработки (этапы 0-8) |
 
 ---
 
