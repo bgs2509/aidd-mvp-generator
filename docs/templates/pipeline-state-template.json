@@ -1,0 +1,60 @@
+{
+  "$schema": "pipeline-state-schema",
+  "version": "1.0",
+  "project_name": "",
+  "mode": "CREATE",
+  "current_stage": 1,
+  "created_at": "",
+  "updated_at": "",
+  "gates": {
+    "PRD_READY": {
+      "passed": false,
+      "passed_at": null,
+      "artifact": null
+    },
+    "RESEARCH_DONE": {
+      "passed": false,
+      "passed_at": null
+    },
+    "PLAN_APPROVED": {
+      "passed": false,
+      "passed_at": null,
+      "artifact": null,
+      "approved_by": null
+    },
+    "IMPLEMENT_OK": {
+      "passed": false,
+      "passed_at": null
+    },
+    "REVIEW_OK": {
+      "passed": false,
+      "passed_at": null,
+      "artifact": null
+    },
+    "QA_PASSED": {
+      "passed": false,
+      "passed_at": null,
+      "artifact": null,
+      "coverage": null
+    },
+    "ALL_GATES_PASSED": {
+      "passed": false,
+      "passed_at": null,
+      "artifact": null
+    },
+    "DEPLOYED": {
+      "passed": false,
+      "passed_at": null
+    }
+  },
+  "artifacts": {
+    "prd": null,
+    "plan": null,
+    "feature_plan": null,
+    "review_report": null,
+    "qa_report": null,
+    "validation_report": null,
+    "rtm": null
+  },
+  "services": []
+}

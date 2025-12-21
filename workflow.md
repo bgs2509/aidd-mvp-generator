@@ -420,6 +420,142 @@ make logs
 
 ---
 
+## Состояние пайплайна (.pipeline-state.json)
+
+> **Философия**: Артефакты = Память. Состояние пайплайна — единый источник истины.
+
+### Формат файла
+
+Файл `.pipeline-state.json` создаётся в корне ЦЕЛЕВОГО ПРОЕКТА при первом `/idea`.
+
+```json
+{
+  "project_name": "booking-service",
+  "mode": "CREATE",
+  "current_stage": 4,
+  "created_at": "2025-12-21T10:00:00Z",
+  "updated_at": "2025-12-21T10:30:00Z",
+  "gates": {
+    "PRD_READY": {"passed": true, "artifact": "ai-docs/docs/prd/booking-prd.md"},
+    "PLAN_APPROVED": {"passed": true, "artifact": "ai-docs/docs/architecture/booking-plan.md"}
+  },
+  "artifacts": {
+    "prd": "ai-docs/docs/prd/booking-prd.md",
+    "plan": "ai-docs/docs/architecture/booking-plan.md"
+  }
+}
+```
+
+**Шаблон**: [docs/templates/pipeline-state-template.json](docs/templates/pipeline-state-template.json)
+
+### Обновление состояния
+
+Каждая команда ОБЯЗАНА обновить `.pipeline-state.json`:
+1. При старте — проверить предусловия
+2. При успехе — отметить ворота пройденными
+3. При создании артефакта — записать путь
+
+---
+
+## Алгоритм обнаружения артефактов
+
+Команды используют следующий алгоритм для поиска входных артефактов:
+
+```python
+def find_artifact(artifact_type: str) -> Path | None:
+    """
+    Алгоритм поиска артефакта в целевом проекте.
+
+    Args:
+        artifact_type: 'prd', 'plan', 'feature_plan', 'review_report', etc.
+
+    Returns:
+        Path к артефакту или None
+    """
+    # 1. Проверить .pipeline-state.json
+    state = read_json(".pipeline-state.json")
+    if state and state.get("artifacts", {}).get(artifact_type):
+        return Path(state["artifacts"][artifact_type])
+
+    # 2. Glob по стандартным паттернам
+    patterns = {
+        "prd": "ai-docs/docs/prd/*-prd.md",
+        "plan": "ai-docs/docs/architecture/*-plan.md",
+        "feature_plan": "ai-docs/docs/plans/*-plan.md",
+        "review_report": "ai-docs/docs/reports/review-*.md",
+        "qa_report": "ai-docs/docs/reports/qa-*.md",
+        "rtm": "ai-docs/docs/rtm.md"
+    }
+
+    files = glob(patterns.get(artifact_type, ""))
+    if files:
+        # Вернуть самый свежий
+        return max(files, key=lambda f: f.stat().st_mtime)
+
+    return None
+```
+
+### Паттерны поиска
+
+| Артефакт | Паттерн | Суффикс |
+|----------|---------|---------|
+| PRD | `ai-docs/docs/prd/*-prd.md` | `-prd.md` |
+| План архитектуры | `ai-docs/docs/architecture/*-plan.md` | `-plan.md` |
+| План фичи | `ai-docs/docs/plans/*-plan.md` | `-plan.md` |
+| Отчёт ревью | `ai-docs/docs/reports/review-*.md` | `review-*.md` |
+| Отчёт QA | `ai-docs/docs/reports/qa-*.md` | `qa-*.md` |
+| RTM | `ai-docs/docs/rtm.md` | — |
+
+---
+
+## Проверка предусловий (Gate Check)
+
+Каждая команда ОБЯЗАНА проверить предусловия перед выполнением:
+
+```python
+def check_preconditions(command: str) -> bool:
+    """Проверка предусловий перед выполнением команды."""
+
+    preconditions = {
+        "/idea": [],  # Нет предусловий
+        "/research": ["PRD_READY"],
+        "/plan": ["PRD_READY", "RESEARCH_DONE"],
+        "/feature-plan": ["PRD_READY", "RESEARCH_DONE"],
+        "/generate": ["PLAN_APPROVED"],
+        "/review": ["IMPLEMENT_OK"],
+        "/test": ["REVIEW_OK"],
+        "/validate": ["QA_PASSED"],
+        "/deploy": ["ALL_GATES_PASSED"]
+    }
+
+    state = read_json(".pipeline-state.json")
+    if not state:
+        return command == "/idea"
+
+    for gate in preconditions.get(command, []):
+        if not state.get("gates", {}).get(gate, {}).get("passed"):
+            print(f"❌ Ворота {gate} не пройдены")
+            return False
+
+    return True
+```
+
+### Матрица предусловий
+
+| Команда | Требуемые ворота | Если не пройдены |
+|---------|-----------------|------------------|
+| `/idea` | — | — |
+| `/research` | PRD_READY | "Сначала выполните /idea" |
+| `/plan` | PRD_READY, RESEARCH_DONE | "Сначала выполните /research" |
+| `/feature-plan` | PRD_READY, RESEARCH_DONE | "Сначала выполните /research" |
+| `/generate` | PLAN_APPROVED | "Сначала утвердите план" |
+| `/review` | IMPLEMENT_OK | "Сначала выполните /generate" |
+| `/test` | REVIEW_OK | "Сначала выполните /review" |
+| `/validate` | QA_PASSED | "Сначала выполните /test" |
+| `/deploy` | ALL_GATES_PASSED | "Сначала выполните /validate" |
+
+---
+
 ## Правила прохождения ворот
 
 ### 1. Блокирующие ворота
