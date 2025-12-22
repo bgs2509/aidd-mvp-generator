@@ -46,7 +46,7 @@ mkdir restaurant-booking && cd restaurant-booking
 git init
 
 # 2. Подключить фреймворк как Git Submodule
-git submodule add https://github.com/your-org/aidd-mvp-generator.git .aidd
+git submodule add git@github.com:bgs2509/aidd-mvp-generator.git .aidd
 git submodule update --init --recursive
 
 # 3. Создать точку входа для AI
