@@ -16,7 +16,7 @@
 | Артефакт | Путь | Описание |
 |----------|------|----------|
 | PRD | `ai-docs/docs/prd/{name}-prd.md` | Требования |
-| Анализ кода | `ai-docs/docs/research-report.md` | Для FEATURE режима |
+| Анализ кода | `ai-docs/docs/research/{name}-research.md` | Для FEATURE режима |
 | Ворота | PRD_READY | Должны быть пройдены |
 
 ---

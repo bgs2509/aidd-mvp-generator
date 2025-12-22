@@ -111,7 +111,7 @@ REDIS_URL=
 | Этап | Артефакт | Путь |
 |------|----------|------|
 | 1. Идея | PRD | `ai-docs/docs/prd/{{PROJECT_SLUG}}-prd.md` |
-| 2. Исследование | Research Report | `ai-docs/docs/reports/research-report.md` |
+| 2. Исследование | Research Report | `ai-docs/docs/research/{{PROJECT_SLUG}}-research.md` |
 | 3. Архитектура | Architecture Plan | `ai-docs/docs/architecture/{{PROJECT_SLUG}}-plan.md` |
 | 4. Реализация | Код сервисов | `services/` |
 | 5. Ревью | Review Report | `ai-docs/docs/reports/review-report.md` |

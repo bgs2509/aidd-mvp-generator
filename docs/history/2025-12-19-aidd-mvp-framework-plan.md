@@ -408,7 +408,7 @@ Dockerfile                  # Образ Nginx
 
 **Пути артефактов:**
 - PRD: `ai-docs/docs/prd/{name}-prd.md`
-- Research: `ai-docs/docs/research/{name}-research.md` (только FEATURE)
+- Research: `ai-docs/docs/research/{name}-research.md`
 - Plan: `ai-docs/docs/architecture/{name}-plan.md` (CREATE) или `ai-docs/docs/plans/{name}-plan.md` (FEATURE)
 - Review: `ai-docs/docs/reports/{name}-review.md`
 - QA: `ai-docs/docs/reports/{name}-qa.md`
@@ -985,7 +985,7 @@ Dockerfile                  # Образ Nginx
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
 | Проверка PRD_READY | `ai-docs/docs/prd/{name}-prd.md` — наличие и полнота | 📝 `ai-docs/docs/reports/{name}-validation.md` |
-| Проверка RESEARCH_DONE | `ai-docs/docs/research/{name}-research.md` (для FEATURE) | 📝 `ai-docs/docs/reports/{name}-validation.md` |
+| Проверка RESEARCH_DONE | `ai-docs/docs/research/{name}-research.md` | 📝 `ai-docs/docs/reports/{name}-validation.md` |
 | Проверка PLAN_APPROVED | `ai-docs/docs/architecture/{name}-plan.md` или `ai-docs/docs/plans/{name}-plan.md` | 📝 `ai-docs/docs/reports/{name}-validation.md` |
 | Проверка IMPLEMENT_OK | Код в `services/`, `shared/`, тесты | 📝 `ai-docs/docs/reports/{name}-validation.md` |
 | Проверка REVIEW_OK | `ai-docs/docs/reports/{name}-review.md` — 0 Critical/Major | 📝 `ai-docs/docs/reports/{name}-validation.md` |

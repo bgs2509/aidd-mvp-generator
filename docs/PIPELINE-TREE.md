@@ -106,7 +106,7 @@
 
 | # | Действие | Результат |
 |---|----------|-----------|
-| 1 | Создать структуру папок | `ai-docs/docs/{prd,architecture,plans,reports}` |
+| 1 | Создать структуру папок | `ai-docs/docs/{prd,architecture,plans,reports,research}` |
 | 2 | Создать состояние пайплайна | `.pipeline-state.json` |
 | 3 | Создать CLAUDE.md | `./CLAUDE.md` → ссылка на `.aidd/CLAUDE.md` |
 
@@ -176,7 +176,7 @@
 
 | Артефакт | Путь в ЦП |
 |----------|-----------|
-| Результаты исследования | (в памяти/контексте) |
+| Отчёт исследования | `ai-docs/docs/research/{name}-research.md` |
 | Состояние | `.pipeline-state.json` (обновлено) |
 
 #### Источники файлов
@@ -186,6 +186,7 @@
 | Инструкции команды | Фреймворк | `.aidd/.claude/commands/research.md` |
 | Инструкции агента | Фреймворк | `.aidd/.claude/agents/researcher.md` |
 | Детальные инструкции | Фреймворк | `.aidd/roles/researcher/*.md` |
+| Шаблон отчёта | Фреймворк | `.aidd/templates/documents/research-report-template.md` |
 | PRD | ЦП | `ai-docs/docs/prd/{name}-prd.md` |
 
 ---
@@ -204,7 +205,7 @@
 | Артефакт | Источник | Путь |
 |----------|----------|------|
 | PRD | ЦП | `ai-docs/docs/prd/{name}-prd.md` |
-| Результаты исследования | Память | — |
+| Отчёт исследования | ЦП | `ai-docs/docs/research/{name}-research.md` |
 | Шаблон архитектуры | Фреймворк | `.aidd/templates/documents/architecture-template.md` |
 
 #### Выходные артефакты
@@ -429,7 +430,7 @@
 |---|------|---------|-------|--------|-------------------|
 | 0 | Bootstrap | `/init` | — | `BOOTSTRAP_READY` | Структура ЦП |
 | 1 | Идея | `/idea` | Аналитик | `PRD_READY` | PRD документ |
-| 2 | Исследование | `/research` | Исследователь | `RESEARCH_DONE` | (в памяти) |
+| 2 | Исследование | `/research` | Исследователь | `RESEARCH_DONE` | Research Report (`ai-docs/docs/research/{name}-research.md`) |
 | 3 | Архитектура | `/plan` | Архитектор | `PLAN_APPROVED` | План архитектуры |
 | 3 | Архитектура | `/feature-plan` | Архитектор | `PLAN_APPROVED` | План фичи |
 | 4 | Реализация | `/generate` | Реализатор | `IMPLEMENT_OK` | Код сервисов |
@@ -455,6 +456,7 @@
 | **Workflow** | Фреймворк | `.aidd/workflow.md` |
 | **PRD** | ЦП | `ai-docs/docs/prd/*.md` |
 | **Планы** | ЦП | `ai-docs/docs/architecture/*.md`, `ai-docs/docs/plans/*.md` |
+| **Отчёты исследования** | ЦП | `ai-docs/docs/research/*.md` |
 | **Отчёты** | ЦП | `ai-docs/docs/reports/*.md` |
 | **RTM** | ЦП | `ai-docs/docs/rtm.md` |
 | **Код сервисов** | ЦП | `services/*/` |

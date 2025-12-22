@@ -13,6 +13,7 @@
 
 **Связанные документы** (в целевом проекте):
 - PRD: `ai-docs/docs/prd/{name}-prd.md`
+- Research Report: `ai-docs/docs/research/{name}-research.md`
 - План: `ai-docs/docs/architecture/{name}-plan.md`
 
 ---

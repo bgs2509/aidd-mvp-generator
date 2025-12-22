@@ -440,7 +440,7 @@ mode = detect_mode(state, {"prd": artifacts, "services": False})
 # → mode = "CREATE"
 
 # Bootstrap (только для /idea при mode == None)
-mkdir("./ai-docs/docs/{prd,architecture,plans,reports}")
+mkdir("./ai-docs/docs/{prd,architecture,plans,reports,research}")
 write("./.pipeline-state.json", {"mode": "CREATE", ...})
 
 # Выполнение: создание PRD

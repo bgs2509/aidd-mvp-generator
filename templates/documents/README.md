@@ -7,6 +7,7 @@
 | Шаблон | Назначение | Этап | Агент |
 |--------|------------|------|-------|
 | `prd-template.md` | Product Requirements Document | Stage 1 | Аналитик |
+| `research-report-template.md` | Research Report | Stage 2 | Исследователь |
 | `architecture-template.md` | Архитектурный план | Stage 3 | Архитектор |
 | `implementation-plan-template.md` | План реализации | Stage 3 | Архитектор |
 | `review-report-template.md` | Отчёт code review | Stage 5 | Ревьюер |
@@ -26,7 +27,17 @@
 
 **Выходной файл** (целевой проект): `ai-docs/docs/prd/{name}-prd.md`
 
-### 2. Architecture Template
+### 2. Research Report Template
+
+Используется Исследователем после анализа требований/кода:
+
+```bash
+/research
+```
+
+**Выходной файл** (целевой проект): `ai-docs/docs/research/{name}-research.md`
+
+### 3. Architecture Template
 
 Используется Архитектором для проектирования:
 
@@ -36,7 +47,7 @@
 
 **Выходной файл** (целевой проект): `ai-docs/docs/architecture/{name}-plan.md`
 
-### 3. Implementation Plan Template
+### 4. Implementation Plan Template
 
 Используется Архитектором для планирования реализации:
 
@@ -48,7 +59,7 @@
 
 **Выходной файл** (целевой проект): `ai-docs/docs/plans/{name}-plan.md`
 
-### 4. Review Report Template
+### 5. Review Report Template
 
 Используется Ревьюером после code review:
 
@@ -58,7 +69,7 @@
 
 **Выходной файл** (целевой проект): `ai-docs/docs/reports/review-{name}.md`
 
-### 5. QA Report Template
+### 6. QA Report Template
 
 Используется QA после тестирования:
 
@@ -68,7 +79,7 @@
 
 **Выходной файл** (целевой проект): `ai-docs/docs/reports/qa-{name}.md`
 
-### 6. Validation Report Template
+### 7. Validation Report Template
 
 Используется Валидатором для финальной проверки:
 
@@ -78,7 +89,7 @@
 
 **Выходной файл** (целевой проект): `ai-docs/docs/reports/validation-{name}.md`
 
-### 7. RTM Template
+### 8. RTM Template
 
 Обновляется всеми агентами для трассировки требований:
 
@@ -95,6 +106,8 @@
         │   └── {feature}-prd.md
         ├── architecture/
         │   └── {project}-plan.md
+        ├── research/
+        │   └── {project}-research.md
         ├── plans/
         │   ├── {project}-implementation-plan.md
         │   └── {feature}-plan.md

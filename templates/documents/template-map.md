@@ -104,6 +104,7 @@ templates/documents/                  →    ai-docs/docs/
 | Шаблон генератора | Результат в целевом проекте | Этап |
 |-------------------|----------------------------|------|
 | `prd-template.md` | `ai-docs/docs/prd/{name}-prd.md` | 1 (Идея) |
+| `research-report-template.md` | `ai-docs/docs/research/{name}-research.md` | 2 (Исследование) |
 | `architecture-template.md` | `ai-docs/docs/architecture/{name}-plan.md` | 3 (Архитектура) |
 | `feature-plan-template.md` | `ai-docs/docs/plans/{feature}-plan.md` | 3 (FEATURE) |
 | `rtm-template.md` | `ai-docs/docs/rtm.md` | 7 (Валидация) |

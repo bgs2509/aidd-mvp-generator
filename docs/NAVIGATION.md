@@ -54,7 +54,7 @@
 | **Фреймворк** | 6 | `.aidd/docs/target-project-structure.md` | Для создания структуры |
 
 **Создавать (в ЦП)**:
-- `ai-docs/docs/{prd,architecture,plans,reports}/`
+- `ai-docs/docs/{prd,architecture,plans,reports,research}/`
 - `.claude/` (локальные настройки Claude Code)
 - `.pipeline-state.json`
 - `CLAUDE.md`
@@ -121,12 +121,14 @@
 | **4. База знаний** | 9 | `.aidd/knowledge/architecture/*.md` | По необходимости |
 
 **Создавать (в ЦП)**:
+- `ai-docs/docs/research/{name}-research.md`
 - Обновление `.pipeline-state.json`
 
 **Чек-лист ворот RESEARCH_DONE**:
 - [ ] Существующий код проанализирован (для FEATURE)
-- [ ] Архитектурные паттерны выявлены
-- [ ] Технические ограничения определены
+- [ ] Архитектурные паттерны и ограничения описаны в отчёте
+- [ ] Рекомендации по интеграции зафиксированы
+- [ ] Отчёт сохранён в `ai-docs/docs/research/{name}-research.md`
 - [ ] `.pipeline-state.json` обновлён
 
 ---
@@ -144,11 +146,12 @@
 | **1. ЦП** | 1 | `./CLAUDE.md` | Если существует |
 | **1. ЦП** | 2 | `./.pipeline-state.json` | Обязательно |
 | **1. ЦП** | 3 | `./ai-docs/docs/prd/*.md` | Обязательно |
+| **1. ЦП** | 4 | `./ai-docs/docs/research/*.md` | Обязательно |
 | **2. Ворота** | — | `gates.PRD_READY + RESEARCH_DONE` | Обязательно |
-| **3. Фреймворк** | 4 | `.aidd/.claude/commands/plan.md` | Всегда |
-| **3. Фреймворк** | 5 | `.aidd/.claude/agents/architect.md` | Всегда |
-| **4. Шаблоны** | 6 | `.aidd/templates/documents/architecture-template.md` | Всегда |
-| **4. База знаний** | 7 | `.aidd/knowledge/architecture/*.md` | Всегда |
+| **3. Фреймворк** | 5 | `.aidd/.claude/commands/plan.md` | Всегда |
+| **3. Фреймворк** | 6 | `.aidd/.claude/agents/architect.md` | Всегда |
+| **4. Шаблоны** | 7 | `.aidd/templates/documents/architecture-template.md` | Всегда |
+| **4. База знаний** | 8 | `.aidd/knowledge/architecture/*.md` | Всегда |
 
 ### Режим FEATURE (`/feature-plan`)
 
@@ -157,11 +160,12 @@
 | **1. ЦП** | 1 | `./CLAUDE.md` | Если существует |
 | **1. ЦП** | 2 | `./.pipeline-state.json` | Обязательно |
 | **1. ЦП** | 3 | `./ai-docs/docs/prd/*.md` | Обязательно |
-| **1. ЦП** | 4 | `./ai-docs/docs/architecture/*.md` | Обязательно |
-| **1. ЦП** | 5 | `./services/` | Обязательно |
+| **1. ЦП** | 4 | `./ai-docs/docs/research/*.md` | Обязательно |
+| **1. ЦП** | 5 | `./ai-docs/docs/architecture/*.md` | Обязательно |
+| **1. ЦП** | 6 | `./services/` | Обязательно |
 | **2. Ворота** | — | `mode == FEATURE + gates` | Обязательно |
-| **3. Фреймворк** | 6 | `.aidd/.claude/commands/feature-plan.md` | Всегда |
-| **3. Фреймворк** | 7 | `.aidd/.claude/agents/architect.md` | Всегда |
+| **3. Фреймворк** | 7 | `.aidd/.claude/commands/feature-plan.md` | Всегда |
+| **3. Фреймворк** | 8 | `.aidd/.claude/agents/architect.md` | Всегда |
 
 **Создавать (в ЦП)**:
 - CREATE: `ai-docs/docs/architecture/{name}-plan.md`

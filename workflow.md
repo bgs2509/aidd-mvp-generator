@@ -111,7 +111,7 @@ git submodule update --init --recursive
 
 ```bash
 # 1. Создание структуры артефактов
-mkdir -p ai-docs/docs/{prd,architecture,plans,reports}
+mkdir -p ai-docs/docs/{prd,architecture,plans,reports,research}
 
 # 2. Инициализация состояния пайплайна
 cat > .pipeline-state.json << 'EOF'
@@ -212,7 +212,7 @@ docker --version
 **Действия при инициализации**:
 ```bash
 # Создание структуры
-mkdir -p ai-docs/docs/{prd,architecture,plans,reports}
+mkdir -p ai-docs/docs/{prd,architecture,plans,reports,research}
 
 # Инициализация состояния
 echo '{"project_name":"","mode":"CREATE","current_stage":0,"gates":{"BOOTSTRAP_READY":{"passed":true}}}' > .pipeline-state.json
@@ -258,17 +258,25 @@ echo "# Project\n\nСм. .aidd/CLAUDE.md" > CLAUDE.md
 | **Команда** | `/research` |
 | **Агент** | Исследователь |
 | **Вход** | PRD, существующий код (для FEATURE) |
-| **Выход** | Анализ, выявленные паттерны |
+| **Выход** | `ai-docs/docs/research/{name}-research.md` |
 | **Ворота** | `RESEARCH_DONE` |
 
 **Критерии прохождения ворот RESEARCH_DONE**:
 - [ ] Существующий код проанализирован (для FEATURE)
-- [ ] Архитектурные паттерны выявлены
+- [ ] Архитектурные паттерны выявлены и описаны в отчёте
 - [ ] Технические ограничения определены
 - [ ] Рекомендации по интеграции сформулированы
+- [ ] Отчёт исследования сохранён в `ai-docs/docs/research/{name}-research.md`
 
-**Режим CREATE**: Анализ требований, выбор технологий.
-**Режим FEATURE**: Анализ кода, выявление точек расширения.
+**Режим CREATE**: Анализ требований, выбор технологий, фиксация гипотез.
+**Режим FEATURE**: Анализ кода, выявление точек расширения, фиксация выводов.
+
+**Артефакты** (в целевом проекте):
+```
+{project-name}/
+└── ai-docs/docs/research/
+    └── booking-restaurant-research.md
+```
 
 ---
 
@@ -278,7 +286,7 @@ echo "# Project\n\nСм. .aidd/CLAUDE.md" > CLAUDE.md
 |----------|----------|
 | **Команда** | `/plan` (CREATE) или `/feature-plan` (FEATURE) |
 | **Агент** | Архитектор |
-| **Вход** | PRD, результаты исследования |
+| **Вход** | PRD, Research Report |
 | **Выход** | `ai-docs/docs/architecture/{name}-plan.md` |
 | **Ворота** | `PLAN_APPROVED` |
 
@@ -572,10 +580,12 @@ make logs
   "updated_at": "2025-12-21T10:30:00Z",
   "gates": {
     "PRD_READY": {"passed": true, "artifact": "ai-docs/docs/prd/booking-prd.md"},
+    "RESEARCH_DONE": {"passed": true, "artifact": "ai-docs/docs/research/booking-research.md"},
     "PLAN_APPROVED": {"passed": true, "artifact": "ai-docs/docs/architecture/booking-plan.md"}
   },
   "artifacts": {
     "prd": "ai-docs/docs/prd/booking-prd.md",
+    "research": "ai-docs/docs/research/booking-research.md",
     "plan": "ai-docs/docs/architecture/booking-plan.md"
   }
 }
@@ -615,6 +625,7 @@ def find_artifact(artifact_type: str) -> Path | None:
     # 2. Glob по стандартным паттернам
     patterns = {
         "prd": "ai-docs/docs/prd/*-prd.md",
+        "research": "ai-docs/docs/research/*-research.md",
         "plan": "ai-docs/docs/architecture/*-plan.md",
         "feature_plan": "ai-docs/docs/plans/*-plan.md",
         "review_report": "ai-docs/docs/reports/review-*.md",
@@ -635,6 +646,7 @@ def find_artifact(artifact_type: str) -> Path | None:
 | Артефакт | Паттерн | Суффикс |
 |----------|---------|---------|
 | PRD | `ai-docs/docs/prd/*-prd.md` | `-prd.md` |
+| Research Report | `ai-docs/docs/research/*-research.md` | `-research.md` |
 | План архитектуры | `ai-docs/docs/architecture/*-plan.md` | `-plan.md` |
 | План фичи | `ai-docs/docs/plans/*-plan.md` | `-plan.md` |
 | Отчёт ревью | `ai-docs/docs/reports/review-*.md` | `review-*.md` |
@@ -726,6 +738,7 @@ def check_gate(gate: str) -> GateResult:
             ("no_blockers", "Нет Open вопросов без решения"),
         ],
         "RESEARCH_DONE": [
+            ("artifact_exists", "ai-docs/docs/research/*-research.md"),
             ("analysis_complete", "Код проанализирован"),
             ("patterns_identified", "Паттерны выявлены"),
             ("constraints_defined", "Ограничения определены"),

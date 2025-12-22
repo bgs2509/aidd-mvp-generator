@@ -139,7 +139,7 @@
 |---|------|---------|-------|--------|----------|
 | 0 | Bootstrap | `/init` | — | `BOOTSTRAP_READY` | Структура ЦП |
 | 1 | Идея | `/idea` | Аналитик | `PRD_READY` | `prd/{name}-prd.md` |
-| 2 | Исследование | `/research` | Исследователь | `RESEARCH_DONE` | — |
+| 2 | Исследование | `/research` | Исследователь | `RESEARCH_DONE` | `research/{name}-research.md` |
 | 3 | Архитектура (CREATE) | `/plan` | Архитектор | `PLAN_APPROVED` | `architecture/{name}-plan.md` |
 | 3 | Архитектура (FEATURE) | `/feature-plan` | Архитектор | `PLAN_APPROVED` | `plans/{feature}-plan.md` |
 | 4 | Реализация | `/generate` | Реализатор | `IMPLEMENT_OK` | `services/`, тесты |

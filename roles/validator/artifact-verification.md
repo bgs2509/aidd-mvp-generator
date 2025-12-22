@@ -18,7 +18,7 @@
 | Артефакт | Путь | Этап | Обязательный |
 |----------|------|------|--------------|
 | PRD | `ai-docs/docs/prd/{name}-prd.md` | Анализ | Да |
-| Research Report | `ai-docs/docs/research-report.md` | Исследование | FEATURE |
+| Research Report | `ai-docs/docs/research/{name}-research.md` | Исследование | Да |
 | Architecture | `ai-docs/docs/architecture/{name}-arch.md` | Архитектура | Да |
 | Implementation Plan | `ai-docs/docs/plans/{name}-plan.md` | Архитектура | Да |
 | Review Report | `ai-docs/docs/reports/review-report.md` | Ревью | Да |
@@ -67,6 +67,13 @@ if [ -f "ai-docs/docs/prd/*-prd.md" ]; then
     echo "✓ PRD exists"
 else
     echo "✗ PRD missing"
+fi
+
+# Research Report
+if ls ai-docs/docs/research/*-research.md >/dev/null 2>&1; then
+    echo "✓ Research Report exists"
+else
+    echo "✗ Research Report missing"
 fi
 
 # Architecture

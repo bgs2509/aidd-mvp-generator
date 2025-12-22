@@ -47,6 +47,9 @@
 │       ├── plans/             ← Планы фич (режим FEATURE)
 │       │   └── {feature}-plan.md
 │       │
+│       ├── research/          ← Отчёты исследований
+│       │   └── {name}-research.md
+│       │
 │       ├── reports/           ← Отчёты этапов
 │       │   ├── review-report.md
 │       │   ├── qa-report.md
@@ -106,7 +109,7 @@
 | Этап | Артефакт | Путь в целевом проекте |
 |------|----------|------------------------|
 | 1. Идея | PRD | `ai-docs/docs/prd/{name}-prd.md` |
-| 2. Исследование | (в памяти) | — |
+| 2. Исследование | Отчёт исследования | `ai-docs/docs/research/{name}-research.md` |
 | 3. Архитектура (CREATE) | План | `ai-docs/docs/architecture/{name}-plan.md` |
 | 3. Архитектура (FEATURE) | План фичи | `ai-docs/docs/plans/{feature}-plan.md` |
 | 4. Реализация | Код | `services/*/` |
@@ -137,7 +140,8 @@
     },
     "RESEARCH_DONE": {
       "passed": true,
-      "passed_at": "2025-12-21T10:10:00Z"
+      "passed_at": "2025-12-21T10:10:00Z",
+      "artifact": "ai-docs/docs/research/booking-research.md"
     },
     "PLAN_APPROVED": {
       "passed": true,
@@ -151,6 +155,7 @@
   },
   "artifacts": {
     "prd": "ai-docs/docs/prd/booking-prd.md",
+    "research": "ai-docs/docs/research/booking-research.md",
     "plan": "ai-docs/docs/architecture/booking-plan.md"
   }
 }
@@ -234,7 +239,7 @@ cp .aidd/templates/project/.claude/settings.local.json.example .claude/settings.
 При первом запуске `/idea` в пустой директории создаётся:
 
 ```bash
-mkdir -p ai-docs/docs/{prd,architecture,plans,reports}
+mkdir -p ai-docs/docs/{prd,architecture,plans,reports,research}
 echo '{"project_name":"","mode":"CREATE","current_stage":1,"gates":{}}' > .pipeline-state.json
 ```
 

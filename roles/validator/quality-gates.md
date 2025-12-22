@@ -43,7 +43,7 @@
 Артефакт: ai-docs/docs/prd/{name}-prd.md
 ```
 
-### 2. RESEARCH_DONE (только FEATURE mode)
+### 2. RESEARCH_DONE
 
 ```markdown
 Критерии:
@@ -52,7 +52,7 @@
 - [ ] Ограничения выявлены
 - [ ] Пайплайн уточнён
 
-Артефакт: ai-docs/docs/research-report.md
+Артефакт: ai-docs/docs/research/{name}-research.md
 ```
 
 ### 3. PLAN_APPROVED

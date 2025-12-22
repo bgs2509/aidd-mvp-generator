@@ -10,6 +10,7 @@
 ```
 ГЕНЕРАТОР (шаблоны)              →    ЦЕЛЕВОЙ ПРОЕКТ (артефакты)
 templates/documents/prd-template.md   →    ai-docs/docs/prd/{name}-prd.md
+templates/documents/research-report-template.md →    ai-docs/docs/research/{name}-research.md
 templates/documents/architecture-*.md →    ai-docs/docs/architecture/{name}-plan.md
 templates/services/*             →    services/{name}_{type}/
 ```
@@ -40,20 +41,21 @@ templates/services/*             →    services/{name}_{type}/
 
 ## Этап 2: Исследование
 
-### Результаты анализа
+### Research Report
 
 | Параметр | Значение |
 |----------|----------|
 | **Команда** | `/research` |
 | **Агент** | Исследователь |
-| **Выход** | В памяти (не файл) |
+| **Шаблон (генератор)** | `templates/documents/research-report-template.md` |
+| **Путь (целевой проект)** | `ai-docs/docs/research/{name}-research.md` |
 | **Ворота** | `RESEARCH_DONE` |
 
 **Критерии готовности**:
-- [ ] Код проанализирован (FEATURE)
-- [ ] Паттерны выявлены
-- [ ] Ограничения определены
-- [ ] Рекомендации сформулированы
+- [ ] Код и/или требования проанализированы
+- [ ] Паттерны и ограничения описаны в отчёте
+- [ ] Рекомендации по интеграции сформулированы
+- [ ] `.pipeline-state.json` обновлён (`RESEARCH_DONE`)
 
 ---
 
@@ -227,7 +229,7 @@ templates/services/*             →    services/{name}_{type}/
 | Этап | Артефакт | Путь в целевом проекте | Ворота |
 |------|----------|------------------------|--------|
 | 1 | PRD | `ai-docs/docs/prd/{name}-prd.md` | PRD_READY |
-| 2 | Анализ | (в памяти) | RESEARCH_DONE |
+| 2 | Research Report | `ai-docs/docs/research/{name}-research.md` | RESEARCH_DONE |
 | 3 | План | `ai-docs/docs/architecture/{name}-plan.md` | PLAN_APPROVED |
 | 4 | Код | `services/`, `docker-compose.yml` | IMPLEMENT_OK |
 | 5 | Ревью | `ai-docs/docs/reports/review-report.md` | REVIEW_OK |

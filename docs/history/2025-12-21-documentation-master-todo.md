@@ -405,7 +405,7 @@ def find_artifact(artifact_type: str) -> Path | None:
 
 2. **Создать структуру артефактов В ЦЕЛЕВОМ ПРОЕКТЕ**:
    ```bash
-   mkdir -p ai-docs/docs/{prd,architecture,plans,reports}
+   mkdir -p ai-docs/docs/{prd,architecture,plans,reports,research}
    ```
 
 3. **Создать .pipeline-state.json**:
