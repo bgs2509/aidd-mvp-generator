@@ -138,8 +138,50 @@ def create_directory_structure():
 
 | # | Issue | Файл | Приоритет | Статус |
 |---|-------|------|-----------|--------|
-| 1 | AI не проверяет существование директорий | `idea.md`, `workflow.md` | Средний | Открыт |
-| 2 | Принцип VERIFY BEFORE ACT не дублируется в командах | `*.md` команды | Низкий | Открыт |
+| 1 | AI не проверяет существование директорий | `idea.md`, `workflow.md`, `init.md` | Средний | **Исправлен** |
+| 2 | Принцип VERIFY BEFORE ACT не дублируется в командах | `*.md` команды | Низкий | **Исправлен** |
+
+---
+
+## Внесённые исправления (2025-12-22)
+
+### Issue #1: Проверка существования директорий
+
+**Изменённые файлы**:
+- `.claude/commands/idea.md` — добавлена проверка перед созданием директорий
+- `.claude/commands/init.md` — добавлена проверка перед созданием папок
+- `workflow.md` — обновлены оба раздела Bootstrap с проверкой
+
+**Суть изменений**:
+```bash
+# БЫЛО:
+mkdir -p ai-docs/docs/{prd,architecture,plans,reports}
+
+# СТАЛО:
+for dir in prd architecture plans reports research; do
+    [ -d "ai-docs/docs/$dir" ] || mkdir -p "ai-docs/docs/$dir"
+done
+```
+
+### Issue #2: VERIFY BEFORE ACT напоминание
+
+**Изменённые файлы** (10 команд):
+- `.claude/commands/init.md`
+- `.claude/commands/idea.md`
+- `.claude/commands/research.md`
+- `.claude/commands/plan.md`
+- `.claude/commands/feature-plan.md`
+- `.claude/commands/generate.md`
+- `.claude/commands/review.md`
+- `.claude/commands/test.md`
+- `.claude/commands/validate.md`
+- `.claude/commands/deploy.md`
+
+**Добавленный блок** (в секцию "## Описание"):
+```markdown
+> **VERIFY BEFORE ACT**: Перед созданием файлов/директорий проверьте их
+> существование (см. CLAUDE.md, раздел "Критические правила").
+```
 
 ---
 
