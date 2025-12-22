@@ -1,0 +1,43 @@
+# AIDD-MVP Generator — .gitignore
+# Игнорируемые файлы фреймворка
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+venv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Логи
+*.log
+logs/
+
+# Временные файлы
+tmp/
+temp/
+*.tmp
+*.bak
+
+# Тестовые целевые проекты (создаваемые для тестирования фреймворка)
+test-project/
+test-projects/
+sandbox/
+
+# Примечание: .claude/settings.local.json НАМЕРЕННО в git
+# как референсный пример для разработчиков фреймворка.
+# В целевых проектах он игнорируется через templates/project/.gitignore.template

@@ -141,6 +141,7 @@
 | README.md | [templates/project/README.md.template](../templates/project/README.md.template) | `./README.md` | Документация проекта |
 | .gitignore | [templates/project/.gitignore.template](../templates/project/.gitignore.template) | `./.gitignore` | Игнорируемые файлы |
 | .env.example | [templates/project/.env.example.template](../templates/project/.env.example.template) | `./.env.example` | Пример переменных окружения |
+| settings.local | [templates/project/.claude/settings.local.json.example](../templates/project/.claude/settings.local.json.example) | `./.claude/settings.local.json.example` | Локальные настройки Claude Code |
 
 ---
 

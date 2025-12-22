@@ -117,6 +117,7 @@ def check_bootstrap_ready() -> BootstrapResult:
 ```bash
 mkdir -p ai-docs/docs/{prd,architecture,plans,reports}
 mkdir -p docs/api
+mkdir -p .claude
 ```
 
 **Результат**:
@@ -128,6 +129,7 @@ mkdir -p docs/api
 │       ├── architecture/  # Архитектурные планы
 │       ├── plans/         # Планы фич
 │       └── reports/       # Отчёты (review, qa, validation)
+├── .claude/               # Локальные настройки Claude Code
 └── docs/
     └── api/               # API документация (openapi.yaml)
 ```
@@ -169,6 +171,7 @@ mkdir -p docs/api
 | `README.md.template` | `./README.md` | Документация проекта |
 | `.gitignore.template` | `./.gitignore` | Игнорируемые файлы |
 | `.env.example.template` | `./.env.example` | Пример переменных окружения |
+| `.claude/settings.local.json.example` | `./.claude/settings.local.json.example` | Образец локальных настроек Claude Code |
 
 #### Алгоритм копирования
 
@@ -251,6 +254,7 @@ def copy_project_templates(project_name: str, project_slug: str) -> None:
 | Python | Версия >= 3.11 |
 | Docker | Установлен |
 | Структура | Папки `ai-docs/docs/` созданы |
+| Claude | Папка `.claude/` создана |
 | Состояние | `.pipeline-state.json` создан |
 
 ---
@@ -272,6 +276,7 @@ def copy_project_templates(project_name: str, project_slug: str) -> None:
 │                                                                  │
 │  Инициализация:                                                  │
 │  ✓ Создана структура ai-docs/docs/                              │
+│  ✓ Создана папка .claude/                                       │
 │  ✓ Создан .pipeline-state.json                                  │
 │  ✓ Создан CLAUDE.md                                             │
 │                                                                  │

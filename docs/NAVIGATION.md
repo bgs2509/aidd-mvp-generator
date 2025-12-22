@@ -55,6 +55,7 @@
 
 **Создавать (в ЦП)**:
 - `ai-docs/docs/{prd,architecture,plans,reports}/`
+- `.claude/` (локальные настройки Claude Code)
 - `.pipeline-state.json`
 - `CLAUDE.md`
 
@@ -64,6 +65,7 @@
 - [ ] Python версия >= 3.11
 - [ ] Docker установлен
 - [ ] Структура `ai-docs/docs/` создана
+- [ ] Папка `.claude/` создана
 - [ ] `.pipeline-state.json` создан
 
 ---

@@ -83,5 +83,8 @@ logs/
 .DS_Store
 Thumbs.db
 
+# Claude Code (локальные настройки — НЕ коммитить!)
+.claude/settings.local.json
+
 # Project specific
 # (добавить по мере необходимости)

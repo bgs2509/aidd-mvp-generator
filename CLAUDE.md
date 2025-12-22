@@ -375,7 +375,8 @@ aidd-mvp-generator/
 ├── workflow.md            ← Описание 9-этапного процесса
 │
 ├── .claude/               ← Интеграция Claude Code
-│   ├── settings.json      ← Permissions и hooks
+│   ├── settings.json      ← Permissions и hooks (коммитится)
+│   ├── settings.local.json← Локальные permissions (НЕ коммитить!)
 │   ├── agents/            ← 7 ролей AI-агентов
 │   └── commands/          ← 10 slash-команд
 │

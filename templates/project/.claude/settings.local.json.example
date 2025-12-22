@@ -1,0 +1,17 @@
+{
+  "_comment": "Локальные permissions для Claude Code (НЕ коммитить в git!)",
+  "_usage": "Скопируйте в settings.local.json и настройте под ваши нужды",
+  "_docs": "https://docs.anthropic.com/en/docs/claude-code/settings",
+
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.python.org)",
+      "WebFetch(domain:fastapi.tiangolo.com)",
+      "WebFetch(domain:docs.pydantic.dev)",
+      "Bash(npm:*)",
+      "Bash(cargo:*)",
+      "Bash(poetry:*)",
+      "Bash(uv:*)"
+    ]
+  }
+}

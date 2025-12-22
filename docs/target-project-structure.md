@@ -88,6 +88,9 @@
 │   └── conf.d/
 │       └── api.conf
 │
+├── .claude/                   ← Локальные настройки Claude Code
+│   └── settings.local.json    ← Персональные permissions (НЕ в git!)
+│
 ├── docker-compose.yml         ← Оркестрация контейнеров
 ├── docker-compose.dev.yml     ← Для разработки
 ├── Makefile                   ← Команды управления
@@ -152,6 +155,51 @@
   }
 }
 ```
+
+---
+
+## Настройки Claude Code (.claude/)
+
+> **ВАЖНО**: Директория `.claude/` содержит локальные настройки Claude Code для целевого проекта.
+
+### Два типа файлов настроек
+
+| Файл | Расположение | В git? | Назначение |
+|------|--------------|--------|------------|
+| `settings.json` | `.aidd/.claude/settings.json` | Да (в submodule) | Общие permissions и hooks фреймворка |
+| `settings.local.json` | `./.claude/settings.local.json` | **Нет** | Персональные локальные permissions |
+
+### settings.local.json
+
+Файл для персональных настроек разработчика, которые **НЕ должны коммититься в git**.
+
+**Назначение**:
+- Дополнительные permissions для bash-команд (npm, cargo, poetry)
+- Доверенные домены для WebFetch (docs.python.org, etc.)
+- Локальные override настроек
+
+**Шаблон**:
+```json
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:docs.python.org)",
+      "WebFetch(domain:fastapi.tiangolo.com)",
+      "Bash(npm:*)",
+      "Bash(poetry:*)"
+    ]
+  }
+}
+```
+
+**Создание**:
+```bash
+# Скопировать шаблон из фреймворка
+mkdir -p .claude
+cp .aidd/templates/project/.claude/settings.local.json.example .claude/settings.local.json
+```
+
+> **Примечание**: Файл добавлен в `.gitignore` шаблона проекта.
 
 ---
 
