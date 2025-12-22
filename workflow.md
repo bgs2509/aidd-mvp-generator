@@ -109,9 +109,19 @@ git submodule update --init --recursive
 
 При первом запуске `/idea` AI-агент выполняет:
 
+> **VERIFY BEFORE ACT**: Перед созданием проверяем существование директорий.
+
 ```bash
-# 1. Создание структуры артефактов
-mkdir -p ai-docs/docs/{prd,architecture,plans,reports,research}
+# 1. VERIFY: Проверить существующую структуру артефактов
+if [ -d "ai-docs/docs" ]; then
+    existing_count=$(ls -d ai-docs/docs/*/ 2>/dev/null | wc -l)
+    echo "✓ Структура ai-docs/docs/ уже существует ($existing_count директорий)"
+fi
+
+# 2. ACT: Создать только недостающие директории
+for dir in prd architecture plans reports research; do
+    [ -d "ai-docs/docs/$dir" ] || mkdir -p "ai-docs/docs/$dir"
+done
 
 # 2. Инициализация состояния пайплайна
 cat > .pipeline-state.json << 'EOF'
@@ -210,15 +220,20 @@ docker --version
 ```
 
 **Действия при инициализации**:
+
+> **VERIFY BEFORE ACT**: Перед созданием проверяем существование.
+
 ```bash
-# Создание структуры
-mkdir -p ai-docs/docs/{prd,architecture,plans,reports,research}
+# 1. VERIFY + ACT: Создать только недостающие директории
+for dir in prd architecture plans reports research; do
+    [ -d "ai-docs/docs/$dir" ] || mkdir -p "ai-docs/docs/$dir"
+done
 
-# Инициализация состояния
-echo '{"project_name":"","mode":"CREATE","current_stage":0,"gates":{"BOOTSTRAP_READY":{"passed":true}}}' > .pipeline-state.json
+# 2. Инициализация состояния (если не существует)
+[ -f ".pipeline-state.json" ] || echo '{"project_name":"","mode":"CREATE","current_stage":0,"gates":{"BOOTSTRAP_READY":{"passed":true}}}' > .pipeline-state.json
 
-# Создание CLAUDE.md
-echo "# Project\n\nСм. .aidd/CLAUDE.md" > CLAUDE.md
+# 3. Создание CLAUDE.md (если не существует)
+[ -f "CLAUDE.md" ] || echo "# Project\n\nСм. .aidd/CLAUDE.md" > CLAUDE.md
 ```
 
 **Примечание**: Этап 0 выполняется автоматически при первом `/idea`, если проверки

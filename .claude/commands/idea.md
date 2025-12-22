@@ -23,6 +23,9 @@ description: Создать PRD документ из идеи пользова�
 Команда `/idea` — точка входа в пайплайн AIDD-MVP. Преобразует текстовое
 описание идеи в структурированный PRD (Product Requirements Document).
 
+> **VERIFY BEFORE ACT**: Перед созданием файлов/директорий проверьте их
+> существование (см. CLAUDE.md, раздел "Критические правила").
+
 ---
 
 ## Агент
@@ -113,6 +116,8 @@ def auto_bootstrap() -> bool:
 
 ### Действия при первом запуске
 
+> **VERIFY BEFORE ACT**: Перед созданием директорий и файлов проверяем их существование.
+
 ```bash
 # 1. Определить режим
 if [ -d "services" ] || [ -f "docker-compose.yml" ]; then
@@ -121,17 +126,34 @@ else
     MODE="CREATE"
 fi
 
-# 2. Создать структуру артефактов (если не существует)
-mkdir -p ai-docs/docs/{prd,architecture,plans,reports}
-
-# 3. Инициализировать состояние пайплайна (если не существует)
-if [ ! -f ".pipeline-state.json" ]; then
-    echo '{"project_name":"","mode":"'$MODE'","current_stage":1,"gates":{"BOOTSTRAP_READY":{"passed":true}}}' > .pipeline-state.json
+# 2. VERIFY: Проверить существующую структуру артефактов
+if [ -d "ai-docs/docs" ]; then
+    existing_count=$(ls -d ai-docs/docs/*/ 2>/dev/null | wc -l)
+    echo "✓ Структура ai-docs/docs/ уже существует ($existing_count директорий)"
 fi
 
-# 4. Создать CLAUDE.md если не существует
+# 3. ACT: Создать только недостающие директории
+for dir in prd architecture plans reports research; do
+    if [ ! -d "ai-docs/docs/$dir" ]; then
+        mkdir -p "ai-docs/docs/$dir"
+        echo "✓ Создана директория: ai-docs/docs/$dir"
+    fi
+done
+
+# 4. Инициализировать состояние пайплайна (если не существует)
+if [ ! -f ".pipeline-state.json" ]; then
+    echo '{"project_name":"","mode":"'$MODE'","current_stage":1,"gates":{"BOOTSTRAP_READY":{"passed":true}}}' > .pipeline-state.json
+    echo "✓ Создан .pipeline-state.json"
+else
+    echo "✓ .pipeline-state.json уже существует"
+fi
+
+# 5. Создать CLAUDE.md если не существует
 if [ ! -f "CLAUDE.md" ]; then
     echo "# Project\n\nСм. .aidd/CLAUDE.md" > CLAUDE.md
+    echo "✓ Создан CLAUDE.md"
+else
+    echo "✓ CLAUDE.md уже существует"
 fi
 ```
 

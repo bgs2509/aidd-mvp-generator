@@ -22,6 +22,9 @@ description: Инициализация целевого проекта (Bootstr
 Команда `/init` выполняет проверку окружения и инициализацию структуры
 целевого проекта для работы с AIDD-MVP Generator.
 
+> **VERIFY BEFORE ACT**: Перед созданием файлов/директорий проверьте их
+> существование (см. CLAUDE.md, раздел "Критические правила").
+
 Эта команда:
 - Проверяет готовность окружения (git, Python, Docker, фреймворк)
 - Создаёт необходимую структуру папок
@@ -249,10 +252,22 @@ def check_existing_files() -> List[FileWarning]:
 
 ### 1. Создание структуры папок
 
+> **VERIFY BEFORE ACT**: Перед созданием проверяем существование директорий.
+
 ```bash
-mkdir -p ai-docs/docs/{prd,architecture,plans,reports}
-mkdir -p docs/api
-mkdir -p .claude
+# VERIFY: Проверить существующую структуру
+if [ -d "ai-docs/docs" ]; then
+    existing_count=$(ls -d ai-docs/docs/*/ 2>/dev/null | wc -l)
+    echo "✓ Структура ai-docs/docs/ уже существует ($existing_count директорий)"
+fi
+
+# ACT: Создать только недостающие директории
+for dir in prd architecture plans reports research; do
+    [ -d "ai-docs/docs/$dir" ] || mkdir -p "ai-docs/docs/$dir"
+done
+
+[ -d "docs/api" ] || mkdir -p docs/api
+[ -d ".claude" ] || mkdir -p .claude
 ```
 
 **Результат**:
