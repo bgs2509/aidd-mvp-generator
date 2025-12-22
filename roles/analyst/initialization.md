@@ -25,7 +25,7 @@
    └── Именование
 
 3. workflow.md
-   └── 8-этапный процесс
+   └── 9-этапный процесс (0-8)
    └── Качественные ворота
    └── Артефакты
 ```
@@ -90,5 +90,5 @@ else:
 
 | Документ | Описание |
 |----------|----------|
-| `.ai-framework/AGENTS.md` | AI Agent Reading Order |
-| `.ai-framework/docs/reference/agent-context-summary.md` | Сводка контекста |
+| [CLAUDE.md](../../CLAUDE.md) | Главная точка входа фреймворка |
+| [docs/initialization.md](../../docs/initialization.md) | Алгоритм инициализации (4 фазы) |
