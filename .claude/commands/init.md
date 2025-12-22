@@ -106,6 +106,141 @@ def check_bootstrap_ready() -> BootstrapResult:
     )
 ```
 
+### Проверка существующих файлов
+
+> **ВАЖНО**: Эта проверка выполняется для проектов, где уже есть файлы
+> (например, после `uv init` или `poetry init`).
+
+#### Проверяемые файлы
+
+| Файл | Проблема | Тип | Действие |
+|------|----------|-----|----------|
+| `main.py` | Заглушка "Hello from..." | ⚠️ Предупреждение | Рекомендация удалить |
+| `app.py` | Заглушка | ⚠️ Предупреждение | Рекомендация удалить |
+| `__main__.py` | Заглушка | ⚠️ Предупреждение | Рекомендация удалить |
+| `pyproject.toml` | `requires-python >= 3.13` | ❌ **Блокирующая** | Изменить на `>= 3.11` |
+| `.python-version` | Версия 3.13+ | ⚠️ Предупреждение | Рекомендация 3.11 или 3.12 |
+| `uv.lock` / `poetry.lock` | Устаревший lock | ⚠️ Предупреждение | Пересоздать после изменений |
+
+#### Алгоритм проверки
+
+```python
+from dataclasses import dataclass
+from pathlib import Path
+from typing import List
+import re
+
+
+@dataclass
+class FileWarning:
+    """Предупреждение о файле."""
+    file: str
+    issue: str
+    action: str
+    blocking: bool = False
+
+
+def check_existing_files() -> List[FileWarning]:
+    """
+    Проверка существующих файлов на совместимость с фреймворком.
+
+    Выполняется для проектов, где уже есть файлы (после uv init, poetry init и т.д.).
+
+    Returns:
+        List[FileWarning]: Список предупреждений о файлах
+    """
+    warnings = []
+
+    # 1. Проверка заглушек
+    stub_files = ["main.py", "app.py", "__main__.py"]
+    for stub in stub_files:
+        path = Path(stub)
+        if path.exists():
+            content = path.read_text()
+            # Типичные признаки заглушки
+            if "Hello from" in content or len(content.strip()) < 100:
+                warnings.append(FileWarning(
+                    file=stub,
+                    issue="Заглушка, созданная менеджером пакетов",
+                    action="Удалить (код будет в services/)",
+                    blocking=False
+                ))
+
+    # 2. Проверка pyproject.toml
+    pyproject_path = Path("pyproject.toml")
+    if pyproject_path.exists():
+        content = pyproject_path.read_text()
+
+        # Проверка requires-python
+        match = re.search(r'requires-python\s*=\s*["\']>=\s*([\d.]+)["\']', content)
+        if match:
+            version = match.group(1)
+            major_minor = tuple(map(int, version.split(".")[:2]))
+            if major_minor >= (3, 13):
+                warnings.append(FileWarning(
+                    file="pyproject.toml",
+                    issue=f'requires-python >= {version}',
+                    action='Изменить на >= 3.11 (фреймворк требует 3.11+)',
+                    blocking=True  # Блокирующая ошибка!
+                ))
+
+    # 3. Проверка .python-version
+    python_version_path = Path(".python-version")
+    if python_version_path.exists():
+        version = python_version_path.read_text().strip()
+        if version.startswith("3.13") or version.startswith("3.14"):
+            warnings.append(FileWarning(
+                file=".python-version",
+                issue=f"Указана версия {version}",
+                action="Рекомендуется 3.11 или 3.12 для совместимости",
+                blocking=False
+            ))
+
+    # 4. Проверка lock-файлов при изменении pyproject.toml
+    lock_files = ["uv.lock", "poetry.lock"]
+    has_pyproject_warning = any(w.file == "pyproject.toml" for w in warnings)
+    if has_pyproject_warning:
+        for lock_file in lock_files:
+            if Path(lock_file).exists():
+                warnings.append(FileWarning(
+                    file=lock_file,
+                    issue="Lock-файл устареет после изменения pyproject.toml",
+                    action=f"Пересоздать: {'uv lock' if lock_file == 'uv.lock' else 'poetry lock'}",
+                    blocking=False
+                ))
+
+    return warnings
+```
+
+#### Пример вывода предупреждений
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  ⚠️  Обнаружены файлы, требующие внимания:                       │
+├─────────────────────────────────────────────────────────────────┤
+│  ⚠️ main.py — заглушка, рекомендуется удалить                    │
+│  ❌ pyproject.toml — requires-python >= 3.13, требуется >= 3.11  │
+│  ⚠️ .python-version — 3.13, рекомендуется 3.12 или 3.11          │
+│  ⚠️ uv.lock — пересоздать после изменения pyproject.toml         │
+├─────────────────────────────────────────────────────────────────┤
+│  ❌ БЛОКИРУЮЩИЕ ОШИБКИ: 1                                        │
+│                                                                 │
+│  Исправьте pyproject.toml:                                      │
+│  Замените: requires-python = ">= 3.13"                          │
+│  На:       requires-python = ">= 3.11"                          │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### Логика блокировки
+
+Инициализация **блокируется** только при критических несовместимостях:
+
+| Проблема | Почему блокирующая |
+|----------|-------------------|
+| `requires-python >= 3.13` | Зависимости могут не работать на Python 3.11/3.12, которые поддерживает фреймворк |
+
+Все остальные проблемы — **предупреждения**, пользователь сам решает, исправлять или нет.
+
 ---
 
 ## Действия инициализации

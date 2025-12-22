@@ -3,10 +3,20 @@
   "version": "1.0",
   "project_name": "",
   "mode": "CREATE",
-  "current_stage": 1,
+  "current_stage": 0,
   "created_at": "",
   "updated_at": "",
   "gates": {
+    "BOOTSTRAP_READY": {
+      "passed": false,
+      "passed_at": null,
+      "checks": {
+        "git": null,
+        "framework": null,
+        "python": null,
+        "docker": null
+      }
+    },
     "PRD_READY": {
       "passed": false,
       "passed_at": null,
