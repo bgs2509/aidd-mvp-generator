@@ -13,6 +13,7 @@
 | [initialization.md](initialization.md) | Алгоритм инициализации (4 фазы) | При запуске команды |
 | [conventions.md](../conventions.md) | Соглашения о коде | При написании кода |
 | [workflow.md](../workflow.md) | Пайплайн (этапы 0-8) | При работе с пайплайном |
+| [artifact-naming.md](artifact-naming.md) | Система именования артефактов (FID) | При создании артефактов |
 
 ---
 

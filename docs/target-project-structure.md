@@ -38,22 +38,24 @@
 │
 ├── ai-docs/                   ← Артефакты AI-агентов
 │   └── docs/
+│       ├── FEATURES.md        ← Реестр всех фич (индекс)
+│       │
 │       ├── prd/               ← PRD документы
-│       │   └── {name}-prd.md
+│       │   └── {YYYY-MM-DD}_{FID}_{slug}-prd.md
 │       │
-│       ├── architecture/      ← Архитектурные планы
-│       │   └── {name}-plan.md
+│       ├── architecture/      ← Архитектурные планы (CREATE)
+│       │   └── {YYYY-MM-DD}_{FID}_{slug}-plan.md
 │       │
-│       ├── plans/             ← Планы фич (режим FEATURE)
-│       │   └── {feature}-plan.md
+│       ├── plans/             ← Планы фич (FEATURE)
+│       │   └── {YYYY-MM-DD}_{FID}_{slug}-plan.md
 │       │
 │       ├── research/          ← Отчёты исследований
-│       │   └── {name}-research.md
+│       │   └── {YYYY-MM-DD}_{FID}_{slug}-research.md
 │       │
 │       ├── reports/           ← Отчёты этапов
-│       │   ├── review-report.md
-│       │   ├── qa-report.md
-│       │   └── validation-report.md
+│       │   ├── {YYYY-MM-DD}_{FID}_{slug}-review.md
+│       │   ├── {YYYY-MM-DD}_{FID}_{slug}-qa.md
+│       │   └── {YYYY-MM-DD}_{FID}_{slug}-validation.md
 │       │
 │       └── rtm.md             ← Requirements Traceability Matrix
 │
@@ -106,18 +108,33 @@
 
 ## Таблица артефактов
 
+> **Формат имени**: `{YYYY-MM-DD}_{FID}_{slug}-{type}.md`
+> Подробнее: [artifact-naming.md](artifact-naming.md)
+
 | Этап | Артефакт | Путь в целевом проекте |
 |------|----------|------------------------|
-| 1. Идея | PRD | `ai-docs/docs/prd/{name}-prd.md` |
-| 2. Исследование | Отчёт исследования | `ai-docs/docs/research/{name}-research.md` |
-| 3. Архитектура (CREATE) | План | `ai-docs/docs/architecture/{name}-plan.md` |
-| 3. Архитектура (FEATURE) | План фичи | `ai-docs/docs/plans/{feature}-plan.md` |
+| — | Реестр фич | `ai-docs/docs/FEATURES.md` |
+| 1. Идея | PRD | `ai-docs/docs/prd/{date}_{FID}_{slug}-prd.md` |
+| 2. Исследование | Отчёт исследования | `ai-docs/docs/research/{date}_{FID}_{slug}-research.md` |
+| 3. Архитектура (CREATE) | План | `ai-docs/docs/architecture/{date}_{FID}_{slug}-plan.md` |
+| 3. Архитектура (FEATURE) | План фичи | `ai-docs/docs/plans/{date}_{FID}_{slug}-plan.md` |
 | 4. Реализация | Код | `services/*/` |
-| 5. Ревью | Отчёт | `ai-docs/docs/reports/review-report.md` |
-| 6. QA | Отчёт | `ai-docs/docs/reports/qa-report.md` |
+| 5. Ревью | Отчёт | `ai-docs/docs/reports/{date}_{FID}_{slug}-review.md` |
+| 6. QA | Отчёт | `ai-docs/docs/reports/{date}_{FID}_{slug}-qa.md` |
 | 7. Валидация | RTM | `ai-docs/docs/rtm.md` |
-| 7. Валидация | Отчёт | `ai-docs/docs/reports/validation-report.md` |
+| 7. Валидация | Отчёт | `ai-docs/docs/reports/{date}_{FID}_{slug}-validation.md` |
 | 8. Деплой | — | — |
+
+### Примеры имён файлов
+
+```
+2024-12-23_F001_table-booking-prd.md
+2024-12-23_F001_table-booking-research.md
+2024-12-23_F001_table-booking-plan.md
+2024-12-23_F001_table-booking-review.md
+2024-12-23_F001_table-booking-qa.md
+2024-12-23_F001_table-booking-validation.md
+```
 
 ---
 
@@ -132,33 +149,82 @@
   "current_stage": 4,
   "created_at": "2025-12-21T10:00:00Z",
   "updated_at": "2025-12-21T10:30:00Z",
+
+  "next_feature_id": 3,
+
+  "current_feature": {
+    "id": "F002",
+    "name": "email-notify",
+    "title": "Email-уведомления о бронированиях",
+    "stage": "IMPLEMENT",
+    "created": "2025-12-21",
+    "artifacts": {
+      "prd": "prd/2025-12-21_F002_email-notify-prd.md",
+      "research": "research/2025-12-21_F002_email-notify-research.md",
+      "plan": "plans/2025-12-21_F002_email-notify-plan.md"
+    }
+  },
+
+  "features_registry": {
+    "F001": {
+      "name": "table-booking",
+      "title": "Бронирование столиков",
+      "status": "DEPLOYED",
+      "created": "2025-12-20",
+      "deployed": "2025-12-21",
+      "artifacts": {
+        "prd": "prd/2025-12-20_F001_table-booking-prd.md",
+        "research": "research/2025-12-20_F001_table-booking-research.md",
+        "plan": "architecture/2025-12-20_F001_table-booking-plan.md",
+        "review": "reports/2025-12-20_F001_table-booking-review.md",
+        "qa": "reports/2025-12-20_F001_table-booking-qa.md",
+        "validation": "reports/2025-12-21_F001_table-booking-validation.md"
+      },
+      "services": ["booking_api", "booking_data"]
+    }
+  },
+
   "gates": {
     "PRD_READY": {
       "passed": true,
-      "passed_at": "2025-12-21T10:05:00Z",
-      "artifact": "ai-docs/docs/prd/booking-prd.md"
+      "passed_at": "2025-12-21T10:05:00Z"
     },
     "RESEARCH_DONE": {
       "passed": true,
-      "passed_at": "2025-12-21T10:10:00Z",
-      "artifact": "ai-docs/docs/research/booking-research.md"
+      "passed_at": "2025-12-21T10:10:00Z"
     },
     "PLAN_APPROVED": {
       "passed": true,
       "passed_at": "2025-12-21T10:20:00Z",
-      "artifact": "ai-docs/docs/architecture/booking-plan.md",
       "approved_by": "user"
     },
     "IMPLEMENT_OK": {
       "passed": false
     }
-  },
-  "artifacts": {
-    "prd": "ai-docs/docs/prd/booking-prd.md",
-    "research": "ai-docs/docs/research/booking-research.md",
-    "plan": "ai-docs/docs/architecture/booking-plan.md"
   }
 }
+```
+
+### Структура `current_feature`
+
+| Поле | Тип | Описание |
+|------|-----|----------|
+| `id` | string | Feature ID (F001, F002, ...) |
+| `name` | string | slug для имён файлов (kebab-case) |
+| `title` | string | Человекочитаемое название |
+| `stage` | string | Текущий этап (PRD, RESEARCH, PLAN, IMPLEMENT, ...) |
+| `created` | string | Дата создания (YYYY-MM-DD) |
+| `artifacts` | object | Карта артефактов (тип → путь) |
+| `services` | array | Список созданных сервисов (после IMPLEMENT) |
+
+### Жизненный цикл фичи
+
+```
+1. /aidd-idea создаёт current_feature с новым FID
+2. Каждый этап добавляет артефакт в current_feature.artifacts
+3. /aidd-deploy переносит фичу в features_registry
+4. current_feature очищается (null)
+5. Готово для следующей фичи
 ```
 
 ---
@@ -210,15 +276,31 @@ cp .aidd/templates/project/.claude/settings.local.json.example .claude/settings.
 
 ## Важные соглашения
 
-### Пути артефактов
+### Формат имён артефактов
+
+```
+{YYYY-MM-DD}_{FID}_{slug}-{type}.md
+
+Где:
+- YYYY-MM-DD — дата создания
+- FID — Feature ID (F001, F002, ...)
+- slug — kebab-case название (≤30 символов)
+- type — тип артефакта
+```
+
+### Суффиксы типов
 
 | Тип | Суффикс | Пример |
 |-----|---------|--------|
-| PRD | `-prd.md` | `booking-prd.md` |
-| План архитектуры | `-plan.md` | `booking-plan.md` |
-| План фичи | `-plan.md` | `notifications-plan.md` |
-| Отчёт ревью | `review-*.md` | `review-report.md` |
-| Отчёт QA | `qa-*.md` | `qa-report.md` |
+| PRD | `-prd.md` | `2024-12-23_F001_table-booking-prd.md` |
+| План архитектуры | `-plan.md` | `2024-12-23_F001_table-booking-plan.md` |
+| План фичи | `-plan.md` | `2024-12-23_F042_email-notify-plan.md` |
+| Исследование | `-research.md` | `2024-12-23_F001_table-booking-research.md` |
+| Отчёт ревью | `-review.md` | `2024-12-23_F001_table-booking-review.md` |
+| Отчёт QA | `-qa.md` | `2024-12-23_F001_table-booking-qa.md` |
+| Отчёт валидации | `-validation.md` | `2024-12-23_F001_table-booking-validation.md` |
+
+> Подробная спецификация: [artifact-naming.md](artifact-naming.md)
 
 ### Именование сервисов
 
@@ -253,5 +335,6 @@ echo '{"project_name":"","mode":"CREATE","current_stage":1,"gates":{}}' > .pipel
 
 ---
 
-**Версия**: 1.0
+**Версия**: 2.0
 **Создан**: 2025-12-21
+**Обновлён**: 2025-12-23
