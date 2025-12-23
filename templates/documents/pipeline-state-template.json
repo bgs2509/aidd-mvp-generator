@@ -3,6 +3,8 @@
   "version": "1.0",
   "project_name": "",
   "mode": "CREATE",
+  "init_mode": "NEW_PROJECT",
+  "init_decisions": {},
   "current_stage": 0,
   "created_at": "",
   "updated_at": "",
