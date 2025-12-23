@@ -588,6 +588,115 @@ def copy_project_templates(project_name: str, project_slug: str) -> None:
 - Безопасно запускать `/init` повторно
 - Сохранять пользовательские изменения в файлах ЦП
 
+### 4. Копирование slash-команд
+
+> **Назначение**: Сделать команды AIDD видимыми в автодополнении Claude Code CLI.
+>
+> **Проблема**: Claude Code ищет slash-команды только в `{project}/.claude/commands/`.
+> Когда фреймворк подключен как submodule (`.aidd/`), команды из `.aidd/.claude/commands/`
+> не регистрируются автоматически.
+
+#### Алгоритм копирования
+
+```python
+from pathlib import Path
+import shutil
+
+
+def copy_slash_commands() -> int:
+    """
+    Копирует slash-команды из фреймворка в проект.
+
+    Returns:
+        Количество скопированных/обновлённых команд
+    """
+    framework_commands = Path(".aidd/.claude/commands")
+    project_commands = Path(".claude/commands")
+
+    # VERIFY: Проверить существование фреймворка
+    if not framework_commands.exists():
+        print("⚠️ Директория .aidd/.claude/commands/ не найдена")
+        return 0
+
+    # ACT: Создать директорию если не существует
+    project_commands.mkdir(parents=True, exist_ok=True)
+
+    copied = 0
+    updated = 0
+    skipped = 0
+
+    for cmd_file in framework_commands.glob("*.md"):
+        target = project_commands / cmd_file.name
+
+        if target.exists():
+            # Сравнить содержимое
+            if cmd_file.read_text() == target.read_text():
+                skipped += 1
+                continue
+            # Файл изменился — обновить
+            shutil.copy2(cmd_file, target)
+            updated += 1
+        else:
+            # Файл не существует — скопировать
+            shutil.copy2(cmd_file, target)
+            copied += 1
+
+    print(f"✓ Команды: {copied} скопировано, {updated} обновлено, {skipped} актуальны")
+    return copied + updated
+```
+
+#### Bash-эквивалент
+
+```bash
+# VERIFY: Проверить существование .aidd/.claude/commands/
+if [ ! -d ".aidd/.claude/commands" ]; then
+    echo "⚠️ Фреймворк не подключен или повреждён"
+    exit 1
+fi
+
+# ACT: Создать директорию и скопировать файлы
+mkdir -p .claude/commands
+
+for f in .aidd/.claude/commands/*.md; do
+    name=$(basename "$f")
+    target=".claude/commands/$name"
+
+    if [ -f "$target" ]; then
+        if cmp -s "$f" "$target"; then
+            echo "✓ $name — актуален"
+        else
+            cp "$f" "$target"
+            echo "↻ $name — обновлён"
+        fi
+    else
+        cp "$f" "$target"
+        echo "+ $name — скопирован"
+    fi
+done
+```
+
+#### Результат
+
+```
+.claude/
+└── commands/
+    ├── init.md          ← Копия из .aidd/
+    ├── idea.md
+    ├── research.md
+    ├── plan.md
+    ├── feature-plan.md
+    ├── generate.md
+    ├── review.md
+    ├── test.md
+    ├── validate.md
+    └── deploy.md
+```
+
+#### Обновление при `git submodule update`
+
+При обновлении submodule `.aidd/` команды могут измениться.
+Повторный запуск `/init` обновит изменённые файлы.
+
 ---
 
 ## Качественные ворота
@@ -624,11 +733,15 @@ def copy_project_templates(project_name: str, project_slug: str) -> None:
 │  Инициализация:                                                  │
 │  ✓ Создана структура ai-docs/docs/                              │
 │  ✓ Создана папка .claude/                                       │
+│  ✓ Скопировано 10 команд в .claude/commands/                    │
 │  ✓ Создан .pipeline-state.json                                  │
 │  ✓ Создан CLAUDE.md (с таблицами команд и агентов)              │
 │                                                                  │
 │  ────────────────────────────────────────────────────────────── │
 │  ✓ BOOTSTRAP_READY                                               │
+│                                                                  │
+│  Доступные команды: /idea /research /plan /generate /review     │
+│                     /test /validate /deploy /feature-plan       │
 │                                                                  │
 │  Следующий шаг: /idea "Описание вашего проекта"                 │
 │                                                                  │
@@ -687,9 +800,13 @@ def copy_project_templates(project_name: str, project_slug: str) -> None:
 │  ✓ .pipeline-state.json — создан                                │
 │  ⏭️  ai-docs/docs/ — пропущено (проект использует services/)     │
 │  ✓ .claude/ — создана                                           │
+│  ✓ Скопировано 10 команд в .claude/commands/                    │
 │                                                                  │
 │  ────────────────────────────────────────────────────────────── │
 │  ✓ BOOTSTRAP_READY                                               │
+│                                                                  │
+│  Доступные команды: /idea /research /plan /generate /review     │
+│                     /test /validate /deploy /feature-plan       │
 │                                                                  │
 │  Следующий шаг: /idea "Описание новой фичи"                     │
 │                                                                  │
