@@ -1,5 +1,33 @@
+---
+# === YAML Frontmatter (машиночитаемые метаданные) ===
+feature_id: "{FID}"
+feature_name: "{slug}"
+title: "Feature Plan: {Название фичи}"
+created: "{YYYY-MM-DD}"
+author: "AI (Architect)"
+type: "feature-plan"
+status: "PLAN_APPROVED"
+version: 1
+mode: "FEATURE"
+
+# Ссылки на связанные артефакты
+prd_ref: "prd/{YYYY-MM-DD}_{FID}_{slug}-prd.md"
+research_ref: "research/{YYYY-MM-DD}_{FID}_{slug}-research.md"
+
+# Затрагиваемые сервисы
+affected_services:
+  modified: []                         # Существующие сервисы для модификации
+  created: []                          # Новые сервисы для создания
+
+# Опционально
+related_features: []
+approved_by: null
+approved_at: null
+---
+
 # План интеграции фичи: {Название фичи}
 
+**Feature ID**: {FID}
 **Версия**: 1.0
 **Дата**: {YYYY-MM-DD}
 **Автор**: AI Agent (Архитектор)

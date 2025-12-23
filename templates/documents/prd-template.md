@@ -1,5 +1,26 @@
+---
+# === YAML Frontmatter (машиночитаемые метаданные) ===
+# Заполняется автоматически при создании артефакта
+
+feature_id: "{FID}"                    # F001, F002, ... (автогенерация)
+feature_name: "{slug}"                 # kebab-case, ≤30 символов
+title: "{Название проекта/фичи}"
+created: "{YYYY-MM-DD}"                # Дата создания
+author: "AI (Analyst)"
+type: "prd"
+status: "PRD_READY"                    # Draft → PRD_READY
+version: 1
+mode: "{CREATE|FEATURE}"
+
+# Опционально (заполняется по мере работы)
+related_features: []                   # [F001, F003] — связанные фичи
+services: []                           # [booking_api, booking_data]
+requirements_count: 0                  # Количество FR-* требований
+---
+
 # PRD: {Название проекта/фичи}
 
+**Feature ID**: {FID}
 **Версия**: 1.0
 **Дата**: {YYYY-MM-DD}
 **Автор**: AI Agent (Аналитик)

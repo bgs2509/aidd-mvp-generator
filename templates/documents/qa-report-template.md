@@ -1,5 +1,34 @@
+---
+# === YAML Frontmatter (машиночитаемые метаданные) ===
+feature_id: "{FID}"
+feature_name: "{slug}"
+title: "QA Report: {Название проекта/фичи}"
+created: "{YYYY-MM-DD}"
+author: "AI (QA)"
+type: "qa"
+status: "QA_PASSED"                    # Draft → QA_PASSED | QA_FAILED
+version: 1
+
+# Ссылки на связанные артефакты
+prd_ref: "prd/{YYYY-MM-DD}_{FID}_{slug}-prd.md"
+review_ref: "reports/review/{YYYY-MM-DD}_{FID}_{slug}-review.md"
+
+# Результаты тестирования
+tests:
+  total: 0
+  passed: 0
+  failed: 0
+  skipped: 0
+coverage_percent: 0
+bugs_count:
+  critical: 0
+  major: 0
+  minor: 0
+---
+
 # QA Report: {Название проекта/фичи}
 
+**Feature ID**: {FID}
 **Версия**: 1.0
 **Дата тестирования**: {YYYY-MM-DD}
 **Автор**: AI Agent (QA)

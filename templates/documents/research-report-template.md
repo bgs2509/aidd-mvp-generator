@@ -1,7 +1,28 @@
+---
+# === YAML Frontmatter (машиночитаемые метаданные) ===
+feature_id: "{FID}"
+feature_name: "{slug}"
+title: "Research: {Название проекта}"
+created: "{YYYY-MM-DD}"
+author: "AI (Researcher)"
+type: "research"
+status: "RESEARCH_DONE"
+version: 1
+mode: "{CREATE|FEATURE}"
+
+# Ссылки на связанные артефакты
+prd_ref: "prd/{YYYY-MM-DD}_{FID}_{slug}-prd.md"
+
+# Опционально
+related_features: []
+findings_count: 0                      # Количество ключевых находок
+---
+
 # Research Report: {Название проекта}
 
-**Версия**: 1.0  
-**Дата**: {YYYY-MM-DD}  
+**Feature ID**: {FID}
+**Версия**: 1.0
+**Дата**: {YYYY-MM-DD}
 **Автор**: AI Agent (Исследователь)
 
 ---

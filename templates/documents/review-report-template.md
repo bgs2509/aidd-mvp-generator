@@ -1,5 +1,29 @@
+---
+# === YAML Frontmatter (машиночитаемые метаданные) ===
+feature_id: "{FID}"
+feature_name: "{slug}"
+title: "Review Report: {Название проекта/фичи}"
+created: "{YYYY-MM-DD}"
+author: "AI (Reviewer)"
+type: "review"
+status: "REVIEW_OK"                    # Draft → REVIEW_OK | REVIEW_FAILED
+version: 1
+
+# Ссылки на связанные артефакты
+prd_ref: "prd/{YYYY-MM-DD}_{FID}_{slug}-prd.md"
+plan_ref: "architecture/{YYYY-MM-DD}_{FID}_{slug}-plan.md"
+
+# Результаты ревью
+issues_count:
+  critical: 0
+  major: 0
+  minor: 0
+coverage_percent: 0
+---
+
 # Review Report: {Название проекта/фичи}
 
+**Feature ID**: {FID}
 **Версия**: 1.0
 **Дата ревью**: {YYYY-MM-DD}
 **Автор**: AI Agent (Ревьюер)

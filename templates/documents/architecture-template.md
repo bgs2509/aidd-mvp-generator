@@ -1,5 +1,38 @@
+---
+# === YAML Frontmatter (машиночитаемые метаданные) ===
+feature_id: "{FID}"
+feature_name: "{slug}"
+title: "Architecture: {Название проекта}"
+created: "{YYYY-MM-DD}"
+author: "AI (Architect)"
+type: "architecture"
+status: "PLAN_APPROVED"                # Draft → PLAN_APPROVED
+version: 1
+mode: "CREATE"
+
+# Ссылки на связанные артефакты
+prd_ref: "prd/{YYYY-MM-DD}_{FID}_{slug}-prd.md"
+research_ref: "research/{YYYY-MM-DD}_{FID}_{slug}-research.md"
+
+# Сервисы
+services:
+  - "{context}_api"
+  - "{context}_data"
+
+# Технологии
+technologies:
+  backend: "FastAPI"
+  database: "PostgreSQL"
+  cache: "Redis"
+
+# Опционально
+approved_by: null
+approved_at: null
+---
+
 # Архитектурный план: {Название проекта}
 
+**Feature ID**: {FID}
 **Версия**: 1.0
 **Дата**: {YYYY-MM-DD}
 **Автор**: AI Agent (Архитектор)

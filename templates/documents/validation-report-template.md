@@ -1,5 +1,39 @@
+---
+# === YAML Frontmatter (машиночитаемые метаданные) ===
+feature_id: "{FID}"
+feature_name: "{slug}"
+title: "Validation Report: {Название проекта/фичи}"
+created: "{YYYY-MM-DD}"
+author: "AI (Validator)"
+type: "validation"
+status: "ALL_GATES_PASSED"             # Draft → ALL_GATES_PASSED | VALIDATION_FAILED
+version: 1
+
+# Ссылки на ВСЕ артефакты фичи
+artifacts:
+  prd: "prd/{YYYY-MM-DD}_{FID}_{slug}-prd.md"
+  research: "research/{YYYY-MM-DD}_{FID}_{slug}-research.md"
+  plan: "architecture/{YYYY-MM-DD}_{FID}_{slug}-plan.md"
+  review: "reports/review/{YYYY-MM-DD}_{FID}_{slug}-review.md"
+  qa: "reports/qa/{YYYY-MM-DD}_{FID}_{slug}-qa.md"
+
+# Статус ворот
+gates:
+  PRD_READY: false
+  RESEARCH_DONE: false
+  PLAN_APPROVED: false
+  IMPLEMENT_OK: false
+  REVIEW_OK: false
+  QA_PASSED: false
+  ALL_GATES_PASSED: false
+
+# Готовность к деплою
+deploy_ready: false
+---
+
 # Validation Report: {Название проекта/фичи}
 
+**Feature ID**: {FID}
 **Версия**: 1.0
 **Дата валидации**: {YYYY-MM-DD}
 **Автор**: AI Agent (Валидатор)
