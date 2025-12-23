@@ -34,16 +34,16 @@
 
 | Команда | Файл | Описание |
 |---------|------|----------|
-| `/init` | [.claude/commands/init.md](../.claude/commands/init.md) | Bootstrap (инициализация ЦП) |
-| `/idea` | [.claude/commands/idea.md](../.claude/commands/idea.md) | Создание PRD |
-| `/research` | [.claude/commands/research.md](../.claude/commands/research.md) | Исследование |
-| `/plan` | [.claude/commands/plan.md](../.claude/commands/plan.md) | Архитектура (CREATE) |
-| `/feature-plan` | [.claude/commands/feature-plan.md](../.claude/commands/feature-plan.md) | План фичи (FEATURE) |
-| `/generate` | [.claude/commands/generate.md](../.claude/commands/generate.md) | Генерация кода |
-| `/review` | [.claude/commands/review.md](../.claude/commands/review.md) | Код-ревью |
-| `/test` | [.claude/commands/test.md](../.claude/commands/test.md) | Тестирование |
-| `/validate` | [.claude/commands/validate.md](../.claude/commands/validate.md) | Валидация |
-| `/deploy` | [.claude/commands/deploy.md](../.claude/commands/deploy.md) | Деплой |
+| `/aidd-init` | [.claude/commands/aidd-init.md](../.claude/commands/aidd-init.md) | Bootstrap (инициализация ЦП) |
+| `/aidd-idea` | [.claude/commands/aidd-idea.md](../.claude/commands/aidd-idea.md) | Создание PRD |
+| `/aidd-research` | [.claude/commands/aidd-research.md](../.claude/commands/aidd-research.md) | Исследование |
+| `/aidd-plan` | [.claude/commands/aidd-plan.md](../.claude/commands/aidd-plan.md) | Архитектура (CREATE) |
+| `/aidd-feature-plan` | [.claude/commands/aidd-feature-plan.md](../.claude/commands/aidd-feature-plan.md) | План фичи (FEATURE) |
+| `/aidd-generate` | [.claude/commands/aidd-generate.md](../.claude/commands/aidd-generate.md) | Генерация кода |
+| `/aidd-review` | [.claude/commands/aidd-review.md](../.claude/commands/aidd-review.md) | Код-ревью |
+| `/aidd-test` | [.claude/commands/aidd-test.md](../.claude/commands/aidd-test.md) | Тестирование |
+| `/aidd-validate` | [.claude/commands/aidd-validate.md](../.claude/commands/aidd-validate.md) | Валидация |
+| `/aidd-deploy` | [.claude/commands/aidd-deploy.md](../.claude/commands/aidd-deploy.md) | Деплой |
 
 > Обзор пайплайна: [CLAUDE.md](../CLAUDE.md#9-этапный-пайплайн)
 
@@ -134,7 +134,7 @@
 
 ## Шаблоны проекта (корневые файлы ЦП)
 
-> Файлы, создаваемые в корне целевого проекта при `/init`.
+> Файлы, создаваемые в корне целевого проекта при `/aidd-init`.
 
 | Шаблон | Путь в генераторе | Создаёт в ЦП | Назначение |
 |--------|-------------------|--------------|------------|

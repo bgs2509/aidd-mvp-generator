@@ -40,7 +40,7 @@
 
 ## Этап 0: Bootstrap (Инициализация)
 
-**Команда**: `/init` (ручной) или авто с `/idea`
+**Команда**: `/aidd-init` (ручной) или авто с `/aidd-idea`
 **Агент**: — (системный)
 **Ворота**: `BOOTSTRAP_READY`
 
@@ -72,7 +72,7 @@
 
 ## Этап 1: Идея → PRD
 
-**Команда**: `/idea`
+**Команда**: `/aidd-idea`
 **Агент**: Аналитик
 **Ворота**: `PRD_READY`
 
@@ -103,7 +103,7 @@
 
 ## Этап 2: Исследование
 
-**Команда**: `/research`
+**Команда**: `/aidd-research`
 **Агент**: Исследователь
 **Ворота**: `RESEARCH_DONE`
 
@@ -135,11 +135,11 @@
 
 ## Этап 3: Архитектура
 
-**Команда**: `/plan` (CREATE) или `/feature-plan` (FEATURE)
+**Команда**: `/aidd-plan` (CREATE) или `/aidd-feature-plan` (FEATURE)
 **Агент**: Архитектор
 **Ворота**: `PLAN_APPROVED`
 
-### Режим CREATE (`/plan`)
+### Режим CREATE (`/aidd-plan`)
 
 | Фаза | # | Читать | Условие |
 |------|---|--------|---------|
@@ -153,7 +153,7 @@
 | **4. Шаблоны** | 7 | `.aidd/templates/documents/architecture-template.md` | Всегда |
 | **4. База знаний** | 8 | `.aidd/knowledge/architecture/*.md` | Всегда |
 
-### Режим FEATURE (`/feature-plan`)
+### Режим FEATURE (`/aidd-feature-plan`)
 
 | Фаза | # | Читать | Условие |
 |------|---|--------|---------|
@@ -182,7 +182,7 @@
 
 ## Этап 4: Реализация
 
-**Команда**: `/generate`
+**Команда**: `/aidd-generate`
 **Агент**: Реализатор
 **Ворота**: `IMPLEMENT_OK`
 
@@ -218,7 +218,7 @@
 
 ## Этап 5: Ревью
 
-**Команда**: `/review`
+**Команда**: `/aidd-review`
 **Агент**: Ревьюер
 **Ворота**: `REVIEW_OK`
 
@@ -249,7 +249,7 @@
 
 ## Этап 6: QA
 
-**Команда**: `/test`
+**Команда**: `/aidd-test`
 **Агент**: QA
 **Ворота**: `QA_PASSED`
 
@@ -278,7 +278,7 @@
 
 ## Этап 7: Валидация
 
-**Команда**: `/validate`
+**Команда**: `/aidd-validate`
 **Агент**: Валидатор
 **Ворота**: `ALL_GATES_PASSED`
 
@@ -311,7 +311,7 @@
 
 ## Этап 8: Деплой
 
-**Команда**: `/deploy`
+**Команда**: `/aidd-deploy`
 **Агент**: Валидатор
 **Ворота**: `DEPLOYED`
 
@@ -343,15 +343,15 @@
 
 | # | Этап | Команда | Агент | Читает | Создаёт | Ворота |
 |---|------|---------|-------|--------|---------|--------|
-| 0 | Bootstrap | `/init` | — | init.md, target-structure | Структура ЦП | BOOTSTRAP_READY |
-| 1 | Идея | `/idea` | Аналитик | CLAUDE, workflow, analyst, prd-template | PRD, state | PRD_READY |
-| 2 | Исследование | `/research` | Исследователь | researcher, knowledge | (state) | RESEARCH_DONE |
-| 3 | Архитектура | `/plan` | Архитектор | architect, ddd, http-only | План | PLAN_APPROVED |
-| 4 | Реализация | `/generate` | Реализатор | implementer, conventions, templates | Код, тесты | IMPLEMENT_OK |
-| 5 | Ревью | `/review` | Ревьюер | reviewer, conventions | Отчёт | REVIEW_OK |
-| 6 | QA | `/test` | QA | qa, testing | Отчёт QA | QA_PASSED |
-| 7 | Валидация | `/validate` | Валидатор | validator | RTM, отчёт | ALL_GATES_PASSED |
-| 8 | Деплой | `/deploy` | Валидатор | docker | — | DEPLOYED |
+| 0 | Bootstrap | `/aidd-init` | — | init.md, target-structure | Структура ЦП | BOOTSTRAP_READY |
+| 1 | Идея | `/aidd-idea` | Аналитик | CLAUDE, workflow, analyst, prd-template | PRD, state | PRD_READY |
+| 2 | Исследование | `/aidd-research` | Исследователь | researcher, knowledge | (state) | RESEARCH_DONE |
+| 3 | Архитектура | `/aidd-plan` | Архитектор | architect, ddd, http-only | План | PLAN_APPROVED |
+| 4 | Реализация | `/aidd-generate` | Реализатор | implementer, conventions, templates | Код, тесты | IMPLEMENT_OK |
+| 5 | Ревью | `/aidd-review` | Ревьюер | reviewer, conventions | Отчёт | REVIEW_OK |
+| 6 | QA | `/aidd-test` | QA | qa, testing | Отчёт QA | QA_PASSED |
+| 7 | Валидация | `/aidd-validate` | Валидатор | validator | RTM, отчёт | ALL_GATES_PASSED |
+| 8 | Деплой | `/aidd-deploy` | Валидатор | docker | — | DEPLOYED |
 
 ---
 

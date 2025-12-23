@@ -236,7 +236,7 @@ cp .aidd/templates/project/.claude/settings.local.json.example .claude/settings.
 
 ## Bootstrap: Инициализация структуры
 
-При первом запуске `/idea` в пустой директории создаётся:
+При первом запуске `/aidd-idea` в пустой директории создаётся:
 
 ```bash
 mkdir -p ai-docs/docs/{prd,architecture,plans,reports,research}

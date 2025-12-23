@@ -229,9 +229,9 @@ grep -c "CREATE" CLAUDE.md workflow.md docs/NAVIGATION.md 2>/dev/null | paste -s
 echo "FEATURE упоминания:"
 grep -c "FEATURE" CLAUDE.md workflow.md docs/NAVIGATION.md 2>/dev/null | paste -sd+ | bc
 
-# Проверка /plan vs /feature-plan
-[ -f ".claude/commands/plan.md" ] && echo "✅ /plan (CREATE mode)" || echo "❌ /plan"
-[ -f ".claude/commands/feature-plan.md" ] && echo "✅ /feature-plan (FEATURE mode)" || echo "❌ /feature-plan"
+# Проверка /aidd-plan vs /feature-plan
+[ -f ".claude/commands/plan.md" ] && echo "✅ /aidd-plan (CREATE mode)" || echo "❌ /plan"
+[ -f ".claude/commands/feature-plan.md" ] && echo "✅ /aidd-feature-plan (FEATURE mode)" || echo "❌ /feature-plan"
 # Ожидание: Оба режима описаны, обе команды существуют
 ```
 
@@ -585,15 +585,15 @@ done
 
 | Этап | Команда | Агент | Ворота |
 |------|---------|-------|--------|
-| 0 | /init | — | BOOTSTRAP_READY |
-| 1 | /idea | analyst | PRD_READY |
-| 2 | /research | researcher | RESEARCH_DONE |
-| 3 | /plan или /feature-plan | architect | PLAN_APPROVED |
-| 4 | /generate | implementer | IMPLEMENT_OK |
-| 5 | /review | reviewer | REVIEW_OK |
-| 6 | /test | qa | QA_PASSED |
-| 7 | /validate | validator | ALL_GATES_PASSED |
-| 8 | /deploy | validator | DEPLOYED |
+| 0 | /aidd-init | — | BOOTSTRAP_READY |
+| 1 | /aidd-idea | analyst | PRD_READY |
+| 2 | /aidd-research | researcher | RESEARCH_DONE |
+| 3 | /aidd-plan или /aidd-feature-plan | architect | PLAN_APPROVED |
+| 4 | /aidd-generate | implementer | IMPLEMENT_OK |
+| 5 | /aidd-review | reviewer | REVIEW_OK |
+| 6 | /aidd-test | qa | QA_PASSED |
+| 7 | /aidd-validate | validator | ALL_GATES_PASSED |
+| 8 | /aidd-deploy | validator | DEPLOYED |
 
 ---
 
@@ -773,7 +773,7 @@ echo "Упоминания в workflow.md: $(grep -c "FEATURE" workflow.md 2>/de
 echo ""
 echo "=== Команды для режимов ==="
 if [ -f ".claude/commands/plan.md" ]; then
-  echo "✅ /plan (CREATE mode)"
+  echo "✅ /aidd-plan (CREATE mode)"
   if grep -qi "CREATE\|полный\|новый проект" ".claude/commands/plan.md" 2>/dev/null; then
     echo "   ✅ Описывает CREATE mode"
   else
@@ -782,7 +782,7 @@ if [ -f ".claude/commands/plan.md" ]; then
 fi
 
 if [ -f ".claude/commands/feature-plan.md" ]; then
-  echo "✅ /feature-plan (FEATURE mode)"
+  echo "✅ /aidd-feature-plan (FEATURE mode)"
   if grep -qi "FEATURE\|добавление\|существующий" ".claude/commands/feature-plan.md" 2>/dev/null; then
     echo "   ✅ Описывает FEATURE mode"
   else

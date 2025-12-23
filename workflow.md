@@ -20,7 +20,7 @@ AIDD-MVP Generator использует 9-этапный конвейер раз
 │                                                                              │
 │  ┌───────────┐                                                               │
 │  │ BOOTSTRAP │  Этап 0: Инициализация целевого проекта                      │
-│  │   /init   │  ─────────────────────────────────────────────────────────── │
+│  │/aidd-init │  ─────────────────────────────────────────────────────────── │
 │  └─────┬─────┘                                                               │
 │        │ BOOTSTRAP_READY                                                     │
 │        ▼                                                                     │
@@ -56,7 +56,7 @@ AIDD-MVP Generator использует 9-этапный конвейер раз
 Полный 9-этапный процесс (этапы 0-8) для создания проекта с нуля.
 
 ```bash
-/idea "Создать сервис бронирования столиков в ресторанах"
+/aidd-idea "Создать сервис бронирования столиков в ресторанах"
 ```
 
 ### FEATURE — Добавление функционала
@@ -64,12 +64,12 @@ AIDD-MVP Generator использует 9-этапный конвейер раз
 Адаптированный процесс для добавления фичи в существующий проект.
 
 ```bash
-/idea "Добавить систему уведомлений по email"
+/aidd-idea "Добавить систему уведомлений по email"
 ```
 
 **Отличия режима FEATURE**:
 - Этап 2 (Исследование) — анализ существующего кода
-- Этап 3 (Архитектура) — `/feature-plan` вместо `/plan`
+- Этап 3 (Архитектура) — `/aidd-feature-plan` вместо `/aidd-plan`
 - Интеграция с существующими компонентами
 
 ---
@@ -97,7 +97,7 @@ AIDD-MVP Generator использует 9-этапный конвейер раз
 
 ### Предварительные условия
 
-Перед запуском `/idea` фреймворк должен быть подключен:
+Перед запуском `/aidd-idea` фреймворк должен быть подключен:
 
 ```bash
 # Если фреймворк ещё не подключен
@@ -105,9 +105,9 @@ git submodule add https://github.com/your-org/aidd-mvp-generator.git .aidd
 git submodule update --init --recursive
 ```
 
-### Автоматическая инициализация при `/idea`
+### Автоматическая инициализация при `/aidd-idea`
 
-При первом запуске `/idea` AI-агент выполняет:
+При первом запуске `/aidd-idea` AI-агент выполняет:
 
 > **VERIFY BEFORE ACT**: Перед созданием проверяем существование директорий.
 
@@ -179,7 +179,7 @@ def detect_mode() -> str:
 
 **Важно**: Режим можно переопределить явно:
 ```bash
-/idea --mode=FEATURE "Добавить фичу"
+/aidd-idea --mode=FEATURE "Добавить фичу"
 ```
 
 ---
@@ -190,7 +190,7 @@ def detect_mode() -> str:
 
 | Параметр | Значение |
 |----------|----------|
-| **Команда** | `/init` (ручной) или авто с `/idea` |
+| **Команда** | `/aidd-init` (ручной) или авто с `/aidd-idea` |
 | **Агент** | — (системный) |
 | **Вход** | Пустая директория с git и .aidd/ |
 | **Выход** | Структура ЦП, `.pipeline-state.json`, `CLAUDE.md` |
@@ -236,8 +236,8 @@ done
 [ -f "CLAUDE.md" ] || echo "# Project\n\nСм. .aidd/CLAUDE.md" > CLAUDE.md
 ```
 
-**Примечание**: Этап 0 выполняется автоматически при первом `/idea`, если проверки
-не были пройдены ранее. Явный запуск `/init` рекомендуется для диагностики.
+**Примечание**: Этап 0 выполняется автоматически при первом `/aidd-idea`, если проверки
+не были пройдены ранее. Явный запуск `/aidd-init` рекомендуется для диагностики.
 
 ---
 
@@ -245,7 +245,7 @@ done
 
 | Параметр | Значение |
 |----------|----------|
-| **Команда** | `/idea "описание"` |
+| **Команда** | `/aidd-idea "описание"` |
 | **Агент** | Аналитик |
 | **Вход** | Описание идеи от пользователя |
 | **Выход** | `ai-docs/docs/prd/{name}-prd.md` |
@@ -270,7 +270,7 @@ done
 
 | Параметр | Значение |
 |----------|----------|
-| **Команда** | `/research` |
+| **Команда** | `/aidd-research` |
 | **Агент** | Исследователь |
 | **Вход** | PRD, существующий код (для FEATURE) |
 | **Выход** | `ai-docs/docs/research/{name}-research.md` |
@@ -299,7 +299,7 @@ done
 
 | Параметр | Значение |
 |----------|----------|
-| **Команда** | `/plan` (CREATE) или `/feature-plan` (FEATURE) |
+| **Команда** | `/aidd-plan` (CREATE) или `/aidd-feature-plan` (FEATURE) |
 | **Агент** | Архитектор |
 | **Вход** | PRD, Research Report |
 | **Выход** | `ai-docs/docs/architecture/{name}-plan.md` |
@@ -329,7 +329,7 @@ done
 
 | Параметр | Значение |
 |----------|----------|
-| **Команда** | `/generate` |
+| **Команда** | `/aidd-generate` |
 | **Агент** | Реализатор |
 | **Вход** | Утверждённый план |
 | **Выход** | Код сервисов, тесты, инфраструктура |
@@ -358,7 +358,7 @@ done
 
 | Параметр | Значение |
 |----------|----------|
-| **Команда** | `/review` |
+| **Команда** | `/aidd-review` |
 | **Агент** | Ревьюер |
 | **Вход** | Сгенерированный код |
 | **Выход** | `ai-docs/docs/reports/review-report.md` |
@@ -383,7 +383,7 @@ done
 
 | Параметр | Значение |
 |----------|----------|
-| **Команда** | `/test` |
+| **Команда** | `/aidd-test` |
 | **Агент** | QA |
 | **Вход** | Код после ревью |
 | **Выход** | `ai-docs/docs/reports/qa-report.md` |
@@ -408,7 +408,7 @@ done
 
 | Параметр | Значение |
 |----------|----------|
-| **Команда** | `/validate` |
+| **Команда** | `/aidd-validate` |
 | **Агент** | Валидатор |
 | **Вход** | Все артефакты проекта |
 | **Выход** | `ai-docs/docs/reports/validation-report.md` |
@@ -435,7 +435,7 @@ done
 
 | Параметр | Значение |
 |----------|----------|
-| **Команда** | `/deploy` |
+| **Команда** | `/aidd-deploy` |
 | **Агент** | Валидатор |
 | **Вход** | Валидированный проект |
 | **Выход** | Работающее приложение |
@@ -464,15 +464,15 @@ make logs
 
 | # | Этап | Команда | Агент | Ворота |
 |---|------|---------|-------|--------|
-| 0 | Bootstrap | `/init` | — | `BOOTSTRAP_READY` |
-| 1 | Идея | `/idea` | Аналитик | `PRD_READY` |
-| 2 | Исследование | `/research` | Исследователь | `RESEARCH_DONE` |
-| 3 | Архитектура | `/plan` | Архитектор | `PLAN_APPROVED` |
-| 4 | Реализация | `/generate` | Реализатор | `IMPLEMENT_OK` |
-| 5 | Ревью | `/review` | Ревьюер | `REVIEW_OK` |
-| 6 | QA | `/test` | QA | `QA_PASSED` |
-| 7 | Валидация | `/validate` | Валидатор | `ALL_GATES_PASSED` |
-| 8 | Деплой | `/deploy` | Валидатор | `DEPLOYED` |
+| 0 | Bootstrap | `/aidd-init` | — | `BOOTSTRAP_READY` |
+| 1 | Идея | `/aidd-idea` | Аналитик | `PRD_READY` |
+| 2 | Исследование | `/aidd-research` | Исследователь | `RESEARCH_DONE` |
+| 3 | Архитектура | `/aidd-plan` | Архитектор | `PLAN_APPROVED` |
+| 4 | Реализация | `/aidd-generate` | Реализатор | `IMPLEMENT_OK` |
+| 5 | Ревью | `/aidd-review` | Ревьюер | `REVIEW_OK` |
+| 6 | QA | `/aidd-test` | QA | `QA_PASSED` |
+| 7 | Валидация | `/aidd-validate` | Валидатор | `ALL_GATES_PASSED` |
+| 8 | Деплой | `/aidd-deploy` | Валидатор | `DEPLOYED` |
 
 ### Почему 9 этапов (0-8) и 7 ролей (P-033)
 
@@ -520,7 +520,7 @@ make logs
 
 ```bash
 # 1. Описываем идею
-/idea "Создать сервис бронирования столиков в ресторанах.
+/aidd-idea "Создать сервис бронирования столиков в ресторанах.
 Пользователи могут искать рестораны, смотреть свободные столики,
 бронировать на определённое время. Рестораны получают уведомления
 о новых бронях через Telegram."
@@ -529,46 +529,46 @@ make logs
 # Ворота: PRD_READY ✓
 
 # 2. Исследование
-/research
+/aidd-research
 
 # Агент: Исследователь анализирует требования
 # Ворота: RESEARCH_DONE ✓
 
 # 3. Архитектура
-/plan
+/aidd-plan
 
 # Агент: Архитектор создаёт план
 # Пользователь утверждает план
 # Ворота: PLAN_APPROVED ✓
 
 # 4. Реализация
-/generate
+/aidd-generate
 
 # Агент: Реализатор генерирует код
 # Создаются: infrastructure, data-api, business-api, bot
 # Ворота: IMPLEMENT_OK ✓
 
 # 5. Ревью
-/review
+/aidd-review
 
 # Агент: Ревьюер проверяет код
 # Ворота: REVIEW_OK ✓
 
 # 6. QA
-/test
+/aidd-test
 
 # Агент: QA запускает тесты
 # Coverage: 78% ✓
 # Ворота: QA_PASSED ✓
 
 # 7. Валидация
-/validate
+/aidd-validate
 
 # Агент: Валидатор проверяет все артефакты
 # Ворота: ALL_GATES_PASSED ✓
 
 # 8. Деплой
-/deploy
+/aidd-deploy
 
 # Агент: Запускает docker-compose
 # Ворота: DEPLOYED ✓
@@ -584,7 +584,7 @@ make logs
 
 ### Формат файла
 
-Файл `.pipeline-state.json` создаётся в корне ЦЕЛЕВОГО ПРОЕКТА при первом `/idea`.
+Файл `.pipeline-state.json` создаётся в корне ЦЕЛЕВОГО ПРОЕКТА при первом `/aidd-idea`.
 
 ```json
 {
@@ -679,21 +679,21 @@ def check_preconditions(command: str) -> bool:
     """Проверка предусловий перед выполнением команды."""
 
     preconditions = {
-        "/init": [],  # Нет предусловий — первый этап
-        "/idea": ["BOOTSTRAP_READY"],  # Авто-bootstrap если не пройден
-        "/research": ["PRD_READY"],
-        "/plan": ["PRD_READY", "RESEARCH_DONE"],
-        "/feature-plan": ["PRD_READY", "RESEARCH_DONE"],
-        "/generate": ["PLAN_APPROVED"],
-        "/review": ["IMPLEMENT_OK"],
-        "/test": ["REVIEW_OK"],
-        "/validate": ["QA_PASSED"],
-        "/deploy": ["ALL_GATES_PASSED"]
+        "/aidd-init": [],  # Нет предусловий — первый этап
+        "/aidd-idea": ["BOOTSTRAP_READY"],  # Авто-bootstrap если не пройден
+        "/aidd-research": ["PRD_READY"],
+        "/aidd-plan": ["PRD_READY", "RESEARCH_DONE"],
+        "/aidd-feature-plan": ["PRD_READY", "RESEARCH_DONE"],
+        "/aidd-generate": ["PLAN_APPROVED"],
+        "/aidd-review": ["IMPLEMENT_OK"],
+        "/aidd-test": ["REVIEW_OK"],
+        "/aidd-validate": ["QA_PASSED"],
+        "/aidd-deploy": ["ALL_GATES_PASSED"]
     }
 
     state = read_json(".pipeline-state.json")
     if not state:
-        return command == "/idea"
+        return command == "/aidd-idea"
 
     for gate in preconditions.get(command, []):
         if not state.get("gates", {}).get(gate, {}).get("passed"):
@@ -707,16 +707,16 @@ def check_preconditions(command: str) -> bool:
 
 | Команда | Требуемые ворота | Если не пройдены |
 |---------|-----------------|------------------|
-| `/init` | — | — |
-| `/idea` | BOOTSTRAP_READY | Авто-запуск bootstrap или "/init" |
-| `/research` | PRD_READY | "Сначала выполните /idea" |
-| `/plan` | PRD_READY, RESEARCH_DONE | "Сначала выполните /research" |
-| `/feature-plan` | PRD_READY, RESEARCH_DONE | "Сначала выполните /research" |
-| `/generate` | PLAN_APPROVED | "Сначала утвердите план" |
-| `/review` | IMPLEMENT_OK | "Сначала выполните /generate" |
-| `/test` | REVIEW_OK | "Сначала выполните /review" |
-| `/validate` | QA_PASSED | "Сначала выполните /test" |
-| `/deploy` | ALL_GATES_PASSED | "Сначала выполните /validate" |
+| `/aidd-init` | — | — |
+| `/aidd-idea` | BOOTSTRAP_READY | Авто-запуск bootstrap или "/aidd-init" |
+| `/aidd-research` | PRD_READY | "Сначала выполните /aidd-idea" |
+| `/aidd-plan` | PRD_READY, RESEARCH_DONE | "Сначала выполните /aidd-research" |
+| `/aidd-feature-plan` | PRD_READY, RESEARCH_DONE | "Сначала выполните /aidd-research" |
+| `/aidd-generate` | PLAN_APPROVED | "Сначала утвердите план" |
+| `/aidd-review` | IMPLEMENT_OK | "Сначала выполните /aidd-generate" |
+| `/aidd-test` | REVIEW_OK | "Сначала выполните /aidd-review" |
+| `/aidd-validate` | QA_PASSED | "Сначала выполните /aidd-test" |
+| `/aidd-deploy` | ALL_GATES_PASSED | "Сначала выполните /aidd-validate" |
 
 ---
 
@@ -813,8 +813,8 @@ def check_gate(gate: str) -> GateResult:
 AI-агент **НЕ МОЖЕТ** перейти к следующему этапу, если ворота не пройдены.
 
 ```
-❌ PRD_READY не пройден → /plan заблокирована
-❌ PLAN_APPROVED не пройден → /generate заблокирована
+❌ PRD_READY не пройден → /aidd-plan заблокирована
+❌ PLAN_APPROVED не пройден → /aidd-generate заблокирована
 ```
 
 ### 2. Откат и восстановление при неудаче (P-004)
@@ -871,13 +871,13 @@ def handle_gate_failure(gate: str, reason: str) -> Action:
 
 **Пример восстановления**:
 ```
-/validate
+/aidd-validate
 → ❌ QA_PASSED: Coverage 68% (требуется ≥75%)
 → Автоматическое действие: Добавить тесты
 [AI добавляет тесты]
-/test
+/aidd-test
 → ✓ QA_PASSED: Coverage 76%
-/validate
+/aidd-validate
 → ✓ ALL_GATES_PASSED
 ```
 
@@ -939,31 +939,31 @@ def handle_gate_failure(gate: str, reason: str) -> Action:
 |--------|--------|---------|
 | Цель | Новый MVP с нуля | Добавление фичи |
 | Этап 2 | Анализ требований | Анализ кода |
-| Этап 3 | `/plan` — полная архитектура | `/feature-plan` — план интеграции |
+| Этап 3 | `/aidd-plan` — полная архитектура | `/aidd-feature-plan` — план интеграции |
 | Артефакты | Новый `ai-docs/` | Интеграция в существующий |
 | Тесты | Создание с нуля | Расширение существующих |
 
 ### Полный процесс FEATURE
 
 ```
-Этап 1: /idea "Добавить email уведомления"
+Этап 1: /aidd-idea "Добавить email уведомления"
 ├── Аналитик создаёт FEATURE_PRD
 ├── Фокус на интеграции с существующим функционалом
 └── Артефакт: ai-docs/docs/prd/notifications-prd.md
 
-Этап 2: /research
+Этап 2: /aidd-research
 ├── Исследователь анализирует СУЩЕСТВУЮЩИЙ код
 ├── Выявляет точки расширения
 ├── Определяет зависимости
 └── Рекомендации по интеграции
 
-Этап 3: /feature-plan (НЕ /plan!)
+Этап 3: /aidd-feature-plan (НЕ /aidd-plan!)
 ├── Архитектор создаёт план ИНТЕГРАЦИИ
 ├── Учитывает существующие компоненты
 ├── Минимизирует изменения в существующем коде
 └── Артефакт: ai-docs/docs/plans/notifications-plan.md
 
-Этап 4: /generate
+Этап 4: /aidd-generate
 ├── Реализатор создаёт новый код
 ├── Интегрирует с существующими сервисами
 ├── Расширяет, не ломает
@@ -979,30 +979,30 @@ def handle_gate_failure(gate: str, reason: str) -> Action:
 cd booking-service/
 
 # 2. Описываем фичу
-/idea "Добавить систему email уведомлений.
+/aidd-idea "Добавить систему email уведомлений.
 При бронировании отправлять подтверждение на email.
 При отмене — уведомление об отмене."
 
 # 3. Исследование существующего кода
-/research
+/aidd-research
 # Агент анализирует:
 # - Структуру сервисов
 # - Точки, где нужны уведомления
 # - Существующие интеграции
 
-# 4. План фичи (НЕ /plan!)
-/feature-plan
+# 4. План фичи (НЕ /aidd-plan!)
+/aidd-feature-plan
 # Агент создаёт план интеграции:
 # - NotificationService в booking_api
 # - Интеграция с BookingService
 # - Новый HTTP клиент для email
 
 # 5-8. Генерация, ревью, QA, деплой
-/generate
-/review
-/test
-/validate
-/deploy
+/aidd-generate
+/aidd-review
+/aidd-test
+/aidd-validate
+/aidd-deploy
 ```
 
 ### Маркеры режима FEATURE

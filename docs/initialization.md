@@ -8,7 +8,7 @@
 
 ## Обзор
 
-При запуске любой slash-команды (`/idea`, `/research`, `/plan` и т.д.) AI-агент
+При запуске любой slash-команды (`/aidd-idea`, `/aidd-research`, `/aidd-plan` и т.д.) AI-агент
 ОБЯЗАН следовать 4-фазному алгоритму инициализации.
 
 ```
@@ -146,15 +146,15 @@ existing_artifacts = {
 
 | Команда | Требуемые ворота | Если не пройдены |
 |---------|-----------------|------------------|
-| `/idea` | — | — (первый этап) |
-| `/research` | `PRD_READY` | "Сначала выполните /idea" |
-| `/plan` | `PRD_READY`, `RESEARCH_DONE` | "Сначала выполните /research" |
-| `/feature-plan` | `PRD_READY`, `RESEARCH_DONE` | "Сначала выполните /research" |
-| `/generate` | `PLAN_APPROVED` | "Сначала утвердите план" |
-| `/review` | `IMPLEMENT_OK` | "Сначала выполните /generate" |
-| `/test` | `REVIEW_OK` | "Сначала выполните /review" |
-| `/validate` | `QA_PASSED` | "Сначала выполните /test" |
-| `/deploy` | `ALL_GATES_PASSED` | "Сначала выполните /validate" |
+| `/aidd-idea` | — | — (первый этап) |
+| `/aidd-research` | `PRD_READY` | "Сначала выполните /idea" |
+| `/aidd-plan` | `PRD_READY`, `RESEARCH_DONE` | "Сначала выполните /research" |
+| `/aidd-feature-plan` | `PRD_READY`, `RESEARCH_DONE` | "Сначала выполните /research" |
+| `/aidd-generate` | `PLAN_APPROVED` | "Сначала утвердите план" |
+| `/aidd-review` | `IMPLEMENT_OK` | "Сначала выполните /generate" |
+| `/aidd-test` | `REVIEW_OK` | "Сначала выполните /review" |
+| `/aidd-validate` | `QA_PASSED` | "Сначала выполните /test" |
+| `/aidd-deploy` | `ALL_GATES_PASSED` | "Сначала выполните /validate" |
 
 ### Алгоритм проверки
 
@@ -180,7 +180,7 @@ def check_preconditions(command: str) -> bool:
 
     state = read_json("./.pipeline-state.json")
     if not state:
-        return command == "/idea"  # Только /idea можно без state
+        return command == "/idea"  # Только /aidd-idea можно без state
 
     for gate in preconditions.get(command, []):
         if not state.get("gates", {}).get(gate, {}).get("passed"):
@@ -220,15 +220,15 @@ read(role_file)
 
 | Команда | Роль |
 |---------|------|
-| `/idea` | analyst |
-| `/research` | researcher |
-| `/plan` | architect |
-| `/feature-plan` | architect |
-| `/generate` | implementer |
-| `/review` | reviewer |
-| `/test` | qa |
-| `/validate` | validator |
-| `/deploy` | validator |
+| `/aidd-idea` | analyst |
+| `/aidd-research` | researcher |
+| `/aidd-plan` | architect |
+| `/aidd-feature-plan` | architect |
+| `/aidd-generate` | implementer |
+| `/aidd-review` | reviewer |
+| `/aidd-test` | qa |
+| `/aidd-validate` | validator |
+| `/aidd-deploy` | validator |
 
 ---
 
@@ -394,22 +394,22 @@ def detect_mode(state: dict, existing_artifacts: dict) -> str:
 
 | Команда | Фаза 1 (ЦП) | Фаза 2 | Фаза 3 (Фреймворк) | Фаза 4 |
 |---------|-------------|--------|--------------------|---------
-| `/idea` | CLAUDE.md, state, ai-docs | — | CLAUDE, workflow, idea.md, analyst.md | prd-template (если PRD нет) |
-| `/research` | CLAUDE.md, state, PRD | PRD_READY | CLAUDE, workflow, research.md, researcher.md | knowledge/architecture |
-| `/plan` | CLAUDE.md, state, PRD | PRD_READY, RESEARCH_DONE | CLAUDE, workflow, plan.md, architect.md | architecture-template, knowledge/architecture |
-| `/feature-plan` | CLAUDE.md, state, PRD, существующая архитектура | PRD_READY, RESEARCH_DONE | CLAUDE, workflow, feature-plan.md, architect.md | — |
-| `/generate` | CLAUDE.md, state, план | PLAN_APPROVED | CLAUDE, workflow, generate.md, implementer.md | templates/services, knowledge/services |
-| `/review` | CLAUDE.md, state, код | IMPLEMENT_OK | CLAUDE, workflow, review.md, reviewer.md | conventions.md |
-| `/test` | CLAUDE.md, state, PRD, код | REVIEW_OK | CLAUDE, workflow, test.md, qa.md | knowledge/quality |
-| `/validate` | CLAUDE.md, state, все артефакты | QA_PASSED | CLAUDE, workflow, validate.md, validator.md | — |
-| `/deploy` | CLAUDE.md, state, инфраструктура | ALL_GATES_PASSED | CLAUDE, workflow, deploy.md, validator.md | knowledge/infrastructure |
+| `/aidd-idea` | CLAUDE.md, state, ai-docs | — | CLAUDE, workflow, idea.md, analyst.md | prd-template (если PRD нет) |
+| `/aidd-research` | CLAUDE.md, state, PRD | PRD_READY | CLAUDE, workflow, research.md, researcher.md | knowledge/architecture |
+| `/aidd-plan` | CLAUDE.md, state, PRD | PRD_READY, RESEARCH_DONE | CLAUDE, workflow, plan.md, architect.md | architecture-template, knowledge/architecture |
+| `/aidd-feature-plan` | CLAUDE.md, state, PRD, существующая архитектура | PRD_READY, RESEARCH_DONE | CLAUDE, workflow, feature-plan.md, architect.md | — |
+| `/aidd-generate` | CLAUDE.md, state, план | PLAN_APPROVED | CLAUDE, workflow, generate.md, implementer.md | templates/services, knowledge/services |
+| `/aidd-review` | CLAUDE.md, state, код | IMPLEMENT_OK | CLAUDE, workflow, review.md, reviewer.md | conventions.md |
+| `/aidd-test` | CLAUDE.md, state, PRD, код | REVIEW_OK | CLAUDE, workflow, test.md, qa.md | knowledge/quality |
+| `/aidd-validate` | CLAUDE.md, state, все артефакты | QA_PASSED | CLAUDE, workflow, validate.md, validator.md | — |
+| `/aidd-deploy` | CLAUDE.md, state, инфраструктура | ALL_GATES_PASSED | CLAUDE, workflow, deploy.md, validator.md | knowledge/infrastructure |
 
 ---
 
-## Пример: Инициализация для /idea
+## Пример: Инициализация для /aidd-idea
 
 ```python
-# Пользователь запускает: /idea "Создать сервис бронирования"
+# Пользователь запускает: /aidd-idea "Создать сервис бронирования"
 
 # ФАЗА 1: Контекст ЦП
 if exists("./CLAUDE.md"):
@@ -423,7 +423,7 @@ else:
 artifacts = glob("./ai-docs/docs/prd/*-prd.md")  # → []
 
 # ФАЗА 2: Предусловия
-# /idea не требует предусловий — пропуск
+# /aidd-idea не требует предусловий — пропуск
 
 # ФАЗА 3: Фреймворк
 read(".aidd/CLAUDE.md")
@@ -439,7 +439,7 @@ if not artifacts:  # PRD не существует
 mode = detect_mode(state, {"prd": artifacts, "services": False})
 # → mode = "CREATE"
 
-# Bootstrap (только для /idea при mode == None)
+# Bootstrap (только для /aidd-idea при mode == None)
 mkdir("./ai-docs/docs/{prd,architecture,plans,reports,research}")
 write("./.pipeline-state.json", {"mode": "CREATE", ...})
 
@@ -449,7 +449,7 @@ create_prd("./ai-docs/docs/prd/booking-prd.md")
 
 ---
 
-## Пример: Инициализация для /generate (середина пайплайна)
+## Пример: Инициализация для /aidd-generate (середина пайплайна)
 
 ```python
 # Пользователь запускает: /generate
