@@ -317,7 +317,7 @@ done
 
 | Шаблон | Создаёт в ЦП | Назначение |
 |--------|--------------|------------|
-| `CLAUDE.md.template` | `./CLAUDE.md` | Точка входа для AI в ЦП |
+| `CLAUDE.md.template` | `./CLAUDE.md` | Точка входа для AI (включает таблицы команд и агентов) |
 | `README.md.template` | `./README.md` | Документация проекта |
 | `.gitignore.template` | `./.gitignore` | Игнорируемые файлы |
 | `.env.example.template` | `./.env.example` | Пример переменных окружения |
@@ -428,7 +428,7 @@ def copy_project_templates(project_name: str, project_slug: str) -> None:
 │  ✓ Создана структура ai-docs/docs/                              │
 │  ✓ Создана папка .claude/                                       │
 │  ✓ Создан .pipeline-state.json                                  │
-│  ✓ Создан CLAUDE.md                                             │
+│  ✓ Создан CLAUDE.md (с таблицами команд и агентов)              │
 │                                                                  │
 │  ────────────────────────────────────────────────────────────── │
 │  ✓ BOOTSTRAP_READY                                               │
