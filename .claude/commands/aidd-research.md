@@ -103,9 +103,42 @@ description: Анализ кодовой базы и технологий
 
 ## Выходные артефакты
 
-| Артефакт | Описание |
-|----------|----------|
-| Анализ | Выявленные паттерны, ограничения, рекомендации |
+| Артефакт | Путь |
+|----------|------|
+| Research Report | `ai-docs/docs/research/{YYYY-MM-DD}_{FID}_{slug}-research.md` |
+
+### Именование артефакта
+
+FID и slug берутся из `current_feature` в `.pipeline-state.json`:
+
+```python
+# Получить данные из state
+fid = state["current_feature"]["id"]      # F001
+slug = state["current_feature"]["name"]    # table-booking
+date = datetime.now().strftime("%Y-%m-%d") # 2024-12-23
+
+# Сформировать имя файла
+filename = f"{date}_{fid}_{slug}-research.md"
+# → 2024-12-23_F001_table-booking-research.md
+```
+
+### Обновление .pipeline-state.json
+
+После создания отчёта обновить `current_feature.artifacts`:
+
+```json
+{
+  "current_feature": {
+    "id": "F001",
+    "name": "table-booking",
+    "stage": "RESEARCH",
+    "artifacts": {
+      "prd": "prd/2024-12-23_F001_table-booking-prd.md",
+      "research": "research/2024-12-23_F001_table-booking-research.md"
+    }
+  }
+}
+```
 
 ---
 

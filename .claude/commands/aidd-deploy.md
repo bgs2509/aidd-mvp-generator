@@ -105,6 +105,51 @@ description: Сборка и запуск Docker-контейнеров
 
 ---
 
+## Обновление статуса фичи
+
+После успешного деплоя обновить статус фичи в `.pipeline-state.json`:
+
+```json
+{
+  "current_feature": {
+    "id": "F001",
+    "name": "table-booking",
+    "stage": "DEPLOYED",
+    "deployed_at": "2024-12-23T15:30:00Z",
+    "artifacts": {
+      "prd": "prd/2024-12-23_F001_table-booking-prd.md",
+      "research": "research/2024-12-23_F001_table-booking-research.md",
+      "plan": "architecture/2024-12-23_F001_table-booking-plan.md",
+      "review": "reports/2024-12-23_F001_table-booking-review.md",
+      "qa": "reports/2024-12-23_F001_table-booking-qa.md",
+      "validation": "reports/2024-12-23_F001_table-booking-validation.md"
+    }
+  }
+}
+```
+
+### Перенос в features_registry
+
+После деплоя фича переносится в реестр:
+
+```json
+{
+  "features_registry": {
+    "F001": {
+      "name": "table-booking",
+      "title": "Бронирование столиков",
+      "status": "DEPLOYED",
+      "created": "2024-12-23",
+      "deployed": "2024-12-23",
+      "artifacts": { ... }
+    }
+  },
+  "current_feature": null  // Очищается после деплоя
+}
+```
+
+---
+
 ## Качественные ворота
 
 ### DEPLOYED

@@ -193,8 +193,123 @@ fi
 
 | Артефакт | Путь |
 |----------|------|
-| PRD документ | `ai-docs/docs/prd/{name}-prd.md` |
+| PRD документ | `ai-docs/docs/prd/{YYYY-MM-DD}_{FID}_{slug}-prd.md` |
+| Реестр фич | `ai-docs/docs/FEATURES.md` |
 | Состояние | `.pipeline-state.json` |
+
+---
+
+## Генерация Feature ID (FID)
+
+> **Спецификация**: [docs/artifact-naming.md](../../docs/artifact-naming.md)
+
+### Алгоритм присвоения FID
+
+```python
+def create_feature(state: dict, idea: str) -> dict:
+    """
+    Создаёт новую фичу с уникальным FID.
+
+    Args:
+        state: Содержимое .pipeline-state.json
+        idea: Описание идеи от пользователя
+
+    Returns:
+        dict: Данные новой фичи
+    """
+    # 1. Сгенерировать FID
+    next_id = state.get("next_feature_id", 1)
+    fid = f"F{next_id:03d}"
+
+    # 2. Создать slug из названия
+    # "Система бронирования столиков" → "table-booking"
+    slug = generate_slug(idea)  # kebab-case, ≤30 символов
+
+    # 3. Получить текущую дату
+    date = datetime.now().strftime("%Y-%m-%d")
+
+    # 4. Сформировать имя файла
+    filename = f"{date}_{fid}_{slug}-prd.md"
+
+    # 5. Создать запись о фиче
+    feature = {
+        "id": fid,
+        "name": slug,
+        "title": extract_title(idea),
+        "created": date,
+        "status": "IN_PROGRESS",
+        "services": []
+    }
+
+    # 6. Обновить state
+    state["next_feature_id"] = next_id + 1
+    state["current_feature"] = {
+        "id": fid,
+        "name": slug,
+        "created": date,
+        "stage": "PRD",
+        "artifacts": {
+            "prd": f"prd/{filename}"
+        }
+    }
+    state["features_registry"] = state.get("features_registry", {})
+    state["features_registry"][fid] = feature
+
+    return feature
+```
+
+### Формат имени файла
+
+```
+{YYYY-MM-DD}_{FID}_{slug}-{type}.md
+
+Примеры:
+- 2024-12-23_F001_table-booking-prd.md
+- 2024-12-23_F002_email-notify-prd.md
+```
+
+### Обновление FEATURES.md
+
+После создания PRD обновить реестр фич:
+
+```markdown
+# В ai-docs/docs/FEATURES.md добавить строку:
+
+| F001 | Бронирование столиков | IN_PROGRESS | 2024-12-23 | — | [PRD](prd/2024-12-23_F001_table-booking-prd.md) |
+```
+
+### Обновление .pipeline-state.json
+
+```json
+{
+  "current_feature": {
+    "id": "F001",
+    "name": "table-booking",
+    "created": "2024-12-23",
+    "stage": "PRD",
+    "artifacts": {
+      "prd": "prd/2024-12-23_F001_table-booking-prd.md"
+    }
+  },
+  "features_registry": {
+    "F001": {
+      "name": "table-booking",
+      "title": "Система бронирования столиков",
+      "created": "2024-12-23",
+      "status": "IN_PROGRESS",
+      "services": []
+    }
+  },
+  "next_feature_id": 2,
+  "gates": {
+    "PRD_READY": {
+      "passed": true,
+      "passed_at": "2024-12-23T10:30:00Z",
+      "artifact": "prd/2024-12-23_F001_table-booking-prd.md"
+    }
+  }
+}
+```
 
 ---
 

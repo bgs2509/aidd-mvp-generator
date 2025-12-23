@@ -100,7 +100,42 @@ description: Код-ревью сгенерированного кода
 
 | Артефакт | Путь |
 |----------|------|
-| Отчёт ревью | `ai-docs/docs/reports/review-report.md` |
+| Отчёт ревью | `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-review.md` |
+
+### Именование артефакта
+
+FID и slug берутся из `current_feature` в `.pipeline-state.json`:
+
+```python
+# Получить данные из state
+fid = state["current_feature"]["id"]      # F001
+slug = state["current_feature"]["name"]    # table-booking
+date = datetime.now().strftime("%Y-%m-%d") # 2024-12-23
+
+# Сформировать имя файла
+filename = f"{date}_{fid}_{slug}-review.md"
+# → 2024-12-23_F001_table-booking-review.md
+```
+
+### Обновление .pipeline-state.json
+
+После создания отчёта обновить `current_feature.artifacts`:
+
+```json
+{
+  "current_feature": {
+    "id": "F001",
+    "name": "table-booking",
+    "stage": "REVIEW",
+    "artifacts": {
+      "prd": "prd/2024-12-23_F001_table-booking-prd.md",
+      "research": "research/2024-12-23_F001_table-booking-research.md",
+      "plan": "architecture/2024-12-23_F001_table-booking-plan.md",
+      "review": "reports/2024-12-23_F001_table-booking-review.md"
+    }
+  }
+}
+```
 
 ---
 

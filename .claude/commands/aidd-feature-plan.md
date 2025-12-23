@@ -115,7 +115,41 @@ description: Создать план реализации новой фичи в
 
 | Артефакт | Путь |
 |----------|------|
-| План фичи | `ai-docs/docs/plans/{feature}-plan.md` |
+| План фичи | `ai-docs/docs/plans/{YYYY-MM-DD}_{FID}_{slug}-plan.md` |
+
+### Именование артефакта
+
+FID и slug берутся из `current_feature` в `.pipeline-state.json`:
+
+```python
+# Получить данные из state
+fid = state["current_feature"]["id"]      # F042
+slug = state["current_feature"]["name"]    # email-notify
+date = datetime.now().strftime("%Y-%m-%d") # 2024-12-23
+
+# Сформировать имя файла
+filename = f"{date}_{fid}_{slug}-plan.md"
+# → 2024-12-23_F042_email-notify-plan.md
+```
+
+### Обновление .pipeline-state.json
+
+После создания плана обновить `current_feature.artifacts`:
+
+```json
+{
+  "current_feature": {
+    "id": "F042",
+    "name": "email-notify",
+    "stage": "PLAN",
+    "artifacts": {
+      "prd": "prd/2024-12-23_F042_email-notify-prd.md",
+      "research": "research/2024-12-23_F042_email-notify-research.md",
+      "plan": "plans/2024-12-23_F042_email-notify-plan.md"
+    }
+  }
+}
+```
 
 ---
 

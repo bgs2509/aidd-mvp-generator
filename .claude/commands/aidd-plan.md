@@ -111,7 +111,41 @@ description: Создать архитектурный план для ново�
 
 | Артефакт | Путь |
 |----------|------|
-| Архитектурный план | `ai-docs/docs/architecture/{name}-plan.md` |
+| Архитектурный план | `ai-docs/docs/architecture/{YYYY-MM-DD}_{FID}_{slug}-plan.md` |
+
+### Именование артефакта
+
+FID и slug берутся из `current_feature` в `.pipeline-state.json`:
+
+```python
+# Получить данные из state
+fid = state["current_feature"]["id"]      # F001
+slug = state["current_feature"]["name"]    # table-booking
+date = datetime.now().strftime("%Y-%m-%d") # 2024-12-23
+
+# Сформировать имя файла
+filename = f"{date}_{fid}_{slug}-plan.md"
+# → 2024-12-23_F001_table-booking-plan.md
+```
+
+### Обновление .pipeline-state.json
+
+После создания плана обновить `current_feature.artifacts`:
+
+```json
+{
+  "current_feature": {
+    "id": "F001",
+    "name": "table-booking",
+    "stage": "PLAN",
+    "artifacts": {
+      "prd": "prd/2024-12-23_F001_table-booking-prd.md",
+      "research": "research/2024-12-23_F001_table-booking-research.md",
+      "plan": "architecture/2024-12-23_F001_table-booking-plan.md"
+    }
+  }
+}
+```
 
 ---
 
