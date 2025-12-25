@@ -1,11 +1,12 @@
 ---
-allowed-tools: Read(*), Glob(*), Grep(*), Bash(git :*)
+allowed-tools: Read(*), Glob(*), Grep(*), Bash(git :*), Bash(python3 :*)
 description: Анализ кодовой базы и технологий
 ---
 
 # Команда: /research
 
 > Запускает Исследователя для анализа кодовой базы и технологий.
+> **Pipeline State v2**: Поддержка параллельных пайплайнов.
 
 ---
 
@@ -47,11 +48,16 @@ description: Анализ кодовой базы и технологий
 | 3 | `./ai-docs/docs/prd/*.md` | Обязательно | PRD для анализа |
 | 4 | `./services/` | Для FEATURE | Существующий код |
 
-### Фаза 2: Предусловия
+### Фаза 2: Автомиграция и предусловия
 
-| Ворота | Проверка |
-|--------|----------|
-| `PRD_READY` | `.pipeline-state.json → gates.PRD_READY.passed == true` |
+> **Важно**: Перед выполнением команды проверить версию `.pipeline-state.json`
+> и выполнить миграцию v1 → v2 если требуется (см. `knowledge/pipeline/automigration.md`).
+
+| Ворота | Проверка (v2) |
+|--------|---------------|
+| `PRD_READY` | `active_pipelines[FID].gates.PRD_READY.passed == true` |
+
+> **Примечание v2**: FID определяется по текущей git ветке.
 
 ### Фаза 3: Инструкции фреймворка
 
@@ -85,18 +91,35 @@ description: Анализ кодовой базы и технологий
 |--------|------------|
 | `PRD_READY` | PRD документ должен существовать |
 
-### Алгоритм проверки
+### Алгоритм проверки (v2)
 
-```
-1. Проверить существование .pipeline-state.json
-2. Если файл отсутствует:
-   ❌ Пайплайн не инициализирован
-   → Сначала выполните /idea
-3. Проверить gates.PRD_READY.passed == true
-4. Если ворота не пройдены:
-   ❌ Ворота PRD_READY не пройдены
-   → Сначала выполните /idea
-5. Продолжить выполнение
+```python
+def check_research_preconditions() -> tuple[str, dict] | None:
+    """
+    Проверить предусловия для /research.
+
+    v2: Определяем FID по git ветке, проверяем active_pipelines[fid].gates
+    """
+    # 1. Проверить и мигрировать state
+    state = ensure_v2_state()  # см. knowledge/pipeline/automigration.md
+    if not state:
+        print("❌ Пайплайн не инициализирован → /aidd-idea")
+        return None
+
+    # 2. Определить FID по текущей git ветке
+    fid, pipeline = get_current_feature_context(state)
+    if not fid:
+        print("❌ Не удалось определить контекст фичи")
+        return None
+
+    # 3. Проверить PRD_READY
+    if not pipeline["gates"].get("PRD_READY", {}).get("passed"):
+        print(f"❌ Ворота PRD_READY не пройдены для {fid}")
+        print("   → Сначала выполните /aidd-idea")
+        return None
+
+    print(f"✓ Фича {fid}: {pipeline.get('title')}")
+    return (fid, pipeline)
 ```
 
 ---

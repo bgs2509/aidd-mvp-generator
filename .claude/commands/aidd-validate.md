@@ -1,11 +1,12 @@
 ---
-allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md)
+allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md), Bash(git :*), Bash(python3 :*)
 description: Финальная проверка всех качественных ворот
 ---
 
 # Команда: /validate
 
 > Запускает Валидатора для финальной проверки.
+> **Pipeline State v2**: Поддержка параллельных пайплайнов.
 
 ---
 
@@ -50,12 +51,17 @@ description: Финальная проверка всех качественны
 | 3 | `./ai-docs/docs/` | Обязательно | ВСЕ артефакты |
 | 4 | `./services/` | Обязательно | Весь код |
 
-### Фаза 2: Предусловия
+### Фаза 2: Автомиграция и предусловия
 
-| Ворота | Проверка |
-|--------|----------|
-| `QA_PASSED` | `.pipeline-state.json → gates.QA_PASSED.passed == true` |
-| `coverage` | `.pipeline-state.json → gates.QA_PASSED.coverage >= 75` |
+> **Важно**: Перед выполнением команды проверить версию `.pipeline-state.json`
+> и выполнить миграцию v1 → v2 если требуется (см. `knowledge/pipeline/automigration.md`).
+
+| Ворота | Проверка (v2) |
+|--------|---------------|
+| `QA_PASSED` | `active_pipelines[FID].gates.QA_PASSED.passed == true` |
+| `coverage` | `active_pipelines[FID].gates.QA_PASSED.coverage >= 75` |
+
+> **Примечание v2**: FID определяется по текущей git ветке.
 
 ### Фаза 3: Инструкции фреймворка
 
@@ -80,21 +86,45 @@ description: Финальная проверка всех качественны
 |--------|------------|
 | `QA_PASSED` | Тесты пройдены, покрытие ≥75% |
 
-### Алгоритм проверки
+### Алгоритм проверки (v2)
 
-```
-1. Проверить существование .pipeline-state.json
-2. Если файл отсутствует:
-   ❌ Пайплайн не инициализирован
-   → Сначала выполните /idea
-3. Проверить gates.QA_PASSED.passed == true
-4. Если ворота не пройдены:
-   ❌ Ворота QA_PASSED не пройдены
-   → Сначала выполните /test
-5. Проверить gates.QA_PASSED.coverage >= 75
-6. Если покрытие недостаточно:
-   ⚠️ Coverage < 75%, добавьте тесты
-7. Продолжить выполнение
+```python
+def check_validate_preconditions() -> tuple[str, dict] | None:
+    """
+    Проверить предусловия для /validate.
+
+    v2: Определяем FID по git ветке, проверяем active_pipelines[fid].gates
+    """
+    # 1. Проверить и мигрировать state
+    state = ensure_v2_state()  # см. knowledge/pipeline/automigration.md
+    if not state:
+        print("❌ Пайплайн не инициализирован → /aidd-idea")
+        return None
+
+    # 2. Определить FID по текущей git ветке
+    fid, pipeline = get_current_feature_context(state)
+    if not fid:
+        print("❌ Не удалось определить контекст фичи")
+        return None
+
+    gates = pipeline.get("gates", {})
+
+    # 3. Проверить QA_PASSED
+    qa_gate = gates.get("QA_PASSED", {})
+    if not qa_gate.get("passed"):
+        print(f"❌ Ворота QA_PASSED не пройдены для {fid}")
+        print("   → Сначала выполните /aidd-test")
+        return None
+
+    # 4. Проверить покрытие
+    coverage = qa_gate.get("coverage", 0)
+    if coverage < 75:
+        print(f"⚠️  Coverage {coverage}% < 75%, добавьте тесты")
+        return None
+
+    print(f"✓ Фича {fid}: {pipeline.get('title')}")
+    print(f"  Coverage: {coverage}%")
+    return (fid, pipeline)
 ```
 
 ---

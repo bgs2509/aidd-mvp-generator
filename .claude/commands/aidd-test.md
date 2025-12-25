@@ -1,11 +1,12 @@
 ---
-allowed-tools: Read(*), Glob(*), Grep(*), Bash(pytest :*), Bash(make :*), Edit(**/*.md), Write(**/*.md)
+allowed-tools: Read(*), Glob(*), Grep(*), Bash(pytest :*), Bash(make :*), Edit(**/*.md), Write(**/*.md), Bash(git :*), Bash(python3 :*)
 description: Запуск тестов и проверка покрытия кода
 ---
 
 # Команда: /test
 
 > Запускает QA для тестирования и верификации.
+> **Pipeline State v2**: Поддержка параллельных пайплайнов.
 
 ---
 
@@ -50,11 +51,16 @@ description: Запуск тестов и проверка покрытия ко
 | 3 | `./ai-docs/docs/prd/*.md` | Обязательно | Требования для верификации |
 | 4 | `./services/*/tests/` | Обязательно | Существующие тесты |
 
-### Фаза 2: Предусловия
+### Фаза 2: Автомиграция и предусловия
 
-| Ворота | Проверка |
-|--------|----------|
-| `REVIEW_OK` | `.pipeline-state.json → gates.REVIEW_OK.passed == true` |
+> **Важно**: Перед выполнением команды проверить версию `.pipeline-state.json`
+> и выполнить миграцию v1 → v2 если требуется (см. `knowledge/pipeline/automigration.md`).
+
+| Ворота | Проверка (v2) |
+|--------|---------------|
+| `REVIEW_OK` | `active_pipelines[FID].gates.REVIEW_OK.passed == true` |
+
+> **Примечание v2**: FID определяется по текущей git ветке.
 
 ### Фаза 3: Инструкции фреймворка
 
@@ -79,18 +85,35 @@ description: Запуск тестов и проверка покрытия ко
 |--------|------------|
 | `REVIEW_OK` | Код прошёл ревью |
 
-### Алгоритм проверки
+### Алгоритм проверки (v2)
 
-```
-1. Проверить существование .pipeline-state.json
-2. Если файл отсутствует:
-   ❌ Пайплайн не инициализирован
-   → Сначала выполните /idea
-3. Проверить gates.REVIEW_OK.passed == true
-4. Если ворота не пройдены:
-   ❌ Ворота REVIEW_OK не пройдены
-   → Сначала выполните /review
-5. Продолжить выполнение
+```python
+def check_test_preconditions() -> tuple[str, dict] | None:
+    """
+    Проверить предусловия для /test.
+
+    v2: Определяем FID по git ветке, проверяем active_pipelines[fid].gates
+    """
+    # 1. Проверить и мигрировать state
+    state = ensure_v2_state()  # см. knowledge/pipeline/automigration.md
+    if not state:
+        print("❌ Пайплайн не инициализирован → /aidd-idea")
+        return None
+
+    # 2. Определить FID по текущей git ветке
+    fid, pipeline = get_current_feature_context(state)
+    if not fid:
+        print("❌ Не удалось определить контекст фичи")
+        return None
+
+    # 3. Проверить REVIEW_OK
+    if not pipeline["gates"].get("REVIEW_OK", {}).get("passed"):
+        print(f"❌ Ворота REVIEW_OK не пройдены для {fid}")
+        print("   → Сначала выполните /aidd-review")
+        return None
+
+    print(f"✓ Фича {fid}: {pipeline.get('title')}")
+    return (fid, pipeline)
 ```
 
 ---

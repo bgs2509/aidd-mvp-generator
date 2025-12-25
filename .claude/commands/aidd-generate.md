@@ -1,11 +1,12 @@
 ---
-allowed-tools: Read(*), Glob(*), Grep(*), Edit(**), Write(**), Bash(make :*), Bash(docker :*), Bash(pytest :*)
+allowed-tools: Read(*), Glob(*), Grep(*), Edit(**), Write(**), Bash(make :*), Bash(docker :*), Bash(pytest :*), Bash(git :*), Bash(python3 :*)
 description: Генерация кода на основе утверждённого плана
 ---
 
 # Команда: /generate
 
 > Запускает Реализатора для генерации кода.
+> **Pipeline State v2**: Поддержка параллельных пайплайнов.
 
 ---
 
@@ -52,12 +53,17 @@ description: Генерация кода на основе утверждённ�
 | 5 | `./ai-docs/docs/plans/*.md` | Для FEATURE | План фичи |
 | 6 | `./services/` | Для FEATURE | Существующий код |
 
-### Фаза 2: Предусловия
+### Фаза 2: Автомиграция и предусловия
 
-| Ворота | Проверка |
-|--------|----------|
-| `PLAN_APPROVED` | `.pipeline-state.json → gates.PLAN_APPROVED.passed == true` |
-| `approved_by` | `.pipeline-state.json → gates.PLAN_APPROVED.approved_by != null` |
+> **Важно**: Перед выполнением команды проверить версию `.pipeline-state.json`
+> и выполнить миграцию v1 → v2 если требуется (см. `knowledge/pipeline/automigration.md`).
+
+| Ворота | Проверка (v2) |
+|--------|---------------|
+| `PLAN_APPROVED` | `active_pipelines[FID].gates.PLAN_APPROVED.passed == true` |
+| `approved_by` | `active_pipelines[FID].gates.PLAN_APPROVED.approved_by != null` |
+
+> **Примечание v2**: FID определяется по текущей git ветке (см. алгоритм ниже).
 
 ### Фаза 3: Инструкции фреймворка
 
@@ -93,21 +99,79 @@ description: Генерация кода на основе утверждённ�
 |--------|------------|
 | `PLAN_APPROVED` | План утверждён пользователем |
 
-### Алгоритм проверки
+### Алгоритм проверки (v2)
 
-```
-1. Проверить существование .pipeline-state.json
-2. Если файл отсутствует:
-   ❌ Пайплайн не инициализирован
-   → Сначала выполните /idea
-3. Проверить gates.PLAN_APPROVED.passed == true
-4. Если ворота не пройдены:
-   ❌ Ворота PLAN_APPROVED не пройдены
-   → Сначала выполните /aidd-plan или /feature-plan
-5. Проверить gates.PLAN_APPROVED.approved_by != null
-6. Если план не утверждён пользователем:
-   ⚠️ План требует явного утверждения пользователем
-7. Продолжить выполнение
+```python
+def check_generate_preconditions() -> tuple[str, dict] | None:
+    """
+    Проверить предусловия для /generate.
+
+    Returns:
+        (fid, pipeline) или None при ошибке
+
+    Алгоритм v2:
+        1. Проверить .pipeline-state.json и мигрировать если нужно
+        2. Определить FID по git ветке
+        3. Проверить active_pipelines[fid].gates.PLAN_APPROVED
+    """
+    # 1. Проверить существование и версию
+    state_path = Path(".pipeline-state.json")
+    if not state_path.exists():
+        print("❌ Пайплайн не инициализирован")
+        print("   → Сначала выполните /aidd-idea")
+        return None
+
+    state = json.loads(state_path.read_text())
+
+    # 2. Автомиграция v1 → v2
+    if state.get("version") != "2.0":
+        print("⚠️  Обнаружен v1, выполняется миграция...")
+        subprocess.run(["python3", ".aidd/scripts/migrate_pipeline_state.py"])
+        state = json.loads(state_path.read_text())
+
+    # 3. Определить FID по текущей git ветке
+    result = subprocess.run(
+        ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+        capture_output=True, text=True
+    )
+    current_branch = result.stdout.strip()
+
+    active_pipelines = state.get("active_pipelines", {})
+    fid, pipeline = None, None
+
+    # Поиск по ветке
+    for f, p in active_pipelines.items():
+        if p.get("branch") == current_branch:
+            fid, pipeline = f, p
+            break
+
+    # Если одна фича — использовать её
+    if not fid and len(active_pipelines) == 1:
+        fid = list(active_pipelines.keys())[0]
+        pipeline = active_pipelines[fid]
+
+    if not fid:
+        print("❌ Не удалось определить контекст фичи")
+        print(f"   Текущая ветка: {current_branch}")
+        print("   → Переключитесь на ветку фичи: git checkout feature/F00X-...")
+        return None
+
+    # 4. Проверить PLAN_APPROVED
+    gates = pipeline.get("gates", {})
+    plan_gate = gates.get("PLAN_APPROVED", {})
+
+    if not plan_gate.get("passed"):
+        print(f"❌ Ворота PLAN_APPROVED не пройдены для {fid}")
+        print("   → Сначала выполните /aidd-plan или /aidd-feature-plan")
+        return None
+
+    if not plan_gate.get("approved_by"):
+        print(f"⚠️  План {fid} требует явного утверждения пользователем")
+        return None
+
+    print(f"✓ Фича {fid}: {pipeline.get('title')}")
+    print(f"  Ветка: {pipeline.get('branch')}")
+    return (fid, pipeline)
 ```
 
 ---
@@ -122,25 +186,57 @@ description: Генерация кода на основе утверждённ�
 | Тесты | `services/*/tests/` |
 | Состояние | `.pipeline-state.json` (обновляется) |
 
-### Обновление .pipeline-state.json
+### Обновление .pipeline-state.json (v2)
 
-После генерации кода обновить `current_feature`:
+После генерации кода обновить `active_pipelines[fid]`:
+
+```python
+def update_after_generate(state: dict, fid: str, services: list[str]):
+    """
+    Обновить состояние после успешной генерации кода.
+
+    v2: Обновляем active_pipelines[fid], а не current_feature
+    """
+    now = datetime.now().isoformat()
+
+    pipeline = state["active_pipelines"][fid]
+
+    # Обновить ворота IMPLEMENT_OK
+    pipeline["gates"]["IMPLEMENT_OK"] = {
+        "passed": True,
+        "passed_at": now
+    }
+
+    # Обновить этап
+    pipeline["stage"] = "REVIEW"
+
+    # Добавить сервисы
+    pipeline["services"] = services
+
+    state["updated_at"] = now
+```
 
 ```json
 {
-  "current_feature": {
-    "id": "F001",
-    "name": "table-booking",
-    "stage": "IMPLEMENT",
-    "artifacts": {
-      "prd": "prd/2024-12-23_F001_table-booking-prd.md",
-      "research": "research/2024-12-23_F001_table-booking-research.md",
-      "plan": "architecture/2024-12-23_F001_table-booking-plan.md"
-    },
-    "services": [
-      "booking_api",
-      "booking_data"
-    ]
+  "version": "2.0",
+  "active_pipelines": {
+    "F001": {
+      "branch": "feature/F001-table-booking",
+      "name": "table-booking",
+      "stage": "REVIEW",
+      "gates": {
+        "PRD_READY": { "passed": true, "passed_at": "..." },
+        "RESEARCH_DONE": { "passed": true, "passed_at": "..." },
+        "PLAN_APPROVED": { "passed": true, "passed_at": "...", "approved_by": "user" },
+        "IMPLEMENT_OK": { "passed": true, "passed_at": "2024-12-23T12:00:00Z" }
+      },
+      "artifacts": {
+        "prd": "prd/2024-12-23_F001_table-booking-prd.md",
+        "research": "research/2024-12-23_F001_table-booking-research.md",
+        "plan": "architecture/2024-12-23_F001_table-booking-plan.md"
+      },
+      "services": ["booking_api", "booking_data"]
+    }
   }
 }
 ```

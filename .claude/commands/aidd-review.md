@@ -1,11 +1,12 @@
 ---
-allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md)
+allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md), Bash(git :*), Bash(python3 :*)
 description: Код-ревью сгенерированного кода
 ---
 
 # Команда: /review
 
 > Запускает Ревьюера для код-ревью.
+> **Pipeline State v2**: Поддержка параллельных пайплайнов.
 
 ---
 
@@ -50,11 +51,16 @@ description: Код-ревью сгенерированного кода
 | 4 | `./ai-docs/docs/architecture/*.md` | Обязательно | План для сверки |
 | 5 | `./services/` | Обязательно | Код для ревью |
 
-### Фаза 2: Предусловия
+### Фаза 2: Автомиграция и предусловия
 
-| Ворота | Проверка |
-|--------|----------|
-| `IMPLEMENT_OK` | `.pipeline-state.json → gates.IMPLEMENT_OK.passed == true` |
+> **Важно**: Перед выполнением команды проверить версию `.pipeline-state.json`
+> и выполнить миграцию v1 → v2 если требуется (см. `knowledge/pipeline/automigration.md`).
+
+| Ворота | Проверка (v2) |
+|--------|---------------|
+| `IMPLEMENT_OK` | `active_pipelines[FID].gates.IMPLEMENT_OK.passed == true` |
+
+> **Примечание v2**: FID определяется по текущей git ветке.
 
 ### Фаза 3: Инструкции фреймворка
 
@@ -80,18 +86,35 @@ description: Код-ревью сгенерированного кода
 |--------|------------|
 | `IMPLEMENT_OK` | Код сгенерирован, тесты проходят |
 
-### Алгоритм проверки
+### Алгоритм проверки (v2)
 
-```
-1. Проверить существование .pipeline-state.json
-2. Если файл отсутствует:
-   ❌ Пайплайн не инициализирован
-   → Сначала выполните /idea
-3. Проверить gates.IMPLEMENT_OK.passed == true
-4. Если ворота не пройдены:
-   ❌ Ворота IMPLEMENT_OK не пройдены
-   → Сначала выполните /generate
-5. Продолжить выполнение
+```python
+def check_review_preconditions() -> tuple[str, dict] | None:
+    """
+    Проверить предусловия для /review.
+
+    v2: Определяем FID по git ветке, проверяем active_pipelines[fid].gates
+    """
+    # 1. Проверить и мигрировать state
+    state = ensure_v2_state()  # см. knowledge/pipeline/automigration.md
+    if not state:
+        print("❌ Пайплайн не инициализирован → /aidd-idea")
+        return None
+
+    # 2. Определить FID по текущей git ветке
+    fid, pipeline = get_current_feature_context(state)
+    if not fid:
+        print("❌ Не удалось определить контекст фичи")
+        return None
+
+    # 3. Проверить IMPLEMENT_OK
+    if not pipeline["gates"].get("IMPLEMENT_OK", {}).get("passed"):
+        print(f"❌ Ворота IMPLEMENT_OK не пройдены для {fid}")
+        print("   → Сначала выполните /aidd-generate")
+        return None
+
+    print(f"✓ Фича {fid}: {pipeline.get('title')}")
+    return (fid, pipeline)
 ```
 
 ---

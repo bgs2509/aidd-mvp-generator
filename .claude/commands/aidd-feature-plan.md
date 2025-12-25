@@ -1,11 +1,12 @@
 ---
-allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md)
+allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md), Bash(git :*), Bash(python3 :*)
 description: Создать план реализации новой фичи в существующем проекте
 ---
 
 # Команда: /feature-plan
 
 > Запускает Архитектора для планирования фичи (режим FEATURE).
+> **Pipeline State v2**: Поддержка параллельных пайплайнов.
 
 ---
 
@@ -48,13 +49,18 @@ description: Создать план реализации новой фичи в
 | 4 | `./ai-docs/docs/architecture/*.md` | Обязательно | Существующая архитектура |
 | 5 | `./services/` | Обязательно | Существующий код |
 
-### Фаза 2: Предусловия
+### Фаза 2: Автомиграция и предусловия
 
-| Ворота | Проверка |
-|--------|----------|
+> **Важно**: Перед выполнением команды проверить версию `.pipeline-state.json`
+> и выполнить миграцию v1 → v2 если требуется (см. `knowledge/pipeline/automigration.md`).
+
+| Ворота | Проверка (v2) |
+|--------|---------------|
 | `mode` | `.pipeline-state.json → mode == "FEATURE"` |
-| `PRD_READY` | `.pipeline-state.json → gates.PRD_READY.passed == true` |
-| `RESEARCH_DONE` | `.pipeline-state.json → gates.RESEARCH_DONE.passed == true` |
+| `PRD_READY` | `active_pipelines[FID].gates.PRD_READY.passed == true` |
+| `RESEARCH_DONE` | `active_pipelines[FID].gates.RESEARCH_DONE.passed == true` |
+
+> **Примечание v2**: FID определяется по текущей git ветке.
 
 ### Фаза 3: Инструкции фреймворка
 
@@ -88,25 +94,48 @@ description: Создать план реализации новой фичи в
 | `PRD_READY` | FEATURE_PRD документ существует |
 | `RESEARCH_DONE` | Код проанализирован |
 
-### Алгоритм проверки
+### Алгоритм проверки (v2)
 
-```
-1. Проверить существование .pipeline-state.json
-2. Если файл отсутствует:
-   ❌ Пайплайн не инициализирован
-   → Сначала выполните /idea
-3. Проверить mode == "FEATURE"
-4. Если mode != "FEATURE":
-   ⚠️ Режим CREATE — используйте /aidd-plan вместо /feature-plan
-5. Проверить gates.PRD_READY.passed == true
-6. Если ворота не пройдены:
-   ❌ Ворота PRD_READY не пройдены
-   → Сначала выполните /idea
-7. Проверить gates.RESEARCH_DONE.passed == true
-8. Если ворота не пройдены:
-   ❌ Ворота RESEARCH_DONE не пройдены
-   → Сначала выполните /research
-9. Продолжить выполнение
+```python
+def check_feature_plan_preconditions() -> tuple[str, dict] | None:
+    """
+    Проверить предусловия для /feature-plan.
+
+    v2: Определяем FID по git ветке, проверяем active_pipelines[fid].gates
+    """
+    # 1. Проверить и мигрировать state
+    state = ensure_v2_state()  # см. knowledge/pipeline/automigration.md
+    if not state:
+        print("❌ Пайплайн не инициализирован → /aidd-idea")
+        return None
+
+    # 2. Проверить режим
+    if state.get("mode") != "FEATURE":
+        print("⚠️  Режим CREATE — используйте /aidd-plan вместо /aidd-feature-plan")
+        return None
+
+    # 3. Определить FID по текущей git ветке
+    fid, pipeline = get_current_feature_context(state)
+    if not fid:
+        print("❌ Не удалось определить контекст фичи")
+        return None
+
+    gates = pipeline.get("gates", {})
+
+    # 4. Проверить PRD_READY
+    if not gates.get("PRD_READY", {}).get("passed"):
+        print(f"❌ Ворота PRD_READY не пройдены для {fid}")
+        print("   → Сначала выполните /aidd-idea")
+        return None
+
+    # 5. Проверить RESEARCH_DONE
+    if not gates.get("RESEARCH_DONE", {}).get("passed"):
+        print(f"❌ Ворота RESEARCH_DONE не пройдены для {fid}")
+        print("   → Сначала выполните /aidd-research")
+        return None
+
+    print(f"✓ Фича {fid}: {pipeline.get('title')}")
+    return (fid, pipeline)
 ```
 
 ---
