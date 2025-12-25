@@ -521,19 +521,35 @@ def ensure_state_v2():
   - Файл: `knowledge/pipeline/automigration.md`
   - Файл: `knowledge/pipeline/state-v2.md`
 
-### Фаза 2: Модификация команд
-- [ ] Модифицировать `/aidd-idea` для создания в `active_pipelines`
-- [ ] Добавить определение контекста фичи по git branch
-- [ ] Обновить все команды для работы с `gates[fid]`
+### Фаза 2: Модификация команд ✅ ЗАВЕРШЕНА
 
-### Фаза 3: Интеграция с Git
-- [ ] Автосоздание веток при `/aidd-idea`
-- [ ] Merge-хелперы для `.pipeline-state.json`
-- [ ] Детекция конфликтов файлов
+- [x] Модифицировать `/aidd-idea` для создания в `active_pipelines`
+  - Файл: `.claude/commands/aidd-idea.md`
+- [x] Добавить определение контекста фичи по git branch
+  - Функция `get_current_feature_context()` добавлена во все команды
+- [x] Обновить все команды для работы с `gates[fid]`
+  - Файлы: `.claude/commands/aidd-*.md` (9 файлов)
+
+### Фаза 3: Интеграция с Git ✅ ЗАВЕРШЕНА
+
+- [x] Автосоздание веток при `/aidd-idea`
+  - Реализовано в `.claude/commands/aidd-idea.md` (функция `create_feature`)
+- [x] Merge-хелперы для `.pipeline-state.json`
+  - Файл: `scripts/git_helpers.py`
+  - Функции: `merge_pipeline_states()`, `complete_feature_merge()`
+- [x] Детекция конфликтов файлов
+  - Функции: `check_file_conflicts()`, `get_modified_files()`
+- [x] Документация git интеграции
+  - Файл: `knowledge/pipeline/git-integration.md`
 
 ### Фаза 4: Документация
-- [ ] Обновить CLAUDE.md
-- [ ] Обновить workflow.md
+- [x] Обновить CLAUDE.md
+  - Добавлена секция "Параллельные пайплайны (Pipeline State v2)"
+  - Обновлена навигация с ссылками на новую документацию
+- [x] Обновить workflow.md
+  - Обновлён формат `.pipeline-state.json` на v2
+  - Добавлена секция "Параллельные пайплайны (Pipeline State v2)"
+  - Добавлена документация git-хелперов
 - [x] Создать knowledge/parallel-pipelines.md → `knowledge/pipeline/state-v2.md`
 
 ---
@@ -575,10 +591,10 @@ def ensure_state_v2():
 | Этап | Статус |
 |------|--------|
 | Проектирование | ✅ Завершено (этот документ) |
-| Обсуждение | ⏳ Ожидает |
-| Реализация | ⏳ Ожидает |
+| Обсуждение | ✅ Завершено |
+| Реализация (Фаза 1-3) | ✅ Завершено |
+| Реализация (Фаза 4) | ✅ Завершено (документация) |
 | Тестирование | ⏳ Ожидает |
-| Документация | ⏳ Ожидает |
 
 ---
 

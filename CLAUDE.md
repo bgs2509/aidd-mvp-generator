@@ -132,6 +132,40 @@ AI выполняет команду по инструкциям
 
 Явное переопределение: `/aidd-idea --mode=FEATURE "описание"`
 
+### Параллельные пайплайны (Pipeline State v2)
+
+Фреймворк поддерживает одновременную разработку нескольких фич:
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         ПАРАЛЛЕЛЬНЫЕ ПАЙПЛАЙНЫ                          │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  main                                                                   │
+│    │                                                                    │
+│    ├──┬── feature/F042-oauth ─────────────────────────▶ merge           │
+│    │  │     ├── /aidd-idea → PRD_READY                                 │
+│    │  │     ├── /aidd-research → RESEARCH_DONE                         │
+│    │  │     ├── /aidd-plan → PLAN_APPROVED                             │
+│    │  │     └── ... → DEPLOYED                                          │
+│    │  │                                                                 │
+│    │  └── feature/F043-payments ──────────────────────▶ merge           │
+│    │        ├── /aidd-idea (параллельно!)                              │
+│    │        └── ...                                                     │
+│    ▼                                                                    │
+│  main (с обеими фичами)                                                 │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+**Ключевые особенности**:
+- Каждая фича разрабатывается в отдельной git ветке `feature/{FID}-{slug}`
+- Ворота изолированы: `active_pipelines[FID].gates` вместо общих `gates`
+- Контекст фичи определяется автоматически по текущей git ветке
+- При `/aidd-deploy` фича переносится в `features_registry`
+
+**Документация**: [knowledge/pipeline/git-integration.md](knowledge/pipeline/git-integration.md)
+
 ### Режимы инициализации (`/aidd-init`)
 
 Команда `/aidd-init` автоматически определяет тип проекта и запускает соответствующий режим:
@@ -481,6 +515,8 @@ aidd-mvp-generator/
 | 9-этапный процесс | [workflow.md](workflow.md) |
 | Соглашения о коде | [conventions.md](conventions.md) |
 | Структура целевого проекта | [docs/target-project-structure.md](docs/target-project-structure.md) |
+| **Параллельные пайплайны** | [knowledge/pipeline/git-integration.md](knowledge/pipeline/git-integration.md) |
+| Pipeline State v2 | [knowledge/pipeline/state-v2.md](knowledge/pipeline/state-v2.md) |
 | Инструкции роли | `.claude/agents/{role}.md` |
 | Инструкции команды | `.claude/commands/{command}.md` |
 | Шаблоны документов | `templates/documents/*.md` |
@@ -489,6 +525,6 @@ aidd-mvp-generator/
 
 ---
 
-**Версия документа**: 2.2
-**Обновлён**: 2025-12-23
+**Версия документа**: 2.3
+**Обновлён**: 2025-12-25
 **Назначение**: Главная точка входа для AI-агентов AIDD-MVP Generator

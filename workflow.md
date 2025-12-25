@@ -582,31 +582,56 @@ make logs
 
 > **Философия**: Артефакты = Память. Состояние пайплайна — единый источник истины.
 
-### Формат файла
+### Формат файла (v2 — параллельные пайплайны)
 
 Файл `.pipeline-state.json` создаётся в корне ЦЕЛЕВОГО ПРОЕКТА при первом `/aidd-idea`.
 
 ```json
 {
+  "version": "2.0",
   "project_name": "booking-service",
-  "mode": "CREATE",
-  "current_stage": 4,
-  "created_at": "2025-12-21T10:00:00Z",
-  "updated_at": "2025-12-21T10:30:00Z",
-  "gates": {
-    "PRD_READY": {"passed": true, "artifact": "ai-docs/docs/prd/booking-prd.md"},
-    "RESEARCH_DONE": {"passed": true, "artifact": "ai-docs/docs/research/booking-research.md"},
-    "PLAN_APPROVED": {"passed": true, "artifact": "ai-docs/docs/architecture/booking-plan.md"}
+  "mode": "FEATURE",
+
+  "global_gates": {
+    "BOOTSTRAP_READY": {"passed": true, "passed_at": "2025-12-25T10:00:00Z"}
   },
-  "artifacts": {
-    "prd": "ai-docs/docs/prd/booking-prd.md",
-    "research": "ai-docs/docs/research/booking-research.md",
-    "plan": "ai-docs/docs/architecture/booking-plan.md"
+
+  "active_pipelines": {
+    "F042": {
+      "branch": "feature/F042-oauth-auth",
+      "name": "oauth-auth",
+      "title": "OAuth авторизация",
+      "stage": "IMPLEMENT",
+      "created": "2025-12-25",
+      "gates": {
+        "PRD_READY": {"passed": true, "passed_at": "..."},
+        "RESEARCH_DONE": {"passed": true, "passed_at": "..."},
+        "PLAN_APPROVED": {"passed": true, "passed_at": "...", "approved_by": "user"}
+      },
+      "artifacts": {
+        "prd": "prd/2025-12-25_F042_oauth-auth-prd.md",
+        "research": "research/2025-12-25_F042_oauth-auth-research.md",
+        "plan": "plans/2025-12-25_F042_oauth-auth-plan.md"
+      }
+    }
+  },
+
+  "next_feature_id": 43,
+
+  "features_registry": {
+    "F001": {"status": "DEPLOYED", "deployed": "2025-12-20"}
   }
 }
 ```
 
+**Ключевые изменения v2**:
+- `active_pipelines` — словарь активных фич (вместо `current_feature`)
+- `global_gates` — ворота уровня проекта (BOOTSTRAP_READY)
+- Ворота изолированы в `active_pipelines[FID].gates`
+- `features_registry` — реестр завершённых фич
+
 **Шаблон**: [templates/documents/pipeline-state-template.json](templates/documents/pipeline-state-template.json)
+**Спецификация v2**: [knowledge/pipeline/state-v2.md](knowledge/pipeline/state-v2.md)
 
 ### Обновление состояния
 
@@ -1019,6 +1044,115 @@ AI определяет режим FEATURE при наличии:
 
 ---
 
+## Параллельные пайплайны (Pipeline State v2)
+
+Фреймворк поддерживает одновременную разработку нескольких фич в отдельных git ветках.
+
+### Концепция
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│                         ПАРАЛЛЕЛЬНЫЙ WORKFLOW                           │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                         │
+│  main                                                                   │
+│    │                                                                    │
+│    ├──┬── feature/F042-oauth ─────────────────────────▶ merge           │
+│    │  │     ├── /aidd-idea      ← Создаёт ветку автоматически          │
+│    │  │     ├── /aidd-research                                          │
+│    │  │     ├── /aidd-plan                                              │
+│    │  │     ├── /aidd-generate                                          │
+│    │  │     └── /aidd-deploy ──────────────▶ DEPLOYED                   │
+│    │  │                                                                 │
+│    │  └── feature/F043-payments ──────────────────────▶ merge           │
+│    │        ├── /aidd-idea      (параллельно с F042!)                  │
+│    │        └── ...                                                     │
+│    ▼                                                                    │
+│  main (с обеими фичами)                                                 │
+│                                                                         │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### Именование веток
+
+```
+feature/{FID}-{slug}
+
+Примеры:
+- feature/F001-table-booking
+- feature/F042-oauth-auth
+- feature/F043-payments
+```
+
+### Определение контекста фичи
+
+AI автоматически определяет текущую фичу по git ветке:
+
+```python
+def get_current_feature_context(state: dict) -> tuple[str, dict] | None:
+    """
+    1. Получить текущую git ветку
+    2. Найти FID в active_pipelines по branch
+    3. Если одна активная фича — использовать её
+    4. Иначе — вернуть None (требуется явное указание)
+    """
+```
+
+### Изоляция ворот
+
+Каждая фича имеет свои ворота в `active_pipelines[FID].gates`:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  ВОРОТА: Глобальные vs Локальные                                │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│  ГЛОБАЛЬНЫЕ (один раз на проект):                               │
+│  └── BOOTSTRAP_READY                                            │
+│                                                                 │
+│  ЛОКАЛЬНЫЕ (для каждой фичи отдельно):                          │
+│  ├── PRD_READY                                                  │
+│  ├── RESEARCH_DONE                                              │
+│  ├── PLAN_APPROVED                                              │
+│  ├── IMPLEMENT_OK                                               │
+│  ├── REVIEW_OK                                                  │
+│  ├── QA_PASSED                                                  │
+│  ├── ALL_GATES_PASSED                                           │
+│  └── DEPLOYED                                                   │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Завершение фичи
+
+После `/aidd-deploy` фича переносится из `active_pipelines` в `features_registry`:
+
+```python
+def complete_feature_deploy(state: dict, fid: str):
+    """
+    1. Отметить DEPLOYED в gates
+    2. Перенести в features_registry
+    3. Удалить из active_pipelines
+    """
+```
+
+### Git-хелперы
+
+```bash
+# Показать текущий контекст
+python3 scripts/git_helpers.py context
+
+# Проверить конфликты между фичами
+python3 scripts/git_helpers.py conflicts F042 F043
+
+# Завершить фичу и подготовить к merge
+python3 scripts/git_helpers.py merge F042
+```
+
+**Документация**: [knowledge/pipeline/git-integration.md](knowledge/pipeline/git-integration.md)
+
+---
+
 ## Версионирование артефактов (P-028)
 
 При итеративной разработке артефакты могут иметь версии.
@@ -1103,6 +1237,7 @@ def version_artifact(artifact_path: Path) -> Path:
 
 ---
 
-**Версия документа**: 1.1
+**Версия документа**: 1.2
 **Создан**: 2025-12-19
+**Обновлён**: 2025-12-25
 **Назначение**: Процесс разработки AIDD-MVP Generator
