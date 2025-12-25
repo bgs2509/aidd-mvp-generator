@@ -1,14 +1,17 @@
 {
   "$schema": "pipeline-state-schema",
-  "version": "1.0",
+  "$comment": "Шаблон состояния пайплайна v2 с поддержкой параллельных пайплайнов",
+  "version": "2.0",
   "project_name": "",
   "mode": "CREATE",
   "init_mode": "NEW_PROJECT",
   "init_decisions": {},
-  "current_stage": 0,
+  "parallel_mode": false,
   "created_at": "",
   "updated_at": "",
-  "gates": {
+
+  "global_gates": {
+    "$comment": "Глобальные ворота — проверяются один раз на проект",
     "BOOTSTRAP_READY": {
       "passed": false,
       "passed_at": null,
@@ -18,55 +21,55 @@
         "python": null,
         "docker": null
       }
-    },
-    "PRD_READY": {
-      "passed": false,
-      "passed_at": null,
-      "artifact": null
-    },
-    "RESEARCH_DONE": {
-      "passed": false,
-      "passed_at": null
-    },
-    "PLAN_APPROVED": {
-      "passed": false,
-      "passed_at": null,
-      "artifact": null,
-      "approved_by": null
-    },
-    "IMPLEMENT_OK": {
-      "passed": false,
-      "passed_at": null
-    },
-    "REVIEW_OK": {
-      "passed": false,
-      "passed_at": null,
-      "artifact": null
-    },
-    "QA_PASSED": {
-      "passed": false,
-      "passed_at": null,
-      "artifact": null,
-      "coverage": null
-    },
-    "ALL_GATES_PASSED": {
-      "passed": false,
-      "passed_at": null,
-      "artifact": null
-    },
-    "DEPLOYED": {
-      "passed": false,
-      "passed_at": null
     }
   },
-  "artifacts": {
-    "prd": null,
-    "plan": null,
-    "feature_plan": null,
-    "review_report": null,
-    "qa_report": null,
-    "validation_report": null,
-    "rtm": null
+
+  "active_pipelines": {
+    "$comment": "Активные пайплайны фич. Ключ — FID (F001, F002, ...). Каждый имеет свои ворота и артефакты.",
+    "$example": {
+      "F001": {
+        "branch": "feature/F001-example",
+        "name": "example-feature",
+        "title": "Пример фичи",
+        "stage": "IDEA",
+        "created": "2025-01-01",
+        "gates": {
+          "PRD_READY": { "passed": false, "passed_at": null, "artifact": null },
+          "RESEARCH_DONE": { "passed": false, "passed_at": null },
+          "PLAN_APPROVED": { "passed": false, "passed_at": null, "artifact": null, "approved_by": null },
+          "IMPLEMENT_OK": { "passed": false, "passed_at": null },
+          "REVIEW_OK": { "passed": false, "passed_at": null, "artifact": null },
+          "QA_PASSED": { "passed": false, "passed_at": null, "artifact": null, "coverage": null },
+          "ALL_GATES_PASSED": { "passed": false, "passed_at": null, "artifact": null },
+          "DEPLOYED": { "passed": false, "passed_at": null }
+        },
+        "artifacts": {
+          "prd": null,
+          "research": null,
+          "plan": null,
+          "review": null,
+          "qa": null,
+          "validation": null
+        }
+      }
+    }
   },
+
+  "features_registry": {
+    "$comment": "Завершённые (deployed) фичи. Перемещаются сюда после /aidd-deploy."
+  },
+
+  "next_feature_id": 1,
+
+  "current_feature": {
+    "$comment": "DEPRECATED в v2. Используется для backward compatibility. В новых проектах = null.",
+    "$deprecated": true
+  },
+
+  "current_stage": {
+    "$comment": "DEPRECATED в v2. Этап теперь хранится в active_pipelines[FID].stage.",
+    "$deprecated": true
+  },
+
   "services": []
 }

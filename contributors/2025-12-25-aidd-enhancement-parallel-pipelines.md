@@ -511,10 +511,15 @@ def ensure_state_v2():
 
 ## План реализации
 
-### Фаза 1: Схема и миграция
-- [ ] Обновить `pipeline-state-template.json` на v2
-- [ ] Написать скрипт миграции v1 → v2
-- [ ] Добавить автоматическую миграцию при запуске
+### Фаза 1: Схема и миграция ✅ ЗАВЕРШЕНА
+
+- [x] Обновить `pipeline-state-template.json` на v2
+  - Файл: `templates/documents/pipeline-state-template.json`
+- [x] Написать скрипт миграции v1 → v2
+  - Файл: `scripts/migrate_pipeline_state.py`
+- [x] Добавить автоматическую миграцию при запуске
+  - Файл: `knowledge/pipeline/automigration.md`
+  - Файл: `knowledge/pipeline/state-v2.md`
 
 ### Фаза 2: Модификация команд
 - [ ] Модифицировать `/aidd-idea` для создания в `active_pipelines`
@@ -529,7 +534,7 @@ def ensure_state_v2():
 ### Фаза 4: Документация
 - [ ] Обновить CLAUDE.md
 - [ ] Обновить workflow.md
-- [ ] Создать knowledge/parallel-pipelines.md
+- [x] Создать knowledge/parallel-pipelines.md → `knowledge/pipeline/state-v2.md`
 
 ---
 

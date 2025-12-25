@@ -114,6 +114,15 @@
 
 ---
 
+## Pipeline
+
+| Файл | Описание |
+|------|----------|
+| [pipeline/state-v2.md](pipeline/state-v2.md) | Pipeline State v2: параллельные пайплайны |
+| [pipeline/automigration.md](pipeline/automigration.md) | Автомиграция v1 → v2 |
+
+---
+
 ## Быстрый поиск
 
 | Ищу | Смотреть |
@@ -124,8 +133,10 @@
 | Как писать бота | `services/aiogram/` |
 | HTTP-клиент для Data API | `integrations/http/business-to-data.md` |
 | Конвенции именования | `architecture/naming/` |
+| Параллельные пайплайны | `pipeline/state-v2.md` |
+| Миграция state v1→v2 | `pipeline/automigration.md` |
 
 ---
 
-**Версия**: 2.0
-**Обновлён**: 2025-12-21
+**Версия**: 2.1
+**Обновлён**: 2025-12-25
