@@ -144,7 +144,38 @@ deploy_ready: false
 | Safety | {Result} | {N} | ✅/❌ |
 | Trivy | {Result} | {N} | ✅/❌ |
 
-### 4.3 Performance
+### 4.3 Secrets Management Verification
+
+> **Документация**: `knowledge/security/security-checklist.md`
+
+#### BLOCKER Issues (должны быть исправлены в REVIEW)
+
+| # | Проверка | Статус Review | Статус Сейчас |
+|---|----------|---------------|---------------|
+| 1 | .gitignore содержит .env | ✅/❌ | ✅/❌ |
+| 2 | Нет hardcoded паролей | ✅/❌ | ✅/❌ |
+| 3 | Нет hardcoded токенов | ✅/❌ | ✅/❌ |
+| 4 | .env.example без реальных секретов | ✅/❌ | ✅/❌ |
+
+#### CRITICAL Issues (должны быть исправлены)
+
+| # | Проверка | Статус Review | Статус Сейчас |
+|---|----------|---------------|---------------|
+| 5 | *.pem, *.key в .gitignore | ✅/❌ | ✅/❌ |
+| 6 | Нет default паролей в docker-compose | ✅/❌ | ✅/❌ |
+| 7 | sanitize_sensitive_data в логах | ✅/❌ | ✅/❌ |
+| 8 | CI/CD использует secrets | ✅/❌ | ✅/❌ |
+
+#### WARNING Issues (задокументированы как известные ограничения)
+
+| # | Проверка | Статус | Комментарий |
+|---|----------|--------|-------------|
+| 9 | Pre-commit hooks | ✅/⚠️ | {Комментарий} |
+| 10 | Gitleaks hook | ✅/⚠️ | {Комментарий} |
+
+**Security Summary**: {Все BLOCKER/CRITICAL исправлены | Есть неисправленные issues}
+
+### 4.4 Performance
 
 | Тест | Метрика | Результат | Требование | Статус |
 |------|---------|-----------|------------|--------|

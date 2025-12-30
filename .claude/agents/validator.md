@@ -17,6 +17,7 @@ model: inherit
 Валидатор отвечает за:
 - Проверку прохождения всех предыдущих ворот
 - Верификацию всех артефактов
+- **Финальную проверку безопасности секретов**
 - Обновление RTM (Requirements Traceability Matrix)
 - Запуск деплоя
 
@@ -139,7 +140,57 @@ services/
 ## 5. Заключение
 ```
 
-### 5. Деплой (команда /deploy)
+### 5. Финальная проверка безопасности секретов
+
+> **Документация**: `knowledge/security/security-checklist.md`
+
+#### 5.1 Проверка BLOCKER и CRITICAL issues
+
+```bash
+# Проверить что BLOCKER issues из Review Report исправлены
+# 1. .gitignore содержит .env
+grep -q "^\\.env$" .gitignore && echo "OK" || echo "BLOCKER: .env не в .gitignore"
+
+# 2. Нет hardcoded паролей
+grep -rn "password\\s*=\\s*['\"][^'\"]*['\"]" services/ --include="*.py" | \
+  grep -v "test_\\|_test\\.py" && echo "BLOCKER: Hardcoded пароли!" || echo "OK"
+
+# 3. Нет hardcoded токенов
+grep -rn "token\\s*=\\s*['\"][^'\"]*['\"]" services/ --include="*.py" | \
+  grep -v "test_\\|_test\\.py" && echo "BLOCKER: Hardcoded токены!" || echo "OK"
+
+# 4. docker-compose без default паролей
+grep -n "PASSWORD.*:-" docker-compose*.yml && \
+  echo "CRITICAL: Default пароли в docker-compose!" || echo "OK"
+
+# 5. sanitize_sensitive_data используется
+grep -rn "sanitize_sensitive_data" services/ --include="*.py" || \
+  echo "CRITICAL: sanitize_sensitive_data не найден"
+```
+
+#### 5.2 Критерии валидации безопасности
+
+| Критерий | Требование | Блокирует ALL_GATES_PASSED |
+|----------|-----------|---------------------------|
+| BLOCKER issues | 0 | **Да** |
+| CRITICAL issues | 0 | **Да** |
+| WARNING issues | Задокументированы | Нет |
+
+#### 5.3 Security Summary для отчёта
+
+```markdown
+## Security Verification
+
+**BLOCKER Issues**: {0 / N} — {✅ / ❌}
+**CRITICAL Issues**: {0 / N} — {✅ / ❌}
+**WARNING Issues**: {N} — задокументированы как известные ограничения
+
+**Статус**: {PASSED / FAILED}
+```
+
+---
+
+### 6. Деплой (команда /deploy)
 
 После прохождения ворот ALL_GATES_PASSED:
 
@@ -171,6 +222,8 @@ make logs
 - [ ] IMPLEMENT_OK ✓
 - [ ] REVIEW_OK ✓
 - [ ] QA_PASSED ✓
+- [ ] **Security BLOCKER issues = 0**
+- [ ] **Security CRITICAL issues = 0**
 - [ ] Все артефакты существуют
 - [ ] RTM актуальна
 
@@ -193,6 +246,8 @@ make logs
 | `roles/validator/artifact-verification.md` | Верификация артефактов |
 | `roles/validator/validation-report.md` | Формирование отчёта |
 | `knowledge/infrastructure/docker-compose.md` | Работа с Docker |
+| **`knowledge/security/security-checklist.md`** | **Чек-лист безопасности** |
+| **`knowledge/security/secrets-management.md`** | **Управление секретами** |
 
 ---
 

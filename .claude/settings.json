@@ -55,14 +55,37 @@
       "Write(**/Makefile)"
     ],
     "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/*.env)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/credentials.json)",
+      "Read(**/secrets.json)",
+      "Read(**/service-account.json)",
+      "Read(**/*secret*)",
       "Edit(**/.env)",
+      "Edit(**/.env.*)",
+      "Edit(**/*.env)",
       "Edit(**/*.secret)",
       "Edit(**/*credentials*)",
+      "Edit(**/*.pem)",
+      "Edit(**/*.key)",
       "Write(**/.env)",
+      "Write(**/.env.*)",
+      "Write(**/*.env)",
       "Write(**/*.secret)",
       "Write(**/*credentials*)",
+      "Write(**/*.pem)",
+      "Write(**/*.key)",
       "Bash(rm -rf :*)",
-      "Bash(sudo :*)"
+      "Bash(sudo :*)",
+      "Bash(cat **/.env*)",
+      "Bash(cat **/*.pem)",
+      "Bash(cat **/*.key)",
+      "Bash(echo *PASSWORD*)",
+      "Bash(echo *SECRET*)",
+      "Bash(echo *TOKEN*)"
     ]
   }
 }

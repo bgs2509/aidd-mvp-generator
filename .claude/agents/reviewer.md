@@ -19,6 +19,7 @@ model: inherit
 - Проверку соблюдения conventions.md
 - Выявление нарушений DRY/KISS/YAGNI
 - **Проверку Log-Driven Design**
+- **Проверку безопасности секретных данных**
 - Формирование отчёта ревью
 
 ---
@@ -129,7 +130,57 @@ Grep: "password|secret|token|api_key" in services/*/src/
 - [ ] `for item in items: logger.debug(item)` — логирование в цикле
 - [ ] Логирование уже залогированной информации
 
-### 5. Формирование отчёта
+### 5. Проверка безопасности секретов
+
+> **Документация**: `knowledge/security/security-checklist.md`
+
+```
+BLOCKER Checklist (блокирует REVIEW_OK):
+[ ] Нет hardcoded паролей в коде
+[ ] Нет hardcoded токенов в коде
+[ ] .env в .gitignore
+[ ] Нет реальных секретов в .env.example
+
+CRITICAL Checklist:
+[ ] *.pem, *.key в .gitignore
+[ ] Нет default паролей в docker-compose (:-secret)
+[ ] Секретные поля маскируются в логах (sanitize_sensitive_data)
+[ ] CI/CD использует ${{ secrets.* }}
+
+WARNING Checklist:
+[ ] .pre-commit-config.yaml существует
+[ ] gitleaks hook настроен
+[ ] .env.example содержит CHANGE_ME placeholder'ы
+```
+
+**Команды проверки:**
+
+```bash
+# Проверка .gitignore
+Grep: "\.env$" in .gitignore
+
+# Поиск hardcoded секретов
+Grep: "password\s*=\s*['\"][^'\"]+['\"]" in services/ --include="*.py"
+Grep: "token\s*=\s*['\"][^'\"]+['\"]" in services/ --include="*.py"
+# Исключить test_ файлы!
+
+# Проверка docker-compose
+Grep: "PASSWORD.*:-" in docker-compose*.yml
+# Если найдено - нарушение (должно быть :? вместо :-)
+
+# Проверка логирования секретов
+Grep: "sanitize_sensitive_data" in services/*/src/
+# Должен использоваться!
+
+# Проверка pre-commit
+test -f .pre-commit-config.yaml
+```
+
+**При обнаружении BLOCKER:**
+- Статус ревью: **FAILED**
+- Требуется исправление перед повторным ревью
+
+### 6. Формирование отчёта
 
 Создать `ai-docs/docs/reports/review-report.md`:
 
