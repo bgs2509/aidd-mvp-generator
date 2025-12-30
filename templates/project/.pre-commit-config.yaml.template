@@ -1,0 +1,168 @@
+# Pre-commit hooks для {{PROJECT_NAME}}
+# Установка: pip install pre-commit && pre-commit install
+#
+# Включает:
+# - Проверку секретов (gitleaks, detect-secrets)
+# - Линтинг Python (ruff)
+# - Форматирование (ruff format)
+# - Проверку типов (mypy)
+# - Валидацию YAML/JSON
+
+repos:
+  # ============================================================================
+  # SECURITY: Обнаружение секретов в коде
+  # ============================================================================
+
+  # Gitleaks — быстрый сканер секретов
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: v8.18.1
+    hooks:
+      - id: gitleaks
+        name: "🔐 Detect secrets with gitleaks"
+        description: "Сканирование на наличие секретов (API keys, passwords, tokens)"
+        # Пропустить .env.example файлы (они содержат placeholder'ы)
+        exclude: \.env\.example$
+
+  # Detect-secrets — дополнительный сканер от Yelp
+  - repo: https://github.com/Yelp/detect-secrets
+    rev: v1.4.0
+    hooks:
+      - id: detect-secrets
+        name: "🔑 Detect secrets with detect-secrets"
+        args:
+          - "--baseline"
+          - ".secrets.baseline"
+        # Исключаем тестовые файлы и примеры
+        exclude: |
+          (?x)^(
+            .*\.env\.example$|
+            .*test_.*\.py$|
+            .*_test\.py$|
+            \.secrets\.baseline$
+          )$
+
+  # ============================================================================
+  # PYTHON: Качество кода
+  # ============================================================================
+
+  # Ruff — быстрый линтер и форматтер
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.1.9
+    hooks:
+      # Линтинг
+      - id: ruff
+        name: "🔍 Lint Python with ruff"
+        args: ["--fix", "--exit-non-zero-on-fix"]
+      # Форматирование
+      - id: ruff-format
+        name: "✨ Format Python with ruff"
+
+  # Mypy — статическая проверка типов
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.8.0
+    hooks:
+      - id: mypy
+        name: "📝 Type check with mypy"
+        additional_dependencies:
+          - pydantic
+          - pydantic-settings
+          - fastapi
+          - structlog
+        args:
+          - "--ignore-missing-imports"
+          - "--no-error-summary"
+        # Только проверяем services/
+        files: ^services/.*\.py$
+
+  # ============================================================================
+  # GENERAL: Общие проверки
+  # ============================================================================
+
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      # Запрет больших файлов
+      - id: check-added-large-files
+        name: "📦 Check for large files"
+        args: ["--maxkb=500"]
+
+      # Проверка YAML синтаксиса
+      - id: check-yaml
+        name: "📄 Validate YAML"
+        args: ["--unsafe"]  # Разрешить кастомные теги
+
+      # Проверка JSON синтаксиса
+      - id: check-json
+        name: "📄 Validate JSON"
+
+      # Проверка TOML синтаксиса
+      - id: check-toml
+        name: "📄 Validate TOML"
+
+      # Запрет коммита в main/master напрямую
+      - id: no-commit-to-branch
+        name: "🚫 Prevent direct commits to main"
+        args: ["--branch", "main", "--branch", "master"]
+
+      # Проверка конца файла
+      - id: end-of-file-fixer
+        name: "📝 Fix end of file"
+
+      # Удаление trailing whitespace
+      - id: trailing-whitespace
+        name: "🧹 Remove trailing whitespace"
+
+      # Проверка merge conflict маркеров
+      - id: check-merge-conflict
+        name: "⚠️ Check for merge conflicts"
+
+      # Проверка что .env файлы не добавляются
+      - id: check-case-conflict
+        name: "🔤 Check case conflicts"
+
+  # Проверка что секретные файлы не добавляются
+  - repo: local
+    hooks:
+      - id: check-secrets-files
+        name: "🚫 Block secret files from commit"
+        entry: bash -c 'echo "ERROR: Attempting to commit secret files!" && exit 1'
+        language: system
+        files: |
+          (?x)^(
+            .*\.env$|
+            .*\.env\.local$|
+            .*\.env\.[^.]+\.local$|
+            .*\.pem$|
+            .*\.key$|
+            .*credentials\.json$|
+            .*secrets\.json$|
+            .*service-account\.json$
+          )$
+        pass_filenames: false
+
+  # ============================================================================
+  # DOCKER: Проверка Dockerfile
+  # ============================================================================
+
+  - repo: https://github.com/hadolint/hadolint
+    rev: v2.12.0
+    hooks:
+      - id: hadolint-docker
+        name: "🐳 Lint Dockerfile"
+        args:
+          - "--ignore"
+          - "DL3008"  # Версии apt пакетов
+          - "--ignore"
+          - "DL3013"  # Версии pip пакетов
+
+# ============================================================================
+# CI Integration
+# ============================================================================
+# Добавьте в GitHub Actions:
+#
+# - name: Run pre-commit
+#   uses: pre-commit/action@v3.0.0
+#   with:
+#     extra_args: --all-files
+#
+# ============================================================================
