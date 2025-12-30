@@ -4,6 +4,9 @@
 Создание и настройка FastAPI приложения.
 """
 
+import hashlib
+import sys
+import time
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 
@@ -15,9 +18,15 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.core.config import settings
 from src.core.logging import setup_logging
 from src.api.v1.router import api_router
+from src.middlewares import RequestLoggingMiddleware
+from shared.utils.log_helpers import log_service_started, log_service_stopped
 
 
 logger = structlog.get_logger()
+
+
+# Время запуска для расчёта uptime
+_startup_time: float | None = None
 
 
 @asynccontextmanager
@@ -27,11 +36,26 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
 
     Инициализация и закрытие ресурсов.
     """
+    global _startup_time
+    _startup_time = time.time()
+
     # === Startup ===
-    logger.info(
-        "Запуск приложения",
-        app_name=settings.app_name,
+    # Полное логирование контекста при старте (Log-Driven Design)
+    log_service_started(
+        logger,
+        service_name=settings.app_name,
+        service_version=getattr(settings, "app_version", "1.0.0"),
         environment=settings.app_env,
+        python_version=sys.version.split()[0],
+        feature_flags={
+            "debug": settings.debug,
+        },
+        dependencies={
+            "data_api": settings.data_api_url,
+        },
+        config_hash=hashlib.md5(
+            settings.model_dump_json().encode()
+        ).hexdigest()[:8],
     )
 
     # Создание HTTP клиента для Data API
@@ -39,16 +63,22 @@ async def lifespan(app: FastAPI) -> AsyncGenerator[None, None]:
         base_url=settings.data_api_url,
         timeout=httpx.Timeout(settings.data_api_timeout),
     )
-    logger.info("HTTP клиент создан", base_url=settings.data_api_url)
+    logger.info("http_client_created", base_url=settings.data_api_url)
 
     yield
 
     # === Shutdown ===
-    logger.info("Остановка приложения")
+    uptime = time.time() - _startup_time if _startup_time else None
+    log_service_stopped(
+        logger,
+        service_name=settings.app_name,
+        reason="shutdown",
+        uptime_seconds=uptime,
+    )
 
     # Закрытие HTTP клиента
     await app.state.http_client.aclose()
-    logger.info("HTTP клиент закрыт")
+    logger.info("http_client_closed")
 
 
 def create_app() -> FastAPI:
@@ -74,6 +104,8 @@ def create_app() -> FastAPI:
         redoc_url="/redoc" if settings.debug else None,
     )
 
+    # === Middleware (порядок важен!) ===
+
     # CORS middleware
     app.add_middleware(
         CORSMiddleware,
@@ -81,6 +113,13 @@ def create_app() -> FastAPI:
         allow_credentials=True,
         allow_methods=["*"],
         allow_headers=["*"],
+    )
+
+    # Request Logging middleware (Log-Driven Design)
+    # Должен быть после CORS, чтобы логировать только валидные запросы
+    app.add_middleware(
+        RequestLoggingMiddleware,
+        skip_paths={"/health", "/metrics", "/ready"},
     )
 
     # Подключение роутеров

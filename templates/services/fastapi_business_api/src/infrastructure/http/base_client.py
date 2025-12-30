@@ -2,6 +2,7 @@
 Базовый HTTP клиент.
 
 Общий функционал для всех HTTP клиентов.
+Реализует Log-Driven Design для исходящих вызовов.
 """
 
 from typing import Any
@@ -10,19 +11,28 @@ import httpx
 import structlog
 
 from src.core.exceptions import ExternalServiceError
+from shared.utils.request_id import create_tracing_headers
+from shared.utils.log_helpers import log_external_call_start, log_external_call_end
 
 
 logger = structlog.get_logger()
 
 
 class BaseHttpClient:
-    """Базовый HTTP клиент с обработкой ошибок."""
+    """
+    Базовый HTTP клиент с обработкой ошибок и Log-Driven Design.
+
+    Реализует:
+    - Автоматическую передачу tracing headers (request_id, correlation_id, causation_id)
+    - Логирование начала и завершения вызовов с duration_ms
+    - Классификацию ошибок (timeout, connection_error)
+    - Флаг is_retryable для ошибок
+    """
 
     def __init__(
         self,
         client: httpx.AsyncClient,
         service_name: str = "external",
-        request_id: str | None = None,
     ):
         """
         Инициализация клиента.
@@ -30,22 +40,23 @@ class BaseHttpClient:
         Args:
             client: HTTP клиент httpx.
             service_name: Название сервиса для логов.
-            request_id: ID запроса для корреляции.
         """
         self.client = client
         self.service_name = service_name
-        self.request_id = request_id
 
     def _get_headers(self) -> dict[str, str]:
         """
-        Получить заголовки запроса.
+        Получить заголовки запроса с полной трассировкой.
+
+        Передаёт request_id, correlation_id, causation_id для
+        сквозной трассировки между сервисами.
 
         Returns:
             Словарь заголовков.
         """
         headers = {"Content-Type": "application/json"}
-        if self.request_id:
-            headers["X-Request-ID"] = self.request_id
+        # Добавляем все tracing headers (Log-Driven Design)
+        headers.update(create_tracing_headers())
         return headers
 
     async def _handle_response(
@@ -90,6 +101,7 @@ class BaseHttpClient:
         self,
         path: str,
         params: dict[str, Any] | None = None,
+        operation: str | None = None,
     ) -> dict[str, Any]:
         """
         GET запрос.
@@ -97,28 +109,64 @@ class BaseHttpClient:
         Args:
             path: Путь запроса.
             params: Query параметры.
+            operation: Название операции для логов.
 
         Returns:
             JSON данные ответа.
         """
-        logger.debug(
-            "HTTP GET запрос",
+        op_name = operation or f"GET {path}"
+        start_time = log_external_call_start(
+            logger,
             service=self.service_name,
-            path=path,
+            operation=op_name,
+            method="GET",
+            endpoint=path,
         )
 
-        response = await self.client.get(
-            path,
-            params=params,
-            headers=self._get_headers(),
-        )
+        try:
+            response = await self.client.get(
+                path,
+                params=params,
+                headers=self._get_headers(),
+            )
 
-        return await self._handle_response(response)
+            log_external_call_end(
+                logger,
+                service=self.service_name,
+                operation=op_name,
+                start_time=start_time,
+                status_code=response.status_code,
+            )
+
+            return await self._handle_response(response)
+
+        except httpx.TimeoutException:
+            log_external_call_end(
+                logger,
+                service=self.service_name,
+                operation=op_name,
+                start_time=start_time,
+                error_type="timeout",
+                is_retryable=True,
+            )
+            raise
+
+        except httpx.ConnectError:
+            log_external_call_end(
+                logger,
+                service=self.service_name,
+                operation=op_name,
+                start_time=start_time,
+                error_type="connection_error",
+                is_retryable=True,
+            )
+            raise
 
     async def post(
         self,
         path: str,
         data: dict[str, Any] | None = None,
+        operation: str | None = None,
     ) -> dict[str, Any]:
         """
         POST запрос.
@@ -126,28 +174,64 @@ class BaseHttpClient:
         Args:
             path: Путь запроса.
             data: Данные для отправки.
+            operation: Название операции для логов.
 
         Returns:
             JSON данные ответа.
         """
-        logger.debug(
-            "HTTP POST запрос",
+        op_name = operation or f"POST {path}"
+        start_time = log_external_call_start(
+            logger,
             service=self.service_name,
-            path=path,
+            operation=op_name,
+            method="POST",
+            endpoint=path,
         )
 
-        response = await self.client.post(
-            path,
-            json=data,
-            headers=self._get_headers(),
-        )
+        try:
+            response = await self.client.post(
+                path,
+                json=data,
+                headers=self._get_headers(),
+            )
 
-        return await self._handle_response(response)
+            log_external_call_end(
+                logger,
+                service=self.service_name,
+                operation=op_name,
+                start_time=start_time,
+                status_code=response.status_code,
+            )
+
+            return await self._handle_response(response)
+
+        except httpx.TimeoutException:
+            log_external_call_end(
+                logger,
+                service=self.service_name,
+                operation=op_name,
+                start_time=start_time,
+                error_type="timeout",
+                is_retryable=True,
+            )
+            raise
+
+        except httpx.ConnectError:
+            log_external_call_end(
+                logger,
+                service=self.service_name,
+                operation=op_name,
+                start_time=start_time,
+                error_type="connection_error",
+                is_retryable=True,
+            )
+            raise
 
     async def put(
         self,
         path: str,
         data: dict[str, Any] | None = None,
+        operation: str | None = None,
     ) -> dict[str, Any]:
         """
         PUT запрос.
@@ -155,49 +239,120 @@ class BaseHttpClient:
         Args:
             path: Путь запроса.
             data: Данные для отправки.
+            operation: Название операции для логов.
 
         Returns:
             JSON данные ответа.
         """
-        logger.debug(
-            "HTTP PUT запрос",
+        op_name = operation or f"PUT {path}"
+        start_time = log_external_call_start(
+            logger,
             service=self.service_name,
-            path=path,
+            operation=op_name,
+            method="PUT",
+            endpoint=path,
         )
 
-        response = await self.client.put(
-            path,
-            json=data,
-            headers=self._get_headers(),
-        )
+        try:
+            response = await self.client.put(
+                path,
+                json=data,
+                headers=self._get_headers(),
+            )
 
-        return await self._handle_response(response)
+            log_external_call_end(
+                logger,
+                service=self.service_name,
+                operation=op_name,
+                start_time=start_time,
+                status_code=response.status_code,
+            )
+
+            return await self._handle_response(response)
+
+        except httpx.TimeoutException:
+            log_external_call_end(
+                logger,
+                service=self.service_name,
+                operation=op_name,
+                start_time=start_time,
+                error_type="timeout",
+                is_retryable=True,
+            )
+            raise
+
+        except httpx.ConnectError:
+            log_external_call_end(
+                logger,
+                service=self.service_name,
+                operation=op_name,
+                start_time=start_time,
+                error_type="connection_error",
+                is_retryable=True,
+            )
+            raise
 
     async def delete(
         self,
         path: str,
+        operation: str | None = None,
     ) -> dict[str, Any] | None:
         """
         DELETE запрос.
 
         Args:
             path: Путь запроса.
+            operation: Название операции для логов.
 
         Returns:
             JSON данные ответа или None.
         """
-        logger.debug(
-            "HTTP DELETE запрос",
+        op_name = operation or f"DELETE {path}"
+        start_time = log_external_call_start(
+            logger,
             service=self.service_name,
-            path=path,
+            operation=op_name,
+            method="DELETE",
+            endpoint=path,
         )
 
-        response = await self.client.delete(
-            path,
-            headers=self._get_headers(),
-        )
+        try:
+            response = await self.client.delete(
+                path,
+                headers=self._get_headers(),
+            )
 
-        if response.status_code == 204:
-            return None
+            log_external_call_end(
+                logger,
+                service=self.service_name,
+                operation=op_name,
+                start_time=start_time,
+                status_code=response.status_code,
+            )
 
-        return await self._handle_response(response)
+            if response.status_code == 204:
+                return None
+
+            return await self._handle_response(response)
+
+        except httpx.TimeoutException:
+            log_external_call_end(
+                logger,
+                service=self.service_name,
+                operation=op_name,
+                start_time=start_time,
+                error_type="timeout",
+                is_retryable=True,
+            )
+            raise
+
+        except httpx.ConnectError:
+            log_external_call_end(
+                logger,
+                service=self.service_name,
+                operation=op_name,
+                start_time=start_time,
+                error_type="connection_error",
+                is_retryable=True,
+            )
+            raise
