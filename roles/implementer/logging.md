@@ -385,6 +385,101 @@ logger.info("response", body=large_json_object)  # ПЛОХО!
 
 ---
 
+## Антипаттерны логирования
+
+### ❌ НИКОГДА не делайте
+
+```python
+# 1. Бесполезные входы/выходы из функций
+def process_order(order):
+    logger.debug("Entering process_order")  # ПЛОХО!
+    result = do_work(order)
+    logger.debug("Exiting process_order")   # ПЛОХО!
+    return result
+
+# 2. Логирование каждой итерации цикла
+for item in items:
+    logger.debug(f"Processing item {item.id}")  # ПЛОХО!
+    process(item)
+
+# 3. Тривиальные проверки без контекста
+if user is not None:
+    logger.debug("User exists")  # ПЛОХО! Очевидно и бесполезно
+
+# 4. Дублирование уже залогированной информации
+logger.info("request_started", path="/api/users")
+# ... код ...
+logger.info("processing request", path="/api/users")  # ПЛОХО! path уже залогирован
+
+# 5. Очевидные сообщения
+logger.info("Starting to process request...")  # ПЛОХО!
+logger.info("About to call database...")       # ПЛОХО!
+logger.info("Going to validate input...")      # ПЛОХО!
+
+# 6. Логирование успешных тривиальных проверок
+if len(name) > 0:
+    logger.debug("Name is not empty")  # ПЛОХО!
+
+# 7. Логирование содержимого больших объектов
+logger.info("User data", user=user.__dict__)  # ПЛОХО!
+logger.info("Response", body=response.json()) # ПЛОХО!
+```
+
+### ✅ Вместо этого делайте
+
+```python
+# 1. Логируйте значимые бизнес-события
+logger.info("order_created", order_id=order.id, user_id=user.id)
+
+# 2. Для циклов — логируйте итоги или пакеты
+logger.info("items_processed", count=len(items), duration_ms=elapsed)
+
+# 3. Логируйте решения с контекстом
+if user is None:
+    logger.warning("user_not_found", user_id=user_id)
+    raise UserNotFoundError(user_id)
+
+# 4. Используйте request_id для связи логов
+# Middleware автоматически добавляет request_id
+
+# 5. Используйте стандартные события
+logger.info("request_started", method="GET", path="/api/users")
+
+# 6. Логируйте только отклонения от нормы
+if not is_valid:
+    log_validation_errors(logger, errors, endpoint="/api/users")
+
+# 7. Логируйте только размер, не содержимое
+logger.info("response_sent", response_size=len(body), status_code=200)
+```
+
+### Критерии: когда логировать?
+
+| Вопрос | Да → Логировать | Нет → Не логировать |
+|--------|-----------------|---------------------|
+| AI-агент поймёт ЧТО произошло? | ✅ | ❌ |
+| AI-агент поймёт ПОЧЕМУ? | ✅ | ❌ |
+| Информация уникальна? | ✅ | ❌ |
+| Помогает в отладке? | ✅ | ❌ |
+| Влияет на бизнес-логику? | ✅ | ❌ |
+
+### Правило трёх вопросов
+
+Перед каждым `logger.*` спросите себя:
+
+1. **Что нового это сообщение добавляет?**
+   - Если ничего → не логировать
+
+2. **Кто будет это читать и зачем?**
+   - DEBUG: разработчик при отладке
+   - INFO: AI-агент для понимания flow
+   - WARNING/ERROR: on-call инженер для диагностики
+
+3. **Можно ли восстановить эту информацию из других логов?**
+   - Если да → не дублировать
+
+---
+
 ## Качественные ворота
 
 ### LOGGING_READY
@@ -399,9 +494,90 @@ logger.info("response", body=large_json_object)  # ПЛОХО!
 
 ---
 
+## Log-Driven Design
+
+Для AI-агентного кодинга используйте расширенный подход Log-Driven Design.
+
+### Дополнительные компоненты
+
+| Компонент | Файл | Описание |
+|-----------|------|----------|
+| Хелперы логирования | `shared/utils/log_helpers.py` | `log_decision`, `log_state_change`, `log_db_operation`, `log_validation_errors`, `log_auth_context`, `log_rate_limit_status` |
+| State Machine | `shared/utils/state_machine.py` | Автоматическое логирование переходов состояний |
+| Полная трассировка | `shared/utils/request_id.py` | `correlation_id`, `causation_id` |
+| Telegram логирование | `bot/middlewares/logging.py` | `update_id`, FSM before/after, детальные Telegram ошибки |
+
+### Пример логирования решений
+
+```python
+from shared.utils.log_helpers import log_decision
+
+if order.fraud_score > settings.fraud_threshold:
+    log_decision(
+        logger,
+        decision="REJECT",
+        reason="fraud_score_exceeded",
+        threshold_values={"fraud_threshold": settings.fraud_threshold},
+        actual_values={"fraud_score": order.fraud_score},
+    )
+    raise FraudDetectedError(...)
+```
+
+### Пример логирования ошибок валидации
+
+```python
+from pydantic import ValidationError
+from shared.utils.log_helpers import log_validation_errors
+
+try:
+    user = UserCreate(**request_data)
+except ValidationError as e:
+    log_validation_errors(
+        logger,
+        errors=e.errors(),
+        source="request",
+        endpoint="/api/v1/users",
+    )
+    raise HTTPException(status_code=422, detail=e.errors())
+```
+
+### Пример логирования контекста авторизации
+
+```python
+from shared.utils.log_helpers import log_auth_context
+
+def get_current_user(token: str = Depends(oauth2_scheme)):
+    user = decode_token(token)
+    log_auth_context(
+        logger,
+        user_id=str(user.id),
+        roles=user.roles,
+        auth_method="jwt",
+    )
+    return user
+```
+
+### Пример логирования rate limit
+
+```python
+from shared.utils.log_helpers import log_rate_limit_status, log_rate_limit_exceeded
+
+# При приближении к лимиту (< 20%)
+if remaining < limit * 0.2:
+    log_rate_limit_status(logger, limit=100, remaining=15, identifier=client_ip)
+
+# При превышении лимита
+if remaining <= 0:
+    log_rate_limit_exceeded(logger, limit=100, retry_after=60, identifier=client_ip)
+    raise HTTPException(status_code=429, detail="Rate limit exceeded")
+```
+
+---
+
 ## Источники
 
 | Документ | Описание |
 |----------|----------|
+| `knowledge/quality/logging/log-driven-design.md` | **Полное руководство Log-Driven Design** |
 | `knowledge/quality/logging/structured.md` | Структурированное логирование |
 | `knowledge/quality/logging/correlation.md` | Корреляция логов |
