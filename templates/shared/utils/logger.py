@@ -1,12 +1,69 @@
 """
-Структурированное логирование.
+Структурированное логирование по Log-Driven Design.
 
-Настройка structlog для JSON логов.
+Настройка structlog для JSON логов с полной трассировкой:
+- request_id, correlation_id, causation_id
+- entity_type, entity_id для операций над сущностями
+- Стандартизированные поля для AI-агентов
 """
 
 import logging
+from typing import Any
+
 import structlog
 from structlog.types import Processor
+
+
+def add_tracing_context(
+    logger: Any,
+    method_name: str,
+    event_dict: dict[str, Any],
+) -> dict[str, Any]:
+    """
+    Процессор для добавления контекста трассировки.
+
+    Автоматически добавляет request_id, correlation_id, causation_id, user_id
+    из ContextVars в каждое сообщение лога.
+
+    Args:
+        logger: Логгер (не используется).
+        method_name: Название метода логирования.
+        event_dict: Словарь события.
+
+    Returns:
+        Обновлённый словарь события.
+    """
+    # Ленивый импорт для избежания циклических зависимостей
+    from shared.utils.request_id import (
+        get_causation_id,
+        get_correlation_id,
+        get_request_id,
+        get_user_id,
+    )
+
+    # Добавляем ID трассировки если их нет в event_dict
+    if "request_id" not in event_dict:
+        request_id = get_request_id()
+        if request_id:
+            event_dict["request_id"] = request_id
+
+    if "correlation_id" not in event_dict:
+        correlation_id = get_correlation_id()
+        if correlation_id:
+            event_dict["correlation_id"] = correlation_id
+
+    if "causation_id" not in event_dict:
+        causation_id = get_causation_id()
+        if causation_id:
+            event_dict["causation_id"] = causation_id
+
+    # user_id добавляется если пользователь аутентифицирован
+    if "user_id" not in event_dict:
+        user_id = get_user_id()
+        if user_id:
+            event_dict["user_id"] = user_id
+
+    return event_dict
 
 
 def setup_logging(
@@ -25,10 +82,11 @@ def setup_logging(
     # Общие процессоры
     shared_processors: list[Processor] = [
         structlog.contextvars.merge_contextvars,
+        add_tracing_context,  # Log-Driven Design: добавляем request_id, correlation_id, causation_id
         structlog.processors.add_log_level,
         structlog.processors.TimeStamper(fmt="iso"),
         structlog.processors.StackInfoRenderer(),
-        # Добавление названия сервиса
+        # Добавление названия сервиса и callsite
         structlog.processors.CallsiteParameterAdder(
             [
                 structlog.processors.CallsiteParameter.FUNC_NAME,
