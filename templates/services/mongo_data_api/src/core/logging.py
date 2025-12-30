@@ -2,11 +2,14 @@
 Настройка логирования {context}_data.
 
 Структурированное логирование с structlog.
+Включает фильтрацию секретных данных (sanitize_sensitive_data).
 """
 
 import logging
 import structlog
 from structlog.types import Processor
+
+from shared.utils.logger import sanitize_sensitive_data
 
 
 def setup_logging(
@@ -20,8 +23,11 @@ def setup_logging(
         log_level: Уровень логирования.
         json_logs: Использовать JSON формат.
     """
+    # SECURITY: sanitize_sensitive_data ДОЛЖЕН быть перед JSONRenderer
+    # чтобы маскировать секреты ДО записи в лог
     shared_processors: list[Processor] = [
         structlog.contextvars.merge_contextvars,
+        sanitize_sensitive_data,  # SECURITY: фильтрация секретов
         structlog.processors.add_log_level,
         structlog.processors.TimeStamper(fmt="iso"),
         structlog.processors.StackInfoRenderer(),
