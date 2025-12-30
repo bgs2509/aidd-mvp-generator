@@ -70,14 +70,27 @@
 | NF-011 | SQL Injection | Bandit scan | 0 issues | ✅ |
 | NF-012 | XSS Protection | Security headers | Configured | ✅ |
 
-### 3.3 Надёжность
+### 3.3 Observability (Логирование)
+
+| ID | Описание | Проверка | Результат | Статус |
+|----|----------|----------|-----------|--------|
+| NF-LOG-001 | Structured logging (JSON) | `structlog` настроен | Configured | ✅/⏳ |
+| NF-LOG-002 | Request tracing | `request_id` в логах | Implemented | ✅/⏳ |
+| NF-LOG-003 | Correlation tracing | `correlation_id` передаётся | Implemented | ✅/⏳ |
+| NF-LOG-004 | User context | `user_id` в логах | Implemented | ✅/⏳ |
+| NF-LOG-005 | Request logging middleware | `RequestLoggingMiddleware` | Installed | ✅/⏳ |
+| NF-LOG-006 | External call logging | HTTP client логирует | Implemented | ✅/⏳ |
+| NF-LOG-007 | DB operation logging | Repository логирует | Implemented | ✅/⏳ |
+| NF-LOG-008 | No secrets in logs | Bandit + manual check | 0 issues | ✅/⏳ |
+
+### 3.4 Надёжность
 
 | ID | Описание | Метрика | Целевое | Проверка | Статус |
 |----|----------|---------|---------|----------|--------|
 | NF-020 | Uptime | Availability | 99.9% | Monitoring | ⏳ |
 | NF-021 | Recovery | RTO | < 1h | DR test | ⏳ |
 
-### 3.4 Масштабируемость
+### 3.5 Масштабируемость
 
 | ID | Описание | Проверка | Результат | Статус |
 |----|----------|----------|-----------|--------|

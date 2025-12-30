@@ -173,7 +173,22 @@ filename = f"{date}_{fid}_{slug}-review.md"
 | DRY | Нет дублирования |
 | KISS | Решения простые |
 | YAGNI | Нет лишнего кода |
+| **Логирование** | Log-Driven Design соблюдён (см. ниже) |
 | Замечания | Нет Blocker/Critical |
+
+### Чек-лист логирования (Log-Driven Design)
+
+> **Документация**: `.aidd/knowledge/quality/logging/log-driven-design.md`
+
+| Критерий | Проверка |
+|----------|----------|
+| Middleware установлен | `RequestLoggingMiddleware` в `main.py` |
+| Tracing настроен | `request_id`, `correlation_id` в логах |
+| JSON формат | `structlog` с `JSONRenderer` для production |
+| HTTP client логирует | `log_external_call_start/end` в `BaseHttpClient` |
+| DB логирует | `log_db_operation` в `BaseRepository` |
+| Нет секретов в логах | Пароли, токены, PII не логируются |
+| Антипаттерны | Нет избыточного логирования (см. `roles/implementer/logging.md`) |
 
 ---
 

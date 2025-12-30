@@ -18,6 +18,7 @@ model: inherit
 - Проверку соответствия архитектуре
 - Проверку соблюдения conventions.md
 - Выявление нарушений DRY/KISS/YAGNI
+- **Проверку Log-Driven Design**
 - Формирование отчёта ревью
 
 ---
@@ -85,7 +86,50 @@ Grep: похожие блоки кода
 - [ ] Только то, что требуется по PRD
 - [ ] Нет "на будущее" кода
 
-### 4. Формирование отчёта
+### 4. Проверка Log-Driven Design
+
+> **Документация**: `knowledge/quality/logging/log-driven-design.md`
+
+```
+Checklist:
+[ ] RequestLoggingMiddleware установлен в main.py
+[ ] structlog настроен с JSON форматом
+[ ] request_id присутствует во всех логах
+[ ] correlation_id передаётся между сервисами
+[ ] HTTP client использует log_external_call_start/end
+[ ] Repository использует log_db_operation
+[ ] Нет логирования секретных данных (пароли, токены)
+[ ] Нет антипаттернов логирования
+```
+
+**Команды проверки:**
+
+```bash
+# Проверка middleware
+Grep: "RequestLoggingMiddleware" in services/*/src/main.py
+
+# Проверка structlog
+Grep: "setup_logging" in services/*/src/main.py
+
+# Проверка tracing в HTTP client
+Grep: "create_tracing_headers" in services/*/src/infrastructure/
+
+# Проверка логирования в repository
+Grep: "log_db_operation" in services/*/src/repositories/
+
+# Поиск потенциальных секретов в логах
+Grep: "password|secret|token|api_key" in services/*/src/
+# Если логируется — нарушение
+```
+
+**Антипаттерны (нарушения):**
+
+- [ ] `logger.debug("Entering function")` — бесполезный лог
+- [ ] `logger.info(f"Data: {large_object}")` — логирование больших объектов
+- [ ] `for item in items: logger.debug(item)` — логирование в цикле
+- [ ] Логирование уже залогированной информации
+
+### 5. Формирование отчёта
 
 Создать `ai-docs/docs/reports/review-report.md`:
 
@@ -109,12 +153,15 @@ Grep: похожие блоки кода
 ### 3.2 KISS
 ### 3.3 YAGNI
 
-## 4. Найденные проблемы
+## 4. Log-Driven Design
+| Критерий | Статус | Комментарий |
+
+## 5. Найденные проблемы
 | # | Файл | Строка | Серьёзность | Описание |
 
-## 5. Рекомендации
+## 6. Рекомендации
 
-## 6. Заключение
+## 7. Заключение
 ```
 
 ---
@@ -128,6 +175,7 @@ Grep: похожие блоки кода
 - [ ] Код соответствует архитектурному плану
 - [ ] Conventions.md соблюдён
 - [ ] DRY/KISS/YAGNI соблюдены
+- [ ] **Log-Driven Design соблюдён** (middleware, tracing, no secrets)
 - [ ] Нет критических (Critical) замечаний
 - [ ] Нет блокирующих (Blocker) замечаний
 - [ ] Отчёт ревью создан
@@ -149,6 +197,8 @@ Grep: похожие блоки кода
 | `roles/reviewer/convention-compliance.md` | Проверка соглашений |
 | `roles/reviewer/review-report.md` | Формирование отчёта |
 | `knowledge/quality/dry-kiss-yagni.md` | Принципы DRY/KISS/YAGNI |
+| `knowledge/quality/logging/log-driven-design.md` | **Log-Driven Design** |
+| `roles/implementer/logging.md` | Антипаттерны логирования |
 
 ---
 

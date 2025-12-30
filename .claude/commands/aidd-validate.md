@@ -194,6 +194,20 @@ filename = f"{date}_{fid}_{slug}-validation.md"
 Дополнительно:
 - [ ] Все артефакты существуют
 - [ ] RTM актуальна
+- [ ] **Log-Driven Design проверен** (см. ниже)
+
+### Проверка Log-Driven Design
+
+> Финальная валидация логирования перед деплоем.
+
+| Проверка | Команда |
+|----------|---------|
+| Middleware | `Grep: "RequestLoggingMiddleware" in services/*/src/main.py` |
+| Tracing | `Grep: "setup_tracing_context" in services/` |
+| JSON logs | `Grep: "json_logs.*True\|JSONRenderer" in services/` |
+| No secrets | `Grep: "logger.*(password\|secret\|token)" in services/` → должно быть 0 |
+
+**При нарушении** — вернуться к `/aidd-generate` для исправления.
 
 ---
 

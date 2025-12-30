@@ -8,7 +8,7 @@
 #   make test      — запустить тесты
 #   make deploy    — деплой на staging
 
-.PHONY: help dev prod down logs test lint format clean build push
+.PHONY: help dev prod down logs test lint format clean build push check-logging ci
 
 # === Цвета для вывода ===
 GREEN  := $(shell tput -Txterm setaf 2)
@@ -201,8 +201,40 @@ env-check: ## Проверить переменные окружения
 		cp .env.example .env; \
 	fi
 
+# === Проверка логирования ===
+check-logging: ## Проверить Log-Driven Design
+	@echo "${GREEN}Проверка Log-Driven Design...${RESET}"
+	@echo "${YELLOW}1. Проверка RequestLoggingMiddleware...${RESET}"
+	@if grep -rq "RequestLoggingMiddleware" services/*/src/main.py 2>/dev/null; then \
+		echo "  ✓ RequestLoggingMiddleware найден"; \
+	else \
+		echo "  ✗ RequestLoggingMiddleware НЕ найден в main.py"; \
+		exit 1; \
+	fi
+	@echo "${YELLOW}2. Проверка structlog...${RESET}"
+	@if grep -rq "setup_logging\|structlog" services/*/src/core/logging.py 2>/dev/null; then \
+		echo "  ✓ structlog настроен"; \
+	else \
+		echo "  ✗ structlog НЕ настроен"; \
+		exit 1; \
+	fi
+	@echo "${YELLOW}3. Проверка tracing...${RESET}"
+	@if grep -rq "request_id\|correlation_id" services/*/src/ 2>/dev/null; then \
+		echo "  ✓ Tracing настроен"; \
+	else \
+		echo "  ⚠ Tracing не найден (проверьте вручную)"; \
+	fi
+	@echo "${YELLOW}4. Проверка секретов в логах...${RESET}"
+	@if grep -rE "logger\.(info|debug|warning|error).*['\"].*password|secret|token|api_key" services/*/src/ 2>/dev/null; then \
+		echo "  ✗ ВНИМАНИЕ: Возможно логирование секретов!"; \
+		exit 1; \
+	else \
+		echo "  ✓ Секреты не логируются"; \
+	fi
+	@echo "${GREEN}Log-Driven Design: OK${RESET}"
+
 # === CI/CD ===
-ci: lint test ## Запустить CI локально
+ci: lint test check-logging ## Запустить CI локально (включая проверку логирования)
 	@echo "${GREEN}CI проверки пройдены!${RESET}"
 
 release: ## Создать релиз
