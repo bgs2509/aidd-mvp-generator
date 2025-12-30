@@ -124,7 +124,8 @@ make logs
 
 ```env
 # Database
-DATABASE_URL=postgresql://user:pass@localhost:5432/dbname
+# SECURITY: Замените CHANGE_ME на реальные credentials!
+DATABASE_URL=postgresql://CHANGE_ME_USER:CHANGE_ME_PASSWORD@localhost:5432/dbname
 
 # Redis
 REDIS_URL=redis://localhost:6379/0

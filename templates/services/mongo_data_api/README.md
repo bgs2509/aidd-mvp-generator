@@ -82,7 +82,9 @@ pytest tests/ -v
 
 ```bash
 # MongoDB
-MONGODB_URL=mongodb://user:pass@localhost:27017
+# SECURITY: Замените YOUR_USER и YOUR_PASSWORD на реальные credentials!
+# Для локальной разработки без auth: mongodb://localhost:27017
+MONGODB_URL=mongodb://YOUR_USER:YOUR_PASSWORD@localhost:27017
 MONGODB_DATABASE={context}_db
 
 # Приложение

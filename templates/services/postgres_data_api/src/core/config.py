@@ -4,6 +4,7 @@
 Загрузка настроек из переменных окружения.
 """
 
+from pydantic import Field
 from pydantic_settings import BaseSettings
 
 
@@ -17,7 +18,12 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
 
     # === База данных ===
-    database_url: str = "postgresql+asyncpg://user:pass@localhost:5432/{context}_db"
+    # SECURITY: Нет default значения с credentials!
+    # Обязательно установить через DATABASE_URL в .env
+    database_url: str = Field(
+        default="postgresql+asyncpg://localhost:5432/{context}_db",
+        description="Database URL. ОБЯЗАТЕЛЬНО установите credentials через переменную окружения DATABASE_URL",
+    )
 
     # === Пул соединений ===
     db_pool_size: int = 5

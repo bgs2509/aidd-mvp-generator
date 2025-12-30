@@ -90,7 +90,8 @@ pytest tests/ -v
 
 ```bash
 # База данных
-DATABASE_URL=postgresql+asyncpg://user:pass@localhost:5432/{context}_db
+# SECURITY: Замените YOUR_USER и YOUR_PASSWORD на реальные credentials!
+DATABASE_URL=postgresql+asyncpg://YOUR_USER:YOUR_PASSWORD@localhost:5432/{context}_db
 
 # Приложение
 APP_ENV=development
