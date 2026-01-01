@@ -357,11 +357,16 @@ curl http://IP/service-name/openapi.json
 
 | # | Файл | Изменение | Статус |
 |---|------|-----------|--------|
-| 1 | `templates/infrastructure/nginx/conf.d/` | Добавить шаблон без rewrite | ⏳ Pending |
-| 2 | `templates/services/*/src/main.py` | Добавить root_path | ⏳ Pending |
-| 3 | `templates/project/.env.example` | Добавить ROOT_PATH | ⏳ Pending |
-| 4 | `knowledge/infrastructure/nginx.md` | Документация multi-service | ⏳ Pending |
-| 5 | `conventions.md` | Секция 9.3 Reverse Proxy | ⏳ Pending |
+| 1 | `templates/infrastructure/nginx/conf.d/service-location.conf.template` | Добавить шаблон без rewrite | ✅ Done |
+| 2 | `templates/services/fastapi_business_api/src/main.py` | Добавить root_path | ✅ Done |
+| 3 | `templates/services/fastapi_business_api/src/core/config.py` | Добавить root_path | ✅ Done |
+| 4 | `templates/services/postgres_data_api/src/main.py` | Добавить root_path | ✅ Done |
+| 5 | `templates/services/postgres_data_api/src/core/config.py` | Добавить root_path | ✅ Done |
+| 6 | `templates/services/mongo_data_api/src/main.py` | Добавить root_path | ✅ Done |
+| 7 | `templates/services/mongo_data_api/src/core/config.py` | Добавить root_path | ✅ Done |
+| 8 | `templates/project/.env.example.template` | Добавить ROOT_PATH | ✅ Done |
+| 9 | `knowledge/infrastructure/nginx.md` | Документация multi-service | ✅ Done |
+| 10 | `conventions.md` | Секция 9.3 Reverse Proxy | ✅ Done |
 
 ---
 
@@ -376,7 +381,7 @@ curl http://IP/service-name/openapi.json
 | Этап | Статус |
 |------|--------|
 | Проектирование | ✅ Завершено (этот документ) |
-| Реализация в фреймворке | ⏳ Ожидает |
+| Реализация в фреймворке | ✅ Завершено (2026-01-01) |
 | Миграция free-ai-selector | ⏳ Ожидает |
 | Миграция других сервисов | ⏳ Ожидает |
 

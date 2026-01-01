@@ -534,6 +534,38 @@ DATA_API_TIMEOUT=30
 REDIS_URL=redis://redis:6379
 ```
 
+### 9.3 Reverse Proxy (root_path)
+
+При работе за nginx с путевым префиксом (multi-service deployment):
+
+```python
+# src/core/config.py
+
+class Settings(BaseSettings):
+    # ... другие настройки
+    root_path: str = ""  # Путевой префикс (например, "/my-service")
+
+# src/main.py
+
+app = FastAPI(
+    title=settings.app_name,
+    root_path=settings.root_path,
+)
+```
+
+```bash
+# .env (production)
+ROOT_PATH=/my-service
+```
+
+**Правила:**
+- nginx НЕ делает rewrite — передаёт полный путь
+- FastAPI использует root_path из env
+- Routes объявляются БЕЗ префикса (`@app.get("/health")`, не `/my-service/health`)
+- StaticFiles mounts работают автоматически
+
+**Подробнее:** `knowledge/infrastructure/nginx.md` (секция "Работа с путевыми префиксами")
+
 ---
 
 ## 10. Чек-лист для код-ревью

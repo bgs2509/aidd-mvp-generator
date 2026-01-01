@@ -266,6 +266,101 @@ volumes:
 
 ---
 
+## Работа с путевыми префиксами (Multi-Service на одном IP)
+
+При размещении нескольких сервисов на одном IP с разными путевыми префиксами
+(`/service-a/`, `/service-b/`) требуется правильная настройка nginx и FastAPI.
+
+### Проблема
+
+Если nginx делает rewrite (убирает префикс), а FastAPI использует `root_path`:
+- **API routes работают** — маршрутизация по `scope["path"]`, root_path игнорируется
+- **StaticFiles ломаются** — mounts учитывают root_path, получают несовпадение путей
+- **OpenAPI docs нестабильны** — зависит от внутренних редиректов
+
+### Best Practice
+
+| Компонент | Настройка |
+|-----------|-----------|
+| nginx | **БЕЗ rewrite**, передаёт полный путь |
+| FastAPI | `root_path` из env переменной |
+| .env | `ROOT_PATH=/service-name` |
+
+### Почему НЕ использовать rewrite
+
+rewrite ломает:
+- StaticFiles mounts
+- WebSocket endpoints
+- Sub-applications (FastAPI внутри FastAPI)
+- Некоторые redirect сценарии
+- OpenAPI документацию
+
+### Пример конфигурации
+
+**nginx:**
+```nginx
+location /my-service/ {
+    # ВАЖНО: БЕЗ rewrite!
+    # FastAPI с root_path сам обработает префикс
+
+    proxy_pass http://my-service:8000;  # без trailing slash
+    proxy_http_version 1.1;
+
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+    proxy_set_header X-Forwarded-Prefix /my-service;  # для логирования
+    proxy_set_header Connection "";
+}
+```
+
+**FastAPI (src/main.py):**
+```python
+from src.core.config import settings
+
+app = FastAPI(
+    title="My Service",
+    root_path=settings.root_path,
+)
+```
+
+**Settings (src/core/config.py):**
+```python
+class Settings(BaseSettings):
+    root_path: str = ""  # Путевой префикс
+```
+
+**.env (production):**
+```bash
+ROOT_PATH=/my-service
+```
+
+### Как это работает
+
+```
+┌─────────────────────────────────────────────────────────────────────────┐
+│  Путь в браузере: /my-service/static/index.html                         │
+├─────────────────────────────────────────────────────────────────────────┤
+│                                                                          │
+│  nginx БЕЗ rewrite:                                                      │
+│  → FastAPI получает: /my-service/static/index.html                       │
+│                                                                          │
+│  FastAPI с root_path="/my-service":                                      │
+│  1. Starlette видит root_path="/my-service"                              │
+│  2. Убирает из path: /my-service/static/... → /static/...                │
+│  3. Mount("/static") получает: /static/index.html                        │
+│  → СОВПАДАЕТ → 200 OK                                                    │
+│                                                                          │
+└─────────────────────────────────────────────────────────────────────────┘
+```
+
+### Шаблон
+
+Готовый шаблон location: `templates/infrastructure/nginx/conf.d/service-location.conf.template`
+
+---
+
 ## Чек-лист
 
 - [ ] Reverse proxy настроен
@@ -274,3 +369,4 @@ volumes:
 - [ ] SSL настроен (production)
 - [ ] Rate limiting добавлен
 - [ ] Health check endpoint
+- [ ] root_path настроен (multi-service deployment)
