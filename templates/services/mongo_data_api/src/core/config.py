@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     debug: bool = True
     log_level: str = "INFO"
 
+    # === Reverse Proxy ===
+    root_path: str = ""  # Путевой префикс (например, "/my-service")
+
     # === MongoDB ===
     mongodb_url: str = "mongodb://localhost:27017"
     mongodb_database: str = "{context}_db"

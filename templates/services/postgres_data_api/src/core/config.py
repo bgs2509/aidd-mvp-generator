@@ -17,6 +17,9 @@ class Settings(BaseSettings):
     debug: bool = True
     log_level: str = "INFO"
 
+    # === Reverse Proxy ===
+    root_path: str = ""  # Путевой префикс (например, "/my-service")
+
     # === База данных ===
     # SECURITY: Нет default значения с credentials!
     # Обязательно установить через DATABASE_URL в .env

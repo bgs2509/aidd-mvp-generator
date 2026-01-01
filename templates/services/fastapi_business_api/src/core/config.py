@@ -16,6 +16,9 @@ class Settings(BaseSettings):
     debug: bool = True
     log_level: str = "INFO"
 
+    # === Reverse Proxy ===
+    root_path: str = ""  # Путевой префикс (например, "/my-service")
+
     # === Data API ===
     data_api_url: str = "http://data-api:8001"
     data_api_timeout: float = 30.0

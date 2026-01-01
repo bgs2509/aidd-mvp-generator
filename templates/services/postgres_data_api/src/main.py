@@ -61,6 +61,7 @@ def create_app() -> FastAPI:
         title=settings.app_name,
         version="1.0.0",
         description="PostgreSQL Data API сервис",
+        root_path=settings.root_path,  # Reverse proxy support
         lifespan=lifespan,
         docs_url="/docs" if settings.debug else None,
         redoc_url="/redoc" if settings.debug else None,
