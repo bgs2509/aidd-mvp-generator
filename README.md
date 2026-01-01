@@ -49,23 +49,22 @@ git init
 git submodule add git@github.com:bgs2509/aidd-mvp-generator.git .aidd
 git submodule update --init --recursive
 
-# 3. Создать точку входа для AI
-echo "# Restaurant Booking\n\nСм. .aidd/CLAUDE.md для работы с AI." > CLAUDE.md
-
-# 4. Запустить Claude Code
+# 3. Запустить Claude Code
 claude
 ```
 
 ```bash
-# 5. ВАЖНО: Инициализировать фреймворк (регистрирует /aidd-* команды)
+# 4. Инициализировать фреймворк (создаёт CLAUDE.md, регистрирует /aidd-* команды)
 /aidd-init
 
-# После /aidd-init команды /aidd-* появятся в автодополнении CLI.
-# Это копирует файлы команд из .aidd/.claude/commands/ в .claude/commands/
+# /aidd-init выполняет:
+#   - Создаёт CLAUDE.md с инструкциями для AI
+#   - Копирует команды в .claude/commands/
+#   - Создаёт структуру проекта (ai-docs/, .pipeline-state.json)
 ```
 
 ```bash
-# 6. Следовать 9-этапному процессу (этапы 0-8)
+# 5. Следовать 9-этапному процессу (этапы 1-8)
 /aidd-idea "Создать сервис бронирования столиков в ресторанах"
 /aidd-research
 /aidd-plan
@@ -76,7 +75,7 @@ claude
 /aidd-validate
 /aidd-deploy
 
-# 7. Запустить сгенерированный проект
+# 6. Запустить сгенерированный проект
 make build && make up
 ```
 
