@@ -1,0 +1,80 @@
+# =============================================================================
+# Шаблон location для сервиса за reverse proxy
+# =============================================================================
+#
+# Использование:
+#   Скопируйте этот шаблон и замените переменные:
+#   - {service_path}  — путевой префикс (например, /my-service)
+#   - {upstream_name} — имя upstream из upstream.conf (например, my_service_api)
+#
+# Best Practice:
+#   - nginx НЕ делает rewrite — передаёт полный путь
+#   - FastAPI использует root_path для обработки префикса
+#   - Это обеспечивает корректную работу StaticFiles, WebSocket, OpenAPI docs
+#
+# Пример:
+#   location /booking-api/ {
+#       proxy_pass http://booking_api;
+#       ...
+#   }
+#
+# =============================================================================
+
+location {service_path}/ {
+    # ВАЖНО: НЕ используем rewrite!
+    # FastAPI с root_path сам обработает префикс.
+    # rewrite ломает StaticFiles mounts, WebSocket endpoints и sub-applications.
+
+    proxy_pass http://{upstream_name};
+    proxy_http_version 1.1;
+
+    # === Стандартные заголовки ===
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+    proxy_set_header X-Forwarded-Proto $scheme;
+
+    # === Reverse Proxy заголовки ===
+    # X-Forwarded-Prefix используется FastAPI для определения root_path
+    proxy_set_header X-Forwarded-Prefix {service_path};
+
+    # Request ID для трассировки
+    proxy_set_header X-Request-ID $request_id;
+
+    # Keep-alive соединения
+    proxy_set_header Connection "";
+
+    # === Таймауты ===
+    proxy_connect_timeout 30s;
+    proxy_send_timeout 60s;
+    proxy_read_timeout 60s;
+
+    # === Буферизация ===
+    proxy_buffering on;
+    proxy_buffer_size 4k;
+    proxy_buffers 8 4k;
+}
+
+# =============================================================================
+# WebSocket location (опционально)
+# =============================================================================
+# Раскомментируйте, если сервис использует WebSocket:
+#
+# location {service_path}/ws {
+#     proxy_pass http://{upstream_name};
+#     proxy_http_version 1.1;
+#
+#     proxy_set_header Host $host;
+#     proxy_set_header X-Real-IP $remote_addr;
+#     proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+#     proxy_set_header X-Forwarded-Proto $scheme;
+#     proxy_set_header X-Forwarded-Prefix {service_path};
+#
+#     # WebSocket upgrade
+#     proxy_set_header Upgrade $http_upgrade;
+#     proxy_set_header Connection "upgrade";
+#
+#     # Увеличенные таймауты для долгих соединений
+#     proxy_read_timeout 3600s;
+#     proxy_send_timeout 3600s;
+# }
