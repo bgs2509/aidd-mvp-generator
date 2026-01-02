@@ -83,9 +83,9 @@
       "Bash(cat **/.env*)",
       "Bash(cat **/*.pem)",
       "Bash(cat **/*.key)",
-      "Bash(echo *PASSWORD*)",
-      "Bash(echo *SECRET*)",
-      "Bash(echo *TOKEN*)"
+      "Bash(echo :*PASSWORD:*)",
+      "Bash(echo :*SECRET:*)",
+      "Bash(echo :*TOKEN:*)"
     ]
   }
 }
