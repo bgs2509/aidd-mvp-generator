@@ -181,6 +181,21 @@ bugs_count:
 | NF-001 | Response time < 200ms | p95 = {X}ms | {Y}ms | ✅/❌ |
 | NF-002 | Throughput > 100 RPS | — | {Y} RPS | ✅/❌ |
 
+### 5.3 UI/UX требования
+
+| ID | Требование | Экран/Компонент | Тест | Статус | Комментарий |
+|----|------------|-----------------|------|--------|-------------|
+| UI-001 | {Название} | {Экран} | test_{name} | ✅/❌ | {Комментарий} |
+| UI-002 | {Название} | {Экран} | test_{name} | ✅/❌ | {Комментарий} |
+
+### 5.4 Интеграционные требования
+
+| ID | Интеграция | От → К | Тест | Статус | Комментарий |
+|----|------------|--------|------|--------|-------------|
+| INT-001 | Business API → Data API | {context}_api → {context}_data | test_integration_{name} | ✅/❌ | {Комментарий} |
+| INT-002 | Bot → Business API | {context}_bot → {context}_api | test_integration_{name} | ✅/❌ | {Комментарий} |
+| INT-003 | Worker → External | {context}_worker → External | test_integration_{name} | ✅/❌ | {Комментарий} |
+
 ---
 
 ## 6. Performance тестирование

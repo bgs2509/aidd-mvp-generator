@@ -66,6 +66,12 @@ Stage 4.2: Data Service
 ├── API endpoints
 └── Тесты
 
+Stage 4.2.1: Интеграции (INT-*)
+├── HTTP клиенты для внешних сервисов
+├── Retry логика и error handling
+├── Tracing (correlation_id)
+└── Тесты интеграций
+
 Stage 4.3: Business API
 ├── Структура DDD
 ├── HTTP клиент к Data API
@@ -135,6 +141,7 @@ def test_{что}_{сценарий}_{результат}():
 - [ ] Структура соответствует DDD/Hexagonal
 - [ ] Type hints присутствуют везде
 - [ ] Docstrings на русском
+- [ ] Интеграции (INT-*) реализованы с retry и error handling
 - [ ] Все unit-тесты проходят
 - [ ] Код компилируется без ошибок
 

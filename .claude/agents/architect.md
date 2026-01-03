@@ -18,6 +18,7 @@ model: inherit
 - Проектирование архитектуры системы
 - Определение компонентов и их взаимодействия
 - Создание API контрактов
+- Определение точек интеграции (INT-*)
 - Формирование Implementation Plan
 
 ---
@@ -80,6 +81,22 @@ Infrastructure:
 - Коды ответов
 - Примеры
 
+### 3.1 Точки интеграции (INT-*)
+
+Для каждой интеграции из PRD (секция 4.3):
+- **ID**: INT-{NNN} (соответствует PRD)
+- **От → К**: Какой сервис вызывает какой
+- **Протокол**: HTTP/REST, Webhook, gRPC, Event Bus
+- **Контракт**: Request/Response схемы
+- **Ошибки**: Retry стратегия, timeout, fallback
+
+```
+Типичные интеграции:
+- INT-001: Business API → Data API (HTTP/REST)
+- INT-002: Bot → Business API (HTTP/REST)
+- INT-003: Worker → External API (HTTP/REST с retry)
+```
+
 ### 4. Создание Implementation Plan
 
 Создать `ai-docs/docs/architecture/{name}-plan.md`:
@@ -96,6 +113,8 @@ Infrastructure:
 ## 3. API Контракты
 ### 3.1 Business API
 ### 3.2 Data API
+### 3.3 Точки интеграции (INT-*)
+| ID | От → К | Протокол | Контракт | Error Handling |
 
 ## 4. Структура данных
 ### 4.1 Entities
@@ -132,6 +151,7 @@ Infrastructure:
 
 - [ ] Компоненты системы определены
 - [ ] API контракты описаны
+- [ ] Точки интеграции (INT-*) из PRD перенесены в план
 - [ ] NFR учтены (производительность, масштабируемость)
 - [ ] Зависимости между компонентами ясны
 - [ ] **План утверждён пользователем**

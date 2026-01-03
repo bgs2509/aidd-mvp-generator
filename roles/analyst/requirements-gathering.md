@@ -66,6 +66,39 @@ UI-001: Отображение списка ресторанов
 Приоритет: Must
 ```
 
+### Точки интеграции (INT-*)
+
+**Где система взаимодействует с другими компонентами.**
+
+```
+INT-{NNN}: {Краткое название}
+От: {Сервис-источник}
+К: {Сервис/Система-получатель}
+Протокол: HTTP/REST | Webhook | gRPC | Event Bus
+Описание: {Контракт, данные, обработка ошибок}
+```
+
+**Примеры**:
+```
+INT-001: Business API → Data API
+От: booking_api
+К: booking_data
+Протокол: HTTP/REST
+Описание: CRUD операции с бронированиями, JSON, retry при 5xx
+
+INT-002: Bot → Business API
+От: booking_bot
+К: booking_api
+Протокол: HTTP/REST
+Описание: Команды бота, JSON, timeout 30s
+
+INT-003: Worker → External Service
+От: notification_worker
+К: Telegram API
+Протокол: HTTP/REST
+Описание: Отправка уведомлений, exponential backoff при ошибках
+```
+
 ---
 
 ## Приоритизация (MoSCoW)

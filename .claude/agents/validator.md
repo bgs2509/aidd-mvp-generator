@@ -98,6 +98,13 @@ services/
 | Req ID | Описание | Как достигнуто | Верификация |
 |--------|----------|----------------|-------------|
 | NF-001 | Response <500ms | async/await, Redis cache | Load test |
+
+## Интеграционные требования
+
+| Req ID | Описание | От → К | Файл реализации | Тест | Статус |
+|--------|----------|--------|-----------------|------|--------|
+| INT-001 | Business → Data API | booking_api → booking_data | data_api_client.py | test_data_integration | Done |
+| INT-002 | Bot → Business API | booking_bot → booking_api | api_client.py | test_bot_integration | Done |
 ```
 
 ### 4. Формирование отчёта валидации
@@ -225,7 +232,8 @@ make logs
 - [ ] **Security BLOCKER issues = 0**
 - [ ] **Security CRITICAL issues = 0**
 - [ ] Все артефакты существуют
-- [ ] RTM актуальна
+- [ ] RTM актуальна (включая INT-* требования)
+- [ ] Все интеграции (INT-*) протестированы
 
 ### DEPLOYED
 
