@@ -34,6 +34,11 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+    # SECURITY: Ограничение привилегий контейнера
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
 
   # === Data API (PostgreSQL) ===
   {context}-data:
@@ -60,6 +65,11 @@ services:
       timeout: 10s
       retries: 3
       start_period: 10s
+    # SECURITY: Ограничение привилегий контейнера
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
 
   # === PostgreSQL ===
   postgres:
@@ -83,6 +93,9 @@ services:
       timeout: 5s
       retries: 5
       start_period: 10s
+    # SECURITY: Ограничение привилегий (cap_drop не применяем - PostgreSQL требует capabilities)
+    security_opt:
+      - no-new-privileges:true
 
   # === Redis (опционально) ===
   redis:
@@ -100,6 +113,11 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+    # SECURITY: Ограничение привилегий контейнера
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
     profiles:
       - with-redis
 

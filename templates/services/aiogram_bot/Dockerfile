@@ -2,6 +2,9 @@
 # Telegram Bot сервис на Aiogram
 
 # === Этап сборки ===
+# SECURITY: В production используйте pinned SHA для reproducible builds
+# docker pull python:3.11-slim && docker inspect --format='{{index .RepoDigests 0}}' python:3.11-slim
+# Пример: FROM python:3.11-slim@sha256:abc123...
 FROM python:3.11-slim as builder
 
 WORKDIR /app
@@ -17,6 +20,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.t
 
 
 # === Финальный образ ===
+# SECURITY: В production используйте тот же pinned SHA что и в builder
 FROM python:3.11-slim
 
 WORKDIR /app
@@ -42,4 +46,6 @@ ENV PYTHONUNBUFFERED=1 \
     PYTHONPATH=/app
 
 # Запуск бота
-CMD ["python", "-m", "src.main"]
+# ENTRYPOINT + CMD паттерн позволяет переопределять аргументы при запуске
+ENTRYPOINT ["python", "-m"]
+CMD ["src.main"]

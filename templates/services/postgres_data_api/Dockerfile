@@ -2,6 +2,9 @@
 # PostgreSQL Data API сервис
 
 # === Этап сборки ===
+# SECURITY: В production используйте pinned SHA для reproducible builds
+# docker pull python:3.11-slim && docker inspect --format='{{index .RepoDigests 0}}' python:3.11-slim
+# Пример: FROM python:3.11-slim@sha256:abc123...
 FROM python:3.11-slim as builder
 
 WORKDIR /app
@@ -18,6 +21,7 @@ RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.t
 
 
 # === Финальный образ ===
+# SECURITY: В production используйте тот же pinned SHA что и в builder
 FROM python:3.11-slim
 
 WORKDIR /app
@@ -57,4 +61,6 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
     CMD python -c "import httpx; httpx.get('http://localhost:8001/health')" || exit 1
 
 # Запуск приложения
-CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8001"]
+# ENTRYPOINT + CMD паттерн позволяет переопределять аргументы при запуске
+ENTRYPOINT ["python", "-m", "uvicorn"]
+CMD ["src.main:app", "--host", "0.0.0.0", "--port", "8001"]

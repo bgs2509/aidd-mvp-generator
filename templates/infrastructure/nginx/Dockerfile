@@ -1,6 +1,9 @@
 # Dockerfile для Nginx
 # {project_name} MVP — Reverse Proxy
 
+# SECURITY: В production используйте pinned SHA для reproducible builds
+# docker pull nginx:alpine && docker inspect --format='{{index .RepoDigests 0}}' nginx:alpine
+# Пример: FROM nginx:alpine@sha256:abc123...
 FROM nginx:alpine
 
 # Метаданные
@@ -39,4 +42,6 @@ HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
 EXPOSE 80 443
 
 # Запуск
-CMD ["nginx", "-g", "daemon off;"]
+# ENTRYPOINT + CMD паттерн позволяет переопределять аргументы при запуске
+ENTRYPOINT ["nginx"]
+CMD ["-g", "daemon off;"]
