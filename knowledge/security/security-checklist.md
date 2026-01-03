@@ -314,16 +314,135 @@ AI-валидатор ОБЯЗАН:
 
 ---
 
+## 12. Docker Security
+
+> **Подробнее**: `knowledge/security/docker-security.md`
+
+### Dockerfile проверки
+
+```bash
+# Проверить non-root user
+for dockerfile in services/*/Dockerfile; do
+  grep -q "USER appuser\|USER 1000" "$dockerfile" && \
+    echo "OK: Non-root user в $dockerfile" || \
+    echo "WARN: Нет non-root user в $dockerfile"
+done
+
+# Проверить ENTRYPOINT + CMD паттерн
+for dockerfile in services/*/Dockerfile; do
+  grep -q "ENTRYPOINT" "$dockerfile" && \
+    echo "OK: ENTRYPOINT в $dockerfile" || \
+    echo "INFO: Нет ENTRYPOINT в $dockerfile"
+done
+```
+
+### Docker Compose проверки
+
+```bash
+# Проверить security_opt
+grep -q "no-new-privileges" docker-compose.yml && \
+  echo "OK: security_opt настроен" || echo "WARN: security_opt не настроен"
+
+# Проверить cap_drop в prod
+grep -q "cap_drop" docker-compose.prod.yml && \
+  echo "OK: cap_drop настроен в prod" || echo "WARN: cap_drop не настроен в prod"
+
+# Проверить read_only в prod
+grep -q "read_only: true" docker-compose.prod.yml && \
+  echo "OK: read_only в prod" || echo "INFO: read_only не настроен в prod"
+```
+
+### Критерии
+
+| Проверка | Критичность |
+|----------|-------------|
+| Non-root user в Dockerfile | Warning |
+| security_opt: no-new-privileges | Warning |
+| cap_drop: ALL для stateless | Warning |
+| read_only + tmpfs в prod | Info |
+| Resource limits в prod | Warning |
+
+---
+
+## 13. VPS Security Mode
+
+> **Подробнее**: `knowledge/security/vps-mode.md`
+
+### Проверка SSH-сессии
+
+```bash
+# Определить VPS/production среду
+if [ -n "$SSH_CONNECTION" ] || [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+    echo "⚠️  ОБНАРУЖЕНА SSH-СЕССИЯ"
+    echo ""
+    echo "Рекомендуется VPS Mode (только чтение):"
+    echo "  cp .aidd/templates/project/.claude/settings.vps.json.example \\"
+    echo "     .claude/settings.json"
+fi
+```
+
+### Проверка VPS settings
+
+```bash
+# Проверить что Edit и Write запрещены
+if [ -f ".claude/settings.json" ]; then
+  grep -q '"Edit(\*\*)"' .claude/settings.json && \
+    echo "VPS Mode: Edit запрещён" || echo "WARN: Edit может быть разрешён"
+
+  grep -q '"Write(\*\*)"' .claude/settings.json && \
+    echo "VPS Mode: Write запрещён" || echo "WARN: Write может быть разрешён"
+fi
+```
+
+### Критерии для production
+
+| Проверка | Критичность |
+|----------|-------------|
+| VPS Mode активирован на production | Рекомендуется |
+| Edit/Write запрещены | Рекомендуется |
+| docker exec запрещён | Рекомендуется |
+| systemctl start/stop/restart запрещены | Рекомендуется |
+
+---
+
+## 14. Сводная таблица (расширенная)
+
+```markdown
+## Security Checklist
+
+| # | Проверка | Статус | Комментарий |
+|---|----------|--------|-------------|
+| 1 | .gitignore содержит .env | ✅/❌ | |
+| 2 | .gitignore содержит *.pem, *.key | ✅/❌ | |
+| 3 | Нет hardcoded паролей в коде | ✅/❌ | |
+| 4 | Нет hardcoded токенов в коде | ✅/❌ | |
+| 5 | .env.example без реальных секретов | ✅/❌ | |
+| 6 | docker-compose без default паролей | ✅/❌ | |
+| 7 | Логирование с sanitization | ✅/❌ | |
+| 8 | CI/CD использует secrets | ✅/❌ | |
+| 9 | Pre-commit hooks настроены | ✅/⚠️ | |
+| 10 | Settings без default секретов | ✅/❌ | |
+| 11 | Non-root user в Dockerfile | ✅/⚠️ | |
+| 12 | security_opt настроен | ✅/⚠️ | |
+| 13 | cap_drop для stateless | ✅/⚠️ | |
+| 14 | VPS Mode на production | ✅/ℹ️ | |
+```
+
+---
+
 ## Связанные документы
 
 | Документ | Описание |
 |----------|----------|
-| `knowledge/security/secrets-management.md` | Полное руководство |
+| `knowledge/security/secrets-management.md` | Управление секретами |
+| `knowledge/security/docker-security.md` | Docker best practices |
+| `knowledge/security/vps-mode.md` | VPS режим для production |
 | `templates/documents/review-report-template.md` | Шаблон ревью |
 | `templates/documents/validation-report-template.md` | Шаблон валидации |
 | `.claude/settings.json` | Ограничения для AI |
+| `templates/project/.claude/settings.vps.json.example` | Шаблон VPS settings |
 
 ---
 
-**Версия документа**: 1.0
-**Создан**: 2025-12-30
+**Версия документа**: 1.1
+**Обновлён**: 2026-01-03

@@ -85,7 +85,16 @@
       "Bash(cat **/*.key)",
       "Bash(echo :*PASSWORD:*)",
       "Bash(echo :*SECRET:*)",
-      "Bash(echo :*TOKEN:*)"
+      "Bash(echo :*TOKEN:*)",
+      "Bash(grep :* **/.env*)",
+      "Bash(less **/.env*)",
+      "Bash(more **/.env*)",
+      "Bash(head **/.env*)",
+      "Bash(tail **/.env*)",
+      "Bash(vim **/.env*)",
+      "Bash(nano **/.env*)",
+      "Bash(source **/.env*)",
+      "Bash(. **/.env*)"
     ]
   }
 }
