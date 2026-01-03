@@ -109,6 +109,90 @@ def check_bootstrap_ready() -> BootstrapResult:
     )
 ```
 
+### VPS Detection (Автоопределение SSH)
+
+> **БЕЗОПАСНОСТЬ**: При работе на VPS/production сервере рекомендуется
+> использовать VPS Mode (только чтение).
+
+#### Алгоритм детекции
+
+```python
+def detect_vps_session() -> bool:
+    """
+    Определяет, запущена ли сессия через SSH (VPS/production).
+
+    Returns:
+        True если обнаружена SSH-сессия
+    """
+    import os
+
+    # Признаки SSH-сессии (любой из):
+    ssh_indicators = [
+        os.environ.get("SSH_CONNECTION"),  # IP клиента и сервера
+        os.environ.get("SSH_CLIENT"),      # IP и порт клиента
+        os.environ.get("SSH_TTY"),         # TTY сессии
+    ]
+
+    return any(ssh_indicators)
+```
+
+#### Вывод предупреждения
+
+Если обнаружена SSH-сессия:
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  ⚠️  ОБНАРУЖЕНА SSH-СЕССИЯ (VPS/Production)                      │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Для безопасной работы на production сервере рекомендуется      │
+│  активировать VPS Mode (только чтение):                          │
+│                                                                  │
+│  1. Скопируйте шаблон VPS settings:                              │
+│     cp .aidd/templates/project/.claude/settings.vps.json.example │
+│        .claude/settings.json                                     │
+│                                                                  │
+│  2. Перезапустите Claude Code:                                   │
+│     claude                                                       │
+│                                                                  │
+│  В VPS Mode AI может:                                            │
+│  ✓ Читать файлы и логи                                          │
+│  ✓ Анализировать конфигурации                                   │
+│  ✓ Диагностировать проблемы                                     │
+│                                                                  │
+│  В VPS Mode AI НЕ может:                                         │
+│  ✗ Редактировать файлы                                          │
+│  ✗ Выполнять docker exec/run                                    │
+│  ✗ Перезапускать сервисы                                        │
+│                                                                  │
+│  Подробнее: knowledge/security/vps-mode.md                       │
+│                                                                  │
+│  [Продолжить без VPS Mode? y/N]                                  │
+│                                                                  │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+#### Bash-эквивалент
+
+```bash
+# Проверка SSH-сессии
+if [ -n "$SSH_CONNECTION" ] || [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
+    echo "⚠️  Обнаружена SSH-сессия. Рекомендуется VPS Mode."
+    echo ""
+    echo "Активировать VPS Mode (только чтение):"
+    echo "  cp .aidd/templates/project/.claude/settings.vps.json.example \\"
+    echo "     .claude/settings.json"
+    echo ""
+    read -p "Продолжить без VPS Mode? [y/N] " -n 1 -r
+    if [[ ! $REPLY =~ ^[Yy]$ ]]; then
+        echo "Активируйте VPS Mode и перезапустите claude."
+        exit 1
+    fi
+fi
+```
+
+---
+
 ### Проверка существующих файлов
 
 > **ВАЖНО**: Эта проверка выполняется для проектов, где уже есть файлы

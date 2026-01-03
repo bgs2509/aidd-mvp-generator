@@ -1,0 +1,98 @@
+{
+  "_comment": "VPS Mode - ТОЛЬКО ЧТЕНИЕ! Используйте на production/staging серверах.",
+  "_usage": "Скопируйте этот файл в .claude/settings.json для активации VPS Mode",
+
+  "permissions": {
+    "allow": [
+      "Read(**)",
+      "Glob(**)",
+      "Grep(**)",
+
+      "Bash(git status)",
+      "Bash(git log :*)",
+      "Bash(git diff :*)",
+      "Bash(git show :*)",
+      "Bash(git branch :*)",
+
+      "Bash(docker logs :*)",
+      "Bash(docker ps :*)",
+      "Bash(docker inspect :*)",
+      "Bash(docker images :*)",
+      "Bash(docker-compose ps :*)",
+      "Bash(docker-compose logs :*)",
+
+      "Bash(ls :*)",
+      "Bash(find :*)",
+      "Bash(wc :*)",
+      "Bash(tail :*)",
+      "Bash(head :*)",
+      "Bash(cat :*)",
+      "Bash(grep :*)",
+
+      "Bash(journalctl :*)",
+      "Bash(systemctl status :*)",
+      "Bash(free :*)",
+      "Bash(df :*)",
+      "Bash(top -bn1 :*)",
+      "Bash(ps :*)",
+      "Bash(netstat :*)",
+      "Bash(ss :*)"
+    ],
+
+    "deny": [
+      "Read(**/.env)",
+      "Read(**/.env.*)",
+      "Read(**/*.env)",
+      "Read(**/*.pem)",
+      "Read(**/*.key)",
+      "Read(**/credentials.json)",
+      "Read(**/secrets.json)",
+
+      "Edit(**)",
+      "Write(**)",
+
+      "Bash(rm :*)",
+      "Bash(rmdir :*)",
+      "Bash(mv :*)",
+      "Bash(cp :*)",
+      "Bash(chmod :*)",
+      "Bash(chown :*)",
+      "Bash(mkdir :*)",
+      "Bash(touch :*)",
+
+      "Bash(git commit :*)",
+      "Bash(git push :*)",
+      "Bash(git pull :*)",
+      "Bash(git checkout :*)",
+      "Bash(git reset :*)",
+      "Bash(git merge :*)",
+      "Bash(git rebase :*)",
+      "Bash(git stash :*)",
+
+      "Bash(docker exec :*)",
+      "Bash(docker run :*)",
+      "Bash(docker stop :*)",
+      "Bash(docker start :*)",
+      "Bash(docker restart :*)",
+      "Bash(docker rm :*)",
+      "Bash(docker rmi :*)",
+      "Bash(docker-compose up :*)",
+      "Bash(docker-compose down :*)",
+      "Bash(docker-compose restart :*)",
+
+      "Bash(systemctl start :*)",
+      "Bash(systemctl stop :*)",
+      "Bash(systemctl restart :*)",
+      "Bash(systemctl enable :*)",
+      "Bash(systemctl disable :*)",
+      "Bash(sudo :*)",
+
+      "Bash(cat **/.env*)",
+      "Bash(grep :* **/.env*)",
+      "Bash(less **/.env*)",
+      "Bash(more **/.env*)",
+      "Bash(head **/.env*)",
+      "Bash(tail **/.env*)"
+    ]
+  }
+}
