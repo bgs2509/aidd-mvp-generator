@@ -201,6 +201,9 @@ def complete_feature_deploy(state: dict, fid: str):
 
 ## Создание Completion Report
 
+> **⚠️ ОБЯЗАТЕЛЬНО**: Completion Report является обязательным артефактом для ворот DEPLOYED.
+> Этот шаг НЕ должен быть пропущен. См. `workflow.md` строки 444-460.
+
 > **Назначение**: Completion Report — итоговый документ, содержащий ВСЁ что нужно
 > знать о реализованной фиче. Служит single source of truth для AI в будущих сессиях.
 
@@ -314,6 +317,7 @@ def complete_feature_deploy(state: dict, fid: str):
 | Health | Health-check проходит |
 | Сценарии | Базовые сценарии работают |
 | Логи | Нет ошибок в логах |
+| Completion Report | Completion Report создан |
 
 ---
 
@@ -335,6 +339,68 @@ make logs
 # Остановка
 make down
 ```
+
+---
+
+## Шаги выполнения деплоя
+
+### Шаг 1: Сборка Docker-контейнеров
+
+```bash
+make build
+```
+
+Проверить, что все образы успешно собраны без ошибок.
+
+### Шаг 2: Запуск приложения
+
+```bash
+make up
+```
+
+Убедиться, что все контейнеры запущены и работают.
+
+### Шаг 3: Проверка health-check
+
+```bash
+make health
+```
+
+Проверить, что health-check endpoints возвращают успешный статус.
+
+### Шаг 4: Проверка базовых сценариев
+
+Выполнить базовые API запросы для проверки работоспособности приложения:
+
+```bash
+# API Health
+curl http://localhost:8000/health
+
+# Data API Health (если применимо)
+curl http://localhost:8001/health
+
+# Базовый сценарий использования
+curl http://localhost:8000/api/v1/...
+```
+
+### Шаг 5: Создание Completion Report
+
+**ОБЯЗАТЕЛЬНЫЙ ШАГ**: После успешного деплоя создать Completion Report.
+
+Путь: `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md`
+
+Использовать шаблон: `templates/documents/completion-report-template.md`
+
+Подробные инструкции см. в разделе "Создание Completion Report" выше.
+
+### Шаг 6: Обновление pipeline state
+
+Обновить `.pipeline-state.json`:
+- Отметить ворота DEPLOYED как пройденные
+- Добавить completion report в artifacts
+- Перенести фичу из `active_pipelines` в `features_registry`
+
+Пример кода см. в разделе "Обновление статуса фичи (v2)" выше.
 
 ---
 
@@ -386,6 +452,21 @@ curl http://localhost:8001/health
 # Базовый сценарий
 curl http://localhost:8000/api/v1/...
 ```
+
+---
+
+## Чеклист ворот DEPLOYED
+
+Перед завершением деплоя убедитесь, что выполнены все критерии:
+
+- [ ] Docker-контейнеры собраны (`make build`)
+- [ ] Приложение запущено (`make up`)
+- [ ] Health-check проходит (`make health`)
+- [ ] Базовые сценарии работают (API запросы успешны)
+- [ ] Completion Report создан: `ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md`
+- [ ] Completion Report добавлен в `pipeline.artifacts.completion`
+- [ ] `.pipeline-state.json` обновлён (DEPLOYED gate passed)
+- [ ] Фича перенесена в `features_registry`
 
 ---
 
