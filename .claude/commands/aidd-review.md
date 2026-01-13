@@ -127,13 +127,17 @@ def check_review_preconditions() -> tuple[str, dict] | None:
 
 ### Именование артефакта
 
-FID и slug берутся из `current_feature` в `.pipeline-state.json`:
+FID и slug берутся из `active_pipelines[FID]` в `.pipeline-state.json` (v2):
 
 ```python
-# Получить данные из state
-fid = state["current_feature"]["id"]      # F001
-slug = state["current_feature"]["name"]    # table-booking
-date = datetime.now().strftime("%Y-%m-%d") # 2024-12-23
+# Получить данные из state (v2)
+fid, pipeline = get_current_feature_context(state)
+if not fid:
+    print("❌ Не удалось определить контекст фичи")
+    return None
+
+slug = pipeline["name"]  # table-booking
+date = datetime.now().strftime("%Y-%m-%d")  # 2024-12-23
 
 # Сформировать имя файла
 filename = f"{date}_{fid}_{slug}-review.md"
@@ -142,19 +146,29 @@ filename = f"{date}_{fid}_{slug}-review.md"
 
 ### Обновление .pipeline-state.json
 
-После создания отчёта обновить `current_feature.artifacts`:
+После создания отчёта обновить `active_pipelines[FID].artifacts` (v2):
 
 ```json
 {
-  "current_feature": {
-    "id": "F001",
-    "name": "table-booking",
-    "stage": "REVIEW",
-    "artifacts": {
-      "prd": "prd/2024-12-23_F001_table-booking-prd.md",
-      "research": "research/2024-12-23_F001_table-booking-research.md",
-      "plan": "architecture/2024-12-23_F001_table-booking-plan.md",
-      "review": "reports/2024-12-23_F001_table-booking-review.md"
+  "active_pipelines": {
+    "F001": {
+      "branch": "feature/F001-table-booking",
+      "name": "table-booking",
+      "title": "Бронирование столиков",
+      "stage": "REVIEW",
+      "gates": {
+        "PRD_READY": {"passed": true, "passed_at": "2024-12-23T10:00:00Z"},
+        "RESEARCH_DONE": {"passed": true, "passed_at": "2024-12-23T11:00:00Z"},
+        "PLAN_APPROVED": {"passed": true, "passed_at": "2024-12-23T12:00:00Z"},
+        "IMPLEMENT_OK": {"passed": true, "passed_at": "2024-12-23T14:00:00Z"},
+        "REVIEW_OK": {"passed": false}
+      },
+      "artifacts": {
+        "prd": "prd/2024-12-23_F001_table-booking-prd.md",
+        "research": "research/2024-12-23_F001_table-booking-research.md",
+        "plan": "architecture/2024-12-23_F001_table-booking-plan.md",
+        "review": "reports/2024-12-23_F001_table-booking-review.md"
+      }
     }
   }
 }

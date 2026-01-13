@@ -369,6 +369,7 @@ done
 - [ ] Архитектура соответствует плану
 - [ ] Нет критических замечаний
 - [ ] DRY/KISS/YAGNI соблюдены
+- [ ] Log-Driven Design соблюдён (см. `knowledge/quality/logging/log-driven-design.md`)
 
 **Артефакты** (в целевом проекте):
 ```
@@ -418,6 +419,7 @@ done
 - [ ] Все предыдущие ворота пройдены
 - [ ] Артефакты соответствуют требованиям
 - [ ] RTM (Requirements Traceability Matrix) актуальна
+- [ ] Log-Driven Design проверен (middleware, tracing, JSON logs, нет секретов в логах)
 - [ ] Проект готов к деплою
 
 **Артефакты** (в целевом проекте):
@@ -442,10 +444,11 @@ done
 | **Ворота** | `DEPLOYED` |
 
 **Критерии прохождения ворот DEPLOYED**:
-- [ ] Docker-контейнеры собраны
+- [ ] Docker-контейнеры собраны и запущены
 - [ ] Приложение запущено
 - [ ] Health-check проходит
 - [ ] Базовые сценарии работают
+- [ ] Нет ошибок в логах контейнеров
 - [ ] **Completion Report создан**
 
 **Артефакты**:
@@ -453,7 +456,7 @@ done
 | Артефакт | Путь | Описание |
 |----------|------|----------|
 | Running App | localhost:8000+ | Работающее приложение |
-| **Completion Report** | `reports/{date}_{FID}_{slug}-completion.md` | Итоговый отчёт |
+| **Completion Report** | `ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md` | Итоговый отчёт |
 
 > **Completion Report** — единый документ, содержащий всю информацию о фиче:
 > ADR, scope changes, known limitations, метрики. Служит памятью для AI.

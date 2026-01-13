@@ -313,7 +313,7 @@ def complete_feature_deploy(state: dict, fid: str):
 
 | Критерий | Описание |
 |----------|----------|
-| Контейнеры | Docker-контейнеры запущены |
+| Контейнеры | Docker-контейнеры собраны и запущены |
 | Health | Health-check проходит |
 | Сценарии | Базовые сценарии работают |
 | Логи | Нет ошибок в логах |
@@ -389,7 +389,7 @@ curl http://localhost:8000/api/v1/...
 
 Путь: `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md`
 
-Использовать шаблон: `templates/documents/completion-report-template.md`
+Использовать шаблон: `.aidd/templates/documents/completion-report-template.md`
 
 Подробные инструкции см. в разделе "Создание Completion Report" выше.
 
