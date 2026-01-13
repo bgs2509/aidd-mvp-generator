@@ -87,6 +87,7 @@
 ### Качество
 | Путь | Тема |
 |------|------|
+| [knowledge/quality/quality-cascade.md](../knowledge/quality/quality-cascade.md) | **Quality Cascade v2** — каскадные проверки качества |
 | [knowledge/quality/testing/](../knowledge/quality/testing/) | Тестирование (5 файлов) |
 | [knowledge/quality/logging/](../knowledge/quality/logging/) | Логирование (2 файла) |
 | [knowledge/quality/dry-kiss-yagni.md](../knowledge/quality/dry-kiss-yagni.md) | Принципы DRY/KISS/YAGNI |

@@ -91,6 +91,7 @@
 
 | Файл | Описание |
 |------|----------|
+| [knowledge/quality/quality-cascade.md](../knowledge/quality/quality-cascade.md) | **Quality Cascade v2** — каскадные проверки |
 | [knowledge/quality/testing/](../knowledge/quality/testing/) | Тестирование |
 | [knowledge/quality/dry-kiss-yagni.md](../knowledge/quality/dry-kiss-yagni.md) | Принципы качества |
 
