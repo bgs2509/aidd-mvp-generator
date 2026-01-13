@@ -220,19 +220,55 @@ def complete_feature(fid: str) -> None:
     state = read_json(".pipeline-state.json")
 
     pipeline = state["active_pipelines"].pop(fid)
+    slug = pipeline["name"]
+    today_str = today()
+
+    # Добавить completion report в artifacts
+    completion_path = f"reports/{today_str}_{fid}_{slug}-completion.md"
+    pipeline["artifacts"]["completion"] = completion_path
 
     state["features_registry"][fid] = {
         "name": pipeline["name"],
         "title": pipeline["title"],
         "status": "DEPLOYED",
         "created": pipeline["created"],
-        "deployed": today(),
-        "artifacts": pipeline["artifacts"],
+        "deployed": today_str,
+        "artifacts": pipeline["artifacts"],  # Включает completion
         "services": pipeline.get("services", [])
     }
 
     write_json(".pipeline-state.json", state)
 ```
+
+### Структура features_registry
+
+```json
+{
+  "features_registry": {
+    "F001": {
+      "name": "table-booking",
+      "title": "Бронирование столиков",
+      "status": "DEPLOYED",
+      "created": "2024-12-23",
+      "deployed": "2024-12-24",
+      "artifacts": {
+        "prd": "prd/2024-12-23_F001_table-booking-prd.md",
+        "research": "research/2024-12-23_F001_table-booking-research.md",
+        "plan": "architecture/2024-12-23_F001_table-booking-plan.md",
+        "review": "reports/2024-12-23_F001_table-booking-review.md",
+        "qa": "reports/2024-12-24_F001_table-booking-qa.md",
+        "validation": "reports/2024-12-24_F001_table-booking-validation.md",
+        "completion": "reports/2024-12-24_F001_table-booking-completion.md"
+      },
+      "services": ["booking_api", "booking_data"]
+    }
+  }
+}
+```
+
+> **Completion Report**: Итоговый документ, содержащий summary всего что сделано,
+> ADR (архитектурные решения), scope changes и known limitations.
+> AI ОБЯЗАН читать этот документ при работе с deployed фичами.
 
 ---
 

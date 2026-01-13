@@ -136,6 +136,39 @@ existing_artifacts = {
 }
 ```
 
+### 1.4 Чтение Completion Reports (для FEATURE режима)
+
+> **Критически важно**: Completion Report — единственный документ, содержащий
+> полный контекст deployed фичи: ADR, scope changes, known limitations.
+
+```python
+# ФАЗА 1.4: Чтение Completion Reports
+if context.mode == "FEATURE" or len(state.get("features_registry", {})) > 0:
+    for fid, feature in state.get("features_registry", {}).items():
+        completion_path = feature.get("artifacts", {}).get("completion")
+        if completion_path and exists(f"./ai-docs/docs/{completion_path}"):
+            context.completion_reports[fid] = read(f"./ai-docs/docs/{completion_path}")
+            # AI теперь знает ВСЁ о deployed фичах за 1 файл на фичу
+```
+
+**Когда читать Completion Reports**:
+
+| Ситуация | Действие |
+|----------|----------|
+| FEATURE режим (добавление фичи) | Прочитать ВСЕ completion reports |
+| CREATE режим, есть deployed фичи | Прочитать для понимания контекста |
+| Новая сессия с тем же проектом | Прочитать для восстановления контекста |
+| Интеграция с deployed фичей | Прочитать depends_on, enables |
+
+**Что AI узнаёт из Completion Report**:
+
+- **Executive Summary** — что было сделано
+- **ADR** — почему приняты архитектурные решения
+- **Scope Changes** — что отложено, что изменилось
+- **Known Limitations** — ограничения и workarounds
+- **Services** — какие сервисы и endpoints доступны
+- **Dependencies** — что можно использовать (enables)
+
 ---
 
 ## Фаза 2: Проверка предусловий
@@ -313,6 +346,15 @@ def initialize_context(command: str) -> Context:
         "services": exists("./services/"),
         "reports": glob("./ai-docs/docs/reports/*.md"),
     }
+
+    # 1.4 Completion Reports (память о deployed фичах)
+    context.completion_reports = {}
+    features_registry = context.state.get("features_registry", {}) if context.state else {}
+    for fid, feature in features_registry.items():
+        completion_path = feature.get("artifacts", {}).get("completion")
+        if completion_path and exists(f"./ai-docs/docs/{completion_path}"):
+            context.completion_reports[fid] = read(f"./ai-docs/docs/{completion_path}")
+            # AI теперь знает: ADR, scope changes, known limitations
 
     # ═══════════════════════════════════════════════════════════════
     # ФАЗА 2: Проверка предусловий

@@ -199,6 +199,111 @@ def complete_feature_deploy(state: dict, fid: str):
 
 ---
 
+## Создание Completion Report
+
+> **Назначение**: Completion Report — итоговый документ, содержащий ВСЁ что нужно
+> знать о реализованной фиче. Служит single source of truth для AI в будущих сессиях.
+
+После успешного деплоя AI **ОБЯЗАН** создать Completion Report:
+
+### Шаги создания
+
+1. **Прочитать все артефакты фичи**:
+   - PRD → извлечь требования, scope, acceptance criteria
+   - Architecture Plan → извлечь ADR (архитектурные решения)
+   - Review Report → извлечь issues и рекомендации
+   - QA Report → извлечь метрики (coverage, tests)
+   - Validation Report → извлечь финальный статус
+
+2. **Собрать информацию о реализации**:
+   - Какие сервисы созданы (из `active_pipelines[FID].services`)
+   - Какие endpoints реализованы (из кода `src/api/v1/`)
+   - Какие модели данных (из `src/domain/entities/`)
+
+3. **Сформировать ADR**:
+   - Извлечь архитектурные решения из плана
+   - Добавить решения, принятые в ходе реализации
+   - Документировать trade-offs и альтернативы
+
+4. **Записать scope changes**:
+   - Сравнить PRD (план) vs реализация (факт)
+   - Документировать deferred items
+
+5. **Создать файл**:
+   ```
+   ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md
+   ```
+   - Использовать шаблон: `.aidd/templates/documents/completion-report-template.md`
+
+6. **Обновить features_registry**:
+   ```json
+   "artifacts": {
+     "prd": "...",
+     "research": "...",
+     "plan": "...",
+     "review": "...",
+     "qa": "...",
+     "validation": "...",
+     "completion": "reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md"
+   }
+   ```
+
+### Обновлённый код complete_feature_deploy
+
+```python
+def complete_feature_deploy(state: dict, fid: str):
+    """
+    Завершить деплой фичи, создать Completion Report, перенести в реестр.
+    """
+    now = datetime.now().isoformat()
+    today = now[:10]
+
+    pipeline = state["active_pipelines"].pop(fid)
+    slug = pipeline["name"]
+
+    # Отметить DEPLOYED
+    pipeline["gates"]["DEPLOYED"] = {
+        "passed": True,
+        "passed_at": now
+    }
+
+    # Добавить completion report в artifacts
+    completion_path = f"reports/{today}_{fid}_{slug}-completion.md"
+    pipeline["artifacts"]["completion"] = completion_path
+
+    # Перенести в реестр
+    state["features_registry"][fid] = {
+        "name": pipeline["name"],
+        "title": pipeline["title"],
+        "status": "DEPLOYED",
+        "created": pipeline["created"],
+        "deployed": today,
+        "artifacts": pipeline["artifacts"],  # Включает completion
+        "services": pipeline.get("services", [])
+    }
+
+    state["updated_at"] = now
+```
+
+### Содержимое Completion Report
+
+| Секция | Описание |
+|--------|----------|
+| Executive Summary | Что сделано (2-3 предложения) |
+| Реализованные компоненты | Сервисы, модели, endpoints |
+| **ADR** | Архитектурные решения с обоснованием |
+| Scope Changes | План vs факт, deferred items |
+| Known Limitations | Ограничения и workarounds |
+| Technical Debt | Что улучшить в будущем |
+| Метрики | Coverage, tests, security |
+| Зависимости | depends_on, enables |
+| Ссылки | Все артефакты |
+
+> **Важно для AI**: Completion Report — первый документ, который нужно читать
+> при работе с deployed фичей в режиме FEATURE.
+
+---
+
 ## Качественные ворота
 
 ### DEPLOYED

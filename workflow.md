@@ -446,6 +446,17 @@ done
 - [ ] Приложение запущено
 - [ ] Health-check проходит
 - [ ] Базовые сценарии работают
+- [ ] **Completion Report создан**
+
+**Артефакты**:
+
+| Артефакт | Путь | Описание |
+|----------|------|----------|
+| Running App | localhost:8000+ | Работающее приложение |
+| **Completion Report** | `reports/{date}_{FID}_{slug}-completion.md` | Итоговый отчёт |
+
+> **Completion Report** — единый документ, содержащий всю информацию о фиче:
+> ADR, scope changes, known limitations, метрики. Служит памятью для AI.
 
 **Команды деплоя**:
 ```bash
@@ -1131,10 +1142,16 @@ def get_current_feature_context(state: dict) -> tuple[str, dict] | None:
 def complete_feature_deploy(state: dict, fid: str):
     """
     1. Отметить DEPLOYED в gates
-    2. Перенести в features_registry
-    3. Удалить из active_pipelines
+    2. Создать Completion Report (итоговый документ)
+    3. Добавить путь к completion в artifacts
+    4. Перенести в features_registry
+    5. Удалить из active_pipelines
     """
 ```
+
+> **Completion Report** — единый документ, который AI ОБЯЗАН читать при работе
+> с deployed фичами. Содержит: ADR, scope changes, known limitations, метрики.
+> **Путь**: `reports/{date}_{FID}_{slug}-completion.md`
 
 ### Git-хелперы
 
