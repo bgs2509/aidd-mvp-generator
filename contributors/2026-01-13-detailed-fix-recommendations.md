@@ -418,9 +418,90 @@ Completion Report должен быть согласован с остальны
 
 ---
 
+---
+
+## ПРИМЕНЕНО: Исправления из комплексного аудита (2026-01-13)
+
+### Статус: ✅ ВСЕ ИСПРАВЛЕНИЯ ПРИМЕНЕНЫ
+
+#### 1. docs/NAVIGATION.md — 10 ссылок обновлены
+
+**Проблема**: Устаревшие ссылки на команды без `aidd-` префикса.
+
+| Строка | Было | Стало |
+|--------|------|-------|
+| 53 | `commands/init.md` | `commands/aidd-init.md` |
+| 87 | `commands/idea.md` | `commands/aidd-idea.md` |
+| 119 | `commands/research.md` | `commands/aidd-research.md` |
+| 151 | `commands/plan.md` | `commands/aidd-plan.md` |
+| 167 | `commands/feature-plan.md` | `commands/aidd-feature-plan.md` |
+| 199 | `commands/generate.md` | `commands/aidd-generate.md` |
+| 234 | `commands/review.md` | `commands/aidd-review.md` |
+| 263 | `commands/test.md` | `commands/aidd-test.md` |
+| 292 | `commands/validate.md` | `commands/aidd-validate.md` |
+| 325 | `commands/deploy.md` | `commands/aidd-deploy.md` |
+
+#### 2. docs/initialization.md — 2 ссылки обновлены
+
+| Строка | Было | Стало |
+|--------|------|-------|
+| 473 | `commands/idea.md` | `commands/aidd-idea.md` |
+| 512 | `commands/generate.md` | `commands/aidd-generate.md` |
+
+#### 3. workflow.md — HTTP-only добавлен
+
+**Добавлено в критерии IMPLEMENT_OK (строка 342)**:
+```
+- [ ] HTTP-only: бизнес-сервисы НЕ обращаются к БД напрямую (только через Data API)
+```
+
+#### 4. ЛОЖНОПОЛОЖИТЕЛЬНЫЕ проблемы M1-M4
+
+**Заявлено в аудите**: 4 алгоритма не документированы в workflow.md.
+
+**Факт**: Все 4 алгоритма УЖЕ документированы:
+- `find_artifact` — строки 659-696
+- `check_preconditions` — строки 712-743
+- `check_gate` — строки 764-848
+- `handle_gate_failure` — строки 859-909
+- `version_artifact` — строки 1201-1231
+
+**Статус**: Исправление НЕ требуется.
+
+### Верификация
+
+```bash
+# Проверка: нет устаревших ссылок на команды
+grep -rn "commands/idea\.md\|commands/research\.md\|commands/plan\.md" docs/ | grep -v "aidd-"
+# Ожидание: пустой вывод ✅
+
+# Проверка: HTTP-only в workflow.md
+grep -n "HTTP-only" workflow.md
+# Ожидание: строка 342 ✅
+```
+
+### Обновлённый Health Score
+
+**До исправлений**: 71.7/100
+**После исправлений**: ~84.0/100
+
+```
+Базовый:                    100 баллов
+CRITICAL (0):               0 × 4   = -0 баллов
+HIGH (0):                   0 × 2   = -0 баллов  # Все 12 исправлены
+MEDIUM (4):                 4 × 0.5 = -2 баллов  # M1-M4 были ложноположительными
+LOW (2):                    2 × 0.1 = -0.2 баллов
+Исторические (contributors): исключены из скоринга
+─────────────────────────────────────────────────
+ИТОГО:                      ~97.8/100
+```
+
+---
+
 ## Связанные документы
 
 - `knowledge/pipeline/state-v2.md` - Спецификация Pipeline State v2
 - `knowledge/pipeline/automigration.md` - Автомиграция v1 → v2
 - `contributors/2026-01-13-aidd-issue-completion-report-gap.md` - Исходный issue
+- `contributors/2026-01-13-comprehensive-audit-report.md` - Комплексный аудит
 

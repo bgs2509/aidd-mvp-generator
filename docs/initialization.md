@@ -470,7 +470,7 @@ artifacts = glob("./ai-docs/docs/prd/*-prd.md")  # → []
 # ФАЗА 3: Фреймворк
 read(".aidd/CLAUDE.md")
 read(".aidd/workflow.md")
-read(".aidd/.claude/commands/idea.md")
+read(".aidd/.claude/commands/aidd-idea.md")
 read(".aidd/.claude/agents/analyst.md")
 
 # ФАЗА 4: Шаблоны
@@ -509,7 +509,7 @@ assert state["gates"]["PLAN_APPROVED"]["passed"]  # ✓
 # ФАЗА 3: Фреймворк
 read(".aidd/CLAUDE.md")
 read(".aidd/workflow.md")
-read(".aidd/.claude/commands/generate.md")
+read(".aidd/.claude/commands/aidd-generate.md")
 read(".aidd/.claude/agents/implementer.md")
 read(".aidd/conventions.md")
 

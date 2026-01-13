@@ -50,7 +50,7 @@
 | **Проверки** | 2 | `.aidd/CLAUDE.md` | Фреймворк подключен |
 | **Проверки** | 3 | `python3 --version` | >= 3.11 |
 | **Проверки** | 4 | `docker --version` | Docker установлен |
-| **Фреймворк** | 5 | `.aidd/.claude/commands/init.md` | Всегда |
+| **Фреймворк** | 5 | `.aidd/.claude/commands/aidd-init.md` | Всегда |
 | **Фреймворк** | 6 | `.aidd/docs/target-project-structure.md` | Для создания структуры |
 
 **Создавать (в ЦП)**:
@@ -84,7 +84,7 @@
 | **2. Ворота** | — | Нет предусловий | Первый этап |
 | **3. Фреймворк** | 4 | `.aidd/CLAUDE.md` | Всегда |
 | **3. Фреймворк** | 5 | `.aidd/workflow.md` | Всегда |
-| **3. Фреймворк** | 6 | `.aidd/.claude/commands/idea.md` | Всегда |
+| **3. Фреймворк** | 6 | `.aidd/.claude/commands/aidd-idea.md` | Всегда |
 | **3. Фреймворк** | 7 | `.aidd/.claude/agents/analyst.md` | Всегда |
 | **4. Шаблоны** | 8 | `.aidd/templates/documents/prd-template.md` | Если PRD не существует |
 
@@ -116,7 +116,7 @@
 | **2. Ворота** | — | `gates.PRD_READY.passed == true` | Обязательно |
 | **3. Фреймворк** | 5 | `.aidd/CLAUDE.md` | Всегда |
 | **3. Фреймворк** | 6 | `.aidd/workflow.md` | Всегда |
-| **3. Фреймворк** | 7 | `.aidd/.claude/commands/research.md` | Всегда |
+| **3. Фреймворк** | 7 | `.aidd/.claude/commands/aidd-research.md` | Всегда |
 | **3. Фреймворк** | 8 | `.aidd/.claude/agents/researcher.md` | Всегда |
 | **4. База знаний** | 9 | `.aidd/knowledge/architecture/*.md` | По необходимости |
 
@@ -148,7 +148,7 @@
 | **1. ЦП** | 3 | `./ai-docs/docs/prd/*.md` | Обязательно |
 | **1. ЦП** | 4 | `./ai-docs/docs/research/*.md` | Обязательно |
 | **2. Ворота** | — | `gates.PRD_READY + RESEARCH_DONE` | Обязательно |
-| **3. Фреймворк** | 5 | `.aidd/.claude/commands/plan.md` | Всегда |
+| **3. Фреймворк** | 5 | `.aidd/.claude/commands/aidd-plan.md` | Всегда |
 | **3. Фреймворк** | 6 | `.aidd/.claude/agents/architect.md` | Всегда |
 | **4. Шаблоны** | 7 | `.aidd/templates/documents/architecture-template.md` | Всегда |
 | **4. База знаний** | 8 | `.aidd/knowledge/architecture/*.md` | Всегда |
@@ -164,7 +164,7 @@
 | **1. ЦП** | 5 | `./ai-docs/docs/architecture/*.md` | Обязательно |
 | **1. ЦП** | 6 | `./services/` | Обязательно |
 | **2. Ворота** | — | `mode == FEATURE + gates` | Обязательно |
-| **3. Фреймворк** | 7 | `.aidd/.claude/commands/feature-plan.md` | Всегда |
+| **3. Фреймворк** | 7 | `.aidd/.claude/commands/aidd-feature-plan.md` | Всегда |
 | **3. Фреймворк** | 8 | `.aidd/.claude/agents/architect.md` | Всегда |
 
 **Создавать (в ЦП)**:
@@ -196,7 +196,7 @@
 | **1. ЦП** | 6 | `./services/` | Для FEATURE |
 | **2. Ворота** | — | `gates.PLAN_APPROVED.passed + approved_by` | Обязательно |
 | **3. Фреймворк** | 7 | `.aidd/conventions.md` | Всегда |
-| **3. Фреймворк** | 8 | `.aidd/.claude/commands/generate.md` | Всегда |
+| **3. Фреймворк** | 8 | `.aidd/.claude/commands/aidd-generate.md` | Всегда |
 | **3. Фреймворк** | 9 | `.aidd/.claude/agents/implementer.md` | Всегда |
 | **4. Шаблоны** | 10 | `.aidd/templates/services/*.md` | Всегда |
 | **4. Шаблоны** | 11 | `.aidd/templates/infrastructure/*.md` | Всегда |
@@ -231,7 +231,7 @@
 | **1. ЦП** | 5 | `./services/` | Обязательно |
 | **2. Ворота** | — | `gates.IMPLEMENT_OK.passed` | Обязательно |
 | **3. Фреймворк** | 6 | `.aidd/conventions.md` | Всегда |
-| **3. Фреймворк** | 7 | `.aidd/.claude/commands/review.md` | Всегда |
+| **3. Фреймворк** | 7 | `.aidd/.claude/commands/aidd-review.md` | Всегда |
 | **3. Фреймворк** | 8 | `.aidd/.claude/agents/reviewer.md` | Всегда |
 | **4. База знаний** | 9 | `.aidd/knowledge/architecture/*.md` | По необходимости |
 
@@ -260,7 +260,7 @@
 | **1. ЦП** | 3 | `./ai-docs/docs/prd/*.md` | Обязательно |
 | **1. ЦП** | 4 | `./services/*/tests/` | Обязательно |
 | **2. Ворота** | — | `gates.REVIEW_OK.passed` | Обязательно |
-| **3. Фреймворк** | 5 | `.aidd/.claude/commands/test.md` | Всегда |
+| **3. Фреймворк** | 5 | `.aidd/.claude/commands/aidd-test.md` | Всегда |
 | **3. Фреймворк** | 6 | `.aidd/.claude/agents/qa.md` | Всегда |
 | **4. База знаний** | 7 | `.aidd/knowledge/quality/testing.md` | По необходимости |
 
@@ -289,7 +289,7 @@
 | **1. ЦП** | 3 | `./ai-docs/docs/` | ВСЕ артефакты |
 | **1. ЦП** | 4 | `./services/` | Весь код |
 | **2. Ворота** | — | `gates.QA_PASSED.passed + coverage >= 75` | Обязательно |
-| **3. Фреймворк** | 5 | `.aidd/.claude/commands/validate.md` | Всегда |
+| **3. Фреймворк** | 5 | `.aidd/.claude/commands/aidd-validate.md` | Всегда |
 | **3. Фреймворк** | 6 | `.aidd/.claude/agents/validator.md` | Всегда |
 | **4. Шаблоны** | 7 | `.aidd/templates/documents/rtm-template.md` | Если RTM не существует |
 
@@ -322,7 +322,7 @@
 | **1. ЦП** | 3 | `./docker-compose.yml` | Обязательно |
 | **1. ЦП** | 4 | `./Makefile` | Обязательно |
 | **2. Ворота** | — | `gates.ALL_GATES_PASSED + все предыдущие` | Обязательно |
-| **3. Фреймворк** | 5 | `.aidd/.claude/commands/deploy.md` | Всегда |
+| **3. Фреймворк** | 5 | `.aidd/.claude/commands/aidd-deploy.md` | Всегда |
 | **3. Фреймворк** | 6 | `.aidd/.claude/agents/validator.md` | Всегда |
 | **4. База знаний** | 7 | `.aidd/knowledge/infrastructure/docker.md` | По необходимости |
 
