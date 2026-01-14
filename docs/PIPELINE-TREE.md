@@ -114,7 +114,7 @@
 
 | Файл | Источник | Путь |
 |------|----------|------|
-| Инструкции команды | Фреймворк | `.aidd/.claude/commands/init.md` |
+| Инструкции команды | Фреймворк | `.aidd/.claude/commands/aidd-init.md` |
 | CLAUDE.md (шаблон) | Фреймворк | `.aidd/CLAUDE.md` |
 | Структура ЦП | Фреймворк | `.aidd/docs/target-project-structure.md` |
 | **Результат** | ЦП | `./CLAUDE.md`, `./ai-docs/docs/`, `./.pipeline-state.json` |
@@ -148,7 +148,7 @@
 
 | Файл | Источник | Путь |
 |------|----------|------|
-| Инструкции команды | Фреймворк | `.aidd/.claude/commands/idea.md` |
+| Инструкции команды | Фреймворк | `.aidd/.claude/commands/aidd-idea.md` |
 | Инструкции агента | Фреймворк | `.aidd/.claude/agents/analyst.md` |
 | Шаблон PRD | Фреймворк | `.aidd/templates/documents/prd-template.md` |
 | Workflow | Фреймворк | `.aidd/workflow.md` |
@@ -183,7 +183,7 @@
 
 | Файл | Источник | Путь |
 |------|----------|------|
-| Инструкции команды | Фреймворк | `.aidd/.claude/commands/research.md` |
+| Инструкции команды | Фреймворк | `.aidd/.claude/commands/aidd-research.md` |
 | Инструкции агента | Фреймворк | `.aidd/.claude/agents/researcher.md` |
 | Детальные инструкции | Фреймворк | `.aidd/roles/researcher/*.md` |
 | Шаблон отчёта | Фреймворк | `.aidd/templates/documents/research-report-template.md` |
@@ -219,7 +219,7 @@
 
 | Файл | Источник | Путь |
 |------|----------|------|
-| Инструкции команды | Фреймворк | `.aidd/.claude/commands/plan.md` или `feature-plan.md` |
+| Инструкции команды | Фреймворк | `.aidd/.claude/commands/aidd-plan.md` или `aidd-feature-plan.md` |
 | Инструкции агента | Фреймворк | `.aidd/.claude/agents/architect.md` |
 | Детальные инструкции | Фреймворк | `.aidd/roles/architect/*.md` |
 | База знаний | Фреймворк | `.aidd/knowledge/architecture/*.md` |
@@ -261,7 +261,7 @@
 
 | Файл | Источник | Путь |
 |------|----------|------|
-| Инструкции команды | Фреймворк | `.aidd/.claude/commands/generate.md` |
+| Инструкции команды | Фреймворк | `.aidd/.claude/commands/aidd-generate.md` |
 | Инструкции агента | Фреймворк | `.aidd/.claude/agents/implementer.md` |
 | Детальные инструкции | Фреймворк | `.aidd/roles/implementer/*.md` |
 | Шаблон FastAPI | Фреймворк | `.aidd/templates/services/fastapi_business_api/` |
@@ -301,7 +301,7 @@
 
 | Файл | Источник | Путь |
 |------|----------|------|
-| Инструкции команды | Фреймворк | `.aidd/.claude/commands/review.md` |
+| Инструкции команды | Фреймворк | `.aidd/.claude/commands/aidd-review.md` |
 | Инструкции агента | Фреймворк | `.aidd/.claude/agents/reviewer.md` |
 | Детальные инструкции | Фреймворк | `.aidd/roles/reviewer/*.md` |
 | Conventions | Фреймворк | `.aidd/conventions.md` |
@@ -343,7 +343,7 @@
 
 | Файл | Источник | Путь |
 |------|----------|------|
-| Инструкции команды | Фреймворк | `.aidd/.claude/commands/test.md` |
+| Инструкции команды | Фреймворк | `.aidd/.claude/commands/aidd-test.md` |
 | Инструкции агента | Фреймворк | `.aidd/.claude/agents/qa.md` |
 | Детальные инструкции | Фреймворк | `.aidd/roles/qa/*.md` |
 | База знаний | Фреймворк | `.aidd/knowledge/quality/testing.md` |
@@ -379,7 +379,7 @@
 
 | Файл | Источник | Путь |
 |------|----------|------|
-| Инструкции команды | Фреймворк | `.aidd/.claude/commands/validate.md` |
+| Инструкции команды | Фреймворк | `.aidd/.claude/commands/aidd-validate.md` |
 | Инструкции агента | Фреймворк | `.aidd/.claude/agents/validator.md` |
 | Детальные инструкции | Фреймворк | `.aidd/roles/validator/*.md` |
 | Шаблон RTM | Фреймворк | `.aidd/templates/documents/rtm-template.md` |
@@ -417,7 +417,7 @@
 
 | Файл | Источник | Путь |
 |------|----------|------|
-| Инструкции команды | Фреймворк | `.aidd/.claude/commands/deploy.md` |
+| Инструкции команды | Фреймворк | `.aidd/.claude/commands/aidd-deploy.md` |
 | Инструкции агента | Фреймворк | `.aidd/.claude/agents/validator.md` |
 | База знаний | Фреймворк | `.aidd/knowledge/infrastructure/docker.md` |
 | **Результат** | ЦП | Запущенные контейнеры |

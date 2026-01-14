@@ -772,18 +772,18 @@ echo "Упоминания в workflow.md: $(grep -c "FEATURE" workflow.md 2>/de
 # ========================================
 echo ""
 echo "=== Команды для режимов ==="
-if [ -f ".claude/commands/plan.md" ]; then
+if [ -f ".claude/commands/aidd-plan.md" ]; then
   echo "✅ /aidd-plan (CREATE mode)"
-  if grep -qi "CREATE\|полный\|новый проект" ".claude/commands/plan.md" 2>/dev/null; then
+  if grep -qi "CREATE\|полный\|новый проект" ".claude/commands/aidd-plan.md" 2>/dev/null; then
     echo "   ✅ Описывает CREATE mode"
   else
     echo "   ⚠️ Не описывает CREATE mode явно"
   fi
 fi
 
-if [ -f ".claude/commands/feature-plan.md" ]; then
+if [ -f ".claude/commands/aidd-feature-plan.md" ]; then
   echo "✅ /aidd-feature-plan (FEATURE mode)"
-  if grep -qi "FEATURE\|добавление\|существующий" ".claude/commands/feature-plan.md" 2>/dev/null; then
+  if grep -qi "FEATURE\|добавление\|существующий" ".claude/commands/aidd-feature-plan.md" 2>/dev/null; then
     echo "   ✅ Описывает FEATURE mode"
   else
     echo "   ⚠️ Не описывает FEATURE mode явно"

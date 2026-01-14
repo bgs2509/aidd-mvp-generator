@@ -144,24 +144,36 @@
 
 ```json
 {
+  "version": "2.0",
   "project_name": "booking-service",
   "mode": "CREATE",
-  "current_stage": 4,
   "created_at": "2025-12-21T10:00:00Z",
   "updated_at": "2025-12-21T10:30:00Z",
 
   "next_feature_id": 3,
 
-  "current_feature": {
-    "id": "F002",
-    "name": "email-notify",
-    "title": "Email-уведомления о бронированиях",
-    "stage": "IMPLEMENT",
-    "created": "2025-12-21",
-    "artifacts": {
-      "prd": "prd/2025-12-21_F002_email-notify-prd.md",
-      "research": "research/2025-12-21_F002_email-notify-research.md",
-      "plan": "plans/2025-12-21_F002_email-notify-plan.md"
+  "global_gates": {
+    "BOOTSTRAP_READY": { "passed": true, "passed_at": "2025-12-21T09:55:00Z" }
+  },
+
+  "active_pipelines": {
+    "F002": {
+      "branch": "feature/F002-email-notify",
+      "name": "email-notify",
+      "title": "Email-уведомления о бронированиях",
+      "stage": "IMPLEMENT",
+      "created": "2025-12-21",
+      "gates": {
+        "PRD_READY": { "passed": true, "passed_at": "2025-12-21T10:05:00Z" },
+        "RESEARCH_DONE": { "passed": true, "passed_at": "2025-12-21T10:10:00Z" },
+        "PLAN_APPROVED": { "passed": true, "passed_at": "2025-12-21T10:20:00Z", "approved_by": "user" },
+        "IMPLEMENT_OK": { "passed": false }
+      },
+      "artifacts": {
+        "prd": "prd/2025-12-21_F002_email-notify-prd.md",
+        "research": "research/2025-12-21_F002_email-notify-research.md",
+        "plan": "plans/2025-12-21_F002_email-notify-plan.md"
+      }
     }
   },
 
@@ -182,49 +194,30 @@
       },
       "services": ["booking_api", "booking_data"]
     }
-  },
-
-  "gates": {
-    "PRD_READY": {
-      "passed": true,
-      "passed_at": "2025-12-21T10:05:00Z"
-    },
-    "RESEARCH_DONE": {
-      "passed": true,
-      "passed_at": "2025-12-21T10:10:00Z"
-    },
-    "PLAN_APPROVED": {
-      "passed": true,
-      "passed_at": "2025-12-21T10:20:00Z",
-      "approved_by": "user"
-    },
-    "IMPLEMENT_OK": {
-      "passed": false
-    }
   }
 }
 ```
 
-### Структура `current_feature`
+### Структура `active_pipelines[FID]`
 
 | Поле | Тип | Описание |
 |------|-----|----------|
-| `id` | string | Feature ID (F001, F002, ...) |
+| `branch` | string | Git-ветка фичи (feature/F001-name) |
 | `name` | string | slug для имён файлов (kebab-case) |
 | `title` | string | Человекочитаемое название |
-| `stage` | string | Текущий этап (PRD, RESEARCH, PLAN, IMPLEMENT, ...) |
+| `stage` | string | Текущий этап (IDEA, RESEARCH, PLAN, IMPLEMENT, ...) |
 | `created` | string | Дата создания (YYYY-MM-DD) |
+| `gates` | object | Ворота фичи (изолированы от других пайплайнов) |
 | `artifacts` | object | Карта артефактов (тип → путь) |
-| `services` | array | Список созданных сервисов (после IMPLEMENT) |
 
-### Жизненный цикл фичи
+### Жизненный цикл фичи (v2)
 
 ```
-1. /aidd-idea создаёт current_feature с новым FID
-2. Каждый этап добавляет артефакт в current_feature.artifacts
+1. /aidd-idea создаёт active_pipelines[FID] с новым Feature ID
+2. Каждый этап обновляет gates и artifacts в active_pipelines[FID]
 3. /aidd-deploy переносит фичу в features_registry
-4. current_feature очищается (null)
-5. Готово для следующей фичи
+4. Запись удаляется из active_pipelines
+5. Готово для следующей фичи (или параллельной разработки)
 ```
 
 ---
@@ -322,7 +315,7 @@ cp .aidd/templates/project/.claude/settings.local.json.example .claude/settings.
 
 ```bash
 mkdir -p ai-docs/docs/{prd,architecture,plans,reports,research}
-echo '{"project_name":"","mode":"CREATE","current_stage":1,"gates":{}}' > .pipeline-state.json
+echo '{"version":"2.0","project_name":"","mode":"CREATE","global_gates":{},"active_pipelines":{},"next_feature_id":1}' > .pipeline-state.json
 ```
 
 ---

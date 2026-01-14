@@ -43,15 +43,15 @@
 
 | Файл | Команда | Этап |
 |------|---------|------|
-| [.claude/commands/idea.md](../.claude/commands/idea.md) | `/idea` | 1 |
-| [.claude/commands/research.md](../.claude/commands/research.md) | `/research` | 2 |
-| [.claude/commands/plan.md](../.claude/commands/plan.md) | `/plan` | 3 (CREATE) |
-| [.claude/commands/feature-plan.md](../.claude/commands/feature-plan.md) | `/feature-plan` | 3 (FEATURE) |
-| [.claude/commands/generate.md](../.claude/commands/generate.md) | `/generate` | 4 |
-| [.claude/commands/review.md](../.claude/commands/review.md) | `/review` | 5 |
-| [.claude/commands/test.md](../.claude/commands/test.md) | `/test` | 6 |
-| [.claude/commands/validate.md](../.claude/commands/validate.md) | `/validate` | 7 |
-| [.claude/commands/deploy.md](../.claude/commands/deploy.md) | `/deploy` | 8 |
+| [.claude/commands/aidd-idea.md](../.claude/commands/aidd-idea.md) | `/aidd-idea` | 1 |
+| [.claude/commands/aidd-research.md](../.claude/commands/aidd-research.md) | `/aidd-research` | 2 |
+| [.claude/commands/aidd-plan.md](../.claude/commands/aidd-plan.md) | `/aidd-plan` | 3 (CREATE) |
+| [.claude/commands/aidd-feature-plan.md](../.claude/commands/aidd-feature-plan.md) | `/aidd-feature-plan` | 3 (FEATURE) |
+| [.claude/commands/aidd-generate.md](../.claude/commands/aidd-generate.md) | `/aidd-generate` | 4 |
+| [.claude/commands/aidd-review.md](../.claude/commands/aidd-review.md) | `/aidd-review` | 5 |
+| [.claude/commands/aidd-test.md](../.claude/commands/aidd-test.md) | `/aidd-test` | 6 |
+| [.claude/commands/aidd-validate.md](../.claude/commands/aidd-validate.md) | `/aidd-validate` | 7 |
+| [.claude/commands/aidd-deploy.md](../.claude/commands/aidd-deploy.md) | `/aidd-deploy` | 8 |
 
 ---
 

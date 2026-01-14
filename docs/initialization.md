@@ -113,12 +113,14 @@ if exists("./CLAUDE.md"):
 if exists("./.pipeline-state.json"):
     state = read_json("./.pipeline-state.json")
 
-    mode = state.get("mode")                    # CREATE или FEATURE
-    current_stage = state.get("current_stage")  # 1-8
-    passed_gates = state.get("gates", {})       # Пройденные ворота
-    artifacts = state.get("artifacts", {})      # Пути к артефактам
+    mode = state.get("mode")                         # CREATE или FEATURE
+    active_pipelines = state.get("active_pipelines", {})  # Активные фичи
+    global_gates = state.get("global_gates", {})     # Глобальные ворота
+    features_registry = state.get("features_registry", {})  # Завершённые фичи
 
-    # Теперь AI знает полный контекст проекта
+    # Для текущей фичи (по git-ветке):
+    # fid = get_current_feature_context()
+    # feature_gates = active_pipelines.get(fid, {}).get("gates", {})
 else:
     # Новый проект — нужна инициализация
     mode = None
@@ -329,12 +331,12 @@ def initialize_context(command: str) -> Context:
     if exists("./CLAUDE.md"):
         context.project_info = read("./CLAUDE.md")
 
-    # 1.2 Состояние пайплайна
+    # 1.2 Состояние пайплайна (v2 формат)
     if exists("./.pipeline-state.json"):
         context.state = read_json("./.pipeline-state.json")
         context.mode = context.state.get("mode")
-        context.current_stage = context.state.get("current_stage")
-        context.passed_gates = context.state.get("gates", {})
+        context.active_pipelines = context.state.get("active_pipelines", {})
+        context.global_gates = context.state.get("global_gates", {})
     else:
         context.mode = None  # Требуется инициализация
 

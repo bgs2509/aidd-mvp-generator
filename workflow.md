@@ -123,13 +123,18 @@ for dir in prd architecture plans reports research; do
     [ -d "ai-docs/docs/$dir" ] || mkdir -p "ai-docs/docs/$dir"
 done
 
-# 2. Инициализация состояния пайплайна
+# 2. Инициализация состояния пайплайна (v2 формат)
 cat > .pipeline-state.json << 'EOF'
 {
+  "version": "2.0",
   "project_name": "",
   "mode": "CREATE",
-  "current_stage": 1,
-  "gates": {}
+  "global_gates": {
+    "BOOTSTRAP_READY": { "passed": true, "passed_at": null }
+  },
+  "active_pipelines": {},
+  "features_registry": {},
+  "next_feature_id": 1
 }
 EOF
 ```
@@ -229,8 +234,8 @@ for dir in prd architecture plans reports research; do
     [ -d "ai-docs/docs/$dir" ] || mkdir -p "ai-docs/docs/$dir"
 done
 
-# 2. Инициализация состояния (если не существует)
-[ -f ".pipeline-state.json" ] || echo '{"project_name":"","mode":"CREATE","current_stage":0,"gates":{"BOOTSTRAP_READY":{"passed":true}}}' > .pipeline-state.json
+# 2. Инициализация состояния (если не существует, v2 формат)
+[ -f ".pipeline-state.json" ] || echo '{"version":"2.0","project_name":"","mode":"CREATE","global_gates":{"BOOTSTRAP_READY":{"passed":true}},"active_pipelines":{},"next_feature_id":1}' > .pipeline-state.json
 
 # 3. Создание CLAUDE.md (если не существует)
 [ -f "CLAUDE.md" ] || echo "# Project\n\nСм. .aidd/CLAUDE.md" > CLAUDE.md

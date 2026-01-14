@@ -181,4 +181,4 @@ templates/
 |----------|----------|
 | [CLAUDE.md](../../CLAUDE.md) | Главная точка входа |
 | [workflow.md](../../workflow.md) | Процесс разработки |
-| [target-project-structure.md](../target-project-structure.md) | Структура целевого проекта |
+| [target-project-structure.md](../../docs/target-project-structure.md) | Структура целевого проекта |

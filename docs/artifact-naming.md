@@ -427,22 +427,36 @@ ai-docs/docs/
 
 ```json
 {
+  "version": "2.0",
   "project_name": "booking-service",
   "mode": "CREATE",
-  "current_stage": 4,
   "created_at": "2024-01-15T10:00:00Z",
   "updated_at": "2024-12-23T15:30:00Z",
 
-  "current_feature": {
-    "id": "F042",
-    "name": "email-notify",
-    "title": "Email-уведомления",
-    "created": "2024-12-20",
-    "stage": "QA",
-    "artifacts": {
-      "prd": "prd/2024-12-20_F042_email-notify-prd.md",
-      "research": "research/2024-12-20_F042_email-notify-research.md",
-      "plan": "plans/2024-12-20_F042_email-notify-plan.md"
+  "global_gates": {
+    "BOOTSTRAP_READY": {"passed": true, "passed_at": "2024-01-15T10:00:00Z"}
+  },
+
+  "active_pipelines": {
+    "F042": {
+      "branch": "feature/F042-email-notify",
+      "name": "email-notify",
+      "title": "Email-уведомления",
+      "created": "2024-12-20",
+      "stage": "QA",
+      "gates": {
+        "PRD_READY": {"passed": true, "passed_at": "2024-12-20T10:05:00Z"},
+        "RESEARCH_DONE": {"passed": true, "passed_at": "2024-12-20T10:10:00Z"},
+        "PLAN_APPROVED": {"passed": true, "passed_at": "2024-12-20T10:20:00Z"},
+        "IMPLEMENT_OK": {"passed": true, "passed_at": "2024-12-21T14:00:00Z"},
+        "REVIEW_OK": {"passed": true, "passed_at": "2024-12-22T10:00:00Z"},
+        "QA_PASSED": {"passed": false}
+      },
+      "artifacts": {
+        "prd": "prd/2024-12-20_F042_email-notify-prd.md",
+        "research": "research/2024-12-20_F042_email-notify-research.md",
+        "plan": "plans/2024-12-20_F042_email-notify-plan.md"
+      }
     }
   },
 
@@ -466,27 +480,10 @@ ai-docs/docs/
       "status": "DEPLOYED",
       "deployed_at": "2024-02-25",
       "services": ["booking_api", "booking_data"]
-    },
-    "F042": {
-      "name": "email-notify",
-      "title": "Email-уведомления",
-      "created": "2024-12-20",
-      "status": "IN_PROGRESS",
-      "services": ["notify_worker"]
     }
   },
 
-  "next_feature_id": 43,
-
-  "gates": {
-    "BOOTSTRAP_READY": {"passed": true, "passed_at": "2024-01-15T10:00:00Z"},
-    "PRD_READY": {"passed": true, "passed_at": "2024-12-20T10:05:00Z"},
-    "RESEARCH_DONE": {"passed": true, "passed_at": "2024-12-20T10:10:00Z"},
-    "PLAN_APPROVED": {"passed": true, "passed_at": "2024-12-20T10:20:00Z"},
-    "IMPLEMENT_OK": {"passed": true, "passed_at": "2024-12-21T14:00:00Z"},
-    "REVIEW_OK": {"passed": true, "passed_at": "2024-12-22T10:00:00Z"},
-    "QA_PASSED": {"passed": false}
-  }
+  "next_feature_id": 43
 }
 ```
 
@@ -614,7 +611,7 @@ migrated_at: 2024-12-23
 2. Создать slug из названия
 3. Сформировать имя файла: {date}_{FID}_{slug}-prd.md
 4. Добавить frontmatter
-5. Обновить .pipeline-state.json (features_registry, current_feature)
+5. Обновить .pipeline-state.json (active_pipelines[FID])
 6. Обновить FEATURES.md
 ```
 
@@ -622,20 +619,20 @@ migrated_at: 2024-12-23
 
 ```python
 # При создании плана:
-1. Взять FID из current_feature
+1. Взять FID из active_pipelines (текущая git-ветка)
 2. Сформировать имя: {date}_{FID}_{slug}-plan.md
 3. Добавить frontmatter с ссылками на PRD и research
-4. Сохранить путь в current_feature.artifacts.plan
+4. Сохранить путь в active_pipelines[FID].artifacts.plan
 ```
 
 ### 10.3 /aidd-deploy
 
 ```python
 # При успешном деплое:
-1. Обновить статус фичи в features_registry → DEPLOYED
-2. Добавить deployed_at
+1. Перенести фичу из active_pipelines в features_registry
+2. Добавить deployed_at и статус DEPLOYED
 3. Обновить FEATURES.md (перенести в "Завершённые")
-4. Очистить current_feature
+4. Удалить запись из active_pipelines
 ```
 
 ---
