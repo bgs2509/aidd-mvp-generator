@@ -3,6 +3,14 @@ allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md), Bash(gi
 description: Код-ревью сгенерированного кода
 ---
 
+> ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
+> 1. Найти секцию "Чеклист ворот" в конце этого файла
+> 2. Создать TodoWrite со ВСЕМИ пунктами (особенно 🔴)
+> 3. Выполнить ВСЕ пункты и отметить completed
+> 4. Команда завершена ТОЛЬКО когда все 🔴 пункты ✅
+>
+> Правила: `.aidd/CLAUDE.md` → "Выполнение команд /aidd-*"
+
 # Команда: /review
 
 > Запускает Ревьюера для код-ревью.
@@ -212,6 +220,20 @@ filename = f"{date}_{fid}_{slug}-review.md"
 # После /generate
 /review
 ```
+
+---
+
+## Чеклист ворот REVIEW_OK
+
+> ⚠️ AI ОБЯЗАН создать TodoWrite с этими пунктами.
+
+- [ ] 🔴 **Review Report создан** (`ai-docs/docs/reports/{name}-review.md`)
+- [ ] 🔴 Код соответствует архитектуре (план vs реализация)
+- [ ] 🔴 Security checklist пройден (нет уязвимостей)
+- [ ] 🔴 `.pipeline-state.json` обновлён (gate: REVIEW_OK)
+- [ ] 🟡 Code style соблюдён (conventions.md)
+- [ ] 🟡 Log-Driven Design проверен
+- [ ] 🟡 Нет Blocker/Critical замечаний
 
 ---
 

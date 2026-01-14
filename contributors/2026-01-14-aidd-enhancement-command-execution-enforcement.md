@@ -3,7 +3,8 @@
 **Date**: 2026-01-14
 **Author**: AI Agent
 **Type**: Enhancement Request
-**Status**: PROPOSED
+**Status**: IMPLEMENTED
+**Implemented**: 2026-01-14
 **Component**: `.aidd/CLAUDE.md`, `.aidd/.claude/commands/*.md`
 
 ---
@@ -231,9 +232,29 @@ AI выполняет /aidd-deploy:
 |---|--------|-------|--------|
 | 1 | Document enhancement in contributors/ | AI | ✅ Done |
 | 2 | Implement in target project CLAUDE.md | AI | ✅ Done (Prognosis) |
-| 3 | Add to framework CLAUDE.md | Framework maintainer | ⏳ Pending |
-| 4 | Add checklists to all command files | Framework maintainer | ⏳ Pending |
-| 5 | Add enforcement headers to command files | Framework maintainer | ⏳ Pending |
+| 3 | Add to framework CLAUDE.md | AI | ✅ Done (2026-01-14) |
+| 4 | Add checklists to all command files | AI | ✅ Done (2026-01-14) |
+| 5 | Add enforcement headers to command files | AI | ✅ Done (2026-01-14) |
+
+### Implementation Notes (2026-01-14)
+
+**Files modified:**
+- `CLAUDE.md` — добавлена секция "Выполнение команд /aidd-*"
+- `aidd-init.md` — enforcement header + чеклист BOOTSTRAP_READY
+- `aidd-idea.md` — enforcement header + чеклист PRD_READY
+- `aidd-research.md` — enforcement header + чеклист RESEARCH_DONE
+- `aidd-plan.md` — enforcement header + чеклист PLAN_APPROVED
+- `aidd-feature-plan.md` — enforcement header + чеклист PLAN_APPROVED
+- `aidd-generate.md` — enforcement header + чеклист IMPLEMENT_OK
+- `aidd-review.md` — enforcement header + чеклист REVIEW_OK
+- `aidd-test.md` — enforcement header + чеклист QA_PASSED
+- `aidd-validate.md` — enforcement header + чеклист ALL_GATES_PASSED
+- `aidd-deploy.md` — enforcement header + обновлён чеклист DEPLOYED
+
+**Маркеры критичности:**
+- 🔴 BLOCKER — без этого команда НЕ завершена
+- 🟡 REQUIRED — обязательно выполнить
+- ⚪ OPTIONAL — рекомендуется
 
 ---
 

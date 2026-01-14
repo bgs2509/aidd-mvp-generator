@@ -3,6 +3,14 @@ allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md), Bash(gi
 description: Финальная проверка всех качественных ворот
 ---
 
+> ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
+> 1. Найти секцию "Чеклист ворот" в конце этого файла
+> 2. Создать TodoWrite со ВСЕМИ пунктами (особенно 🔴)
+> 3. Выполнить ВСЕ пункты и отметить completed
+> 4. Команда завершена ТОЛЬКО когда все 🔴 пункты ✅
+>
+> Правила: `.aidd/CLAUDE.md` → "Выполнение команд /aidd-*"
+
 # Команда: /validate
 
 > Запускает Валидатора для финальной проверки.
@@ -233,6 +241,20 @@ filename = f"{date}_{fid}_{slug}-validation.md"
 # После /test
 /validate
 ```
+
+---
+
+## Чеклист ворот ALL_GATES_PASSED
+
+> ⚠️ AI ОБЯЗАН создать TodoWrite с этими пунктами.
+
+- [ ] 🔴 Все предыдущие ворота пройдены (PRD→QA)
+- [ ] 🔴 RTM создан (`ai-docs/docs/rtm.md`)
+- [ ] 🔴 Все FR-* покрыты тестами
+- [ ] 🔴 **Validation Report создан** (`ai-docs/docs/reports/{name}-validation.md`)
+- [ ] 🔴 `.pipeline-state.json` обновлён (gate: ALL_GATES_PASSED)
+- [ ] 🟡 Log-Driven Design проверен
+- [ ] 🟡 Все артефакты существуют и актуальны
 
 ---
 

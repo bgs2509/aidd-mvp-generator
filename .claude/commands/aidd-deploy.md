@@ -3,6 +3,14 @@ allowed-tools: Read(*), Glob(*), Grep(*), Bash(make :*), Bash(docker :*), Bash(c
 description: Сборка и запуск Docker-контейнеров
 ---
 
+> ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
+> 1. Найти секцию "Чеклист ворот" в конце этого файла
+> 2. Создать TodoWrite со ВСЕМИ пунктами (особенно 🔴)
+> 3. Выполнить ВСЕ пункты и отметить completed
+> 4. Команда завершена ТОЛЬКО когда все 🔴 пункты ✅
+>
+> Правила: `.aidd/CLAUDE.md` → "Выполнение команд /aidd-*"
+
 # Команда: /deploy
 
 > Запускает Валидатора для деплоя приложения.
@@ -457,16 +465,17 @@ curl http://localhost:8000/api/v1/...
 
 ## Чеклист ворот DEPLOYED
 
-Перед завершением деплоя убедитесь, что выполнены все критерии:
+> ⚠️ AI ОБЯЗАН создать TodoWrite с этими пунктами.
 
-- [ ] Docker-контейнеры собраны (`make build`)
-- [ ] Приложение запущено (`make up`)
-- [ ] Health-check проходит (`make health`)
-- [ ] Базовые сценарии работают (API запросы успешны)
-- [ ] Completion Report создан: `ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md`
-- [ ] Completion Report добавлен в `pipeline.artifacts.completion`
-- [ ] `.pipeline-state.json` обновлён (DEPLOYED gate passed)
-- [ ] Фича перенесена в `features_registry`
+- [ ] 🔴 Docker-контейнеры собраны (`make build`)
+- [ ] 🔴 Приложение запущено (`make up`)
+- [ ] 🔴 Health-check проходит (`make health`)
+- [ ] 🔴 Базовые сценарии работают (API запросы успешны)
+- [ ] 🔴 **Completion Report создан** ← ОБЯЗАТЕЛЬНО!
+- [ ] 🔴 `.pipeline-state.json` обновлён (DEPLOYED gate passed)
+- [ ] 🔴 Фича перенесена в `features_registry`
+- [ ] 🟡 Completion Report добавлен в `pipeline.artifacts.completion`
+- [ ] 🟡 Метрики задокументированы
 
 ---
 

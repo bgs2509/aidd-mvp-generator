@@ -3,6 +3,14 @@ allowed-tools: Read(*), Glob(*), Grep(*), Edit(**), Write(**), Bash(make :*), Ba
 description: Генерация кода на основе утверждённого плана
 ---
 
+> ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
+> 1. Найти секцию "Чеклист ворот" в конце этого файла
+> 2. Создать TodoWrite со ВСЕМИ пунктами (особенно 🔴)
+> 3. Выполнить ВСЕ пункты и отметить completed
+> 4. Команда завершена ТОЛЬКО когда все 🔴 пункты ✅
+>
+> Правила: `.aidd/CLAUDE.md` → "Выполнение команд /aidd-*"
+
 # Команда: /generate
 
 > Запускает Реализатора для генерации кода.
@@ -279,6 +287,20 @@ def update_after_generate(state: dict, fid: str, services: list[str]):
 # После утверждения плана
 /generate
 ```
+
+---
+
+## Чеклист ворот IMPLEMENT_OK
+
+> ⚠️ AI ОБЯЗАН создать TodoWrite с этими пунктами.
+
+- [ ] 🔴 Весь код сгенерирован согласно плану
+- [ ] 🔴 Все сервисы созданы в `services/`
+- [ ] 🔴 Unit тесты написаны
+- [ ] 🔴 Type hints добавлены (100%)
+- [ ] 🔴 `.pipeline-state.json` обновлён (gate: IMPLEMENT_OK)
+- [ ] 🟡 Quality Cascade (17 checks) пройден
+- [ ] 🟡 `docker-compose.yml` обновлён
 
 ---
 
