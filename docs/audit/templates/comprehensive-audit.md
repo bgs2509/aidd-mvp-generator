@@ -1537,11 +1537,11 @@ echo -e "\n💡 Запустите полный аудит для детальн
 
 ## Связанные документы
 
-- **Главная точка входа**: [CLAUDE.md](../../CLAUDE.md)
-- **9-этапный процесс**: [workflow.md](../../workflow.md)
-- **Соглашения**: [conventions.md](../../conventions.md)
-- **Индекс документации**: [docs/INDEX.md](../INDEX.md)
-- **Навигационная матрица**: [docs/NAVIGATION.md](../NAVIGATION.md)
+- **Главная точка входа**: [CLAUDE.md](../../../CLAUDE.md)
+- **9-этапный процесс**: [workflow.md](../../../workflow.md)
+- **Соглашения**: [conventions.md](../../../conventions.md)
+- **Индекс документации**: [docs/INDEX.md](../../INDEX.md)
+- **Навигационная матрица**: [docs/NAVIGATION.md](../../NAVIGATION.md)
 
 ---
 

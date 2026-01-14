@@ -1,31 +1,32 @@
-# Комплексный аудит AIDD-MVP Generator — Codex (2026-01-13)
+# Комплексный аудит AIDD-MVP Generator — Codex (2025-01-13)
 
 ## 1. Executive Summary
 ### Назначение проекта
 AIDD-MVP Generator — эталонный репозиторий методологии AI-Driven Development. Он определяет 9-этапный пайплайн, 7 ролей агентов, шаблоны сервисов (FastAPI, Aiogram, async workers) и документацию для быстрой сборки production-ready MVP за ~10 минут. Репозиторий служит «фабрикой инструкций» — `/aidd-*` команды и документация копируются в целевой проект и управляют качеством на каждом этапе.
 
-Аудит подтвердил, что Stage 0 документы, сервисные и документ-шаблоны сохранены, однако критические участки ссылаются на отсутствующие файлы и на legacy-концепцию `current_feature`. Smoke Tests 2, 3, 7 и 11 падают: slash-команды недоступны по ожидаемым путям, а в шаблонах state-машины всё ещё фигурируют DEPRECATED поля. Пользователь или AI-агент, следуя документации, попадает на 404 и может сгенерировать устаревший `.pipeline-state.json`, что блокирует пайплайн.
+Аудит подтвердил, что Stage 0 документы, сервисные и документ-шаблоны сохранены. **Ревизия аудита**: Проблема с Smoke Test 7 (slash-команды) отклонена — команды `aidd-*.md` корректны по дизайну. Остаётся **1 CRITICAL**: в шаблонах state-машины присутствуют DEPRECATED поля `current_feature`/`current_stage`. Также 20 битых ссылок (HIGH) и deprecated-упоминания в документах.
 
 ### Health Score
 ```
 Health Score = 100 - (CRITICAL×4) - (HIGH×2) - (MEDIUM×0.5) - (LOW×0.1)
 Базовый: 100
-CRITICAL (2):  2 × 4   =  -8
+CRITICAL (1):  1 × 4   =  -4    ← Проблема 1 отклонена (ошибка теста)
 HIGH (5):      5 × 2   = -10
 MEDIUM (3):    3 × 0.5 = -1.5
 LOW (1):       1 × 0.1 = -0.1
 ---------------------------------
-ИТОГО: 100 - 19.6 = 80.4 / 100
+ИТОГО: 100 - 15.6 = 84.4 / 100   ← УЛУЧШЕНО после ревизии
 ```
 
 ### Всего найдено проблем
 | Приоритет | Кол-во | Топ-3 примера (file:line) | Влияние |
 |-----------|--------|---------------------------|---------|
-| **CRITICAL** | 2 | `.claude/commands/plan.md` (отсутствует), `docs/audit/templates/comprehensive-audit.md:233`, `templates/documents/pipeline-state-template.json:64` | Slash-команды и state-машина не соответствуют требованиям Stage 0 → пайплайн ломается сразу после `/aidd-init` |
+| **CRITICAL** | 1 | `templates/documents/pipeline-state-template.json:64` (deprecated fields) | State-машина содержит DEPRECATED поля `current_feature`/`current_stage` |
+| ~~CRITICAL~~ | ~~1~~ | ~~`.claude/commands/plan.md`~~ | ~~ОТКЛОНЕНО: ошибка теста, команды `aidd-*.md` корректны~~ |
 | **HIGH** | 5 | `docs/LINKS_REFERENCE.md:46`, `docs/audit/templates/comprehensive-audit.md:1540`, `templates/documents/template-map.md:184` | Пользователи и аудиторы переходят по 404, ссылки на Stage 0 и target-structure неверные |
 | **MEDIUM** | 3 | `.claude/agents/analyst.md:11`, `docs/history/2025-12-19-aidd-mvp-implementation-todo.md:1`, `workflow.md:33` | Автоматические проверки ролей, TODO и визуализация ворот дают шум |
 | **LOW** | 1 | `docs/audit/templates/comprehensive-audit.md:94` | Smoke Test 4 из шаблона всегда печатает `Broken pipe`, мешая чтению лога |
-| **ИТОГО** | 11 |  |  |
+| **ИТОГО** | 10 | (было 11, 1 отклонена) |  |
 
 ## 2. Smoke Tests
 Результаты получены запуском `/tmp/run_smoke_tests.sh` (см. `/tmp/smoke_tests.log`).
@@ -38,7 +39,7 @@ LOW (1):       1 × 0.1 = -0.1
 | 4. Битые ссылки (10 файлов) | См. шаблон (Test 4) | Команда выводит `find: 'standard output': Broken pipe`; отдельная полная проверка показала **20** битых ссылок (`/tmp/broken_links_precise.txt`) |
 | 5. Stage 0 | `for doc in CLAUDE.md workflow.md conventions.md` | Все три файла присутствуют (584/1264/599 строк) |
 | 6. 7 ролей | Проверка `.claude/agents/*.md` | 7/7 файлов, но скрипт не видит «Этап N» (см. MEDIUM) |
-| 7. Slash-команды | `ls .claude/commands/$cmd.md` | 0/10 — существуют только `aidd-*.md` |
+| 7. Slash-команды | `ls .claude/commands/aidd-*.md` | **10/10** — все команды имеют префикс `aidd-` (это корректно по дизайну) |
 | 8. Шаблоны сервисов | `ls templates/services/*/` | 5/5, все с README, src, tests, Dockerfile |
 | 9. Шаблоны документов | 10/10 (`prd`, `architecture`, `qa`, `validation`, `tasklist`, `pipeline-state`, …) |
 | 10. Gates | `grep -o "[A-Z_]*_READY\|…"` | CLAUDE/NAVIGATION = 9/9; workflow.md содержит лишние `_DONE/_OK` токены |
@@ -47,35 +48,23 @@ LOW (1):       1 × 0.1 = -0.1
 
 ## 3. Категории проблем
 ### Проблемы пайплайна и ссылок
-#### Проблема 1 (CRITICAL): Нет файлов `.claude/commands/<cmd>.md`
-- **Расположение**: `.claude/commands/plan.md` (файл отсутствует), проверка и требования описаны в `docs/audit/templates/comprehensive-audit.md:233`
-- **Влияние**: Smoke Test 7 и Objective 7 падают, Stage 0 инструкции не находят команды → AI-агенты не могут открыть документацию и пайплайн блокируется до этапа 0.
-- **Как обнаружено**
-  ```bash
-  ls .claude/commands
-  # → только aidd-*.md, отсутствуют init/idea/... без префикса
-  ```
-- **Команда исправления**
-  ```bash
-  for cmd in init idea research plan feature-plan generate review test validate deploy; do
-    src=".claude/commands/aidd-${cmd}.md"
-    dst=".claude/commands/${cmd}.md"
-    [ -f "$src" ] && cp "$src" "$dst"
-  done
-  ```
+#### ~~Проблема 1~~: ОТКЛОНЕНО — Ошибка методологии теста
+- **Статус**: NOT A BUG
+- **Причина**: Smoke Test 7 искал файлы без префикса (`plan.md`), но по дизайну все команды имеют префикс `aidd-` для namespace isolation.
+- **Факт**: Все 10 команд присутствуют: `aidd-init.md`, `aidd-idea.md`, `aidd-research.md`, `aidd-plan.md`, `aidd-feature-plan.md`, `aidd-generate.md`, `aidd-review.md`, `aidd-test.md`, `aidd-validate.md`, `aidd-deploy.md`
+- **Исправление**: Обновлён Smoke Test 7 для корректного поиска `aidd-*.md`
 - **Верификация**
   ```bash
-  ls .claude/commands/plan.md
-  /tmp/run_smoke_tests.sh  # ожидаем 10/10 команд
+  ls .claude/commands/aidd-*.md | wc -l  # → 10
   ```
 
 #### Проблема 2 (CRITICAL): Legacy `current_feature` в шаблонах state-машины
-- **Расположение**: `templates/documents/pipeline-state-template.json:64-71`, `contributors/2026-01-13-detailed-fix-recommendations.md:96-110`
+- **Расположение**: `templates/documents/pipeline-state-template.json:64-71`, `contributors/2025-01-13-detailed-fix-recommendations.md:96-110`
 - **Влияние**: `/aidd-init` продолжает генерировать `current_feature`/`current_stage`, что противоречит v2 (`active_pipelines`). Агенты получают конфликтующие инструкции, smoke test 3 всегда видит 20 legacy ссылок.
 - **Как обнаружено**
   ```bash
   rg -n "current_feature" templates/documents/pipeline-state-template.json
-  rg -n "current_feature" contributors/2026-01-13-detailed-fix-recommendations.md
+  rg -n "current_feature" contributors/2025-01-13-detailed-fix-recommendations.md
   ```
 - **Команда исправления**
   ```bash
@@ -94,7 +83,7 @@ LOW (1):       1 × 0.1 = -0.1
   -  },
   *** End Patch
   PATCH
-  sed -i '/current_feature/,+10d' contributors/2026-01-13-detailed-fix-recommendations.md
+  sed -i '/current_feature/,+10d' contributors/2025-01-13-detailed-fix-recommendations.md
   ```
 - **Верификация**
   ```bash
@@ -103,16 +92,16 @@ LOW (1):       1 × 0.1 = -0.1
   ```
 
 #### Проблема 3 (HIGH): Навигация (`docs/LINKS_REFERENCE.md`, `docs/PIPELINE-TREE.md`, contributor-репорты) ссылается на несуществующие `.claude/commands/<cmd>.md`
-- **Расположение**: `docs/LINKS_REFERENCE.md:46-54`, `docs/PIPELINE-TREE.md:151-188`, `contributors/2026-01-13-comprehensive-audit-report.md:83`
+- **Расположение**: `docs/LINKS_REFERENCE.md:46-54`, `docs/PIPELINE-TREE.md:151-188`, `contributors/2025-01-13-comprehensive-audit-report.md:83`
 - **Влияние**: Любая документация, которая использует таблицу ссылок, открывает 404 вместо инструкций по командам. Даже после добавления алиасов нужно актуализировать ссылки на реальные пути `aidd-*.md`.
 - **Как обнаружено**
   ```bash
   sed -n '46,54p' docs/LINKS_REFERENCE.md
-  rg -n '\.claude/commands/idea.md' docs/PIPELINE-TREE.md contributors/2026-01-13-comprehensive-audit-report.md
+  rg -n '\.claude/commands/idea.md' docs/PIPELINE-TREE.md contributors/2025-01-13-comprehensive-audit-report.md
   ```
 - **Команда исправления**
   ```bash
-  rg -l '\.claude/commands/[a-z-]*\.md' docs/LINKS_REFERENCE.md docs/PIPELINE-TREE.md contributors/2026-01-13-comprehensive-audit-report.md \
+  rg -l '\.claude/commands/[a-z-]*\.md' docs/LINKS_REFERENCE.md docs/PIPELINE-TREE.md contributors/2025-01-13-comprehensive-audit-report.md \
     | xargs perl -0pi -e 's#\.claude/commands/([a-z-]+)\.md#\.claude/commands/aidd-\1.md#g'
   ```
 - **Верификация**
@@ -270,14 +259,14 @@ LOW (1):       1 × 0.1 = -0.1
   ```
 
 ## 4. TODO-список
-| Фаза | Задача | Время | Приоритет | Зависимости | Команда проверки |
-|------|--------|-------|-----------|-------------|------------------|
-| **Фаза 1 — быстрые** | Добавить алиасы `.claude/commands/<cmd>.md` и обновить все ссылки на `aidd-*.md` | 45 мин | CRITICAL | Нет | `/tmp/run_smoke_tests.sh` (Test 7) |
-| | Удалить `current_feature/current_stage` из шаблонов и документов | 30 мин | CRITICAL | Нет | `rg -n 'current_feature' templates/documents` |
-| | Исправить относительные пути в `docs/audit/templates`, `templates/documents/template-map.md`, `docs/history/2025-12-20-*` | 40 мин | HIGH | Нет | `python scripts/check_links.py` (из Objective 2) |
-| **Фаза 2 — контент** | Вставить явные `Этап N` токены в `.claude/agents/*.md` и обновить TODOS | 1.5 ч | MEDIUM | Фаза 1 | `grep -n 'Этап [0-9]' .claude/agents/*.md` + `grep -n 'TODO'` |
-| | Обновить примеры артефактов (`docs/artifact-naming`, `.claude/commands/aidd-idea`) на текстовые пояснения | 30 мин | HIGH | Нет | `rg -n '\[PRD\]' docs .claude/commands` |
-| **Фаза 3 — структурные** | Переписать проблемные разделы исторических документов, добавить исправленные ссылки и пояснения | 4 ч | MEDIUM | Фазы 1-2 | `/tmp/broken_links_precise.txt` повторно |
+| Фаза | Задача | Приоритет | Команда проверки |
+|------|--------|-----------|------------------|
+| **Фаза 1 — быстрые** | ~~Добавить алиасы `.claude/commands/<cmd>.md`~~ ОТКЛОНЕНО — команды `aidd-*.md` корректны | ~~CRITICAL~~ | — |
+| | Удалить `current_feature/current_stage` из шаблонов и документов | CRITICAL | `rg -n 'current_feature' templates/documents` |
+| | Исправить относительные пути в `docs/audit/templates` | HIGH | Ручная верификация ссылок |
+| **Фаза 2 — контент** | Вставить явные `Этап N` токены в `.claude/agents/*.md` | MEDIUM | `grep -n 'Этап [0-9]' .claude/agents/*.md` |
+| | Обновить примеры артефактов на текстовые пояснения | HIGH | `rg -n '\[PRD\]' docs .claude/commands` |
+| **Фаза 3 — структурные** | Переписать проблемные разделы исторических документов | MEDIUM | Повторный аудит ссылок |
 
 ## 5. Команды валидации
 Ниже главные команды, использованные в ходе аудита (см. упомянутые логи):
@@ -297,12 +286,13 @@ grep -o "[A-Z_]*_READY\|..." workflow.md        # Gates
 ```
 
 ## 6. Spot Checks
-### Spot Check 1 — Slash-команды
+### Spot Check 1 — Slash-команды (РЕВИЗИЯ)
 ```
-$ ls .claude/commands
-# → aidd-deploy.md … aidd-validate.md (нет init/plan/...)
+$ ls .claude/commands/aidd-*.md
+# → aidd-deploy.md aidd-feature-plan.md aidd-generate.md aidd-idea.md aidd-init.md
+#   aidd-plan.md aidd-research.md aidd-review.md aidd-test.md aidd-validate.md
 ```
-✅ Подтверждено: шаблон требует `.claude/commands/plan.md`, но файла нет.
+✅ **РЕВИЗИЯ**: Все 10 команд присутствуют с префиксом `aidd-`. Это корректно по дизайну — namespace isolation.
 
 ### Spot Check 2 — Аудиторский шаблон
 ```

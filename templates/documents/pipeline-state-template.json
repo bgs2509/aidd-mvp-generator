@@ -61,15 +61,5 @@
 
   "next_feature_id": 1,
 
-  "current_feature": {
-    "$comment": "DEPRECATED в v2. Используется для backward compatibility. В новых проектах = null.",
-    "$deprecated": true
-  },
-
-  "current_stage": {
-    "$comment": "DEPRECATED в v2. Этап теперь хранится в active_pipelines[FID].stage.",
-    "$deprecated": true
-  },
-
   "services": []
 }
