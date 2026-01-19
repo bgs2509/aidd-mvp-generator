@@ -65,8 +65,14 @@ description: Quality & Deploy — полный цикл проверки кач�
 
 ### Единственный артефакт (оба режима)
 
+**v2 (по умолчанию)**:
 ```
 ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md
+```
+
+**v3 (после миграции)**:
+```
+ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}.md
 ```
 
 Completion Report содержит:
@@ -259,9 +265,14 @@ def execute_finalize(fid: str, pipeline: dict, mode: str):
 
 ## Выходные артефакты (в целевом проекте)
 
-| Артефакт | Путь |
-|----------|------|
-| **Completion Report** | `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md` |
+| Артефакт | Путь (v2) | Путь (v3) |
+|----------|-----------|-----------|
+| **Completion Report** | `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md` | `ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}.md` |
+
+> **Примечание (v2.4+)**:
+> - **v2** (по умолчанию): Старая структура `reports/`, имя с дублированием `{name}-completion.md`
+> - **v3** (после миграции): Новая структура `_validation/`, имя без дублирования `{name}.md`
+> - Режим определяется из `.pipeline-state.json → naming_version`
 
 ### Именование артефакта
 
@@ -277,17 +288,29 @@ if not fid:
 slug = pipeline["name"]  # table-booking
 date = datetime.now().strftime("%Y-%m-%d")  # 2024-12-23
 
-# Сформировать имя файла
-filename = f"{date}_{fid}_{slug}-completion.md"
-# → 2024-12-23_F001_table-booking-completion.md
+# Определить naming_version и структуру артефактов
+naming_version = state.get("naming_version", "v2")
+
+if naming_version == "v3":
+    folder = "_validation"
+    filename = f"{date}_{fid}_{slug}.md"  # Без дублирования
+else:
+    folder = "reports"
+    filename = f"{date}_{fid}_{slug}-completion.md"  # С дублированием
+
+artifact_path = f"{folder}/{filename}"
+# v2: reports/2024-12-23_F001_table-booking-completion.md
+# v3: _validation/2024-12-23_F001_table-booking.md
 ```
 
 ### Обновление .pipeline-state.json
 
 После создания отчёта обновить `active_pipelines[FID]` (v2):
 
+**Пример для v2 (по умолчанию)**:
 ```json
 {
+  "naming_version": "v2",
   "active_pipelines": {
     "F001": {
       "branch": "feature/F001-table-booking",
@@ -309,6 +332,23 @@ filename = f"{date}_{fid}_{slug}-completion.md"
         "research": "research/2024-12-23_F001_table-booking-research.md",
         "plan": "architecture/2024-12-23_F001_table-booking-plan.md",
         "completion": "reports/2024-12-23_F001_table-booking-completion.md"
+      }
+    }
+  }
+}
+```
+
+**Пример для v3 (после миграции)**:
+```json
+{
+  "naming_version": "v3",
+  "active_pipelines": {
+    "F001": {
+      "artifacts": {
+        "prd": "_analysis/2024-12-23_F001_table-booking.md",
+        "research": "_research/2024-12-23_F001_table-booking.md",
+        "plan": "_plans/mvp/2024-12-23_F001_table-booking.md",
+        "completion": "_validation/2024-12-23_F001_table-booking.md"
       }
     }
   }
@@ -444,8 +484,18 @@ def create_draft_completion_report(fid: str, pipeline: dict):
         static_analysis_results=get_static_analysis_results()
     )
 
-    # Сохранить
-    path = f"ai-docs/docs/reports/{date}_{fid}_{slug}-completion.md"
+    # Определить путь на основе naming_version
+    state = read_json(".pipeline-state.json")
+    naming_version = state.get("naming_version", "v2")
+
+    if naming_version == "v3":
+        folder = "_validation"
+        filename = f"{date}_{fid}_{slug}.md"
+    else:
+        folder = "reports"
+        filename = f"{date}_{fid}_{slug}-completion.md"
+
+    path = f"ai-docs/docs/{folder}/{filename}"
     write_file(path, content)
 
     return path
@@ -818,8 +868,15 @@ Architecture Decision Records — ключевые решения с обосн�
 ##### 4.5.7. Создать файл
 
 ```bash
-# Путь к файлу
-completion_path="ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md"
+# Определить путь на основе naming_version
+state=$(cat .pipeline-state.json)
+naming_version=$(echo "$state" | jq -r '.naming_version // "v2"')
+
+if [ "$naming_version" = "v3" ]; then
+    completion_path="ai-docs/docs/_validation/{date}_{FID}_{slug}.md"
+else
+    completion_path="ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md"
+fi
 
 # Использовать шаблон
 template_path=".aidd/templates/documents/completion-report-template.md"
