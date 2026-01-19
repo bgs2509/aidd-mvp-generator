@@ -1,7 +1,8 @@
 # Naming v3: Implementation Guide for Commands
 
-> **Статус**: Phase 2.3 (Migration mode)
+> **Статус**: ✅ Phase 2.3 Complete (Migration mode active)
 > **Дата**: 2026-01-19
+> **Завершено**: 2026-01-19
 
 ## Обзор
 
@@ -63,14 +64,14 @@ artifact_path = f"ai-docs/docs/{folder}/{date}_{FID}_{slug}.md"  # v3 (без д
 
 ## Команды для обновления
 
-| # | Команда | Артефакт (v2) | Артефакт (v3) | Статус |
-|---|---------|--------------|--------------|--------|
-| 1 | `/aidd-analyze` | `prd/{name}-prd.md` | `_analysis/{name}.md` | ⏳ TODO |
-| 2 | `/aidd-research` | `research/{name}-research.md` | `_research/{name}.md` | ⏳ TODO |
-| 3 | `/aidd-plan` | `architecture/{name}-plan.md` | `_plans/mvp/{name}.md` | ⏳ TODO |
-| 4 | `/aidd-plan-feature` | `plans/{name}-plan.md` | `_plans/features/{name}.md` | ⏳ TODO |
-| 5 | `/aidd-code` | `services/` | `services/` | ✅ No changes |
-| 6 | `/aidd-validate` | `reports/{name}-completion.md` | `_validation/{name}.md` | ⏳ TODO |
+| # | Команда | Артефакт (v2) | Артефакт (v3) | Статус | Commit |
+|---|---------|--------------|--------------|--------|--------|
+| 1 | `/aidd-analyze` | `prd/{name}-prd.md` | `_analysis/{name}.md` | ✅ DONE | ea568ca |
+| 2 | `/aidd-research` | `research/{name}-research.md` | `_research/{name}.md` | ✅ DONE | c0ec969 |
+| 3 | `/aidd-plan` | `architecture/{name}-plan.md` | `_plans/mvp/{name}.md` | ✅ DONE | f9c810e |
+| 4 | `/aidd-plan-feature` | `plans/{name}-plan.md` | `_plans/features/{name}.md` | ✅ DONE | 6e84bbc |
+| 5 | `/aidd-code` | `services/` | `services/` | ✅ No changes | — |
+| 6 | `/aidd-validate` | `reports/{name}-completion.md` | `_validation/{name}.md` | ✅ DONE | e56630d |
 
 ## Шаблон для обновления команды
 
