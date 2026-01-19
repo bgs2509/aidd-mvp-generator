@@ -144,9 +144,14 @@ def check_plan_preconditions() -> tuple[str, dict] | None:
 
 ## Выходные артефакты (в целевом проекте)
 
-| Артефакт | Путь |
-|----------|------|
-| Архитектурный план | `ai-docs/docs/architecture/{YYYY-MM-DD}_{FID}_{slug}-plan.md` |
+| Артефакт | Путь (v2) | Путь (v3) |
+|----------|-----------|-----------|
+| Архитектурный план (MVP) | `ai-docs/docs/architecture/{YYYY-MM-DD}_{FID}_{slug}-plan.md` | `ai-docs/docs/_plans/mvp/{YYYY-MM-DD}_{FID}_{slug}.md` |
+
+> **Примечание (v2.4+)**:
+> - **v2** (по умолчанию): Старая структура `architecture/`, имя с дублированием `{name}-plan.md`
+> - **v3** (после миграции): Новая структура `_plans/mvp/`, имя без дублирования `{name}.md`
+> - Режим определяется из `.pipeline-state.json → naming_version`
 
 ### Именование артефакта
 
@@ -162,17 +167,29 @@ if not fid:
 slug = pipeline["name"]  # table-booking
 date = datetime.now().strftime("%Y-%m-%d")  # 2024-12-23
 
-# Сформировать имя файла
-filename = f"{date}_{fid}_{slug}-plan.md"
-# → 2024-12-23_F001_table-booking-plan.md
+# Определить naming_version и структуру артефактов
+naming_version = state.get("naming_version", "v2")
+
+if naming_version == "v3":
+    folder = "_plans/mvp"
+    filename = f"{date}_{fid}_{slug}.md"  # Без дублирования
+else:
+    folder = "architecture"
+    filename = f"{date}_{fid}_{slug}-plan.md"  # С дублированием
+
+artifact_path = f"{folder}/{filename}"
+# v2: architecture/2024-12-23_F001_table-booking-plan.md
+# v3: _plans/mvp/2024-12-23_F001_table-booking.md
 ```
 
 ### Обновление .pipeline-state.json
 
 После создания плана обновить `active_pipelines[FID].artifacts` (v2):
 
+**Пример для v2 (по умолчанию)**:
 ```json
 {
+  "naming_version": "v2",
   "active_pipelines": {
     "F001": {
       "branch": "feature/F001-table-booking",
@@ -188,6 +205,22 @@ filename = f"{date}_{fid}_{slug}-plan.md"
         "prd": "prd/2024-12-23_F001_table-booking-prd.md",
         "research": "research/2024-12-23_F001_table-booking-research.md",
         "plan": "architecture/2024-12-23_F001_table-booking-plan.md"
+      }
+    }
+  }
+}
+```
+
+**Пример для v3 (после миграции)**:
+```json
+{
+  "naming_version": "v3",
+  "active_pipelines": {
+    "F001": {
+      "artifacts": {
+        "prd": "_analysis/2024-12-23_F001_table-booking.md",
+        "research": "_research/2024-12-23_F001_table-booking.md",
+        "plan": "_plans/mvp/2024-12-23_F001_table-booking.md"
       }
     }
   }
@@ -224,11 +257,13 @@ filename = f"{date}_{fid}_{slug}-plan.md"
 
 > ⚠️ AI ОБЯЗАН создать TodoWrite с этими пунктами.
 
-- [ ] 🔴 Architecture Plan создан (`ai-docs/docs/architecture/{name}-plan.md`)
+- [ ] 🔴 Architecture Plan создан в правильной папке:
+  - v2: `ai-docs/docs/architecture/{name}-plan.md`
+  - v3: `ai-docs/docs/_plans/mvp/{name}.md`
 - [ ] 🔴 Все сервисы определены с типами
 - [ ] 🔴 API контракты описаны
 - [ ] 🔴 **Пользователь утвердил план** ← КРИТИЧЕСКИ ВАЖНО
-- [ ] 🔴 `.pipeline-state.json` обновлён (gate: PLAN_APPROVED)
+- [ ] 🔴 `.pipeline-state.json` обновлён (gate: PLAN_APPROVED, artifact path соответствует naming_version)
 - [ ] 🟡 ADR задокументированы
 
 ---
