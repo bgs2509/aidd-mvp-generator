@@ -243,11 +243,17 @@ fi
 
 ## Выходные артефакты (в целевом проекте)
 
-| Артефакт | Путь |
-|----------|------|
-| PRD документ | `ai-docs/docs/prd/{YYYY-MM-DD}_{FID}_{slug}-prd.md` |
-| Реестр фич | `ai-docs/docs/FEATURES.md` |
-| Состояние | `.pipeline-state.json` |
+| Артефакт | Путь (v2) | Путь (v3) |
+|----------|-----------|-----------|
+| PRD документ | `ai-docs/docs/prd/{YYYY-MM-DD}_{FID}_{slug}-prd.md` | `ai-docs/docs/_analysis/{YYYY-MM-DD}_{FID}_{slug}.md` |
+| Реестр фич | `ai-docs/docs/FEATURES.md` | `ai-docs/docs/FEATURES.md` |
+| Состояние | `.pipeline-state.json` | `.pipeline-state.json` |
+
+> **Примечание (v2.4+)**:
+> - **v2** (по умолчанию): Старая структура `prd/`, имя с дублированием `{name}-prd.md`
+> - **v3** (после миграции): Новая структура `_analysis/`, имя без дублирования `{name}.md`
+> - Режим определяется из `.pipeline-state.json → naming_version`
+> - Миграция: `python .aidd/scripts/migrate-naming-v3.py`
 
 ---
 
@@ -285,15 +291,26 @@ def create_feature(state: dict, idea: str) -> dict:
     # 3. Получить текущую дату
     date = datetime.now().strftime("%Y-%m-%d")
 
-    # 4. Сформировать имя файла и ветки
-    filename = f"{date}_{fid}_{slug}-prd.md"
+    # 4. Определить naming_version и структуру артефактов
+    naming_version = state.get("naming_version", "v2")
+
+    if naming_version == "v3":
+        folder = "_analysis"
+        filename = f"{date}_{fid}_{slug}.md"  # Без дублирования
+    else:
+        folder = "prd"
+        filename = f"{date}_{fid}_{slug}-prd.md"  # С дублированием
+
+    artifact_path = f"{folder}/{filename}"
+
+    # 5. Сформировать имя ветки
     branch = f"feature/{fid}-{slug}"
 
-    # 5. Создать git ветку для фичи
+    # 6. Создать git ветку для фичи
     subprocess.run(["git", "checkout", "-b", branch], check=True)
     print(f"✓ Создана ветка: {branch}")
 
-    # 6. Создать запись о фиче в active_pipelines (v2)
+    # 7. Создать запись о фиче в active_pipelines (v2)
     state["active_pipelines"] = state.get("active_pipelines", {})
     state["active_pipelines"][fid] = {
         "branch": branch,
@@ -314,7 +331,7 @@ def create_feature(state: dict, idea: str) -> dict:
         "artifacts": {}
     }
 
-    # 7. Добавить в реестр фич
+    # 8. Добавить в реестр фич
     state["features_registry"] = state.get("features_registry", {})
     state["features_registry"][fid] = {
         "name": slug,
@@ -324,10 +341,10 @@ def create_feature(state: dict, idea: str) -> dict:
         "services": []
     }
 
-    # 8. Инкрементировать счётчик
+    # 9. Инкрементировать счётчик
     state["next_feature_id"] = next_id + 1
 
-    # 9. Обновить updated_at
+    # 10. Обновить updated_at
     state["updated_at"] = datetime.now().isoformat()
 
     return state["active_pipelines"][fid]
@@ -373,29 +390,49 @@ def get_current_feature_context(state: dict) -> tuple[str, dict] | None:
 
 ### Формат имени файла
 
+**v2 (по умолчанию, с дублированием)**:
 ```
-{YYYY-MM-DD}_{FID}_{slug}-{type}.md
+{YYYY-MM-DD}_{FID}_{slug}-prd.md
 
 Примеры:
 - 2024-12-23_F001_table-booking-prd.md
 - 2024-12-23_F002_email-notify-prd.md
 ```
 
+**v3 (после миграции, без дублирования)**:
+```
+{YYYY-MM-DD}_{FID}_{slug}.md
+
+Примеры:
+- 2024-12-23_F001_table-booking.md
+- 2024-12-23_F002_email-notify.md
+```
+
 ### Обновление FEATURES.md
 
 После создания PRD обновить реестр фич:
 
+**v2 (по умолчанию)**:
 ```markdown
 # В ai-docs/docs/FEATURES.md добавить строку:
 
 | F001 | Бронирование столиков | IN_PROGRESS | 2024-12-23 | — | [PRD](prd/2024-12-23_F001_table-booking-prd.md) |
 ```
 
+**v3 (после миграции)**:
+```markdown
+# В ai-docs/docs/FEATURES.md добавить строку:
+
+| F001 | Бронирование столиков | IN_PROGRESS | 2024-12-23 | — | [PRD](_analysis/2024-12-23_F001_table-booking.md) |
+```
+
 ### Обновление .pipeline-state.json (v2)
 
+**Пример для v2 (по умолчанию)**:
 ```json
 {
   "version": "2.0",
+  "naming_version": "v2",
   "global_gates": {
     "BOOTSTRAP_READY": { "passed": true, "passed_at": "2024-12-23T09:00:00Z" }
   },
@@ -433,6 +470,30 @@ def get_current_feature_context(state: dict) -> tuple[str, dict] | None:
 }
 ```
 
+**Пример для v3 (после миграции)**:
+```json
+{
+  "version": "2.0",
+  "naming_version": "v3",
+  "gate_aliases": {
+    "PRD_READY": "ANALYSIS_READY"
+  },
+  "active_pipelines": {
+    "F001": {
+      "gates": {
+        "PRD_READY": {
+          "passed": true,
+          "artifact": "_analysis/2024-12-23_F001_table-booking.md"
+        }
+      },
+      "artifacts": {
+        "prd": "_analysis/2024-12-23_F001_table-booking.md"
+      }
+    }
+  }
+}
+```
+
 > **Примечание v2**: Ворота теперь изолированы в `active_pipelines[FID].gates`,
 > а не в общем `gates`. Это позволяет вести несколько фич параллельно.
 
@@ -457,6 +518,11 @@ def get_current_feature_context(state: dict) -> tuple[str, dict] | None:
 def pass_prd_ready_gate(state: dict, fid: str, artifact_path: str):
     """
     Отметить PRD_READY как пройденные для указанной фичи.
+
+    Args:
+        artifact_path: Путь к PRD (должен учитывать naming_version)
+                      v2: "prd/{name}-prd.md"
+                      v3: "_analysis/{name}.md"
 
     v2: Ворота обновляются в active_pipelines[fid].gates
     """
@@ -506,10 +572,12 @@ def pass_prd_ready_gate(state: dict, fid: str, artifact_path: str):
 
 > ⚠️ AI ОБЯЗАН создать TodoWrite с этими пунктами.
 
-- [ ] 🔴 PRD документ создан (`ai-docs/docs/prd/{name}-prd.md`)
+- [ ] 🔴 PRD документ создан в правильной папке:
+  - v2: `ai-docs/docs/prd/{name}-prd.md`
+  - v3: `ai-docs/docs/_analysis/{name}.md`
 - [ ] 🔴 Все FR-* требования определены
 - [ ] 🔴 NFR-* требования определены
-- [ ] 🔴 `.pipeline-state.json` обновлён (gate: PRD_READY)
+- [ ] 🔴 `.pipeline-state.json` обновлён (gate: PRD_READY, artifact path соответствует naming_version)
 - [ ] 🟡 Уточняющие вопросы заданы пользователю
 - [ ] 🟡 Scope границы определены (in/out of scope)
 
