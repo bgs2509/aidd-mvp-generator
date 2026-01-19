@@ -10,6 +10,16 @@
   "created_at": "",
   "updated_at": "",
 
+  "gate_aliases": {
+    "$comment": "Алиасы ворот для унификации naming (v2.4+). Старые и новые имена работают одновременно.",
+    "PRD_READY": "ANALYSIS_READY",
+    "RESEARCH_DONE": "RESEARCH_READY",
+    "IMPLEMENT_OK": "CODE_READY",
+    "REVIEW_OK": "REVIEW_READY",
+    "QA_PASSED": "TESTING_READY",
+    "ALL_GATES_PASSED": "VALIDATION_READY"
+  },
+
   "global_gates": {
     "$comment": "Глобальные ворота — проверяются один раз на проект",
     "BOOTSTRAP_READY": {

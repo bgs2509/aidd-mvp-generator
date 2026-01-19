@@ -173,6 +173,55 @@ def pass_gate(fid: str, gate: str, artifact: str = None) -> None:
     write_json(".pipeline-state.json", state)
 ```
 
+### Gate Aliases (v2.4+)
+
+Начиная с v2.4 фреймворк поддерживает **алиасы ворот** для унификации naming conventions:
+
+```json
+{
+  "gate_aliases": {
+    "PRD_READY": "ANALYSIS_READY",
+    "RESEARCH_DONE": "RESEARCH_READY",
+    "IMPLEMENT_OK": "CODE_READY",
+    "REVIEW_OK": "REVIEW_READY",
+    "QA_PASSED": "TESTING_READY",
+    "ALL_GATES_PASSED": "VALIDATION_READY"
+  }
+}
+```
+
+**Как это работает:**
+- Старые имена (`PRD_READY`, `IMPLEMENT_OK`) остаются основными в структуре ворот
+- Новые имена (`ANALYSIS_READY`, `CODE_READY`) — алиасы, которые можно использовать в коде
+- AI-агент может проверять ворота по любому имени: `check_gate(fid, "PRD_READY")` или `check_gate(fid, "ANALYSIS_READY")`
+
+**Пример расширенной проверки ворот:**
+
+```python
+def check_gate_with_alias(fid: str, gate: str) -> bool:
+    state = read_json(".pipeline-state.json")
+
+    # Резолвим алиас → основное имя
+    gate_aliases = state.get("gate_aliases", {})
+    reverse_aliases = {v: k for k, v in gate_aliases.items()}
+
+    # Если gate — это алиас, получить основное имя
+    primary_gate = reverse_aliases.get(gate, gate)
+
+    # Глобальные ворота
+    if primary_gate == "BOOTSTRAP_READY":
+        return state["global_gates"]["BOOTSTRAP_READY"]["passed"]
+
+    # Локальные ворота
+    pipeline = state["active_pipelines"].get(fid)
+    if not pipeline:
+        return False
+
+    return pipeline["gates"].get(primary_gate, {}).get("passed", False)
+```
+
+**Статус:** Phase 1 (backward compatible) — оба варианта работают одновременно.
+
 ---
 
 ## Жизненный цикл фичи
