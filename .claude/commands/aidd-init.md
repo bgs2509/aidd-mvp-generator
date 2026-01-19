@@ -516,39 +516,62 @@ if [ -d "ai-docs/docs" ]; then
 fi
 
 # ACT: Создать только недостающие директории
+# v2.4+: Поддержка новой структуры с префиксом _ (naming v3)
+# Если naming_version=v3, создаём новую структуру, иначе старую
 for dir in prd architecture plans reports research; do
     [ -d "ai-docs/docs/$dir" ] || mkdir -p "ai-docs/docs/$dir"
 done
+
+# v3 структура (опционально, создаётся при миграции)
+# for dir in _analysis _research _plans/mvp _plans/features _validation; do
+#     [ -d "ai-docs/docs/$dir" ] || mkdir -p "ai-docs/docs/$dir"
+# done
 
 [ -d "docs/api" ] || mkdir -p docs/api
 [ -d ".claude" ] || mkdir -p .claude
 ```
 
-**Результат**:
+**Результат** (v2 - backward compatible):
 ```
 {project}/
 ├── ai-docs/
 │   └── docs/
-│       ├── prd/           # PRD документы
-│       ├── architecture/  # Архитектурные планы
-│       ├── plans/         # Планы фич
-│       └── reports/       # Отчёты (review, qa, validation)
+│       ├── prd/           # PRD документы (v2) или _analysis/ (v3)
+│       ├── architecture/  # Архитектурные планы (v2) или _plans/mvp/ (v3)
+│       ├── plans/         # Планы фич (v2) или _plans/features/ (v3)
+│       ├── reports/       # Отчёты (v2) или _validation/ (v3)
+│       └── research/      # Исследования (v2) или _research/ (v3)
 ├── .claude/               # Локальные настройки Claude Code
 └── docs/
     └── api/               # API документация (openapi.yaml)
 ```
 
+> **Примечание v2.4+**: Для миграции на v3 структуру используйте:
+> ```bash
+> python .aidd/scripts/migrate-naming-v3.py
+> ```
+
 ### 2. Создание .pipeline-state.json
 
 ```json
 {
+  "version": "2.0",
   "project_name": "",
   "mode": "CREATE",
   "init_mode": "NEW_PROJECT",
   "init_decisions": {},
-  "current_stage": 0,
+  "naming_version": "v2",
   "created_at": "2025-12-21T10:00:00Z",
-  "gates": {
+  "updated_at": "2025-12-21T10:00:00Z",
+  "gate_aliases": {
+    "PRD_READY": "ANALYSIS_READY",
+    "RESEARCH_DONE": "RESEARCH_READY",
+    "IMPLEMENT_OK": "CODE_READY",
+    "REVIEW_OK": "REVIEW_READY",
+    "QA_PASSED": "TESTING_READY",
+    "ALL_GATES_PASSED": "VALIDATION_READY"
+  },
+  "global_gates": {
     "BOOTSTRAP_READY": {
       "passed": true,
       "passed_at": "2025-12-21T10:00:00Z",
@@ -560,14 +583,23 @@ done
       }
     }
   },
-  "artifacts": {}
+  "active_pipelines": {},
+  "features_registry": {},
+  "next_feature_id": 1,
+  "services": []
 }
 ```
+
+> **Примечание v2.4+**:
+> - `naming_version: "v2"` — использует старую структуру артефактов (backward compatible)
+> - `naming_version: "v3"` — использует новую структуру (_analysis/, _plans/, etc.)
+> - `gate_aliases` — позволяют использовать оба варианта названий ворот
 
 #### Пример для EXISTING_PROJECT
 
 ```json
 {
+  "version": "2.0",
   "project_name": "my-existing-app",
   "mode": "FEATURE",
   "init_mode": "EXISTING_PROJECT",
@@ -579,9 +611,18 @@ done
     "ai-docs/": "skipped",
     ".claude/": "created"
   },
-  "current_stage": 0,
+  "naming_version": "v2",
   "created_at": "2025-12-23T10:00:00Z",
-  "gates": {
+  "updated_at": "2025-12-23T10:00:00Z",
+  "gate_aliases": {
+    "PRD_READY": "ANALYSIS_READY",
+    "RESEARCH_DONE": "RESEARCH_READY",
+    "IMPLEMENT_OK": "CODE_READY",
+    "REVIEW_OK": "REVIEW_READY",
+    "QA_PASSED": "TESTING_READY",
+    "ALL_GATES_PASSED": "VALIDATION_READY"
+  },
+  "global_gates": {
     "BOOTSTRAP_READY": {
       "passed": true,
       "passed_at": "2025-12-23T10:00:00Z",
@@ -593,7 +634,10 @@ done
       }
     }
   },
-  "artifacts": {}
+  "active_pipelines": {},
+  "features_registry": {},
+  "next_feature_id": 1,
+  "services": []
 }
 ```
 
@@ -788,6 +832,68 @@ done
 
 При обновлении submodule `.aidd/` команды могут измениться.
 Повторный запуск `/aidd-init` обновит изменённые файлы.
+
+### 5. Определение naming_version (v2.4+)
+
+> **Назначение**: Определить какую структуру артефактов использовать (v2 или v3).
+
+#### Алгоритм
+
+```python
+def determine_naming_version() -> str:
+    """
+    Определить naming_version для нового проекта.
+
+    Returns:
+        "v2" (старая структура, backward compatible) или
+        "v3" (новая структура с префиксом _)
+
+    Логика:
+        - По умолчанию: "v2" (backward compatible)
+        - v3 активируется только после явной миграции
+    """
+    # Проверить существование старой структуры
+    old_structure = [
+        Path("ai-docs/docs/prd"),
+        Path("ai-docs/docs/architecture"),
+        Path("ai-docs/docs/plans"),
+        Path("ai-docs/docs/reports"),
+    ]
+
+    # Проверить существование новой структуры
+    new_structure = [
+        Path("ai-docs/docs/_analysis"),
+        Path("ai-docs/docs/_research"),
+        Path("ai-docs/docs/_plans/mvp"),
+        Path("ai-docs/docs/_plans/features"),
+        Path("ai-docs/docs/_validation"),
+    ]
+
+    old_exists = any(p.exists() for p in old_structure)
+    new_exists = any(p.exists() for p in new_structure)
+
+    if new_exists and not old_exists:
+        # Уже мигрирован на v3
+        return "v3"
+    else:
+        # По умолчанию v2 (backward compatible)
+        return "v2"
+```
+
+#### Результат
+
+В `.pipeline-state.json` устанавливается:
+
+```json
+{
+  "naming_version": "v2",  // или "v3" после миграции
+  ...
+}
+```
+
+**Использование**:
+- Команды `/aidd-idea`, `/aidd-plan` проверяют `naming_version` и создают артефакты в соответствующих папках
+- Миграция v2 → v3: `python .aidd/scripts/migrate-naming-v3.py`
 
 ---
 

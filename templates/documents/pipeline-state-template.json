@@ -7,6 +7,8 @@
   "init_mode": "NEW_PROJECT",
   "init_decisions": {},
   "parallel_mode": false,
+  "naming_version": "v2",
+  "$comment_naming": "v2 = старая структура (prd/, architecture/), v3 = новая (_analysis/, _plans/)",
   "created_at": "",
   "updated_at": "",
 
