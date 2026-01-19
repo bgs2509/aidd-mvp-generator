@@ -28,21 +28,51 @@ description: Quality & Deploy — полный цикл проверки кач�
 
 ## Описание
 
-Команда `/aidd-finalize` объединяет 4 последовательных этапа пайплайна:
+Команда `/aidd-finalize` завершает разработку фичи. Поддерживает **два режима**:
+
+### 1. Полный режим (Рекомендуется)
+
+Объединяет 4 последовательных этапа пайплайна:
 1. **Code Review** — проверка архитектуры, соглашений, качества
 2. **Testing** — запуск тестов, проверка покрытия ≥75%
 3. **Validation** — финальная проверка всех ворот
 4. **Deploy** — сборка Docker-контейнеров, запуск, health-check
 
-**Ключевое отличие**: Вместо 4 отдельных артефактов создаётся ОДИН итоговый:
+**Результат**: MVP готов к production, все ворота пройдены.
+
+### 2. Быстрый режим (Только документация)
+
+Создаёт **ТОЛЬКО** Completion Report с пометкой `DRAFT`:
+- Пропускает Code Review, Testing, Validation, Deploy
+- Запускает только статический анализ (mypy, ruff, bandit)
+- Отчёт помечается как `DRAFT` (не production-ready)
+- Новый gate: `DOCUMENTED` (вместо `DEPLOYED`)
+
+**Когда использовать**:
+- Документационные фичи (README, guides)
+- Застопорившаяся фича (нужно переключиться на другую)
+- Временный коммит без полного QA
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  ⚠️  Быстрый режим НЕ делает фичу production-ready!              │
+├─────────────────────────────────────────────────────────────────┤
+│  • QA не выполнено → не гарантируется работоспособность         │
+│  • Отчёт помечен DRAFT → явный маркер незавершённости           │
+│  • Gate: DOCUMENTED (не DEPLOYED)                               │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Единственный артефакт (оба режима)
+
 ```
 ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md
 ```
 
 Completion Report содержит:
 - Executive Summary
-- Code Review Summary (вместо review-report.md)
-- Testing Summary (вместо qa-report.md)
+- Code Review Summary (полный) или Static Analysis (быстрый)
+- Testing Summary (полный) или "Skipped (Quick mode)" (быстрый)
 - Requirements Traceability (вместо RTM)
 - ADR, Scope Changes, Known Limitations, Metrics
 
@@ -149,6 +179,80 @@ def check_finalize_preconditions() -> tuple[str, dict] | None:
     print(f"✓ Фича {fid}: {pipeline.get('title')}")
     print("  Готов к финализации (review → test → validate → deploy)")
     return (fid, pipeline)
+```
+
+---
+
+## Выбор режима
+
+После проверки предусловий AI ОБЯЗАН запросить у пользователя выбор режима:
+
+```python
+def ask_finalize_mode() -> str:
+    """
+    Запросить у пользователя режим выполнения /finalize.
+
+    Returns:
+        "full" или "quick"
+    """
+    # Использовать AskUserQuestion
+    answers = AskUserQuestion(
+        questions=[{
+            "question": "Какой режим финализации выполнить?",
+            "header": "Режим",
+            "multiSelect": False,
+            "options": [
+                {
+                    "label": "Полный (Review + Test + Validate + Deploy)",
+                    "description": "Рекомендуется. Production-ready результат с полной проверкой качества."
+                },
+                {
+                    "label": "Быстрый (Только Completion Report)",
+                    "description": "Создаёт DRAFT отчёт без QA. Используйте для документации или временных коммитов."
+                }
+            ]
+        }]
+    )
+
+    # Получить ответ
+    selected = answers["Какой режим финализации выполнить?"]
+
+    if "Полный" in selected:
+        return "full"
+    else:
+        return "quick"
+```
+
+### Алгоритм выполнения по режиму
+
+```python
+def execute_finalize(fid: str, pipeline: dict, mode: str):
+    """
+    Выполнить финализацию в выбранном режиме.
+    """
+    if mode == "full":
+        # Полный режим (как сейчас)
+        step1_code_review(fid, pipeline)      # → REVIEW_OK
+        step2_testing(fid, pipeline)          # → QA_PASSED
+        step3_validation(fid, pipeline)       # → ALL_GATES_PASSED
+        step4_deploy(fid, pipeline)           # → DEPLOYED
+        create_completion_report(fid, pipeline, draft=False)
+        move_to_features_registry(fid, status="DEPLOYED")
+
+    elif mode == "quick":
+        # Быстрый режим (новый)
+        step0_static_analysis(fid, pipeline)  # mypy, ruff, bandit
+        create_completion_report(fid, pipeline, draft=True)  # DRAFT маркер
+
+        # Отметить DOCUMENTED (не DEPLOYED)
+        pipeline["gates"]["DOCUMENTED"] = {
+            "passed": True,
+            "passed_at": datetime.now().isoformat(),
+            "mode": "quick"
+        }
+
+        # НЕ переносим в features_registry (остаётся в active_pipelines)
+        # Пользователь должен будет выполнить полный /finalize позже
 ```
 
 ---
@@ -281,6 +385,101 @@ make test
 ---
 
 ## Шаги выполнения
+
+### Режим: Быстрый (Quick Mode)
+
+> **Используется когда**: Пользователь выбрал "Быстрый режим"
+
+#### Шаг 0: Static Analysis Only
+
+**Цель**: Выполнить минимальные проверки без полного QA.
+
+##### 0.1. Запуск статического анализа
+
+```bash
+# Перейти в каждый сервис
+cd services/{service_name}
+
+# Type checking
+mypy src/ --strict
+
+# Code style
+ruff check src/
+
+# Security scan
+bandit -r src/ -ll
+```
+
+##### 0.2. Проверка результатов
+
+- [ ] `mypy` — 0 errors
+- [ ] `ruff` — 0 errors (или только warnings)
+- [ ] `bandit` — 0 high/critical issues
+
+**Если есть ошибки**: Записать в Known Issues секцию отчёта.
+
+##### 0.3. Создание DRAFT Completion Report
+
+```python
+def create_draft_completion_report(fid: str, pipeline: dict):
+    """
+    Создать Completion Report с пометкой DRAFT.
+
+    Отличия от полного:
+    - Frontmatter: status: "DRAFT"
+    - Executive Summary: ⚠️ DRAFT — QA не выполнено
+    - Code Review: Static Analysis результаты
+    - Testing: "Skipped (Quick mode)"
+    - Validation: "Skipped (Quick mode)"
+    - Deploy: "Skipped (Quick mode)"
+    """
+    # Шаблон тот же, но с маркерами DRAFT
+    template = read_template("completion-report-template.md")
+
+    # Заполнить секции
+    content = fill_draft_template(
+        template=template,
+        fid=fid,
+        pipeline=pipeline,
+        static_analysis_results=get_static_analysis_results()
+    )
+
+    # Сохранить
+    path = f"ai-docs/docs/reports/{date}_{fid}_{slug}-completion.md"
+    write_file(path, content)
+
+    return path
+```
+
+##### 0.4. Обновить pipeline state
+
+```python
+# Отметить DOCUMENTED (новый gate)
+pipeline["gates"]["DOCUMENTED"] = {
+    "passed": True,
+    "passed_at": datetime.now().isoformat(),
+    "mode": "quick",
+    "artifact": completion_path
+}
+
+# Добавить completion в artifacts
+pipeline["artifacts"]["completion"] = completion_path
+
+# НЕ переносим в features_registry!
+# Фича остаётся в active_pipelines с gate=DOCUMENTED
+```
+
+**Результат быстрого режима**:
+- ✅ Completion Report создан (DRAFT)
+- ✅ Gate DOCUMENTED пройден
+- ⚠️ Фича НЕ production-ready
+- ⚠️ Останется в `active_pipelines` (не переносится в `features_registry`)
+
+---
+
+### Режим: Полный (Full Mode)
+
+> **Используется когда**: Пользователь выбрал "Полный режим" (рекомендуется)
 
 ### Шаг 1: Code Review
 
@@ -707,9 +906,16 @@ docker-compose logs -f
 
 ## Примеры использования
 
+### Пример 1: Полный режим (Production-ready)
+
 ```bash
 # После /generate
 /finalize
+
+# AI спрашивает режим
+Какой режим финализации выполнить?
+[1] Полный (Review + Test + Validate + Deploy)  ← Выбираем
+[2] Быстрый (Только Completion Report)
 
 # Результат:
 # ✓ Step 1: Code Review → REVIEW_OK
@@ -717,6 +923,28 @@ docker-compose logs -f
 # ✓ Step 3: Validation → ALL_GATES_PASSED
 # ✓ Step 4: Deploy → DEPLOYED
 # ✓ Completion Report: ai-docs/docs/reports/2024-12-23_F001_table-booking-completion.md
+# ✓ Фича перенесена в features_registry
+```
+
+### Пример 2: Быстрый режим (DRAFT документация)
+
+```bash
+# После /generate, но фича застопорилась
+/finalize
+
+# AI спрашивает режим
+Какой режим финализации выполнить?
+[1] Полный (Review + Test + Validate + Deploy)
+[2] Быстрый (Только Completion Report)  ← Выбираем
+
+# Результат:
+# ✓ Step 0: Static Analysis (mypy, ruff, bandit)
+# ✓ Completion Report (DRAFT): ai-docs/docs/reports/2024-12-23_F042_oauth-auth-completion.md
+# ✓ Gate: DOCUMENTED (не DEPLOYED)
+# ⚠️ Фича остаётся в active_pipelines (не production-ready)
+
+# Теперь можно начать новую фичу
+/aidd-idea "Добавить систему платежей"
 ```
 
 ---
@@ -724,46 +952,95 @@ docker-compose logs -f
 ## Чеклист ворот (итоговый)
 
 > ⚠️ AI ОБЯЗАН создать TodoWrite с этими пунктами.
+> Выбор пунктов зависит от режима (быстрый или полный).
 
-### Шаг 1: Code Review
+### Общие шаги (для обоих режимов)
+
+- [ ] 🔴 Проверить предусловия (`IMPLEMENT_OK` пройден)
+- [ ] 🔴 Определить FID по текущей git ветке
+- [ ] 🔴 Запросить у пользователя режим (Quick / Full)
+- [ ] 🔴 Прочитать артефакты PRD, Research, Plan
+
+---
+
+### Режим: Быстрый (Quick Mode)
+
+> Используется когда: документационная фича, застопорившаяся фича, временный коммит
+
+#### Шаг 0: Static Analysis
+
+- [ ] 🔴 Запустить mypy на всех сервисах (0 errors)
+- [ ] 🔴 Запустить ruff на всех сервисах (0 errors)
+- [ ] 🔴 Запустить bandit на всех сервисах (0 critical)
+- [ ] 🟡 Записать результаты статического анализа
+
+#### Completion Report (DRAFT)
+
+- [ ] 🔴 **Создать DRAFT Completion Report**
+  - [ ] Frontmatter: `status: "DRAFT"`
+  - [ ] Executive Summary: "⚠️ DRAFT — QA не выполнено"
+  - [ ] Code Review: Static Analysis результаты
+  - [ ] Testing: "Skipped (Quick mode)"
+  - [ ] Validation: "Skipped (Quick mode)"
+  - [ ] Deploy: "Skipped (Quick mode)"
+  - [ ] ADR: Извлечь из Architecture Plan
+  - [ ] Scope Changes: Сравнить PRD vs факт (если доступно)
+  - [ ] Known Limitations: Список ограничений
+  - [ ] Метрики: Только static analysis результаты
+- [ ] 🔴 `.pipeline-state.json` обновлён
+  - [ ] Gate `DOCUMENTED` отмечен как passed
+  - [ ] Completion Report добавлен в `artifacts.completion`
+  - [ ] `stage` остаётся в active_pipelines (НЕ переносить в features_registry)
+
+---
+
+### Режим: Полный (Full Mode)
+
+> Рекомендуется. Production-ready результат.
+
+#### Шаг 1: Code Review
 
 - [ ] 🔴 Архитектура соответствует плану (DDD, HTTP-only)
 - [ ] 🔴 Security checklist пройден (нет уязвимостей)
 - [ ] 🟡 Code style соблюдён (conventions.md)
 - [ ] 🟡 Log-Driven Design проверен
 - [ ] 🟡 Quality Cascade (QC-1 до QC-17) пройден
+- [ ] 🔴 Gate `REVIEW_OK` отмечен как passed
 
-### Шаг 2: Testing
+#### Шаг 2: Testing
 
 - [ ] 🔴 Все тесты проходят (0 failed)
 - [ ] 🔴 Coverage ≥ 75%
 - [ ] 🟡 Integration тесты пройдены
 - [ ] 🟡 Все FR-* требования верифицированы
+- [ ] 🔴 Gate `QA_PASSED` отмечен как passed (с coverage)
 
-### Шаг 3: Validation
+#### Шаг 3: Validation
 
 - [ ] 🔴 Все предыдущие ворота пройдены (PRD→QA)
 - [ ] 🔴 Все артефакты существуют и актуальны
+- [ ] 🔴 Gate `ALL_GATES_PASSED` отмечен как passed
 
-### Шаг 4: Deploy & Completion Report
+#### Шаг 4: Deploy & Completion Report
 
 - [ ] 🔴 Docker-контейнеры собраны (`make build`)
 - [ ] 🔴 Приложение запущено (`make up`)
 - [ ] 🔴 Health-check проходит (`make health`)
 - [ ] 🔴 Базовые сценарии работают (API запросы успешны)
-- [ ] 🔴 **Completion Report создан** ← ОБЯЗАТЕЛЬНО!
+- [ ] 🔴 **Completion Report создан** (Production-ready)
   - [ ] Executive Summary заполнен
-  - [ ] Code Review Summary (вместо review-report.md)
-  - [ ] Testing Summary (вместо qa-report.md)
-  - [ ] Requirements Traceability (вместо RTM)
+  - [ ] Code Review Summary (из шага 1)
+  - [ ] Testing Summary (из шага 2)
+  - [ ] Requirements Traceability (RTM)
   - [ ] ADR задокументированы
   - [ ] Scope Changes описаны
   - [ ] Known Limitations перечислены
-  - [ ] Метрики записаны
+  - [ ] Метрики записаны (coverage, tests, security)
   - [ ] Timeline заполнен
-- [ ] 🔴 `.pipeline-state.json` обновлён (все ворота passed)
-- [ ] 🔴 Completion Report добавлен в `artifacts.completion`
-- [ ] 🔴 Фича перенесена в `features_registry`
+- [ ] 🔴 `.pipeline-state.json` обновлён
+  - [ ] Gate `DEPLOYED` отмечен как passed
+  - [ ] Completion Report добавлен в `artifacts.completion`
+  - [ ] Фича перенесена в `features_registry` (из active_pipelines)
 - [ ] 🟡 Логи проверены (нет ошибок)
 
 ---
