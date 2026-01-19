@@ -369,14 +369,27 @@ done
 ### Этап 5: Quality & Deploy (Финализация)
 
 > **Новый подход (v2.0)**: Объединённый этап вместо отдельных review/test/validate/deploy.
+> **v2.1**: Добавлены два режима — Full (production-ready) и Quick (DRAFT документация).
 
 | Параметр | Значение |
 |----------|----------|
 | **Команда** | `/aidd-finalize` |
 | **Агент** | Валидатор (расширенная роль) |
 | **Вход** | Сгенерированный код (IMPLEMENT_OK) |
-| **Выход** | 1 Completion Report + работающее приложение |
-| **Ворота** | `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED` |
+| **Выход** | 1 Completion Report + работающее приложение (Full) или DRAFT отчёт (Quick) |
+| **Ворота (Full)** | `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED` |
+| **Ворота (Quick)** | `DOCUMENTED` |
+
+**Команда поддерживает два режима**:
+
+1. **Полный режим (рекомендуется)**: 4 последовательных шага → Production-ready MVP
+2. **Быстрый режим**: Только Static Analysis + DRAFT Completion Report → для документации или незавершённых фич
+
+При запуске AI спрашивает у пользователя выбор режима через интерактивный диалог.
+
+---
+
+#### Полный режим (Full Mode)
 
 **Этап состоит из 4 последовательных шагов**:
 
@@ -407,22 +420,43 @@ done
 - [ ] **Completion Report создан** ← ОБЯЗАТЕЛЬНО!
 - [ ] Фича перенесена в `features_registry`
 
-**Единственный артефакт** (в целевом проекте):
+---
+
+#### Быстрый режим (Quick Mode)
+
+**Используется когда**: документационная фича, застопорившаяся фича, временный коммит.
+
+**Шаг 0: Static Analysis Only → `DOCUMENTED`**
+- [ ] mypy — type checking (0 errors)
+- [ ] ruff — code style (0 errors)
+- [ ] bandit — security scan (0 critical)
+- [ ] **DRAFT Completion Report создан** с пометкой "QA не выполнено"
+- [ ] Gate `DOCUMENTED` отмечен как passed
+- [ ] Фича остаётся в `active_pipelines` (НЕ переносится в `features_registry`)
+
+**Результат**: DRAFT документация без гарантии работоспособности. Позволяет переключиться на другую фичу.
+
+---
+
+**Единственный артефакт** (в целевом проекте, оба режима):
 
 | Артефакт | Путь | Описание |
 |----------|------|----------|
 | **Completion Report** | `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md` | Single Source of Truth |
 
 **Completion Report содержит**:
-- Executive Summary (что сделано)
-- **Code Review Summary** (вместо review-report.md)
-- **Testing Summary** (вместо qa-report.md)
-- **Requirements Traceability** (вместо rtm.md)
-- ADR (Architecture Decision Records)
-- Scope Changes (план vs факт)
-- Known Limitations
-- Метрики качества (coverage, tests, security)
-- Timeline
+
+| Секция | Full Mode | Quick Mode |
+|--------|-----------|------------|
+| Executive Summary | Что реализовано | ⚠️ DRAFT — QA не выполнено |
+| Code Review Summary | Полный code review | Static Analysis (mypy, ruff, bandit) |
+| Testing Summary | Результаты тестов + coverage | "Skipped (Quick mode)" |
+| Requirements Traceability | RTM: FR-* → тесты | Из PRD (если доступно) |
+| ADR | Из Architecture Plan | Из Architecture Plan |
+| Scope Changes | План vs факт | План vs факт (если доступно) |
+| Known Limitations | Список ограничений | Список ограничений |
+| Метрики | Coverage, tests, security | Только static analysis |
+| Timeline | Полный timeline | Полный timeline |
 
 > **Преимущества**: -3 файла, -900 строк кода команд, -180 токенов на проект.
 > Вся информация о фиче в одном месте — Single Source of Truth для AI.

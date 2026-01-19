@@ -272,8 +272,12 @@ AI выполняет команду по инструкциям
 | 3 | Архитектура (CREATE) | `/aidd-plan` | Архитектор | `PLAN_APPROVED` | `architecture/{name}-plan.md` |
 | 3 | Архитектура (FEATURE) | `/aidd-feature-plan` | Архитектор | `PLAN_APPROVED` | `plans/{feature}-plan.md` |
 | 4 | Реализация | `/aidd-generate` | Реализатор | `IMPLEMENT_OK` | `services/`, тесты |
-| 5 | Quality & Deploy | `/aidd-finalize` | Валидатор | `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED` | `reports/{name}-completion.md` |
+| 5 | Quality & Deploy | `/aidd-finalize` | Валидатор | **Full**: `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED` <br> **Quick**: `DOCUMENTED` | `reports/{name}-completion.md` |
 
+> **Примечание**: `/aidd-finalize` поддерживает два режима:
+> - **Полный (рекомендуется)**: Review → Test → Validate → Deploy → Production-ready MVP
+> - **Быстрый**: Только DRAFT Completion Report + Static Analysis → для документации или незавершённых фич
+>
 > Файлы команд: [docs/INDEX.md](docs/INDEX.md#slash-команды)
 
 ### Принцип блокировки
