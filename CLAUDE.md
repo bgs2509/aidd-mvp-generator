@@ -12,7 +12,7 @@
 | Вопрос | Ответ |
 |--------|-------|
 | **Что это?** | Фреймворк для генерации production-ready MVP за ~10 минут |
-| **Как работает?** | 9-этапный пайплайн с качественными воротами |
+| **Как работает?** | 6-этапный пайплайн с качественными воротами |
 | **Как начать?** | `/aidd-idea "описание проекта"` |
 | **Результат** | Работающий MVP: FastAPI + PostgreSQL + Docker |
 
@@ -30,7 +30,7 @@
 | Уровень зрелости | **Level 2 (MVP)** — всегда |
 | Покрытие тестами | ≥75% |
 | Архитектура | DDD/Hexagonal, HTTP-only доступ к данным |
-| Качественные ворота | 9 этапов (0-8), 9 ворот |
+| Качественные ворота | 6 этапов (0-5), 6 ворот |
 | Типы сервисов | Business API, Data API, Bot, Worker |
 
 ---
@@ -96,8 +96,7 @@ cp .aidd/.claude/commands/*.md .claude/commands/
 
 После `/aidd-init` команды доступны в автодополнении CLI:
 ```
-/aidd-idea, /aidd-research, /aidd-plan, /aidd-feature-plan, /aidd-generate,
-/aidd-review, /aidd-test, /aidd-validate, /aidd-deploy
+/aidd-idea, /aidd-research, /aidd-plan, /aidd-feature-plan, /aidd-generate, /aidd-finalize
 ```
 
 **Обновление команд**: При обновлении submodule (`.aidd/`) повторно запустите `/aidd-init` —
@@ -215,37 +214,46 @@ AI выполняет команду по инструкциям
 
 ---
 
-## 9-этапный пайплайн
+## 6-этапный пайплайн
 
 ```
-┌─────────────────────────────────────────────────────────────────────────┐
-│                         PIPELINE (этапы 0-8)                            │
-├─────────────────────────────────────────────────────────────────────────┤
-│                                                                         │
-│  ┌────────────┐                                                         │
-│  │/aidd-init  │ Этап 0: Bootstrap                                       │
-│  └─────┬──────┘                                                         │
-│        │ BOOTSTRAP_READY                                                │
-│        ▼                                                                │
-│  ┌────────────┐  ┌──────────────┐  ┌───────────┐  ┌──────────────┐     │
-│  │/aidd-idea  │─▶│/aidd-research│─▶│/aidd-plan │─▶│/aidd-generate│     │
-│  │  Этап 1    │  │   Этап 2     │  │  Этап 3   │  │   Этап 4     │     │
-│  └─────┬──────┘  └──────┬───────┘  └─────┬─────┘  └──────┬───────┘     │
-│        │                │                │               │              │
-│  PRD_READY       RESEARCH_DONE     PLAN_APPROVED   IMPLEMENT_OK        │
-│                                          ⚠️                             │
-│                                 Требует подтверждения                   │
-│                                    пользователя!                        │
-│                                                                         │
-│  ┌──────────────┐  ┌───────────┐  ┌───────────────┐  ┌─────────────┐   │
-│  │/aidd-review  │─▶│/aidd-test │─▶│/aidd-validate │─▶│/aidd-deploy │   │
-│  │   Этап 5     │  │  Этап 6   │  │    Этап 7     │  │   Этап 8    │   │
-│  └──────┬───────┘  └─────┬─────┘  └───────┬───────┘  └──────┬──────┘   │
-│       │               │               │               │                 │
-│  REVIEW_OK        QA_PASSED     ALL_GATES_PASSED   DEPLOYED            │
-│                   (≥75% cov)                                            │
-│                                                                         │
-└─────────────────────────────────────────────────────────────────────────┘
+┌─────────────────────────────────────────────────────────────────────────────┐
+│                      AIDD-MVP DEVELOPMENT PIPELINE (v2.0)                    │
+├─────────────────────────────────────────────────────────────────────────────┤
+│                                                                              │
+│  ┌───────────┐                                                               │
+│  │ BOOTSTRAP │  Этап 0: Инициализация целевого проекта                      │
+│  │/aidd-init │  ─────────────────────────────────────────────────────────── │
+│  └─────┬─────┘                                                               │
+│        │ BOOTSTRAP_READY                                                     │
+│        ▼                                                                     │
+│  ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌──────────────┐             │
+│  │  ИДЕЯ   │───▶│ИССЛЕДО- │───▶│АРХИТЕК- │───▶│   РЕАЛИЗА-   │             │
+│  │         │    │ ВАНИЕ   │    │  ТУРА   │    │     ЦИЯ       │             │
+│  └────┬────┘    └────┬────┘    └────┬────┘    └──────┬───────┘             │
+│       │              │              │                 │                     │
+│  ┌────▼────┐    ┌────▼────┐    ┌────▼────┐    ┌──────▼───────┐             │
+│  │PRD_READY│    │RESEARCH │    │  PLAN   │    │  IMPLEMENT   │             │
+│  │         │    │  _DONE  │    │APPROVED │    │     _OK      │             │
+│  └─────────┘    └─────────┘    └─────────┘    └──────────────┘             │
+│                                      ⚠️                                      │
+│                              Требует подтверждения                           │
+│                                пользователя!                                 │
+│                                                                              │
+│                                     ▼                                        │
+│  ┌───────────────────────────────────────────────────────────────┐          │
+│  │            QUALITY & DEPLOY (/aidd-finalize)                  │          │
+│  │  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────────────┐      │          │
+│  │  │ Review │─▶│  Test  │─▶│Validate│─▶│Deploy + Report │      │          │
+│  │  └────┬───┘  └────┬───┘  └────┬───┘  └────┬───────────┘      │          │
+│  │       │           │           │            │                  │          │
+│  │  REVIEW_OK    QA_PASSED  ALL_GATES     DEPLOYED              │          │
+│  │                                 PASSED                        │          │
+│  └───────────────────────────────────────────────────────────────┘          │
+│                                                                              │
+│  Артефакт: 1 Completion Report (вместо 4 файлов)                            │
+│                                                                              │
+└─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ### Таблица команд и ворот
@@ -258,10 +266,7 @@ AI выполняет команду по инструкциям
 | 3 | Архитектура (CREATE) | `/aidd-plan` | Архитектор | `PLAN_APPROVED` | `architecture/{name}-plan.md` |
 | 3 | Архитектура (FEATURE) | `/aidd-feature-plan` | Архитектор | `PLAN_APPROVED` | `plans/{feature}-plan.md` |
 | 4 | Реализация | `/aidd-generate` | Реализатор | `IMPLEMENT_OK` | `services/`, тесты |
-| 5 | Ревью | `/aidd-review` | Ревьюер | `REVIEW_OK` | `reports/review-report.md` |
-| 6 | QA | `/aidd-test` | QA | `QA_PASSED` | `reports/qa-report.md` |
-| 7 | Валидация | `/aidd-validate` | Валидатор | `ALL_GATES_PASSED` | `rtm.md` |
-| 8 | Деплой | `/aidd-deploy` | Валидатор | `DEPLOYED` | Работающее приложение |
+| 5 | Quality & Deploy | `/aidd-finalize` | Валидатор | `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED` | `reports/{name}-completion.md` |
 
 > Файлы команд: [docs/INDEX.md](docs/INDEX.md#slash-команды)
 
@@ -327,9 +332,7 @@ ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md
 | **Исследователь** | `.claude/agents/researcher.md` | 2 | Анализ кода/требований |
 | **Архитектор** | `.claude/agents/architect.md` | 3 | Проектирование |
 | **Реализатор** | `.claude/agents/implementer.md` | 4 | Генерация кода |
-| **Ревьюер** | `.claude/agents/reviewer.md` | 5 | Качество кода |
-| **QA** | `.claude/agents/qa.md` | 6 | Тестирование |
-| **Валидатор** | `.claude/agents/validator.md` | 7-8 | Финальная проверка, деплой |
+| **Валидатор** | `.claude/agents/validator.md` | 5 | Quality & Deploy (Review, QA, Validate, Deploy) |
 
 ---
 
@@ -359,11 +362,12 @@ ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md
 │  8. /aidd-generate              ───▶    Генерирует код              │
 │                                         IMPLEMENT_OK ✓              │
 │                                                                     │
-│  9. /aidd-review → /aidd-test   ───▶    Проверяет качество          │
-│     → /aidd-validate                    ALL_GATES_PASSED ✓          │
-│                                                                     │
-│  10. /aidd-deploy               ───▶    Запускает приложение        │
-│                                         DEPLOYED ✓                  │
+│  9. /aidd-finalize              ───▶    Quality & Deploy:           │
+│                                         • Review → REVIEW_OK ✓      │
+│                                         • Test → QA_PASSED ✓        │
+│                                         • Validate → ALL_GATES ✓    │
+│                                         • Deploy → DEPLOYED ✓       │
+│                                         • Completion Report         │
 │                                                                     │
 │  🎉 MVP готов!                                                      │
 │                                                                     │
@@ -543,8 +547,8 @@ claude
 # 3. Начать работу
 /aidd-idea "Создать сервис бронирования столиков в ресторанах"
 
-# 4. Следовать пайплайну (этапы 0-8)
-# /aidd-init → /aidd-idea → /aidd-research → /aidd-plan → /aidd-generate → /aidd-review → /aidd-test → /aidd-validate → /aidd-deploy
+# 4. Следовать пайплайну (этапы 0-5)
+# /aidd-init → /aidd-idea → /aidd-research → /aidd-plan → /aidd-generate → /aidd-finalize
 ```
 
 ### Добавление фичи (FEATURE)
@@ -554,7 +558,7 @@ cd existing-project
 claude
 /aidd-idea "Добавить систему email уведомлений"
 
-# /aidd-idea → /aidd-research → /aidd-feature-plan → /aidd-generate → /aidd-review → /aidd-test → /aidd-validate → /aidd-deploy
+# /aidd-idea → /aidd-research → /aidd-feature-plan → /aidd-generate → /aidd-finalize
 ```
 
 ---
@@ -589,7 +593,7 @@ aidd-mvp-generator/
 │
 ├── CLAUDE.md              ← ВЫ ЗДЕСЬ — точка входа
 ├── conventions.md         ← Соглашения о коде и стиле
-├── workflow.md            ← Описание 9-этапного процесса
+├── workflow.md            ← Описание 6-этапного процесса
 │
 ├── .claude/               ← Интеграция Claude Code
 │   ├── settings.json      ← Permissions и hooks (коммитится)
@@ -614,7 +618,7 @@ aidd-mvp-generator/
 | Полный индекс файлов | [docs/INDEX.md](docs/INDEX.md) |
 | Навигационная матрица | [docs/NAVIGATION.md](docs/NAVIGATION.md) |
 | Алгоритм инициализации | [docs/initialization.md](docs/initialization.md) |
-| 9-этапный процесс | [workflow.md](workflow.md) |
+| 6-этапный процесс | [workflow.md](workflow.md) |
 | Соглашения о коде | [conventions.md](conventions.md) |
 | Структура целевого проекта | [docs/target-project-structure.md](docs/target-project-structure.md) |
 | **Параллельные пайплайны** | [knowledge/pipeline/git-integration.md](knowledge/pipeline/git-integration.md) |

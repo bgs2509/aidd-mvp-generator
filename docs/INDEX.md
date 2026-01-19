@@ -12,7 +12,7 @@
 | [CLAUDE.md](../CLAUDE.md) | Главная точка входа | Первым |
 | [initialization.md](initialization.md) | Алгоритм инициализации (4 фазы) | При запуске команды |
 | [conventions.md](../conventions.md) | Соглашения о коде | При написании кода |
-| [workflow.md](../workflow.md) | Пайплайн (этапы 0-8) | При работе с пайплайном |
+| [workflow.md](../workflow.md) | Пайплайн (этапы 0-5) | При работе с пайплайном |
 | [artifact-naming.md](artifact-naming.md) | Система именования артефактов (FID) | При создании артефактов |
 
 ---
@@ -25,9 +25,7 @@
 | [.claude/agents/researcher.md](../.claude/agents/researcher.md) | Исследователь | 2 | RESEARCH_DONE |
 | [.claude/agents/architect.md](../.claude/agents/architect.md) | Архитектор | 3 | PLAN_APPROVED |
 | [.claude/agents/implementer.md](../.claude/agents/implementer.md) | Реализатор | 4 | IMPLEMENT_OK |
-| [.claude/agents/reviewer.md](../.claude/agents/reviewer.md) | Ревьюер | 5 | REVIEW_OK |
-| [.claude/agents/qa.md](../.claude/agents/qa.md) | QA | 6 | QA_PASSED |
-| [.claude/agents/validator.md](../.claude/agents/validator.md) | Валидатор | 7-8 | ALL_GATES_PASSED |
+| [.claude/agents/validator.md](../.claude/agents/validator.md) | Валидатор | 5 | REVIEW_OK, QA_PASSED, ALL_GATES_PASSED, DEPLOYED |
 
 ---
 
@@ -41,12 +39,9 @@
 | `/aidd-plan` | [.claude/commands/aidd-plan.md](../.claude/commands/aidd-plan.md) | Архитектура (CREATE) |
 | `/aidd-feature-plan` | [.claude/commands/aidd-feature-plan.md](../.claude/commands/aidd-feature-plan.md) | План фичи (FEATURE) |
 | `/aidd-generate` | [.claude/commands/aidd-generate.md](../.claude/commands/aidd-generate.md) | Генерация кода |
-| `/aidd-review` | [.claude/commands/aidd-review.md](../.claude/commands/aidd-review.md) | Код-ревью |
-| `/aidd-test` | [.claude/commands/aidd-test.md](../.claude/commands/aidd-test.md) | Тестирование |
-| `/aidd-validate` | [.claude/commands/aidd-validate.md](../.claude/commands/aidd-validate.md) | Валидация |
-| `/aidd-deploy` | [.claude/commands/aidd-deploy.md](../.claude/commands/aidd-deploy.md) | Деплой |
+| `/aidd-finalize` | [.claude/commands/aidd-finalize.md](../.claude/commands/aidd-finalize.md) | Quality & Deploy (Review → Test → Validate → Deploy) |
 
-> Обзор пайплайна: [CLAUDE.md](../CLAUDE.md#9-этапный-пайплайн)
+> Обзор пайплайна: [CLAUDE.md](../CLAUDE.md#6-этапный-пайплайн)
 
 ---
 
@@ -104,10 +99,11 @@
 | Архитектура | [templates/documents/architecture-template.md](../templates/documents/architecture-template.md) | `ai-docs/docs/architecture/{name}-plan.md` |
 | План фичи (FEATURE) | [templates/documents/feature-plan-template.md](../templates/documents/feature-plan-template.md) | `ai-docs/docs/plans/{feature}-plan.md` |
 | План реализации | [templates/documents/implementation-plan-template.md](../templates/documents/implementation-plan-template.md) | `ai-docs/docs/architecture/{name}-impl.md` |
-| Отчёт ревью | [templates/documents/review-report-template.md](../templates/documents/review-report-template.md) | `ai-docs/docs/reports/review-report.md` |
-| Отчёт QA | [templates/documents/qa-report-template.md](../templates/documents/qa-report-template.md) | `ai-docs/docs/reports/qa-report.md` |
-| Отчёт валидации | [templates/documents/validation-report-template.md](../templates/documents/validation-report-template.md) | `ai-docs/docs/reports/validation-report.md` |
-| RTM | [templates/documents/rtm-template.md](../templates/documents/rtm-template.md) | `ai-docs/docs/rtm.md` |
+| **Completion Report** | [templates/documents/completion-report-template.md](../templates/documents/completion-report-template.md) | `ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md` |
+| ~~Отчёт ревью~~ | ~~templates/documents/review-report-template.md~~ | ~~Устарел (заменён Completion Report)~~ |
+| ~~Отчёт QA~~ | ~~templates/documents/qa-report-template.md~~ | ~~Устарел (заменён Completion Report)~~ |
+| ~~Отчёт валидации~~ | ~~templates/documents/validation-report-template.md~~ | ~~Устарел (заменён Completion Report)~~ |
+| ~~RTM~~ | ~~templates/documents/rtm-template.md~~ | ~~Устарел (заменён Completion Report)~~ |
 | Состояние пайплайна | [templates/documents/pipeline-state-template.json](../templates/documents/pipeline-state-template.json) | `.pipeline-state.json` |
 
 ---
