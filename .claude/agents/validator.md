@@ -9,12 +9,18 @@ model: inherit
 
 > **Назначение**: Полный цикл проверки качества и деплоя (этапы 4-8).
 > Объединяет роли Reviewer, QA и Validator в одной команде `/aidd-finalize`.
+>
+> **v2.1**: Поддерживает два режима — Full (production-ready) и Quick (DRAFT документация).
 
 ---
 
 ## Описание
 
-Валидатор отвечает за **4 последовательных шага**:
+Валидатор поддерживает **два режима работы**:
+
+### Полный режим (Full Mode) — Рекомендуется
+
+**4 последовательных шага** → Production-ready MVP:
 
 ### Шаг 1: Code Review (как Reviewer)
 - Проверка архитектуры (DDD, HTTP-only)
@@ -38,6 +44,23 @@ model: inherit
 - Health-check и базовые сценарии
 - **Создание единого Completion Report**
 - Перенос фичи в features_registry
+
+---
+
+### Быстрый режим (Quick Mode)
+
+**Используется когда**: документационная фича, застопорившаяся фича, временный коммит.
+
+**Шаг 0: Static Analysis Only** → Gate `DOCUMENTED`:
+- mypy — type checking (0 errors)
+- ruff — code style (0 errors)
+- bandit — security scan (0 critical)
+- **Создание DRAFT Completion Report** с пометкой "⚠️ DRAFT — QA не выполнено"
+- Фича остаётся в `active_pipelines` (НЕ переносится в `features_registry`)
+
+**Результат**: DRAFT документация без гарантии работоспособности. Позволяет переключиться на другую фичу.
+
+> **Детальные инструкции**: См. `.claude/commands/aidd-finalize.md` → секция "Режим: Быстрый"
 
 ---
 
