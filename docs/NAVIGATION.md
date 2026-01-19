@@ -353,6 +353,19 @@
 | 7 | Валидация | `/aidd-validate` | Валидатор | validator | RTM, отчёт | ALL_GATES_PASSED |
 | 8 | Деплой | `/aidd-deploy` | Валидатор | docker | — | DEPLOYED |
 
+> **Примечание (v2.4+)**: Унификация naming conventions:
+>
+> | Старое | Новое | Статус |
+> |--------|-------|--------|
+> | `/aidd-idea` | `/aidd-analyze` | ✅ Оба работают |
+> | `/aidd-feature-plan` | `/aidd-plan-feature` | ✅ Оба работают |
+> | `/aidd-generate` | `/aidd-code` | ✅ Оба работают |
+> | `/aidd-finalize` | `/aidd-validate` | ✅ Оба работают |
+> | `architect.md` | `planner.md` | ✅ Оба доступны |
+> | `implementer.md` | `coder.md` | ✅ Оба доступны |
+>
+> **Важно**: `/aidd-finalize` (или `/aidd-validate`) объединяет этапы 5-8 в один цикл Quality & Deploy.
+
 ---
 
 ## См. также

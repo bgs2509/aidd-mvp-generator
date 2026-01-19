@@ -346,6 +346,34 @@ ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md
 
 ---
 
+## Naming Convention Migration (v2.4+)
+
+> **Статус**: Phase 1 (Non-breaking) — оба варианта работают одновременно
+
+Фреймворк унифицирует naming conventions на основе 5 базовых слов:
+**analyst**, **researcher**, **planner**, **coder**, **validator**
+
+### Что изменилось
+
+| Сущность | Старое название | Новое название | Статус |
+|----------|----------------|----------------|--------|
+| **Роли** | `architect.md` | `planner.md` | ✅ Оба доступны |
+| | `implementer.md` | `coder.md` | ✅ Оба доступны |
+| **Команды** | `/aidd-idea` | `/aidd-analyze` | ✅ Обе работают |
+| | `/aidd-feature-plan` | `/aidd-plan-feature` | ✅ Обе работают |
+| | `/aidd-generate` | `/aidd-code` | ✅ Обе работают |
+| | `/aidd-finalize` | `/aidd-validate` | ✅ Обе работают |
+
+### Рекомендации
+
+- **Новые проекты**: Используйте новые названия (`/aidd-analyze`, `planner.md`)
+- **Существующие проекты**: Продолжайте использовать старые или постепенно переходите
+- **Документация**: Обновляется для упоминания обоих вариантов
+
+**Полный план миграции**: `/home/bgs/.claude/plans/idempotent-drifting-wirth.md`
+
+---
+
 ## Взаимодействие пользователя с фреймворком
 
 ```
