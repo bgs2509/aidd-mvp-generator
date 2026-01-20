@@ -713,7 +713,9 @@ gates["ALL_GATES_PASSED"] = {
 
 **Цель**: Запустить приложение и создать итоговый Completion Report.
 
-#### 4.1. Сборка Docker-контейнеров
+#### 4.1 Docker Deploy
+
+##### 4.1.1. Сборка Docker-контейнеров
 
 ```bash
 # Сборка
@@ -725,7 +727,7 @@ docker-compose build
 docker images | grep {project_name}
 ```
 
-#### 4.2. Запуск приложения
+##### 4.1.2. Запуск приложения
 
 ```bash
 # Запуск в фоне
@@ -737,7 +739,7 @@ docker-compose up -d
 docker-compose ps
 ```
 
-#### 4.3. Health-check
+##### 4.1.3. Health-check
 
 ```bash
 # Проверить health endpoint каждого сервиса
@@ -747,7 +749,7 @@ curl http://localhost:8001/health
 # Ожидаемый результат: {"status": "ok"}
 ```
 
-#### 4.4. Базовые сценарии
+##### 4.1.4. Базовые сценарии
 
 Выполнить базовые API запросы из PRD:
 
@@ -758,9 +760,22 @@ curl -X POST http://localhost:8000/api/v1/bookings \
   -d '{"restaurant_id": 1, "date": "2024-12-25", "time": "18:00", "guests": 4}'
 ```
 
-#### 4.5. Создание Completion Report
+#### 4.2 Create Completion Report (ОБЯЗАТЕЛЬНО!)
 
 **КРИТИЧЕСКИ ВАЖНО**: Этот шаг ОБЯЗАТЕЛЕН.
+
+**Путь**: `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md`
+
+**Использовать шаблон**: `.aidd/templates/documents/completion-report-template.md`
+
+**Содержание**:
+- Executive Summary
+- Реализованные компоненты
+- ADR (Architecture Decision Records)
+- Scope Changes (план vs факт)
+- Known Limitations
+- Метрики качества
+- Ссылки на все артефакты
 
 ##### 4.5.1. Прочитать все артефакты
 
