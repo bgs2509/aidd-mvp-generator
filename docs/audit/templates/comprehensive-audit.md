@@ -1,6 +1,6 @@
 # Шаблон комплексного аудита документации AIDD-MVP Generator
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В migration mode v2.4 доступны алиасы: `/aidd-idea` ↔ `/aidd-analyze`, `/aidd-generate` ↔ `/aidd-code`, `/aidd-finalize` ↔ `/aidd-validate`, `/aidd-feature-plan` ↔ `/aidd-plan-feature`. Все пары равноправны и поддерживаются.
 
 
 ## Назначение
@@ -247,9 +247,9 @@ grep -c "CREATE" CLAUDE.md workflow.md docs/NAVIGATION.md 2>/dev/null | paste -s
 echo "FEATURE упоминания:"
 grep -c "FEATURE" CLAUDE.md workflow.md docs/NAVIGATION.md 2>/dev/null | paste -sd+ | bc
 
-# Проверка /aidd-plan vs /feature-plan
-[ -f ".claude/commands/plan.md" ] && echo "✅ /aidd-plan (CREATE mode)" || echo "❌ /plan"
-[ -f ".claude/commands/feature-plan.md" ] && echo "✅ /aidd-feature-plan (FEATURE mode)" || echo "❌ /feature-plan"
+# Проверка /aidd-plan vs /aidd-feature-plan (migration mode)
+[ -f ".claude/commands/aidd-plan.md" ] && echo "✅ /aidd-plan (CREATE mode)" || echo "❌ /aidd-plan"
+[ -f ".claude/commands/aidd-feature-plan.md" ] && echo "✅ /aidd-feature-plan (FEATURE mode)" || echo "❌ /aidd-feature-plan"
 # Ожидание: Оба режима описаны, обе команды существуют
 ```
 
@@ -1589,13 +1589,13 @@ for role in analyst researcher architect implementer reviewer qa validator; do
 done
 echo "  $roles_ok/7 ролей"
 
-# Smoke 7: 10 команд
-echo -e "\n10 slash-команд:"
+# Smoke 7: 11 команд (migration mode)
+echo -e "\n11 slash-команд:"
 cmds_ok=0
-for cmd in init idea research plan feature-plan generate review test validate deploy; do
-  [ -f ".claude/commands/$cmd.md" ] && cmds_ok=$((cmds_ok + 1))
+for cmd in init idea analyze research plan feature-plan plan-feature generate code finalize validate; do
+  [ -f ".claude/commands/aidd-$cmd.md" ] && cmds_ok=$((cmds_ok + 1))
 done
-echo "  $cmds_ok/10 команд"
+echo "  $cmds_ok/11 команд"
 
 # 2. Критические валидации
 echo -e "\n### КРИТИЧЕСКИЕ ВАЛИДАЦИИ ###"
@@ -1637,7 +1637,7 @@ echo -e "\n💡 Запустите полный аудит для детальн
 ## Связанные документы
 
 - **Главная точка входа**: [CLAUDE.md](../../../CLAUDE.md)
-- **9-этапный процесс**: [workflow.md](../../../workflow.md)
+- **6-этапный процесс (0-5)**: [workflow.md](../../../workflow.md)
 - **Соглашения**: [conventions.md](../../../conventions.md)
 - **Индекс документации**: [docs/INDEX.md](../../INDEX.md)
 - **Навигационная матрица**: [docs/NAVIGATION.md](../../NAVIGATION.md)
