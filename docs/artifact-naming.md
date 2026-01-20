@@ -219,7 +219,7 @@ ai-docs/docs/FEATURES.md
 
 | FID | Название | Статус | Дата | Сервисы | Артефакты |
 |-----|----------|--------|------|---------|-----------|
-| F042 | Email-уведомления | IN_PROGRESS | 2024-12-20 | notify_worker | [PRD](prd/2024-12-20_F042_email-notify-prd.md) |
+| F042 | Email-уведомления | IN_PROGRESS | 2024-12-20 | notify_worker |  |
 | F041 | Платёжная система | QA_PASSED | 2024-12-15 | payments_api | [PRD](...), [Plan](...) |
 
 ---

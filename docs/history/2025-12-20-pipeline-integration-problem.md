@@ -1614,9 +1614,9 @@ User Input: /idea "Добавить систему уведомлений по e
 # Индекс документации AIDD-MVP Generator
 
 ## Быстрый старт
-- [CLAUDE.md](../CLAUDE.md) — Точка входа
-- [workflow.md](../workflow.md) — 8-этапный процесс
-- [conventions.md](../conventions.md) — Соглашения
+- [CLAUDE.md]../../CLAUDE.md — Точка входа
+- [workflow.md]../../workflow.md — 8-этапный процесс
+- [conventions.md]../../conventions.md — Соглашения
 
 ## Роли агентов
 - [Аналитик](.claude/agents/analyst.md)
@@ -1712,4 +1712,4 @@ User Input: /idea "Добавить систему уведомлений по e
 | [documentation-problems.md](2025-12-20-documentation-problems.md) | Список всех проблем |
 | [CLAUDE.md](../../CLAUDE.md) | Точка входа |
 | [workflow.md](../../workflow.md) | 8-этапный процесс |
-| [.ai-framework/AGENTS.md](../../.ai-framework/AGENTS.md) | 7-стадийный процесс |
+| [.ai-framework/AGENTS.md](../../docs/NAVIGATION.md) | 7-стадийный процесс |
