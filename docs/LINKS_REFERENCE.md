@@ -48,10 +48,7 @@
 | [.claude/commands/aidd-plan.md](../.claude/commands/aidd-plan.md) | `/aidd-plan` | 3 (CREATE) |
 | [.claude/commands/aidd-feature-plan.md](../.claude/commands/aidd-feature-plan.md) | `/aidd-feature-plan` | 3 (FEATURE) |
 | [.claude/commands/aidd-generate.md](../.claude/commands/aidd-generate.md) | `/aidd-generate` | 4 |
-| [.claude/commands/aidd-finalize.md](../.claude/commands/aidd-finalize.md) | `/aidd-review` | 5 |
-| [.claude/commands/aidd-finalize.md](../.claude/commands/aidd-finalize.md) | `/aidd-test` | 6 |
 | [.claude/commands/aidd-validate.md](../.claude/commands/aidd-validate.md) | `/aidd-validate` | 7 |
-| [.claude/commands/aidd-finalize.md](../.claude/commands/aidd-finalize.md) | `/aidd-deploy` | 8 |
 
 ---
 
