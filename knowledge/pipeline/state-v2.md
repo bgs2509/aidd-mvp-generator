@@ -363,7 +363,7 @@ def complete_feature(fid: str) -> None:
 - При попытке создать второй — предупреждение
 - Используется для проектов с строгой последовательностью
 
-### Deprecated поля
+### Backward compatibility (v1) поля
 
 Эти поля сохраняются для совместимости, но НЕ используются:
 - `current_feature` — заменён на `active_pipelines`
