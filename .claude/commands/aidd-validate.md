@@ -68,14 +68,8 @@ description: Quality & Deploy — полный цикл проверки кач�
 
 ### Единственный артефакт (оба режима)
 
-**v2 (по умолчанию)**:
 ```
 ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md
-```
-
-**v3 (после миграции)**:
-```
-ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}.md
 ```
 
 Completion Report содержит:
@@ -92,12 +86,11 @@ Completion Report содержит:
 
 ## Агент
 
-**Валидатор** (`.claude/agents/validator.md`) с расширенными обязанностями:
-- Выполняет код-ревью (роль Reviewer)
-- Запускает тесты (роль QA)
-- Валидирует все ворота
-- Выполняет деплой
-- Создаёт итоговый Completion Report
+**Валидатор** (`.claude/agents/validator.md`) выполняет полный цикл:
+- Code Review (см. библиотеку: `.claude/agents/code-review-library.md`)
+- Testing (см. библиотеку: `.claude/agents/testing-library.md`)
+- Validation (собственная логика)
+- Deploy & Completion Report (собственная логика)
 
 ---
 
@@ -276,6 +269,7 @@ def execute_finalize(fid: str, pipeline: dict, mode: str):
 > - **v2** (по умолчанию): Старая структура `reports/`, имя с дублированием `{name}-completion.md`
 > - **v3** (после миграции): Новая структура `_validation/`, имя без дублирования `{name}.md`
 > - Режим определяется из `.pipeline-state.json → naming_version`
+> - Миграция: `python .aidd/scripts/migrate-naming-v3.py`
 
 ### Именование артефакта
 
@@ -295,22 +289,22 @@ date = datetime.now().strftime("%Y-%m-%d")  # 2024-12-23
 naming_version = state.get("naming_version", "v2")
 
 if naming_version == "v3":
-    folder = "_validation"
-    filename = f"{date}_{fid}_{slug}.md"  # Без дублирования
-else:
-    folder = "reports"
-    filename = f"{date}_{fid}_{slug}-completion.md"  # С дублированием
+    artifact_dir = "ai-docs/docs/_validation"
+    filename = f"{date}_{fid}_{slug}.md"  # без дублирования -completion
+else:  # v2 (по умолчанию)
+    artifact_dir = "ai-docs/docs/reports"
+    filename = f"{date}_{fid}_{slug}-completion.md"
 
-artifact_path = f"{folder}/{filename}"
-# v2: reports/2024-12-23_F001_table-booking-completion.md
-# v3: _validation/2024-12-23_F001_table-booking.md
+# Пример: 2024-12-23_F001_table-booking-completion.md (v2)
+# Пример: 2024-12-23_F001_table-booking.md (v3)
 ```
 
 ### Обновление .pipeline-state.json
 
-После создания отчёта обновить `active_pipelines[FID]` (v2):
+После создания отчёта обновить `active_pipelines[FID]` (v2).
 
-**Пример для v2 (по умолчанию)**:
+**Пример для naming_version = "v2" (по умолчанию)**:
+
 ```json
 {
   "naming_version": "v2",
@@ -341,12 +335,27 @@ artifact_path = f"{folder}/{filename}"
 }
 ```
 
-**Пример для v3 (после миграции)**:
+**Пример для naming_version = "v3" (после миграции)**:
+
 ```json
 {
   "naming_version": "v3",
   "active_pipelines": {
     "F001": {
+      "branch": "feature/F001-table-booking",
+      "name": "table-booking",
+      "title": "Бронирование столиков",
+      "stage": "DEPLOYED",
+      "gates": {
+        "PRD_READY": {"passed": true, "passed_at": "2024-12-23T10:00:00Z"},
+        "RESEARCH_DONE": {"passed": true, "passed_at": "2024-12-23T11:00:00Z"},
+        "PLAN_APPROVED": {"passed": true, "passed_at": "2024-12-23T12:00:00Z"},
+        "IMPLEMENT_OK": {"passed": true, "passed_at": "2024-12-23T14:00:00Z"},
+        "REVIEW_OK": {"passed": true, "passed_at": "2024-12-23T15:30:00Z"},
+        "QA_PASSED": {"passed": true, "passed_at": "2024-12-23T16:00:00Z", "coverage": 82},
+        "ALL_GATES_PASSED": {"passed": true, "passed_at": "2024-12-23T16:15:00Z"},
+        "DEPLOYED": {"passed": true, "passed_at": "2024-12-23T17:00:00Z"}
+      },
       "artifacts": {
         "prd": "_analysis/2024-12-23_F001_table-booking.md",
         "research": "_research/2024-12-23_F001_table-booking.md",
@@ -487,18 +496,8 @@ def create_draft_completion_report(fid: str, pipeline: dict):
         static_analysis_results=get_static_analysis_results()
     )
 
-    # Определить путь на основе naming_version
-    state = read_json(".pipeline-state.json")
-    naming_version = state.get("naming_version", "v2")
-
-    if naming_version == "v3":
-        folder = "_validation"
-        filename = f"{date}_{fid}_{slug}.md"
-    else:
-        folder = "reports"
-        filename = f"{date}_{fid}_{slug}-completion.md"
-
-    path = f"ai-docs/docs/{folder}/{filename}"
+    # Сохранить
+    path = f"ai-docs/docs/reports/{date}_{fid}_{slug}-completion.md"
     write_file(path, content)
 
     return path
@@ -714,7 +713,9 @@ gates["ALL_GATES_PASSED"] = {
 
 **Цель**: Запустить приложение и создать итоговый Completion Report.
 
-#### 4.1. Сборка Docker-контейнеров
+#### 4.1 Docker Deploy
+
+##### 4.1.1. Сборка Docker-контейнеров
 
 ```bash
 # Сборка
@@ -726,7 +727,7 @@ docker-compose build
 docker images | grep {project_name}
 ```
 
-#### 4.2. Запуск приложения
+##### 4.1.2. Запуск приложения
 
 ```bash
 # Запуск в фоне
@@ -738,7 +739,7 @@ docker-compose up -d
 docker-compose ps
 ```
 
-#### 4.3. Health-check
+##### 4.1.3. Health-check
 
 ```bash
 # Проверить health endpoint каждого сервиса
@@ -748,7 +749,7 @@ curl http://localhost:8001/health
 # Ожидаемый результат: {"status": "ok"}
 ```
 
-#### 4.4. Базовые сценарии
+##### 4.1.4. Базовые сценарии
 
 Выполнить базовые API запросы из PRD:
 
@@ -759,11 +760,24 @@ curl -X POST http://localhost:8000/api/v1/bookings \
   -d '{"restaurant_id": 1, "date": "2024-12-25", "time": "18:00", "guests": 4}'
 ```
 
-#### 4.5. Создание Completion Report
+#### 4.2 Create Completion Report (ОБЯЗАТЕЛЬНО!)
 
 **КРИТИЧЕСКИ ВАЖНО**: Этот шаг ОБЯЗАТЕЛЕН.
 
-##### 4.5.1. Прочитать все артефакты
+**Путь**: `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md`
+
+**Использовать шаблон**: `.aidd/templates/documents/completion-report-template.md`
+
+**Содержание**:
+- Executive Summary
+- Реализованные компоненты
+- ADR (Architecture Decision Records)
+- Scope Changes (план vs факт)
+- Known Limitations
+- Метрики качества
+- Ссылки на все артефакты
+
+##### 4.2.1. Прочитать все артефакты
 
 ```python
 # 1. PRD → извлечь требования, scope, acceptance criteria
@@ -779,7 +793,7 @@ research_path = artifacts.get("research")
 research_content = read_file(f"ai-docs/docs/{research_path}")
 ```
 
-##### 4.5.2. Собрать информацию о реализации
+##### 4.2.2. Собрать информацию о реализации
 
 ```python
 # Сервисы (из pipeline.services)
@@ -792,7 +806,7 @@ endpoints = extract_endpoints_from_code("services/*/src/api/v1/")
 models = extract_models_from_code("services/*/src/domain/entities/")
 ```
 
-##### 4.5.3. Сформировать ADR
+##### 4.2.3. Сформировать ADR
 
 Architecture Decision Records — ключевые решения с обоснованием:
 
@@ -821,7 +835,7 @@ Architecture Decision Records — ключевые решения с обосн�
 - Дополнительный сервис для поддержки
 ```
 
-##### 4.5.4. Документировать Scope Changes
+##### 4.2.4. Документировать Scope Changes
 
 Сравнить PRD (план) vs реализация (факт):
 
@@ -840,7 +854,7 @@ Architecture Decision Records — ключевые решения с обосн�
 - SMS подтверждения → требует внешнего сервиса
 ```
 
-##### 4.5.5. Записать Known Limitations
+##### 4.2.5. Записать Known Limitations
 
 ```markdown
 ## 5. Известные ограничения
@@ -854,7 +868,7 @@ Architecture Decision Records — ключевые решения с обосн�
 - TODO: Оптимизировать запрос доступности столиков
 ```
 
-##### 4.5.6. Записать метрики
+##### 4.2.6. Записать метрики
 
 ```markdown
 ## 6. Метрики качества
@@ -868,18 +882,11 @@ Architecture Decision Records — ключевые решения с обосн�
 | Code Quality | A (SonarQube) | ✅ |
 ```
 
-##### 4.5.7. Создать файл
+##### 4.2.7. Создать файл
 
 ```bash
-# Определить путь на основе naming_version
-state=$(cat .pipeline-state.json)
-naming_version=$(echo "$state" | jq -r '.naming_version // "v2"')
-
-if [ "$naming_version" = "v3" ]; then
-    completion_path="ai-docs/docs/_validation/{date}_{FID}_{slug}.md"
-else
-    completion_path="ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md"
-fi
+# Путь к файлу
+completion_path="ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md"
 
 # Использовать шаблон
 template_path=".aidd/templates/documents/completion-report-template.md"
@@ -898,7 +905,7 @@ template_path=".aidd/templates/documents/completion-report-template.md"
 10. Рекомендации
 11. Quick Reference
 
-##### 4.5.8. Обновить pipeline state
+##### 4.2.8. Обновить pipeline state
 
 ```python
 # Добавить completion report в artifacts
@@ -914,7 +921,7 @@ gates["DEPLOYED"] = {
 pipeline["stage"] = "DEPLOYED"
 ```
 
-#### 4.6. Перенести в features_registry
+#### 4.3 Перенести в features_registry
 
 После успешного деплоя перенести фичу из `active_pipelines` в `features_registry`:
 
@@ -1102,6 +1109,86 @@ docker-compose logs -f
   - [ ] Completion Report добавлен в `artifacts.completion`
   - [ ] Фича перенесена в `features_registry` (из active_pipelines)
 - [ ] 🟡 Логи проверены (нет ошибок)
+
+---
+
+## Чеклист ворот DEPLOYED (BLOCKER)
+
+> ⚠️ **КРИТИЧЕСКАЯ СЕКЦИЯ**: Без выполнения ВСЕХ 🔴 пунктов команда НЕ завершена!
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│  🔴 BLOCKER (без этого команда НЕ завершена):                    │
+├─────────────────────────────────────────────────────────────────┤
+│  □ Docker-контейнеры собраны и запущены                         │
+│  □ Health-check проходит                                         │
+│  □ Базовые сценарии работают (API запросы успешны)              │
+│  □ **Completion Report создан** в reports/{date}_{FID}_{slug}   │
+│  □ Фича перенесена из active_pipelines в features_registry      │
+│  □ .pipeline-state.json обновлён                                 │
+└─────────────────────────────────────────────────────────────────┘
+```
+
+### Автоматическая проверка Completion Report
+
+AI ОБЯЗАН выполнить эту проверку перед завершением команды:
+
+```python
+from pathlib import Path
+from datetime import datetime
+
+def verify_completion_report_exists(fid: str, slug: str, naming_version: str = "v2") -> bool:
+    """
+    Проверить, что Completion Report существует.
+
+    ❌ BLOCKER: Если файл не существует, команда НЕ завершена!
+
+    Args:
+        fid: Feature ID (например, "F001")
+        slug: Feature slug (например, "table-booking")
+        naming_version: "v2" (по умолчанию) или "v3"
+
+    Returns:
+        True если файл существует, False иначе
+    """
+    date = datetime.now().strftime("%Y-%m-%d")
+
+    if naming_version == "v3":
+        completion_path = Path(f"ai-docs/docs/_validation/{date}_{fid}_{slug}.md")
+    else:  # v2 (по умолчанию)
+        completion_path = Path(f"ai-docs/docs/reports/{date}_{fid}_{slug}-completion.md")
+
+    if not completion_path.exists():
+        print("❌ BLOCKER: Completion Report не создан!")
+        print(f"   Ожидается: {completion_path}")
+        print("   ")
+        print("   Необходимо:")
+        print("   1. Использовать шаблон: .aidd/templates/documents/completion-report-template.md")
+        print("   2. Заполнить ВСЕ обязательные секции")
+        print("   3. Сохранить в указанный путь")
+        return False
+
+    print(f"✅ Completion Report существует: {completion_path}")
+    return True
+
+
+# Использование в конце /aidd-finalize:
+if not verify_completion_report_exists(fid, slug, naming_version):
+    raise RuntimeError("BLOCKER: Completion Report не создан! Команда не может быть завершена.")
+```
+
+### Что должен содержать Completion Report
+
+| Секция | Статус | Описание |
+|--------|--------|----------|
+| Executive Summary | 🔴 BLOCKER | 2-3 предложения о результате |
+| Реализованные компоненты | 🔴 BLOCKER | Сервисы, endpoints, модели |
+| ADR | 🔴 BLOCKER | Архитектурные решения с обоснованием |
+| Scope Changes | 🟡 REQUIRED | План vs Факт |
+| Known Limitations | 🟡 REQUIRED | Ограничения и workarounds |
+| Метрики | 🟡 REQUIRED | Coverage, tests, security |
+| Timeline | ⚪ OPTIONAL | История прохождения ворот |
+| Рекомендации | ⚪ OPTIONAL | Для следующих итераций |
 
 ---
 
