@@ -152,7 +152,7 @@ echo "(5 базовых ролей + дубликаты architect/planner, imple
 ```bash
 echo "=== SMOKE TEST 7: Slash-команды пайплайна ==="
 # Migration mode v2.4: команды доступны в двух вариантах (старые/новые названия)
-# Consolidation: review, test, validate, deploy → /aidd-finalize (/aidd-validate)
+# Consolidation Stage 5: review, test, deploy → /aidd-finalize (also /aidd-validate in v2.4)
 COMMANDS=(init idea analyze research plan feature-plan plan-feature generate code finalize validate)
 missing=0
 for cmd in "${COMMANDS[@]}"; do
@@ -194,9 +194,9 @@ echo "Итого: $((5 - missing))/5 шаблонов"
 ```bash
 echo "=== SMOKE TEST 9: Шаблоны документов ==="
 # Consolidation: review/qa/validation-report → completion-report-template.md
-TEMPLATES=(prd-template.md architecture-template.md feature-plan-template.md \
-           implementation-plan-template.md completion-report-template.md \
-           rtm-template.md)
+TEMPLATES=(prd-template.md research-report-template.md architecture-template.md \
+           feature-plan-template.md implementation-plan-template.md \
+           completion-report-template.md)
 count=0
 for tpl in "${TEMPLATES[@]}"; do
   if [ -f "templates/documents/$tpl" ]; then
@@ -225,14 +225,16 @@ grep -o "[A-Z_]*_READY\|[A-Z_]*_DONE\|[A-Z_]*_APPROVED\|[A-Z_]*_OK\|[A-Z_]*_PASS
 echo ""
 echo "Ворота в docs/NAVIGATION.md:"
 grep -o "[A-Z_]*_READY\|[A-Z_]*_DONE\|[A-Z_]*_APPROVED\|[A-Z_]*_OK\|[A-Z_]*_PASSED\|DEPLOYED\|DOCUMENTED" docs/NAVIGATION.md 2>/dev/null | sort -u
-# Ожидание: 6 основных ворот + 4 sub-gates (Этап 5) + 1 Quick режим = 10 ворот
+# Ожидание: 10 ворот всего (6 main + 3 sub-gates + 1 Quick)
 # Этап 0: BOOTSTRAP_READY
 # Этап 1: PRD_READY
 # Этап 2: RESEARCH_DONE
 # Этап 3: PLAN_APPROVED
 # Этап 4: IMPLEMENT_OK
-# Этап 5 (Full): REVIEW_OK → QA_PASSED → ALL_GATES_PASSED → DEPLOYED
-# Этап 5 (Quick): DOCUMENTED (вместо DEPLOYED)
+# Этап 5 Full: IMPLEMENT_OK → [REVIEW_OK → QA_PASSED → ALL_GATES_PASSED] → DEPLOYED
+#   (REVIEW_OK, QA_PASSED, ALL_GATES_PASSED — промежуточные sub-gates внутри Stage 5)
+#   (DEPLOYED — финальные ворота всего пайплайна)
+# Этап 5 Quick: IMPLEMENT_OK → DOCUMENTED (минует sub-gates, draft completion report)
 ```
 
 ### Smoke Test 11: Режимы CREATE/FEATURE
@@ -261,7 +263,7 @@ find knowledge/ -name "*.md" 2>/dev/null | wc -l
 echo ""
 echo "Категории:"
 ls -d knowledge/*/ 2>/dev/null | xargs -I{} basename {}
-# Ожидание: architecture, services, quality, infrastructure, integrations
+# Ожидание: 7 категорий — architecture, infrastructure, integrations, pipeline, quality, security, services
 ```
 
 ### Smoke Test 13: 🚨 CRITICAL — Поддержка naming_version (Migration mode v2.4)
@@ -269,7 +271,8 @@ ls -d knowledge/*/ 2>/dev/null | xargs -I{} basename {}
 ```bash
 echo "=== SMOKE TEST 13: Поддержка naming_version ==="
 echo "Проверка команд на поддержку naming_version:"
-for cmd in analyze research plan plan-feature code validate; do
+# Migration mode: проверяем ВСЕ команды (старые и новые названия)
+for cmd in idea analyze research plan feature-plan plan-feature generate code finalize validate; do
   if [ -f ".claude/commands/aidd-$cmd.md" ]; then
     if grep -q "naming_version" ".claude/commands/aidd-$cmd.md" 2>/dev/null; then
       echo "✅ /aidd-$cmd поддерживает naming_version"
@@ -338,7 +341,7 @@ echo "v3 (после миграции): $v3_folders"
 | Уровень зрелости | Level 2 (MVP) — всегда |
 | Покрытие тестами | ≥75% |
 | Архитектура | DDD/Hexagonal, HTTP-only доступ к данным |
-| Пайплайн | 6 этапов (0-5), 6 ворот + 4 sub-gates (Этап 5) |
+| Пайплайн | 6 этапов (0-5), 10 ворот (6 main + 3 sub-gates Stage 5 Full + 1 Quick: DOCUMENTED) |
 | Типы сервисов | Business API, Data API, Bot, Worker |
 
 ---
@@ -531,7 +534,7 @@ ls templates/documents/*.md 2>/dev/null | wc -l
 # ========================================
 echo ""
 echo "=== Структура knowledge/ ==="
-for dir in architecture services quality infrastructure integrations; do
+for dir in architecture infrastructure integrations pipeline quality security services; do
   if [ -d "knowledge/$dir" ]; then
     count=$(find "knowledge/$dir" -name "*.md" | wc -l)
     echo "✅ $dir/ ($count файлов)"
@@ -649,6 +652,7 @@ done
 **Ожидаемые результаты**:
 - Все 6 этапов (0-5) описаны во всех трёх файлах
 - Номера этапов совпадают с командами
+- **Примечание**: Stage 5 был консолидирован — 4 команды (/review, /test, /validate, /deploy) объединены в /aidd-finalize (alias: /aidd-validate)
 - Этап 5 консолидирует 4 шага: Review → Test → Validate → Deploy
 
 | Этап | Команда (старая → новая) | Агент | Ворота |
@@ -682,7 +686,7 @@ declare -A ROLE_STAGES=(
   ["planner"]="3"       # алиас architect
   ["implementer"]="4"   # или coder.md (дубликат)
   ["coder"]="4"         # алиас implementer
-  ["validator"]="5"     # консолидирует reviewer + qa + validation
+  ["validator"]="5"     # консолидирует reviewer + qa (роли из v1), объединяет 4-шаговый процесс Quality & Deploy
 )
 
 for role in "${!ROLE_STAGES[@]}"; do
@@ -763,21 +767,21 @@ echo "Примечание: Migration mode v2.4 — команды и роли �
 # ========================================
 # Определение ожидаемых ворот
 # ========================================
-# 6 основных ворот + 4 sub-gates (Этап 5 Full) + 1 Quick режим = 10 ворот
+# 10 ворот всего: 6 main + 3 sub-gates (Stage 5 Full) + 1 Quick
 EXPECTED_GATES=(
   "BOOTSTRAP_READY"      # Этап 0
   "PRD_READY"            # Этап 1
   "RESEARCH_DONE"        # Этап 2
   "PLAN_APPROVED"        # Этап 3
   "IMPLEMENT_OK"         # Этап 4
-  "REVIEW_OK"            # Этап 5, sub-gate 1 (Full)
-  "QA_PASSED"            # Этап 5, sub-gate 2 (Full)
-  "ALL_GATES_PASSED"     # Этап 5, sub-gate 3 (Full)
-  "DEPLOYED"             # Этап 5, sub-gate 4 (Full)
-  "DOCUMENTED"           # Этап 5, Quick режим (вместо DEPLOYED)
+  "REVIEW_OK"            # Этап 5, sub-gate 1 (Full pipeline)
+  "QA_PASSED"            # Этап 5, sub-gate 2 (Full pipeline)
+  "ALL_GATES_PASSED"     # Этап 5, sub-gate 3 (Full pipeline)
+  "DEPLOYED"             # Этап 5, финальные ворота (Full pipeline)
+  "DOCUMENTED"           # Этап 5, финальные ворота (Quick mode, минует sub-gates)
 )
 
-echo "=== Проверка 10 ворот (6 основных + 4 sub-gates + 1 Quick) ==="
+echo "=== Проверка 10 ворот (6 main + 3 sub-gates + 2 final: DEPLOYED/DOCUMENTED) ==="
 echo ""
 
 # ========================================
@@ -819,7 +823,8 @@ for file in CLAUDE.md workflow.md docs/NAVIGATION.md; do
 done
 
 echo ""
-echo "Примечание: Ворота DOCUMENTED — для Quick режима /aidd-finalize (--mode=quick)"
+echo "Примечание: Quick mode (/aidd-finalize --mode=quick) минует sub-gates (REVIEW_OK/QA_PASSED/ALL_GATES_PASSED)"
+echo "             и завершается воротами DOCUMENTED вместо DEPLOYED (draft completion report)"
 ```
 
 ---
@@ -1015,11 +1020,11 @@ echo "=== Шаблоны документов ==="
 # Consolidation: review/qa/validation-report → completion-report-template.md
 TEMPLATES=(
   "prd-template.md:PRD:Этап 1"
+  "research-report-template.md:Research Report:Этап 2"
   "architecture-template.md:Архитектура:Этап 3 (CREATE)"
   "feature-plan-template.md:План фичи:Этап 3 (FEATURE)"
   "implementation-plan-template.md:План реализации:Этап 3"
   "completion-report-template.md:Completion Report:Этап 5 (заменяет review/qa/validation-report)"
-  "rtm-template.md:RTM:Все этапы"
   "tasklist-template.md:Список задач:Опционально"
   "pipeline-state-template.json:Состояние пайплайна:Этап 0"
 )
