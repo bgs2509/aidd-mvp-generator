@@ -481,38 +481,40 @@ done
 
 ## Таблица команд и ворот
 
-| # | Этап | Команда | Агент | Ворота |
-|---|------|---------|-------|--------|
-| 0 | Bootstrap | `/aidd-init` | — | `BOOTSTRAP_READY` |
-| 1 | Идея | `/aidd-idea` | Аналитик | `PRD_READY` |
-| 2 | Исследование | `/aidd-research` | Исследователь | `RESEARCH_DONE` |
-| 3 | Архитектура | `/aidd-plan` | Архитектор | `PLAN_APPROVED` |
-| 4 | Реализация | `/aidd-generate` | Реализатор | `IMPLEMENT_OK` |
-| 5 | Ревью | `/aidd-review` | Ревьюер | `REVIEW_OK` |
-| 6 | QA | `/aidd-test` | QA | `QA_PASSED` |
-| 7 | Валидация | `/aidd-validate` | Валидатор | `ALL_GATES_PASSED` |
-| 8 | Деплой | `/aidd-deploy` | Валидатор | `DEPLOYED` |
+| # | Этап | Команда (старая → новая) | Агент | Ворота | Артефакт (v2 → v3) |
+|---|------|--------------------------|-------|--------|-------------------|
+| 0 | Bootstrap | `/aidd-init` | — | `BOOTSTRAP_READY` | Структура ЦП |
+| 1 | Идея | `/aidd-idea` → `/aidd-analyze` | Аналитик | `PRD_READY` | `prd/{name}-prd.md` → `_analysis/{name}.md` |
+| 2 | Исследование | `/aidd-research` | Исследователь | `RESEARCH_DONE` | `research/{name}-research.md` → `_research/{name}.md` |
+| 3 | Архитектура (CREATE) | `/aidd-plan` | Архитектор → Планировщик | `PLAN_APPROVED` | `architecture/{name}-plan.md` → `_plans/mvp/{name}.md` |
+| 3 | Архитектура (FEATURE) | `/aidd-feature-plan` → `/aidd-plan-feature` | Архитектор → Планировщик | `PLAN_APPROVED` | `plans/{feature}-plan.md` → `_plans/features/{name}.md` |
+| 4 | Реализация | `/aidd-generate` → `/aidd-code` | Реализатор → Программист | `IMPLEMENT_OK` | `services/`, тесты |
+| 5 | Quality & Deploy | `/aidd-finalize` → `/aidd-validate` | Валидатор | **Full**: `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED` <br> **Quick**: `DOCUMENTED` | `reports/{name}-completion.md` → `_validation/{name}.md` |
 
-> **Примечание (v2.4+)**: Команды получили новые алиасы для унификации:
-> - `/aidd-idea` → `/aidd-analyze` (оба работают)
-> - `/aidd-plan` → без изменений
-> - `/aidd-feature-plan` → `/aidd-plan-feature` (оба работают)
-> - `/aidd-generate` → `/aidd-code` (оба работают)
-> - `/aidd-finalize` → `/aidd-validate` (оба работают)
+> **Migration Mode (v2.4+)**: Все команды доступны в двух вариантах — обе работают одинаково. Артефакты создаются в разных папках в зависимости от `naming_version` в `.pipeline-state.json`.
 >
-> В продакшене команда `/aidd-finalize` (или `/aidd-validate`) объединяет этапы 5-8
-> в один Quality & Deploy цикл. Детальные команды выше показаны для понимания процесса.
+> **Примечание**: `/aidd-finalize` (или `/aidd-validate`) поддерживает два режима:
+> - **Полный (рекомендуется)**: Review → Test → Validate → Deploy → Production-ready MVP
+> - **Быстрый**: Только DRAFT Completion Report + Static Analysis → для документации или незавершённых фич
+>
+> Файлы команд: [docs/INDEX.md](docs/INDEX.md#slash-команды)
 
-### Почему 9 этапов (0-8) и 7 ролей (P-033)
+### Почему 6 этапов (0-5) и 5 ролей
 
-Валидатор выполняет два этапа:
-- **Этап 7 (Валидация)**: Проверка всех ворот и артефактов
-- **Этап 8 (Деплой)**: Запуск приложения
+> **Историческая справка**: До v2.0 пайплайн включал 9 этапов (0-8) с отдельными
+> командами для Review, Test, Validate, Deploy. В v2.0 эти этапы были объединены
+> в один — Quality & Deploy (/aidd-finalize).
 
-Это логично, так как:
-1. Валидатор уже имеет полный контекст всех артефактов
-2. Деплой — логическое продолжение валидации
-3. Оба этапа работают с финальным состоянием проекта
+Валидатор в v2.0 выполняет объединённый Этап 5 (Quality & Deploy):
+- **Шаг 1**: Code Review → REVIEW_OK
+- **Шаг 2**: Testing → QA_PASSED
+- **Шаг 3**: Validation → ALL_GATES_PASSED
+- **Шаг 4**: Deploy + Completion Report → DEPLOYED
+
+Преимущества объединения:
+- Единый Completion Report вместо 4 отчётов
+- -3 файла артефактов, -900 строк кода команд
+- Single Source of Truth для AI
 
 ---
 
@@ -529,18 +531,17 @@ done
     ├── prd/
     │   └── {name}-prd.md            # Этап 1: PRD документ
     │
+    ├── research/
+    │   └── {name}-research.md       # Этап 2: Research Report
+    │
     ├── architecture/
-    │   └── {name}-plan.md           # Этап 3: Архитектурный план
+    │   └── {name}-plan.md           # Этап 3: Архитектурный план (CREATE)
     │
     ├── plans/
     │   └── {feature}-plan.md        # Этап 3: План фичи (FEATURE)
     │
-    ├── reports/
-    │   ├── review-report.md         # Этап 5: Отчёт ревью
-    │   ├── qa-report.md             # Этап 6: Отчёт QA
-    │   └── validation-report.md     # Этап 7: Отчёт валидации
-    │
-    └── rtm.md                       # Матрица трассировки требований
+    └── reports/
+        └── {date}_{FID}_{slug}-completion.md  # Этап 5: Единый Completion Report
 ```
 
 ---
@@ -577,30 +578,15 @@ done
 # Создаются: infrastructure, data-api, business-api, bot
 # Ворота: IMPLEMENT_OK ✓
 
-# 5. Ревью
-/aidd-review
+# 5. Quality & Deploy
+/aidd-finalize
 
-# Агент: Ревьюер проверяет код
-# Ворота: REVIEW_OK ✓
-
-# 6. QA
-/aidd-test
-
-# Агент: QA запускает тесты
-# Coverage: 78% ✓
-# Ворота: QA_PASSED ✓
-
-# 7. Валидация
-/aidd-validate
-
-# Агент: Валидатор проверяет все артефакты
-# Ворота: ALL_GATES_PASSED ✓
-
-# 8. Деплой
-/aidd-deploy
-
-# Агент: Запускает docker-compose
-# Ворота: DEPLOYED ✓
+# Агент: Валидатор выполняет 4 шага
+# ✓ Step 1/4: Code Review → REVIEW_OK
+# ✓ Step 2/4: Testing (Coverage 82%) → QA_PASSED
+# ✓ Step 3/4: Validation → ALL_GATES_PASSED
+# ✓ Step 4/4: Deploy + Completion Report → DEPLOYED
+# ✓ Completion Report: ai-docs/docs/reports/2025-12-23_F001_table-booking-completion.md
 
 # Готово! MVP запущен за ~10 минут
 ```
@@ -739,10 +725,8 @@ def check_preconditions(command: str) -> bool:
         "/aidd-plan": ["PRD_READY", "RESEARCH_DONE"],
         "/aidd-feature-plan": ["PRD_READY", "RESEARCH_DONE"],
         "/aidd-generate": ["PLAN_APPROVED"],
-        "/aidd-review": ["IMPLEMENT_OK"],
-        "/aidd-test": ["REVIEW_OK"],
-        "/aidd-validate": ["QA_PASSED"],
-        "/aidd-deploy": ["ALL_GATES_PASSED"]
+        "/aidd-finalize": ["IMPLEMENT_OK"],  # Full mode - требует реализации
+        # Quick mode (/aidd-finalize --quick) - без предусловий
     }
 
     state = read_json(".pipeline-state.json")
@@ -767,10 +751,8 @@ def check_preconditions(command: str) -> bool:
 | `/aidd-plan` | PRD_READY, RESEARCH_DONE | "Сначала выполните /aidd-research" |
 | `/aidd-feature-plan` | PRD_READY, RESEARCH_DONE | "Сначала выполните /aidd-research" |
 | `/aidd-generate` | PLAN_APPROVED | "Сначала утвердите план" |
-| `/aidd-review` | IMPLEMENT_OK | "Сначала выполните /aidd-generate" |
-| `/aidd-test` | REVIEW_OK | "Сначала выполните /aidd-review" |
-| `/aidd-validate` | QA_PASSED | "Сначала выполните /aidd-test" |
-| `/aidd-deploy` | ALL_GATES_PASSED | "Сначала выполните /aidd-validate" |
+| `/aidd-finalize` (Full) | IMPLEMENT_OK | "Сначала выполните /aidd-generate" |
+| `/aidd-finalize` (Quick) | — | Создаёт DRAFT отчёт без предусловий |
 
 ---
 
@@ -925,14 +907,14 @@ def handle_gate_failure(gate: str, reason: str) -> Action:
 
 **Пример восстановления**:
 ```
-/aidd-validate
-→ ❌ QA_PASSED: Coverage 68% (требуется ≥75%)
+/aidd-finalize
+→ ❌ Step 2/4: Testing failed (Coverage 68%, требуется ≥75%)
 → Автоматическое действие: Добавить тесты
 [AI добавляет тесты]
-/aidd-test
-→ ✓ QA_PASSED: Coverage 76%
-/aidd-validate
-→ ✓ ALL_GATES_PASSED
+/aidd-finalize
+→ ✓ Step 2/4: Testing passed (Coverage 76%)
+→ ✓ Step 3/4: Validation → ALL_GATES_PASSED
+→ ✓ Step 4/4: Deploy → DEPLOYED
 ```
 
 **Принципы восстановления**:
@@ -1051,12 +1033,9 @@ cd booking-service/
 # - Интеграция с BookingService
 # - Новый HTTP клиент для email
 
-# 5-8. Генерация, ревью, QA, деплой
+# 4-5. Генерация и финализация
 /aidd-generate
-/aidd-review
-/aidd-test
-/aidd-validate
-/aidd-deploy
+/aidd-finalize
 ```
 
 ### Маркеры режима FEATURE
@@ -1091,7 +1070,7 @@ AI определяет режим FEATURE при наличии:
 │    │  │     ├── /aidd-research                                          │
 │    │  │     ├── /aidd-plan                                              │
 │    │  │     ├── /aidd-generate                                          │
-│    │  │     └── /aidd-deploy ──────────────▶ DEPLOYED                   │
+│    │  │     └── /aidd-finalize ───────────▶ DEPLOYED                   │
 │    │  │                                                                 │
 │    │  └── feature/F043-payments ──────────────────────▶ merge           │
 │    │        ├── /aidd-idea      (параллельно с F042!)                  │
@@ -1154,7 +1133,7 @@ def get_current_feature_context(state: dict) -> tuple[str, dict] | None:
 
 ### Завершение фичи
 
-После `/aidd-deploy` фича переносится из `active_pipelines` в `features_registry`:
+После `/aidd-finalize` фича переносится из `active_pipelines` в `features_registry`:
 
 ```python
 def complete_feature_deploy(state: dict, fid: str):
