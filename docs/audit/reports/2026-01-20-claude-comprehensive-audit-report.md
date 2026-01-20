@@ -918,9 +918,9 @@ done | head -5
 
 ## 📚 Связанные документы
 
-- **Шаблон аудита**: [docs/audit/templates/comprehensive-audit.md](docs/audit/templates/comprehensive-audit.md)
-- **Главная точка входа**: [CLAUDE.md](CLAUDE.md)
-- **9-этапный процесс**: [workflow.md](workflow.md)
-- **Соглашения**: [conventions.md](conventions.md)
-- **Индекс документации**: [docs/INDEX.md](docs/INDEX.md)
-- **Навигационная матрица**: [docs/NAVIGATION.md](docs/NAVIGATION.md)
+- **Шаблон аудита**: [docs/audit/templates/comprehensive-audit.md](../templates/comprehensive-audit.md)
+- **Главная точка входа**: [CLAUDE.md](../../../CLAUDE.md)
+- **9-этапный процесс**: [workflow.md](../../../workflow.md)
+- **Соглашения**: [conventions.md](../../../conventions.md)
+- **Индекс документации**: [docs/INDEX.md](../../INDEX.md)
+- **Навигационная матрица**: [docs/NAVIGATION.md](../../NAVIGATION.md)

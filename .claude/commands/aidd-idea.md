@@ -406,7 +406,7 @@ def get_current_feature_context(state: dict) -> tuple[str, dict] | None:
 ```markdown
 # В ai-docs/docs/FEATURES.md добавить строку:
 
-| F001 | Бронирование столиков | IN_PROGRESS | 2024-12-23 | — | [PRD](../prd/2024-12-23_F001_table-booking-prd.md) |
+| F001 | Бронирование столиков | IN_PROGRESS | 2024-12-23 | — | `prd/2024-12-23_F001_table-booking-prd.md` |
 ```
 
 ### Обновление .pipeline-state.json (v2)
