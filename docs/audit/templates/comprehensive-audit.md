@@ -125,11 +125,13 @@ done
 # Если любой отсутствует → КРИТИЧЕСКАЯ ПРОБЛЕМА (AI не может работать)
 ```
 
-### Smoke Test 6: 🚨 CRITICAL — 7 ролей AI-агентов
+### Smoke Test 6: 🚨 CRITICAL — 5 базовых ролей AI-агентов (+ алиасы и библиотеки)
 
 ```bash
-echo "=== SMOKE TEST 6: 7 ролей AI-агентов ==="
-ROLES=(analyst researcher architect implementer reviewer qa validator)
+echo "=== SMOKE TEST 6: 5 базовых ролей AI-агентов ==="
+# Migration mode v2.4: роли доступны в двух файлах (дубликаты)
+# Также проверяем библиотеки инструкций (не роли, но важные компоненты)
+ROLES=(analyst researcher architect planner implementer coder validator code-review-library testing-library)
 missing=0
 for role in "${ROLES[@]}"; do
   if [ -f ".claude/agents/$role.md" ]; then
@@ -139,28 +141,32 @@ for role in "${ROLES[@]}"; do
     missing=$((missing + 1))
   fi
 done
-echo "Итого: $((7 - missing))/7 ролей"
-# Ожидание: 7/7
-# Если < 7 → КРИТИЧЕСКАЯ ПРОБЛЕМА (пайплайн неполный)
+echo "Итого: $((9 - missing))/9 файлов"
+echo "(5 базовых ролей + дубликаты architect/planner, implementer/coder + 2 библиотеки)"
+# Ожидание: 9/9 файлов
+# Если < 9 → КРИТИЧЕСКАЯ ПРОБЛЕМА (пайплайн неполный или migration mode не завершён)
 ```
 
-### Smoke Test 7: 🚨 CRITICAL — 10 slash-команд
+### Smoke Test 7: 🚨 CRITICAL — 6 уникальных команд (+ алиасы для migration mode)
 
 ```bash
-echo "=== SMOKE TEST 7: 10 Slash-команд ==="
-COMMANDS=(init idea research plan feature-plan generate review test validate deploy)
+echo "=== SMOKE TEST 7: Slash-команды пайплайна ==="
+# Migration mode v2.4: команды доступны в двух вариантах (старые/новые названия)
+# Consolidation: review, test, validate, deploy → /aidd-finalize (/aidd-validate)
+COMMANDS=(init idea analyze research plan feature-plan plan-feature generate code finalize validate)
 missing=0
 for cmd in "${COMMANDS[@]}"; do
-  if [ -f ".claude/commands/$cmd.md" ]; then
-    echo "✅ /$cmd"
+  if [ -f ".claude/commands/aidd-$cmd.md" ]; then
+    echo "✅ /aidd-$cmd"
   else
-    echo "🚨 MISSING: /$cmd"
+    echo "🚨 MISSING: /aidd-$cmd"
     missing=$((missing + 1))
   fi
 done
-echo "Итого: $((10 - missing))/10 команд"
-# Ожидание: 10/10
-# Если < 10 → КРИТИЧЕСКАЯ ПРОБЛЕМА (пайплайн неполный)
+echo "Итого: $((11 - missing))/11 файлов команд"
+echo "(6 уникальных команд: init, idea/analyze, research, plan/feature-plan/plan-feature, generate/code, finalize/validate)"
+# Ожидание: 11/11 файлов (дубликаты — норма в migration mode)
+# Если < 11 → КРИТИЧЕСКАЯ ПРОБЛЕМА (пайплайн неполный или migration mode не завершён)
 ```
 
 ### Smoke Test 8: 🚨 CRITICAL — 5 шаблонов сервисов
@@ -187,9 +193,10 @@ echo "Итого: $((5 - missing))/5 шаблонов"
 
 ```bash
 echo "=== SMOKE TEST 9: Шаблоны документов ==="
+# Consolidation: review/qa/validation-report → completion-report-template.md
 TEMPLATES=(prd-template.md architecture-template.md feature-plan-template.md \
-           implementation-plan-template.md review-report-template.md \
-           qa-report-template.md validation-report-template.md rtm-template.md)
+           implementation-plan-template.md completion-report-template.md \
+           rtm-template.md)
 count=0
 for tpl in "${TEMPLATES[@]}"; do
   if [ -f "templates/documents/$tpl" ]; then
@@ -200,7 +207,8 @@ for tpl in "${TEMPLATES[@]}"; do
   fi
 done
 echo "Итого: $count/${#TEMPLATES[@]} шаблонов"
-# Ожидание: 8/8 (минимум)
+# Ожидание: 6/6 (минимум)
+# Примечание: Шаблоны review/qa/validation-report заменены на completion-report
 ```
 
 ### Smoke Test 10: 🚨 CRITICAL — Консистентность ворот (Gates)
@@ -208,18 +216,23 @@ echo "Итого: $count/${#TEMPLATES[@]} шаблонов"
 ```bash
 echo "=== SMOKE TEST 10: Консистентность ворот ==="
 echo "Ворота в CLAUDE.md:"
-grep -o "[A-Z_]*_READY\|[A-Z_]*_DONE\|[A-Z_]*_APPROVED\|[A-Z_]*_OK\|[A-Z_]*_PASSED\|DEPLOYED" CLAUDE.md 2>/dev/null | sort -u
+grep -o "[A-Z_]*_READY\|[A-Z_]*_DONE\|[A-Z_]*_APPROVED\|[A-Z_]*_OK\|[A-Z_]*_PASSED\|DEPLOYED\|DOCUMENTED" CLAUDE.md 2>/dev/null | sort -u
 
 echo ""
 echo "Ворота в workflow.md:"
-grep -o "[A-Z_]*_READY\|[A-Z_]*_DONE\|[A-Z_]*_APPROVED\|[A-Z_]*_OK\|[A-Z_]*_PASSED\|DEPLOYED" workflow.md 2>/dev/null | sort -u
+grep -o "[A-Z_]*_READY\|[A-Z_]*_DONE\|[A-Z_]*_APPROVED\|[A-Z_]*_OK\|[A-Z_]*_PASSED\|DEPLOYED\|DOCUMENTED" workflow.md 2>/dev/null | sort -u
 
 echo ""
 echo "Ворота в docs/NAVIGATION.md:"
-grep -o "[A-Z_]*_READY\|[A-Z_]*_DONE\|[A-Z_]*_APPROVED\|[A-Z_]*_OK\|[A-Z_]*_PASSED\|DEPLOYED" docs/NAVIGATION.md 2>/dev/null | sort -u
-# Ожидание: Все 9 ворот совпадают во всех файлах
-# BOOTSTRAP_READY, PRD_READY, RESEARCH_DONE, PLAN_APPROVED,
-# IMPLEMENT_OK, REVIEW_OK, QA_PASSED, ALL_GATES_PASSED, DEPLOYED
+grep -o "[A-Z_]*_READY\|[A-Z_]*_DONE\|[A-Z_]*_APPROVED\|[A-Z_]*_OK\|[A-Z_]*_PASSED\|DEPLOYED\|DOCUMENTED" docs/NAVIGATION.md 2>/dev/null | sort -u
+# Ожидание: 6 основных ворот + 4 sub-gates (Этап 5) + 1 Quick режим = 10 ворот
+# Этап 0: BOOTSTRAP_READY
+# Этап 1: PRD_READY
+# Этап 2: RESEARCH_DONE
+# Этап 3: PLAN_APPROVED
+# Этап 4: IMPLEMENT_OK
+# Этап 5 (Full): REVIEW_OK → QA_PASSED → ALL_GATES_PASSED → DEPLOYED
+# Этап 5 (Quick): DOCUMENTED (вместо DEPLOYED)
 ```
 
 ### Smoke Test 11: Режимы CREATE/FEATURE
@@ -251,6 +264,42 @@ ls -d knowledge/*/ 2>/dev/null | xargs -I{} basename {}
 # Ожидание: architecture, services, quality, infrastructure, integrations
 ```
 
+### Smoke Test 13: 🚨 CRITICAL — Поддержка naming_version (Migration mode v2.4)
+
+```bash
+echo "=== SMOKE TEST 13: Поддержка naming_version ==="
+echo "Проверка команд на поддержку naming_version:"
+for cmd in analyze research plan plan-feature code validate; do
+  if [ -f ".claude/commands/aidd-$cmd.md" ]; then
+    if grep -q "naming_version" ".claude/commands/aidd-$cmd.md" 2>/dev/null; then
+      echo "✅ /aidd-$cmd поддерживает naming_version"
+    else
+      echo "⚠️ /aidd-$cmd не упоминает naming_version"
+    fi
+  else
+    echo "❌ MISSING: /aidd-$cmd"
+  fi
+done
+
+echo ""
+echo "Проверка dual naming в документации:"
+# Команды должны упоминать оба варианта названий
+if grep -qi "migration mode\|naming convention\|v2.4" CLAUDE.md 2>/dev/null; then
+  echo "✅ CLAUDE.md описывает migration mode"
+else
+  echo "⚠️ CLAUDE.md не описывает migration mode"
+fi
+
+echo ""
+echo "Проверка структуры артефактов (v2 vs v3):"
+# Документация должна упоминать обе структуры папок
+v2_folders="prd/ architecture/ plans/ reports/ research/"
+v3_folders="_analysis/ _research/ _plans/mvp/ _plans/features/ _validation/"
+echo "v2 (default): $v2_folders"
+echo "v3 (после миграции): $v3_folders"
+# Ожидание: Все команды поддерживают naming_version, CLAUDE.md описывает migration mode
+```
+
 ### Таблица решений на основе Smoke Tests
 
 | Smoke Test | Результат | Действие |
@@ -258,10 +307,11 @@ ls -d knowledge/*/ 2>/dev/null | xargs -I{} basename {}
 | Test 3 (Legacy) | > 0 | **СТОП. КРИТИЧЕСКАЯ ПРОБЛЕМА.** Сообщить немедленно. |
 | Test 4 (Битые ссылки) | > 0 | **HIGH PRIORITY.** Отметить, продолжить с полной валидацией. |
 | Test 5 (Stage 0) | Любой missing | **CRITICAL.** AI-агенты не могут работать. |
-| Test 6 (Роли) | < 7 | **CRITICAL.** Пайплайн неполный. |
-| Test 7 (Команды) | < 10 | **CRITICAL.** Пайплайн неполный. |
+| Test 6 (Роли) | < 9 файлов | **CRITICAL.** Пайплайн неполный или migration mode не завершён. |
+| Test 7 (Команды) | < 11 файлов | **CRITICAL.** Пайплайн неполный или migration mode не завершён. |
 | Test 8 (Сервисы) | < 5 | **CRITICAL.** Шаблоны неполные. |
 | Test 10 (Ворота) | Несовпадение | **CRITICAL.** Консистентность нарушена. |
+| Test 13 (naming_version) | Команды без поддержки | **HIGH PRIORITY.** Migration mode неполный. |
 | Все тесты | ✅ | Продолжить с полным 16-objective аудитом. |
 
 ---
@@ -288,7 +338,7 @@ ls -d knowledge/*/ 2>/dev/null | xargs -I{} basename {}
 | Уровень зрелости | Level 2 (MVP) — всегда |
 | Покрытие тестами | ≥75% |
 | Архитектура | DDD/Hexagonal, HTTP-only доступ к данным |
-| Пайплайн | 9 этапов (0-8), 9 ворот |
+| Пайплайн | 6 этапов (0-5), 6 ворот + 4 sub-gates (Этап 5) |
 | Типы сервисов | Business API, Data API, Bot, Worker |
 
 ---
@@ -357,6 +407,18 @@ if [ "$BROKEN_COUNT" -gt 0 ]; then
 fi
 
 # ========================================
+# ШАГ 4: Проверка паттернов v3 (Migration mode)
+# ========================================
+echo ""
+echo "Шаг 4: Проверка ссылок на папки v3 (naming migration)..."
+V3_PATTERNS=("_analysis/" "_research/" "_plans/mvp/" "_plans/features/" "_validation/")
+for pattern in "${V3_PATTERNS[@]}"; do
+  count=$(grep -rc "$pattern" . --include="*.md" 2>/dev/null | awk -F: '{sum+=$2} END {print sum}')
+  echo "Упоминания $pattern: $count"
+done
+# Если naming_version=v3 используется, паттерны v3 должны быть в документации
+
+# ========================================
 # ИТОГ
 # ========================================
 echo ""
@@ -364,11 +426,13 @@ echo "=== ИТОГ ВАЛИДАЦИИ ССЫЛОК ==="
 echo "Всего ссылок: $TOTAL_LINKS"
 echo "Legacy ссылок: $LEGACY_COUNT (ДОЛЖНО БЫТЬ 0)"
 echo "Битых ссылок: $BROKEN_COUNT (ДОЛЖНО БЫТЬ 0)"
+echo "Примечание: Папки v3 (_analysis/, _validation/, и т.д.) — часть naming migration v2.4"
 ```
 
 **Ожидаемые результаты**:
 - Legacy ссылки: **0** (если >0 → CRITICAL)
 - Битые ссылки: **0** (если >0 → HIGH)
+- v3 паттерны: Должны быть упомянуты если migration mode описан
 
 **Приоритизация**:
 - Legacy ссылки: **CRITICAL** (блокирует AI-агентов, путает пользователей)
@@ -536,9 +600,9 @@ echo "=== Проверка языка (русский/английский) ==="
 
 ---
 
-### Objective 6: Консистентность 9 этапов (0-8) ⚡ ОБЯЗАТЕЛЬНЫЕ КОМАНДЫ
+### Objective 6: Консистентность 6 этапов (0-5) ⚡ ОБЯЗАТЕЛЬНЫЕ КОМАНДЫ
 
-**Цель**: Убедиться, что все 9 этапов пайплайна описаны консистентно.
+**Цель**: Убедиться, что все 6 этапов пайплайна описаны консистентно.
 
 **КОМАНДЫ ВАЛИДАЦИИ**:
 
@@ -547,7 +611,7 @@ echo "=== Проверка языка (русский/английский) ==="
 # Проверка описания этапов в CLAUDE.md
 # ========================================
 echo "=== Этапы в CLAUDE.md ==="
-for stage in 0 1 2 3 4 5 6 7 8; do
+for stage in 0 1 2 3 4 5; do
   if grep -q "Этап $stage\|Stage $stage\|этап $stage" CLAUDE.md 2>/dev/null; then
     echo "✅ Этап $stage"
   else
@@ -560,7 +624,7 @@ done
 # ========================================
 echo ""
 echo "=== Этапы в workflow.md ==="
-for stage in 0 1 2 3 4 5 6 7 8; do
+for stage in 0 1 2 3 4 5; do
   if grep -q "Этап $stage\|Stage $stage\|этап $stage" workflow.md 2>/dev/null; then
     echo "✅ Этап $stage"
   else
@@ -573,7 +637,7 @@ done
 # ========================================
 echo ""
 echo "=== Этапы в NAVIGATION.md ==="
-for stage in 0 1 2 3 4 5 6 7 8; do
+for stage in 0 1 2 3 4 5; do
   if grep -q "Этап $stage\|Stage $stage\|этап $stage" docs/NAVIGATION.md 2>/dev/null; then
     echo "✅ Этап $stage"
   else
@@ -583,23 +647,24 @@ done
 ```
 
 **Ожидаемые результаты**:
-- Все 9 этапов (0-8) описаны во всех трёх файлах
+- Все 6 этапов (0-5) описаны во всех трёх файлах
 - Номера этапов совпадают с командами
+- Этап 5 консолидирует 4 шага: Review → Test → Validate → Deploy
 
-| Этап | Команда | Агент | Ворота |
-|------|---------|-------|--------|
+| Этап | Команда (старая → новая) | Агент | Ворота |
+|------|--------------------------|-------|--------|
 | 0 | /aidd-init | — | BOOTSTRAP_READY |
-| 1 | /aidd-idea | analyst | PRD_READY |
+| 1 | /aidd-idea → /aidd-analyze | analyst | PRD_READY |
 | 2 | /aidd-research | researcher | RESEARCH_DONE |
-| 3 | /aidd-plan или /aidd-feature-plan | architect | PLAN_APPROVED |
-| 4 | /aidd-generate | implementer | IMPLEMENT_OK |
-| 5 | /aidd-finalize | validator | REVIEW_OK → QA_PASSED → ALL_GATES_PASSED → DEPLOYED |
+| 3 | /aidd-plan или /aidd-feature-plan → /aidd-plan-feature | architect → planner | PLAN_APPROVED |
+| 4 | /aidd-generate → /aidd-code | implementer → coder | IMPLEMENT_OK |
+| 5 | /aidd-finalize → /aidd-validate | validator | **Full**: REVIEW_OK → QA_PASSED → ALL_GATES_PASSED → DEPLOYED <br> **Quick**: DOCUMENTED |
 
 ---
 
-### Objective 7: Консистентность 7 ролей и 10 команд ⚡ ОБЯЗАТЕЛЬНЫЕ КОМАНДЫ
+### Objective 7: Консистентность 5 базовых ролей и 6 команд ⚡ ОБЯЗАТЕЛЬНЫЕ КОМАНДЫ
 
-**Цель**: Убедиться, что все роли и команды согласованы.
+**Цель**: Убедиться, что все роли и команды согласованы (с учётом migration mode и consolidation).
 
 **КОМАНДЫ ВАЛИДАЦИИ**:
 
@@ -607,16 +672,17 @@ done
 # ========================================
 # Проверка соответствия ролей и этапов
 # ========================================
-echo "=== Соответствие ролей этапам ==="
+echo "=== Соответствие ролей этапам (Migration mode v2.4) ==="
 
+# 5 базовых ролей (некоторые доступны в двух файлах)
 declare -A ROLE_STAGES=(
   ["analyst"]="1"
   ["researcher"]="2"
-  ["architect"]="3"
-  ["implementer"]="4"
-  ["reviewer"]="5"
-  ["qa"]="6"
-  ["validator"]="7,8"
+  ["architect"]="3"     # или planner.md (дубликат)
+  ["planner"]="3"       # алиас architect
+  ["implementer"]="4"   # или coder.md (дубликат)
+  ["coder"]="4"         # алиас implementer
+  ["validator"]="5"     # консолидирует reviewer + qa + validation
 )
 
 for role in "${!ROLE_STAGES[@]}"; do
@@ -632,7 +698,7 @@ for role in "${!ROLE_STAGES[@]}"; do
       fi
     done
   else
-    echo "❌ $role.md не найден"
+    echo "⚠️ $role.md не найден (может быть алиасом)"
   fi
 done
 
@@ -640,27 +706,29 @@ done
 # Проверка соответствия команд и этапов
 # ========================================
 echo ""
-echo "=== Соответствие команд этапам ==="
+echo "=== Соответствие команд этапам (Migration mode + Consolidation) ==="
 
+# 6 уникальных команд (некоторые доступны в двух вариантах)
 declare -A CMD_STAGES=(
   ["init"]="0"
-  ["idea"]="1"
+  ["idea"]="1"          # или analyze (дубликат)
+  ["analyze"]="1"       # алиас idea
   ["research"]="2"
   ["plan"]="3"
-  ["feature-plan"]="3"
-  ["generate"]="4"
-  ["review"]="5"
-  ["test"]="6"
-  ["validate"]="7"
-  ["deploy"]="8"
+  ["feature-plan"]="3"  # или plan-feature (дубликат)
+  ["plan-feature"]="3"  # алиас feature-plan
+  ["generate"]="4"      # или code (дубликат)
+  ["code"]="4"          # алиас generate
+  ["finalize"]="5"      # или validate (дубликат) — консолидирует review/test/validate/deploy
+  ["validate"]="5"      # алиас finalize
 )
 
 for cmd in "${!CMD_STAGES[@]}"; do
   stage="${CMD_STAGES[$cmd]}"
-  if [ -f ".claude/commands/$cmd.md" ]; then
-    echo "✅ /$cmd → Этап $stage"
+  if [ -f ".claude/commands/aidd-$cmd.md" ]; then
+    echo "✅ /aidd-$cmd → Этап $stage"
   else
-    echo "❌ /$cmd не найден"
+    echo "⚠️ /aidd-$cmd не найден (может быть алиасом)"
   fi
 done
 
@@ -669,22 +737,25 @@ done
 # ========================================
 echo ""
 echo "=== Перекрёстные ссылки команда→роль ==="
-for cmd in idea research plan feature-plan generate review test validate deploy; do
-  if [ -f ".claude/commands/$cmd.md" ]; then
-    if grep -q "agents/" ".claude/commands/$cmd.md" 2>/dev/null; then
-      echo "✅ /$cmd ссылается на роль"
+for cmd in idea analyze research plan feature-plan plan-feature generate code finalize validate; do
+  if [ -f ".claude/commands/aidd-$cmd.md" ]; then
+    if grep -q "agents/" ".claude/commands/aidd-$cmd.md" 2>/dev/null; then
+      echo "✅ /aidd-$cmd ссылается на роль"
     else
-      echo "⚠️ /$cmd не ссылается на роль"
+      echo "⚠️ /aidd-$cmd не ссылается на роль"
     fi
   fi
 done
+
+echo ""
+echo "Примечание: Migration mode v2.4 — команды и роли доступны в двух вариантах (старые/новые названия)"
 ```
 
 ---
 
-### Objective 8: Консистентность 9 ворот (Gates) ⚡ ОБЯЗАТЕЛЬНЫЕ КОМАНДЫ
+### Objective 8: Консистентность ворот (Gates) ⚡ ОБЯЗАТЕЛЬНЫЕ КОМАНДЫ
 
-**Цель**: Убедиться, что все 9 ворот описаны консистентно во всех файлах.
+**Цель**: Убедиться, что все ворота описаны консистентно во всех файлах.
 
 **КОМАНДЫ ВАЛИДАЦИИ**:
 
@@ -692,19 +763,21 @@ done
 # ========================================
 # Определение ожидаемых ворот
 # ========================================
+# 6 основных ворот + 4 sub-gates (Этап 5 Full) + 1 Quick режим = 10 ворот
 EXPECTED_GATES=(
-  "BOOTSTRAP_READY"
-  "PRD_READY"
-  "RESEARCH_DONE"
-  "PLAN_APPROVED"
-  "IMPLEMENT_OK"
-  "REVIEW_OK"
-  "QA_PASSED"
-  "ALL_GATES_PASSED"
-  "DEPLOYED"
+  "BOOTSTRAP_READY"      # Этап 0
+  "PRD_READY"            # Этап 1
+  "RESEARCH_DONE"        # Этап 2
+  "PLAN_APPROVED"        # Этап 3
+  "IMPLEMENT_OK"         # Этап 4
+  "REVIEW_OK"            # Этап 5, sub-gate 1 (Full)
+  "QA_PASSED"            # Этап 5, sub-gate 2 (Full)
+  "ALL_GATES_PASSED"     # Этап 5, sub-gate 3 (Full)
+  "DEPLOYED"             # Этап 5, sub-gate 4 (Full)
+  "DOCUMENTED"           # Этап 5, Quick режим (вместо DEPLOYED)
 )
 
-echo "=== Проверка 9 ворот ==="
+echo "=== Проверка 10 ворот (6 основных + 4 sub-gates + 1 Quick) ==="
 echo ""
 
 # ========================================
@@ -731,7 +804,7 @@ for gate in "${EXPECTED_GATES[@]}"; do
   if grep -q "$gate" docs/NAVIGATION.md 2>/dev/null; then
     echo "  ✅ NAVIGATION.md"
   else
-    echo "  ❌ NAVIGATION.md"
+    echo "  ⚠️ NAVIGATION.md (может отсутствовать для Quick режима)"
   fi
 done
 
@@ -741,9 +814,12 @@ done
 echo ""
 echo "=== СВОДКА ВОРОТ ==="
 for file in CLAUDE.md workflow.md docs/NAVIGATION.md; do
-  count=$(grep -o "BOOTSTRAP_READY\|PRD_READY\|RESEARCH_DONE\|PLAN_APPROVED\|IMPLEMENT_OK\|REVIEW_OK\|QA_PASSED\|ALL_GATES_PASSED\|DEPLOYED" "$file" 2>/dev/null | sort -u | wc -l)
-  echo "$file: $count/9 ворот"
+  count=$(grep -o "BOOTSTRAP_READY\|PRD_READY\|RESEARCH_DONE\|PLAN_APPROVED\|IMPLEMENT_OK\|REVIEW_OK\|QA_PASSED\|ALL_GATES_PASSED\|DEPLOYED\|DOCUMENTED" "$file" 2>/dev/null | sort -u | wc -l)
+  echo "$file: $count/10 ворот (ожидание: 9-10, DOCUMENTED может отсутствовать в старых файлах)"
 done
+
+echo ""
+echo "Примечание: Ворота DOCUMENTED — для Quick режима /aidd-finalize (--mode=quick)"
 ```
 
 ---
@@ -936,14 +1012,13 @@ done
 # ========================================
 echo "=== Шаблоны документов ==="
 
+# Consolidation: review/qa/validation-report → completion-report-template.md
 TEMPLATES=(
   "prd-template.md:PRD:Этап 1"
-  "architecture-template.md:Архитектура:Этап 3"
-  "feature-plan-template.md:План фичи:Этап 3 FEATURE"
+  "architecture-template.md:Архитектура:Этап 3 (CREATE)"
+  "feature-plan-template.md:План фичи:Этап 3 (FEATURE)"
   "implementation-plan-template.md:План реализации:Этап 3"
-  "review-report-template.md:Отчёт ревью:Этап 5"
-  "qa-report-template.md:Отчёт QA:Этап 6"
-  "validation-report-template.md:Отчёт валидации:Этап 7"
+  "completion-report-template.md:Completion Report:Этап 5 (заменяет review/qa/validation-report)"
   "rtm-template.md:RTM:Все этапы"
   "tasklist-template.md:Список задач:Опционально"
   "pipeline-state-template.json:Состояние пайплайна:Этап 0"
@@ -958,6 +1033,24 @@ for tpl_spec in "${TEMPLATES[@]}"; do
     echo "✅ $tpl_file ($tpl_name, $tpl_stage) — $lines строк"
   else
     echo "❌ MISSING: $tpl_file ($tpl_name, $tpl_stage)"
+  fi
+done
+
+# ========================================
+# Проверка устаревших шаблонов (не должны существовать)
+# ========================================
+echo ""
+echo "=== Проверка устаревших шаблонов (должны отсутствовать) ==="
+DEPRECATED=(
+  "review-report-template.md"
+  "qa-report-template.md"
+  "validation-report-template.md"
+)
+for deprecated in "${DEPRECATED[@]}"; do
+  if [ -f "templates/documents/$deprecated" ]; then
+    echo "⚠️ DEPRECATED: $deprecated (следует удалить, заменён на completion-report)"
+  else
+    echo "✅ $deprecated отсутствует (корректно)"
   fi
 done
 
