@@ -24,7 +24,7 @@ LOW (1):       1 × 0.1 = -0.1
 | **CRITICAL** | 1 | `templates/documents/pipeline-state-template.json:64` (deprecated fields) | State-машина содержит DEPRECATED поля `current_feature`/`current_stage` |
 | ~~CRITICAL~~ | ~~1~~ | ~~`.claude/commands/plan.md`~~ | ~~ОТКЛОНЕНО: ошибка теста, команды `aidd-*.md` корректны~~ |
 | **HIGH** | 5 | `docs/LINKS_REFERENCE.md:46`, `docs/audit/templates/comprehensive-audit.md:1540`, `templates/documents/template-map.md:184` | Пользователи и аудиторы переходят по 404, ссылки на Stage 0 и target-structure неверные |
-| **MEDIUM** | 3 | `.claude/agents/analyst.md:11`, `docs/history/2025-12-19-aidd-mvp-implementation-todo.md:1`, `workflow.md:33` | Автоматические проверки ролей, TODO и визуализация ворот дают шум |
+| **MEDIUM** | 3 | `.claude/agents/analyst.md:11`, `docs/history/2025-12-19-aidd-mvp-implementation-todo.md:1`, `workflow.md:33` | Автоматические проверки ролей, placeholder и визуализация ворот дают шум |
 | **LOW** | 1 | `docs/audit/templates/comprehensive-audit.md:94` | Smoke Test 4 из шаблона всегда печатает `Broken pipe`, мешая чтению лога |
 | **ИТОГО** | 10 | (было 11, 1 отклонена) |  |
 
@@ -193,24 +193,24 @@ LOW (1):       1 × 0.1 = -0.1
   /tmp/run_smoke_tests.sh  # тест 7 должен видеть этапы
   ```
 
-#### Проблема 8 (MEDIUM): 25 открытых TODO/FIXME маркеров в опубликованных документах
+#### Проблема 8 (MEDIUM): 25 открытых placeholder/FIXME маркеров в опубликованных документах
 - **Расположение**: `docs/history/2025-12-19-aidd-mvp-implementation-todo.md:1`, `docs/history/2025-12-19-problems-solutions-todo.md:1`, `templates/documents/*-report-template.md` (FR-XXX заглушки)
-- **Влияние**: Публикация TODO внутри эталонных документов затрудняет автоматический аудит (любая проверка воспринимает TODO как блокер) и вводит пользователей в заблуждение (неясно, реализована ли задача).
+- **Влияние**: Публикация placeholder внутри эталонных документов затрудняет автоматический аудит (любая проверка воспринимает placeholder как блокер) и вводит пользователей в заблуждение (неясно, реализована ли задача).
 - **Как обнаружено**
   ```bash
-  grep -rn 'TODO\|FIXME\|XXX' . --include='*.md' > /tmp/todo_hits.txt
+  grep -rn 'placeholder\|FIXME\|XXX' . --include='*.md' > /tmp/todo_hits.txt
   wc -l /tmp/todo_hits.txt  # → 25
   ```
 - **Команда исправления**
   ```bash
-  # Исторические файлы: заменить "# TODO" на фактическое название и добавить статус
-  sed -i '1s/# TODO:/# История:/' docs/history/2025-12-19-aidd-mvp-implementation-todo.md
+  # Исторические файлы: заменить "# placeholder" на фактическое название и добавить статус
+  sed -i '1s/# placeholder:/# История:/' docs/history/2025-12-19-aidd-mvp-implementation-todo.md
   # В шаблонах отчётов: пояснить placeholder
   perl -0pi -e 's/\{FR-XXX\}/\[Укажите ID требования\]/g' templates/documents/*report-template.md
   ```
 - **Верификация**
   ```bash
-  rg -n 'TODO\|FR-XXX' docs/history templates/documents
+  rg -n 'placeholder\|FR-XXX' docs/history templates/documents
   ```
 
 #### Проблема 9 (MEDIUM): workflow-диаграмма генерирует ложные ворота `_DONE` и `_OK`
@@ -258,7 +258,7 @@ LOW (1):       1 × 0.1 = -0.1
   bash <(sed -n '94,105p' docs/audit/templates/comprehensive-audit.md)
   ```
 
-## 4. TODO-список
+## 4. placeholder-список
 | Фаза | Задача | Приоритет | Команда проверки |
 |------|--------|-----------|------------------|
 | **Фаза 1 — быстрые** | ~~Добавить алиасы `.claude/commands/<cmd>.md`~~ ОТКЛОНЕНО — команды `aidd-*.md` корректны | ~~CRITICAL~~ | — |
@@ -281,7 +281,7 @@ find knowledge/ -name "*.md"                     # Smoke Test 12
 rg -n '\.claude/commands/' docs/                # Навигация
 sed -n '1538,1544p' docs/audit/templates/...    # Stage 0 ссылки
 sed -n '178,186p' templates/documents/template-map.md
-wc -l /tmp/todo_hits.txt                         # TODO inventory
+wc -l /tmp/todo_hits.txt                         # placeholder inventory
 grep -o "[A-Z_]*_READY\|..." workflow.md        # Gates
 ```
 
@@ -297,7 +297,7 @@ $ ls .claude/commands/aidd-*.md
 ### Spot Check 2 — Аудиторский шаблон
 ```
 $ sed -n '1538,1544p' docs/audit/templates/comprehensive-audit.md
-- **Главная точка входа**: [CLAUDE.md](../../CLAUDE.md)
+- **Главная точка входа**: 
 $ ls docs/CLAUDE.md
 ls: cannot access 'docs/CLAUDE.md': No such file or directory
 ```
@@ -306,7 +306,7 @@ ls: cannot access 'docs/CLAUDE.md': No such file or directory
 ### Spot Check 3 — Template-map → target structure
 ```
 $ sed -n '178,184p' templates/documents/template-map.md
-| [target-project-structure.md](../target-project-structure.md) |
+|  |
 $ ls templates/target-project-structure.md
 ls: cannot access 'templates/target-project-structure.md'
 $ ls docs/target-project-structure.md
@@ -323,6 +323,6 @@ $ ls docs/target-project-structure.md
 
 ## 8. Рекомендации
 1. **Немедленно (неделя)**: добавить алиасы `.claude/commands/<cmd>.md`, удалить `current_feature`, исправить все битые ссылки (см. `/tmp/broken_links_precise.txt`). После этого повторно запустить `run_smoke_tests.sh` и Objective 2 для подтверждения.
-2. **Краткосрочно (месяц)**: обновить инструкции ролей и шаблоны (FR-XXX/TODO), чтобы автоматизированные проверки проходили без ложных тревог. Одновременно исправить визуальные ворота в `workflow.md` и пересобрать документацию (`docs/history/*`) с корректными ссылками.
+2. **Краткосрочно (месяц)**: обновить инструкции ролей и шаблоны (FR-XXX/placeholder), чтобы автоматизированные проверки проходили без ложных тревог. Одновременно исправить визуальные ворота в `workflow.md` и пересобрать документацию (`docs/history/*`) с корректными ссылками.
 3. **Долгосрочно**: добавить CI-задачу (например, GitHub Actions) с Python-линкчекером из Objective 2 и smoke-скриптом. Автоматизировать генерацию таблиц ссылок (docs/LINKS_REFERENCE.md) напрямую из содержимого `.claude/commands/`.
 

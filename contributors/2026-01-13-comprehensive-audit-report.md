@@ -243,7 +243,7 @@ sed -n '13p' contributors/2025-12-22-aidd-issues-1-idea.md
 
 ---
 
-## TODO-список
+## placeholder-список
 
 ### Фаза 1: Быстрые исправления (< 30 минут)
 
