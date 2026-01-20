@@ -565,7 +565,7 @@ async def metrics():
 - [ ] Coverage ≥75%
 - [ ] Линтер проходит (`ruff check`)
 - [ ] Type checker проходит (`mypy`)
-- [ ] Нет TODO/FIXME в критичном коде
+- [ ] Нет placeholder/FIXME в критичном коде
 
 ### Безопасность
 
