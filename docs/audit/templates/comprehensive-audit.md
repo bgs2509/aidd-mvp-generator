@@ -77,7 +77,7 @@ find . -name "*.md" -not -path "./.git/*" 2>/dev/null | wc -l
 
 ```bash
 echo "=== SMOKE TEST 2: Всего Markdown ссылок ==="
-grep -rho '\[.*\](.*\.md' . --include="*.md" 2>/dev/null | wc -l
+grep -rho '\\[.*\\](.*\\.md' . --include="*.md" 2>/dev/null | wc -l
 # Ожидание: ~1000-2000 ссылок
 # Это даёт scope задачи валидации ссылок
 ```
@@ -371,7 +371,7 @@ fi
 # ШАГ 2: Извлечение ВСЕХ markdown ссылок
 # ========================================
 echo "Шаг 2: Извлечение всех markdown ссылок..."
-grep -rno '\[.*\](.*\.md' . --include="*.md" 2>/dev/null > /tmp/all_links.txt
+grep -rno '\\[.*\\](.*\\.md' . --include="*.md" 2>/dev/null > /tmp/all_links.txt
 
 TOTAL_LINKS=$(wc -l < /tmp/all_links.txt)
 echo "Найдено $TOTAL_LINKS markdown ссылок"
@@ -383,8 +383,8 @@ echo "Шаг 3: Валидация целей ссылок..."
 > /tmp/broken_links.txt  # Очистка файла
 
 # Извлекаем уникальные пути ссылок
-grep -rho '\[.*\](.*\.md' . --include="*.md" 2>/dev/null | \
-  sed 's/.*(\([^)]*\.md\).*/\1/' | sort -u > /tmp/unique_refs.txt
+grep -rho '\\[.*\\](.*\\.md' . --include="*.md" 2>/dev/null | \
+  sed 's/.*(\([^)]*\\.md\).*/\1/' | sort -u > /tmp/unique_refs.txt
 
 UNIQUE_REFS=$(wc -l < /tmp/unique_refs.txt)
 echo "Уникальных ссылок: $UNIQUE_REFS"
@@ -1089,6 +1089,8 @@ CATEGORIES=(
   "quality:Тестирование и качество"
   "infrastructure:Docker, CI/CD, Nginx"
   "integrations:HTTP, Redis, etc."
+  "pipeline:Pipeline state и git интеграция"
+  "security:Безопасность (secrets, docker, VPS)"
 )
 
 total_files=0
@@ -1107,7 +1109,7 @@ done
 
 echo ""
 echo "Всего файлов в knowledge/: $total_files"
-# Ожидание: 40+ файлов
+# Ожидание: 50+ файлов (7 категорий)
 
 # ========================================
 # Проверка README
@@ -1561,7 +1563,7 @@ MD_COUNT=$(find . -name "*.md" -not -path "./.git/*" 2>/dev/null | wc -l)
 echo "Markdown файлов: $MD_COUNT"
 
 # Smoke 2: Подсчёт ссылок
-LINK_COUNT=$(grep -rho '\[.*\](.*\.md' . --include="*.md" 2>/dev/null | wc -l)
+LINK_COUNT=$(grep -rho '\\[.*\\](.*\\.md' . --include="*.md" 2>/dev/null | wc -l)
 echo "Всего ссылок: $LINK_COUNT"
 
 # Smoke 3: Legacy ссылки (CRITICAL)
