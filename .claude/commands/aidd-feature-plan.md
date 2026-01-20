@@ -3,7 +3,7 @@ allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md), Bash(gi
 description: Создать план реализации новой фичи в существующем проекте
 ---
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
 
 
 > ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
@@ -153,9 +153,15 @@ def check_feature_plan_preconditions() -> tuple[str, dict] | None:
 
 ## Выходные артефакты (в целевом проекте)
 
-| Артефакт | Путь |
-|----------|------|
-| План фичи | `ai-docs/docs/plans/{YYYY-MM-DD}_{FID}_{slug}-plan.md` |
+| Артефакт | Путь (v2) | Путь (v3) |
+|----------|-----------|-----------|
+| План фичи | `ai-docs/docs/plans/{YYYY-MM-DD}_{FID}_{slug}-plan.md` | `ai-docs/docs/_plans/features/{YYYY-MM-DD}_{FID}_{slug}.md` |
+
+> **Примечание (v2.4+)**:
+> - **v2** (по умолчанию): Старая структура `plans/`, имя с дублированием `{name}-plan.md`
+> - **v3** (после миграции): Новая структура `_plans/features/`, имя без дублирования `{name}.md`
+> - Режим определяется из `.pipeline-state.json → naming_version`
+> - Миграция: `python .aidd/scripts/migrate-naming-v3.py`
 
 ### Именование артефакта
 
@@ -171,17 +177,29 @@ if not fid:
 slug = pipeline["name"]  # email-notify
 date = datetime.now().strftime("%Y-%m-%d")  # 2024-12-23
 
-# Сформировать имя файла
-filename = f"{date}_{fid}_{slug}-plan.md"
-# → 2024-12-23_F042_email-notify-plan.md
+# Определить naming_version и структуру артефактов
+naming_version = state.get("naming_version", "v2")
+
+if naming_version == "v3":
+    artifact_dir = "ai-docs/docs/_plans/features"
+    filename = f"{date}_{fid}_{slug}.md"  # без дублирования -plan
+else:  # v2 (по умолчанию)
+    artifact_dir = "ai-docs/docs/plans"
+    filename = f"{date}_{fid}_{slug}-plan.md"
+
+# Пример: 2024-12-23_F042_email-notify-plan.md (v2)
+# Пример: 2024-12-23_F042_email-notify.md (v3)
 ```
 
 ### Обновление .pipeline-state.json
 
-После создания плана обновить `active_pipelines[FID].artifacts` (v2):
+После создания плана обновить `active_pipelines[FID].artifacts` (v2).
+
+**Пример для naming_version = "v2" (по умолчанию)**:
 
 ```json
 {
+  "naming_version": "v2",
   "active_pipelines": {
     "F042": {
       "branch": "feature/F042-email-notify",
@@ -197,6 +215,32 @@ filename = f"{date}_{fid}_{slug}-plan.md"
         "prd": "prd/2024-12-23_F042_email-notify-prd.md",
         "research": "research/2024-12-23_F042_email-notify-research.md",
         "plan": "plans/2024-12-23_F042_email-notify-plan.md"
+      }
+    }
+  }
+}
+```
+
+**Пример для naming_version = "v3" (после миграции)**:
+
+```json
+{
+  "naming_version": "v3",
+  "active_pipelines": {
+    "F042": {
+      "branch": "feature/F042-email-notify",
+      "name": "email-notify",
+      "title": "Email уведомления",
+      "stage": "PLAN",
+      "gates": {
+        "PRD_READY": {"passed": true, "passed_at": "2024-12-23T10:00:00Z"},
+        "RESEARCH_DONE": {"passed": true, "passed_at": "2024-12-23T11:00:00Z"},
+        "PLAN_APPROVED": {"passed": false}
+      },
+      "artifacts": {
+        "prd": "_analysis/2024-12-23_F042_email-notify.md",
+        "research": "_research/2024-12-23_F042_email-notify.md",
+        "plan": "_plans/features/2024-12-23_F042_email-notify.md"
       }
     }
   }

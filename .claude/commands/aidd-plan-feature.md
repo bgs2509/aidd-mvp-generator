@@ -3,7 +3,7 @@ allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md), Bash(gi
 description: Создать план реализации новой фичи в существующем проекте
 ---
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
 
 
 > ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:

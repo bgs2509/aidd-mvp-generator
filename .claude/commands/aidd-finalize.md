@@ -3,7 +3,7 @@ allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md), Bash(gi
 description: Quality & Deploy — полный цикл проверки качества и деплоя
 ---
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
 
 
 > ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
@@ -261,9 +261,15 @@ def execute_finalize(fid: str, pipeline: dict, mode: str):
 
 ## Выходные артефакты (в целевом проекте)
 
-| Артефакт | Путь |
-|----------|------|
-| **Completion Report** | `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md` |
+| Артефакт | Путь (v2) | Путь (v3) |
+|----------|-----------|-----------|
+| **Completion Report** | `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md` | `ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}.md` |
+
+> **Примечание (v2.4+)**:
+> - **v2** (по умолчанию): Старая структура `reports/`, имя с дублированием `{name}-completion.md`
+> - **v3** (после миграции): Новая структура `_validation/`, имя без дублирования `{name}.md`
+> - Режим определяется из `.pipeline-state.json → naming_version`
+> - Миграция: `python .aidd/scripts/migrate-naming-v3.py`
 
 ### Именование артефакта
 
@@ -279,17 +285,29 @@ if not fid:
 slug = pipeline["name"]  # table-booking
 date = datetime.now().strftime("%Y-%m-%d")  # 2024-12-23
 
-# Сформировать имя файла
-filename = f"{date}_{fid}_{slug}-completion.md"
-# → 2024-12-23_F001_table-booking-completion.md
+# Определить naming_version и структуру артефактов
+naming_version = state.get("naming_version", "v2")
+
+if naming_version == "v3":
+    artifact_dir = "ai-docs/docs/_validation"
+    filename = f"{date}_{fid}_{slug}.md"  # без дублирования -completion
+else:  # v2 (по умолчанию)
+    artifact_dir = "ai-docs/docs/reports"
+    filename = f"{date}_{fid}_{slug}-completion.md"
+
+# Пример: 2024-12-23_F001_table-booking-completion.md (v2)
+# Пример: 2024-12-23_F001_table-booking.md (v3)
 ```
 
 ### Обновление .pipeline-state.json
 
-После создания отчёта обновить `active_pipelines[FID]` (v2):
+После создания отчёта обновить `active_pipelines[FID]` (v2).
+
+**Пример для naming_version = "v2" (по умолчанию)**:
 
 ```json
 {
+  "naming_version": "v2",
   "active_pipelines": {
     "F001": {
       "branch": "feature/F001-table-booking",
@@ -311,6 +329,38 @@ filename = f"{date}_{fid}_{slug}-completion.md"
         "research": "research/2024-12-23_F001_table-booking-research.md",
         "plan": "architecture/2024-12-23_F001_table-booking-plan.md",
         "completion": "reports/2024-12-23_F001_table-booking-completion.md"
+      }
+    }
+  }
+}
+```
+
+**Пример для naming_version = "v3" (после миграции)**:
+
+```json
+{
+  "naming_version": "v3",
+  "active_pipelines": {
+    "F001": {
+      "branch": "feature/F001-table-booking",
+      "name": "table-booking",
+      "title": "Бронирование столиков",
+      "stage": "DEPLOYED",
+      "gates": {
+        "PRD_READY": {"passed": true, "passed_at": "2024-12-23T10:00:00Z"},
+        "RESEARCH_DONE": {"passed": true, "passed_at": "2024-12-23T11:00:00Z"},
+        "PLAN_APPROVED": {"passed": true, "passed_at": "2024-12-23T12:00:00Z"},
+        "IMPLEMENT_OK": {"passed": true, "passed_at": "2024-12-23T14:00:00Z"},
+        "REVIEW_OK": {"passed": true, "passed_at": "2024-12-23T15:30:00Z"},
+        "QA_PASSED": {"passed": true, "passed_at": "2024-12-23T16:00:00Z", "coverage": 82},
+        "ALL_GATES_PASSED": {"passed": true, "passed_at": "2024-12-23T16:15:00Z"},
+        "DEPLOYED": {"passed": true, "passed_at": "2024-12-23T17:00:00Z"}
+      },
+      "artifacts": {
+        "prd": "_analysis/2024-12-23_F001_table-booking.md",
+        "research": "_research/2024-12-23_F001_table-booking.md",
+        "plan": "_plans/mvp/2024-12-23_F001_table-booking.md",
+        "completion": "_validation/2024-12-23_F001_table-booking.md"
       }
     }
   }

@@ -4,7 +4,7 @@ argument-hint: "[описание идеи проекта или фичи]"
 description: Создать PRD документ из идеи пользователя
 ---
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
 
 
 > ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
@@ -246,11 +246,17 @@ fi
 
 ## Выходные артефакты (в целевом проекте)
 
-| Артефакт | Путь |
-|----------|------|
-| PRD документ | `ai-docs/docs/prd/{YYYY-MM-DD}_{FID}_{slug}-prd.md` |
-| Реестр фич | `ai-docs/docs/FEATURES.md` |
-| Состояние | `.pipeline-state.json` |
+| Артефакт | Путь (v2) | Путь (v3) |
+|----------|-----------|-----------|
+| PRD документ | `ai-docs/docs/prd/{YYYY-MM-DD}_{FID}_{slug}-prd.md` | `ai-docs/docs/_analysis/{YYYY-MM-DD}_{FID}_{slug}.md` |
+| Реестр фич | `ai-docs/docs/FEATURES.md` | `ai-docs/docs/FEATURES.md` |
+| Состояние | `.pipeline-state.json` | `.pipeline-state.json` |
+
+> **Примечание (v2.4+)**:
+> - **v2** (по умолчанию): Старая структура `prd/`, имя с дублированием `{name}-prd.md`
+> - **v3** (после миграции): Новая структура `_analysis/`, имя без дублирования `{name}.md`
+> - Режим определяется из `.pipeline-state.json → naming_version`
+> - Миграция: `python .aidd/scripts/migrate-naming-v3.py`
 
 ---
 
@@ -288,15 +294,24 @@ def create_feature(state: dict, idea: str) -> dict:
     # 3. Получить текущую дату
     date = datetime.now().strftime("%Y-%m-%d")
 
-    # 4. Сформировать имя файла и ветки
-    filename = f"{date}_{fid}_{slug}-prd.md"
+    # 4. Определить naming_version и структуру артефактов
+    naming_version = state.get("naming_version", "v2")
+
+    if naming_version == "v3":
+        artifact_dir = "ai-docs/docs/_analysis"
+        filename = f"{date}_{fid}_{slug}.md"  # без дублирования -prd
+    else:  # v2 (по умолчанию)
+        artifact_dir = "ai-docs/docs/prd"
+        filename = f"{date}_{fid}_{slug}-prd.md"
+
+    # 5. Сформировать имя ветки
     branch = f"feature/{fid}-{slug}"
 
-    # 5. Создать git ветку для фичи
+    # 6. Создать git ветку для фичи
     subprocess.run(["git", "checkout", "-b", branch], check=True)
     print(f"✓ Создана ветка: {branch}")
 
-    # 6. Создать запись о фиче в active_pipelines (v2)
+    # 7. Создать запись о фиче в active_pipelines (v2)
     state["active_pipelines"] = state.get("active_pipelines", {})
     state["active_pipelines"][fid] = {
         "branch": branch,
@@ -317,7 +332,7 @@ def create_feature(state: dict, idea: str) -> dict:
         "artifacts": {}
     }
 
-    # 7. Добавить в реестр фич
+    # 8. Добавить в реестр фич
     state["features_registry"] = state.get("features_registry", {})
     state["features_registry"][fid] = {
         "name": slug,
@@ -327,10 +342,10 @@ def create_feature(state: dict, idea: str) -> dict:
         "services": []
     }
 
-    # 8. Инкрементировать счётчик
+    # 9. Инкрементировать счётчик
     state["next_feature_id"] = next_id + 1
 
-    # 9. Обновить updated_at
+    # 10. Обновить updated_at
     state["updated_at"] = datetime.now().isoformat()
 
     return state["active_pipelines"][fid]
@@ -396,9 +411,12 @@ def get_current_feature_context(state: dict) -> tuple[str, dict] | None:
 
 ### Обновление .pipeline-state.json (v2)
 
+**Пример для naming_version = "v2" (по умолчанию)**:
+
 ```json
 {
   "version": "2.0",
+  "naming_version": "v2",
   "global_gates": {
     "BOOTSTRAP_READY": { "passed": true, "passed_at": "2024-12-23T09:00:00Z" }
   },
@@ -420,6 +438,49 @@ def get_current_feature_context(state: dict) -> tuple[str, dict] | None:
       },
       "artifacts": {
         "prd": "prd/2024-12-23_F001_table-booking-prd.md"
+      }
+    }
+  },
+  "features_registry": {
+    "F001": {
+      "name": "table-booking",
+      "title": "Система бронирования столиков",
+      "created": "2024-12-23",
+      "status": "IN_PROGRESS",
+      "services": []
+    }
+  },
+  "next_feature_id": 2
+}
+```
+
+**Пример для naming_version = "v3" (после миграции)**:
+
+```json
+{
+  "version": "2.0",
+  "naming_version": "v3",
+  "global_gates": {
+    "BOOTSTRAP_READY": { "passed": true, "passed_at": "2024-12-23T09:00:00Z" }
+  },
+  "active_pipelines": {
+    "F001": {
+      "branch": "feature/F001-table-booking",
+      "name": "table-booking",
+      "title": "Система бронирования столиков",
+      "stage": "IDEA",
+      "created": "2024-12-23",
+      "gates": {
+        "PRD_READY": {
+          "passed": true,
+          "passed_at": "2024-12-23T10:30:00Z",
+          "artifact": "_analysis/2024-12-23_F001_table-booking.md"
+        },
+        "RESEARCH_DONE": { "passed": false, "passed_at": null },
+        "PLAN_APPROVED": { "passed": false, "passed_at": null, "artifact": null }
+      },
+      "artifacts": {
+        "prd": "_analysis/2024-12-23_F001_table-booking.md"
       }
     }
   },

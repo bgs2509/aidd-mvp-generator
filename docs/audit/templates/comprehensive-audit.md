@@ -142,7 +142,7 @@ for role in "${ROLES[@]}"; do
   fi
 done
 echo "Итого: $((9 - missing))/9 файлов"
-echo "(5 базовых ролей + дубликаты architect/planner, implementer/coder + 2 библиотеки)"
+echo "(5 уникальных ролей + 2 алиаса + 2 библиотеки = 9 файлов)"
 # Ожидание: 9/9 файлов
 # Если < 9 → КРИТИЧЕСКАЯ ПРОБЛЕМА (пайплайн неполный или migration mode не завершён)
 ```
@@ -660,7 +660,8 @@ done
 | 0 | /aidd-init | — | BOOTSTRAP_READY |
 | 1 | /aidd-idea → /aidd-analyze | analyst | PRD_READY |
 | 2 | /aidd-research | researcher | RESEARCH_DONE |
-| 3 | /aidd-plan или /aidd-feature-plan → /aidd-plan-feature | architect → planner | PLAN_APPROVED |
+| 3 (CREATE) | /aidd-plan | architect → planner | PLAN_APPROVED |
+| 3 (FEATURE) | /aidd-feature-plan → /aidd-plan-feature | architect → planner | PLAN_APPROVED |
 | 4 | /aidd-generate → /aidd-code | implementer → coder | IMPLEMENT_OK |
 | 5 | /aidd-finalize → /aidd-validate | validator | **Full**: REVIEW_OK → QA_PASSED → ALL_GATES_PASSED → DEPLOYED <br> **Quick**: DOCUMENTED |
 

@@ -3,7 +3,7 @@ allowed-tools: Read(*), Glob(*), Grep(*), Edit(**), Write(**), Bash(make :*), Ba
 description: Генерация кода на основе утверждённого плана
 ---
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
 
 
 > ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
@@ -196,6 +196,11 @@ def check_generate_preconditions() -> tuple[str, dict] | None:
 | CI/CD | `.github/workflows/` |
 | Тесты | `services/*/tests/` |
 | Состояние | `.pipeline-state.json` (обновляется) |
+
+> **Примечание (v2.4+)**:
+> - Генерация кода не зависит от naming_version — сервисы всегда в `services/`
+> - Команда **читает** артефакты предыдущих этапов (PRD, Research, Plan) с учётом naming_version
+> - Режим определяется из `.pipeline-state.json → naming_version`
 
 ### Обновление .pipeline-state.json (v2)
 
