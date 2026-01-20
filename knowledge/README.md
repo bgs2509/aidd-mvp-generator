@@ -100,17 +100,19 @@
 | [quality/testing/mocking.md](quality/testing/mocking.md) | Мокирование зависимостей |
 | [quality/testing/testcontainers.md](quality/testing/testcontainers.md) | Testcontainers для интеграционных тестов |
 
-### Логирование (2 файла)
+### Логирование (3 файла)
 | Файл | Описание |
 |------|----------|
 | [quality/logging/structured.md](quality/logging/structured.md) | Структурированное логирование |
 | [quality/logging/correlation.md](quality/logging/correlation.md) | Correlation ID |
+| [quality/logging/log-driven-design.md](quality/logging/log-driven-design.md) | Log-Driven Design для AI-агентов |
 
 ### Принципы
 | Файл | Описание |
 |------|----------|
 | [quality/dry-kiss-yagni.md](quality/dry-kiss-yagni.md) | Принципы DRY, KISS, YAGNI |
 | [quality/production-requirements.md](quality/production-requirements.md) | Production-ready требования |
+| [quality/quality-cascade.md](quality/quality-cascade.md) | Quality Cascade — раннее выявление ошибок |
 
 ---
 
@@ -120,6 +122,18 @@
 |------|----------|
 | [pipeline/state-v2.md](pipeline/state-v2.md) | Pipeline State v2: параллельные пайплайны |
 | [pipeline/automigration.md](pipeline/automigration.md) | Автомиграция v1 → v2 |
+| [pipeline/git-integration.md](pipeline/git-integration.md) | Git интеграция для параллельных пайплайнов |
+
+---
+
+## Безопасность
+
+| Файл | Описание |
+|------|----------|
+| [security/secrets-management.md](security/secrets-management.md) | Управление секретами |
+| [security/docker-security.md](security/docker-security.md) | Безопасность Docker |
+| [security/security-checklist.md](security/security-checklist.md) | Чек-лист безопасности для AI-агентов |
+| [security/vps-mode.md](security/vps-mode.md) | Режим "только чтение" на production VPS |
 
 ---
 
@@ -135,8 +149,12 @@
 | Конвенции именования | `architecture/naming/` |
 | Параллельные пайплайны | `pipeline/state-v2.md` |
 | Миграция state v1→v2 | `pipeline/automigration.md` |
+| Git интеграция | `pipeline/git-integration.md` |
+| Управление секретами | `security/secrets-management.md` |
+| Безопасность Docker | `security/docker-security.md` |
+| Quality Cascade | `quality/quality-cascade.md` |
 
 ---
 
-**Версия**: 2.1
-**Обновлён**: 2025-12-25
+**Версия**: 2.2
+**Обновлён**: 2026-01-20
