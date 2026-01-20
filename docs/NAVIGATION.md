@@ -1,5 +1,8 @@
 # Навигационная матрица AIDD-MVP Generator
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > **Назначение**: Явная таблица "роль → какие документы читать → какие создавать"
 > для каждого этапа пайплайна.
 
@@ -216,11 +219,27 @@
 
 ---
 
-## Этап 5: Ревью
+## Этап 5: Quality & Deploy
 
-**Команда**: `/aidd-review`
-**Агент**: Ревьюер
-**Ворота**: `REVIEW_OK`
+**Команда**: `/aidd-finalize` (или `/aidd-validate` в v2.4+)
+**Роль**: Валидатор (`.claude/agents/validator.md`)
+**Предусловие**: `IMPLEMENT_OK` ✓
+**Артефакт**: `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md`
+
+### Описание
+
+Этап Quality & Deploy выполняет полный цикл проверки качества и деплоя в 4 последовательных шага:
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│  Шаг 1: Code Review → REVIEW_OK                              │
+│  Шаг 2: Testing → QA_PASSED                                  │
+│  Шаг 3: Validation → ALL_GATES_PASSED                        │
+│  Шаг 4: Deploy & Completion Report → DEPLOYED                │
+└──────────────────────────────────────────────────────────────┘
+```
+
+### Таблица чтения
 
 | Фаза | # | Читать | Условие |
 |------|---|--------|---------|
@@ -229,113 +248,88 @@
 | **1. ЦП** | 3 | `./ai-docs/docs/prd/*.md` | Обязательно |
 | **1. ЦП** | 4 | `./ai-docs/docs/architecture/*.md` | Обязательно |
 | **1. ЦП** | 5 | `./services/` | Обязательно |
-| **2. Ворота** | — | `gates.IMPLEMENT_OK.passed` | Обязательно |
-| **3. Фреймворк** | 6 | `.aidd/conventions.md` | Всегда |
-| **3. Фреймворк** | 7 | `.aidd/.claude/commands/aidd-review.md` | Всегда |
-| **3. Фреймворк** | 8 | `.aidd/.claude/agents/reviewer.md` | Всегда |
-| **4. База знаний** | 9 | `.aidd/knowledge/architecture/*.md` | По необходимости |
+| **1. ЦП** | 6 | `./docker-compose.yml`, `./Makefile` | Для шага 4 (Deploy) |
+| **2. Ворота** | — | Проверка `IMPLEMENT_OK` | Обязательно (для Full режима) |
+| **3. Фреймворк** | 7 | `.aidd/CLAUDE.md` | Всегда |
+| **3. Фреймворк** | 8 | `.aidd/workflow.md` | Всегда |
+| **3. Фреймворк** | 9 | `.aidd/.claude/commands/aidd-finalize.md` | Главные инструкции |
+| **3. Фреймворк** | 10 | `.aidd/.claude/agents/validator.md` | Роль Валидатора |
+| **3. Фреймворк** | 11 | `.aidd/.claude/agents/code-review-library.md` | Библиотека для шага 1 |
+| **3. Фреймворк** | 12 | `.aidd/.claude/agents/testing-library.md` | Библиотека для шага 2 |
+| **3. Фреймворк** | 13 | `.aidd/conventions.md` | Соглашения о коде |
+| **4. Шаблоны** | 14 | `.aidd/templates/documents/completion-report-template.md` | Для создания итогового отчёта |
+| **4. База знаний** | 15 | `.aidd/knowledge/quality/quality-cascade.md` | Quality Cascade (17 проверок) |
+| **4. База знаний** | 16 | `.aidd/knowledge/security/security-checklist.md` | Security checklist |
 
-**Создавать (в ЦП)**:
-- `ai-docs/docs/reports/review-report.md`
+### Два режима работы
 
-**Чек-лист ворот REVIEW_OK**:
-- [ ] Архитектура соответствует плану
-- [ ] conventions.md соблюдён
-- [ ] DRY/KISS/YAGNI соблюдены
-- [ ] Нет Blocker/Critical замечаний
-- [ ] `.pipeline-state.json` обновлён
+| Режим | Когда использовать | Ворота |
+|-------|-------------------|--------|
+| **Полный** (рекомендуется) | Production-ready MVP | `REVIEW_OK` → `QA_PASSED` → `ALL_GATES_PASSED` → `DEPLOYED` |
+| **Быстрый** | Документация, застопорившаяся фича | `DOCUMENTED` (только static analysis) |
 
----
+**Быстрый режим** (Quick Mode):
+- Выполняет только mypy, ruff, bandit (без тестов)
+- Создаёт DRAFT Completion Report с пометкой "⚠️ DRAFT — QA не выполнено"
+- Фича остаётся в `active_pipelines` (НЕ переносится в `features_registry`)
+- Позволяет переключиться на другую фичу без завершения текущей
 
-## Этап 6: QA
+### Создаваемый артефакт (единственный)
 
-**Команда**: `/aidd-test`
-**Агент**: QA
-**Ворота**: `QA_PASSED`
+- `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md`
 
-| Фаза | # | Читать | Условие |
-|------|---|--------|---------|
-| **1. ЦП** | 1 | `./CLAUDE.md` | Если существует |
-| **1. ЦП** | 2 | `./.pipeline-state.json` | Обязательно |
-| **1. ЦП** | 3 | `./ai-docs/docs/prd/*.md` | Обязательно |
-| **1. ЦП** | 4 | `./services/*/tests/` | Обязательно |
-| **2. Ворота** | — | `gates.REVIEW_OK.passed` | Обязательно |
-| **3. Фреймворк** | 5 | `.aidd/.claude/commands/aidd-test.md` | Всегда |
-| **3. Фреймворк** | 6 | `.aidd/.claude/agents/qa.md` | Всегда |
-| **4. База знаний** | 7 | `.aidd/knowledge/quality/testing.md` | По необходимости |
+**Completion Report** содержит:
+- Executive Summary
+- Code Review Summary (вместо отдельного review-report.md)
+- Testing Summary (вместо отдельного qa-report.md)
+- Requirements Traceability (вместо отдельного rtm.md)
+- ADR (Architecture Decision Records)
+- Scope Changes (план vs факт)
+- Known Limitations
+- Метрики качества
 
-**Создавать (в ЦП)**:
-- `ai-docs/docs/reports/qa-report.md`
+### Библиотеки инструкций
 
-**Чек-лист ворот QA_PASSED**:
-- [ ] Все тесты проходят
-- [ ] Coverage ≥75%
-- [ ] Нет Critical/Blocker багов
-- [ ] Требования верифицированы
-- [ ] `.pipeline-state.json` обновлён
+Валидатор использует две вспомогательные библиотеки:
 
----
+| Библиотека | Файл | Содержимое |
+|------------|------|-----------|
+| **Code Review** | `.claude/agents/code-review-library.md` | Quality Cascade (17 проверок), Log-Driven Design, Security |
+| **Testing** | `.claude/agents/testing-library.md` | Тестовые сценарии, Coverage, Верификация требований |
 
-## Этап 7: Валидация
+### Чек-лист ворот
 
-**Команда**: `/aidd-validate`
-**Агент**: Валидатор
-**Ворота**: `ALL_GATES_PASSED`
+**REVIEW_OK** (после шага 1):
+- [ ] Архитектура соответствует плану (DDD, HTTP-only)
+- [ ] Security checklist пройден (нет уязвимостей)
+- [ ] Code style соблюдён (conventions.md)
+- [ ] Log-Driven Design проверен
+- [ ] Quality Cascade (QC-1 до QC-17) пройден
 
-| Фаза | # | Читать | Условие |
-|------|---|--------|---------|
-| **1. ЦП** | 1 | `./CLAUDE.md` | Если существует |
-| **1. ЦП** | 2 | `./.pipeline-state.json` | ВСЕ ворота |
-| **1. ЦП** | 3 | `./ai-docs/docs/` | ВСЕ артефакты |
-| **1. ЦП** | 4 | `./services/` | Весь код |
-| **2. Ворота** | — | `gates.QA_PASSED.passed + coverage >= 75` | Обязательно |
-| **3. Фреймворк** | 5 | `.aidd/.claude/commands/aidd-validate.md` | Всегда |
-| **3. Фреймворк** | 6 | `.aidd/.claude/agents/validator.md` | Всегда |
-| **4. Шаблоны** | 7 | `.aidd/templates/documents/rtm-template.md` | Если RTM не существует |
+**QA_PASSED** (после шага 2):
+- [ ] Все тесты проходят (0 failed)
+- [ ] Coverage ≥ 75%
+- [ ] Integration тесты пройдены
+- [ ] Все FR-* требования верифицированы
 
-**Создавать (в ЦП)**:
-- `ai-docs/docs/rtm.md`
-- `ai-docs/docs/reports/validation-report.md`
-
-**Чек-лист ворот ALL_GATES_PASSED**:
+**ALL_GATES_PASSED** (после шага 3):
 - [ ] PRD_READY ✓
 - [ ] RESEARCH_DONE ✓
 - [ ] PLAN_APPROVED ✓
 - [ ] IMPLEMENT_OK ✓
-- [ ] REVIEW_OK ✓
-- [ ] QA_PASSED ✓
-- [ ] RTM актуальна
-- [ ] Все артефакты существуют
+- [ ] REVIEW_OK ✓ (из шага 1)
+- [ ] QA_PASSED ✓ (из шага 2)
+- [ ] Security BLOCKER issues = 0
+- [ ] Security CRITICAL issues = 0
+- [ ] Все артефакты существуют и актуальны
 
----
-
-## Этап 8: Деплой
-
-**Команда**: `/aidd-deploy`
-**Агент**: Валидатор
-**Ворота**: `DEPLOYED`
-
-| Фаза | # | Читать | Условие |
-|------|---|--------|---------|
-| **1. ЦП** | 1 | `./CLAUDE.md` | Если существует |
-| **1. ЦП** | 2 | `./.pipeline-state.json` | ВСЕ ворота |
-| **1. ЦП** | 3 | `./docker-compose.yml` | Обязательно |
-| **1. ЦП** | 4 | `./Makefile` | Обязательно |
-| **2. Ворота** | — | `gates.ALL_GATES_PASSED + все предыдущие` | Обязательно |
-| **3. Фреймворк** | 5 | `.aidd/.claude/commands/aidd-deploy.md` | Всегда |
-| **3. Фреймворк** | 6 | `.aidd/.claude/agents/validator.md` | Всегда |
-| **4. База знаний** | 7 | `.aidd/knowledge/infrastructure/docker.md` | По необходимости |
-
-**Выполнять**:
-- `make build`
-- `make up`
-- `make health`
-
-**Чек-лист ворот DEPLOYED**:
-- [ ] Контейнеры собраны
-- [ ] Приложение запущено
+**DEPLOYED** (после шага 4):
+- [ ] Docker-контейнеры собраны и запущены
 - [ ] Health-check проходит
-- [ ] Базовые сценарии работают
+- [ ] Базовые сценарии работают (API запросы успешны)
+- [ ] Логи проверены (нет ошибок)
+- [ ] **Completion Report создан** ← ОБЯЗАТЕЛЬНО!
+- [ ] Фича перенесена в `features_registry`
 
 ---
 
@@ -348,10 +342,7 @@
 | 2 | Исследование | `/aidd-research` | Исследователь | researcher, knowledge | (state) | RESEARCH_DONE |
 | 3 | Архитектура | `/aidd-plan` | Архитектор | architect, ddd, http-only | План | PLAN_APPROVED |
 | 4 | Реализация | `/aidd-generate` | Реализатор | implementer, conventions, templates | Код, тесты | IMPLEMENT_OK |
-| 5 | Ревью | `/aidd-review` | Ревьюер | reviewer, conventions | Отчёт | REVIEW_OK |
-| 6 | QA | `/aidd-test` | QA | qa, testing | Отчёт QA | QA_PASSED |
-| 7 | Валидация | `/aidd-validate` | Валидатор | validator | RTM, отчёт | ALL_GATES_PASSED |
-| 8 | Деплой | `/aidd-deploy` | Валидатор | docker | — | DEPLOYED |
+| 5 | Quality & Deploy | `/aidd-finalize` | Валидатор | validator, code-review-library, testing-library, completion-report-template | Completion Report | REVIEW_OK → QA_PASSED → ALL_GATES_PASSED → DEPLOYED |
 
 > **Примечание (v2.4+)**: Унификация naming conventions:
 >

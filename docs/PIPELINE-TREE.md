@@ -1,5 +1,8 @@
 # PIPELINE-TREE.md — Дерево пайплайнов AIDD-MVP
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > **Назначение**: Полная карта всех пайплайнов фреймворка.
 > Для каждого пайплайна указаны: команда, агент, ворота, артефакты, источники файлов.
 
@@ -47,35 +50,22 @@
 │  └──────┬───────┘                                                                │
 │         │ IMPLEMENT_OK                                                           │
 │         ▼                                                                        │
-│  ┌──────────────┐                                                                │
-│  │   ЭТАП 5     │  Review Pipeline                                              │
-│  │   /aidd-review    │  ────────────────────────────────────────────────────────────  │
-│  │              │  Код-ревью                                                    │
-│  └──────┬───────┘                                                                │
-│         │ REVIEW_OK                                                              │
-│         ▼                                                                        │
-│  ┌──────────────┐                                                                │
-│  │   ЭТАП 6     │  QA Pipeline                                                  │
-│  │   /aidd-test      │  ────────────────────────────────────────────────────────────  │
-│  │              │  Тестирование                                                 │
-│  └──────┬───────┘                                                                │
-│         │ QA_PASSED                                                              │
-│         ▼                                                                        │
-│  ┌──────────────┐                                                                │
-│  │   ЭТАП 7     │  Validation Pipeline                                          │
-│  │   /aidd-validate  │  ────────────────────────────────────────────────────────────  │
-│  │              │  Валидация всех артефактов                                    │
-│  └──────┬───────┘                                                                │
-│         │ ALL_GATES_PASSED                                                       │
-│         ▼                                                                        │
-│  ┌──────────────┐                                                                │
-│  │   ЭТАП 8     │  Deploy Pipeline                                              │
-│  │   /aidd-deploy    │  ────────────────────────────────────────────────────────────  │
-│  │              │  Сборка и запуск                                              │
-│  └──────┬───────┘                                                                │
-│         │ DEPLOYED                                                               │
-│         ▼                                                                        │
-│    ✅ MVP ГОТОВ                                                                  │
+│  ┌───────────────────────────────────────────────────────────────┐              │
+│  │   ЭТАП 5: Quality & Deploy Pipeline (/aidd-finalize)          │              │
+│  │  ──────────────────────────────────────────────────────────── │              │
+│  │                                                                │              │
+│  │  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────────────┐      │              │
+│  │  │ Review │─▶│  Test  │─▶│Validate│─▶│Deploy + Report │      │              │
+│  │  └────┬───┘  └────┬───┘  └────┬───┘  └────┬───────────┘      │              │
+│  │       │           │           │            │                  │              │
+│  │  REVIEW_OK    QA_PASSED  ALL_GATES     DEPLOYED              │              │
+│  │                                 PASSED                        │              │
+│  │                                                                │              │
+│  │  Артефакт: 1 Completion Report (вместо 4 файлов)             │              │
+│  └────────────────────────────────┬───────────────────────────────┘              │
+│                                   │                                              │
+│                                   ▼                                              │
+│                              ✅ MVP ГОТОВ                                        │
 │                                                                                  │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
@@ -274,49 +264,23 @@
 
 ---
 
-### Этап 5: Review Pipeline
+### Этап 5: Quality & Deploy Pipeline
 
 | Параметр | Значение |
 |----------|----------|
-| **Команда** | `/aidd-review` |
-| **Агент** | Ревьюер |
+| **Команда** | `/aidd-finalize` (или `/aidd-validate` в v2.4+) |
+| **Агент** | Валидатор |
 | **Предусловия** | `IMPLEMENT_OK` |
-| **Качественные ворота** | `REVIEW_OK` |
+| **Качественные ворота** | `REVIEW_OK` → `QA_PASSED` → `ALL_GATES_PASSED` → `DEPLOYED` |
 
-#### Входные артефакты
+#### Описание
 
-| Артефакт | Источник | Путь |
-|----------|----------|------|
-| Код сервисов | ЦП | `services/` |
-| План | ЦП | `ai-docs/docs/architecture/{name}-plan.md` |
-| Conventions | Фреймворк | `.aidd/conventions.md` |
+Этап Quality & Deploy выполняет полный цикл проверки качества и деплоя в 4 последовательных шага:
 
-#### Выходные артефакты
-
-| Артефакт | Путь в ЦП |
-|----------|-----------|
-| Отчёт ревью | `ai-docs/docs/reports/review-report.md` |
-
-#### Источники файлов
-
-| Файл | Источник | Путь |
-|------|----------|------|
-| Инструкции команды | Фреймворк | `.aidd/.claude/commands/aidd-review.md` |
-| Инструкции агента | Фреймворк | `.aidd/.claude/agents/reviewer.md` |
-| Детальные инструкции | Фреймворк | `.aidd/roles/reviewer/*.md` |
-| Conventions | Фреймворк | `.aidd/conventions.md` |
-| **Результат** | ЦП | `ai-docs/docs/reports/review-report.md` |
-
----
-
-### Этап 6: QA Pipeline
-
-| Параметр | Значение |
-|----------|----------|
-| **Команда** | `/aidd-test` |
-| **Агент** | QA |
-| **Предусловия** | `REVIEW_OK` |
-| **Качественные ворота** | `QA_PASSED` |
+1. **Code Review** → `REVIEW_OK`
+2. **Testing** → `QA_PASSED`
+3. **Validation** → `ALL_GATES_PASSED`
+4. **Deploy & Completion Report** → `DEPLOYED`
 
 #### Входные артефакты
 
@@ -324,103 +288,56 @@
 |----------|----------|------|
 | Код сервисов | ЦП | `services/` |
 | PRD | ЦП | `ai-docs/docs/prd/{name}-prd.md` |
-
-#### Выходные артефакты
-
-| Артефакт | Путь в ЦП |
-|----------|-----------|
-| Отчёт QA | `ai-docs/docs/reports/qa-report.md` |
-
-#### Критерии ворот QA_PASSED
-
-| Критерий | Требование |
-|----------|------------|
-| Тесты | Все проходят |
-| Coverage | >= 75% |
-| Баги | Нет Critical/Blocker |
-
-#### Источники файлов
-
-| Файл | Источник | Путь |
-|------|----------|------|
-| Инструкции команды | Фреймворк | `.aidd/.claude/commands/aidd-test.md` |
-| Инструкции агента | Фреймворк | `.aidd/.claude/agents/qa.md` |
-| Детальные инструкции | Фреймворк | `.aidd/roles/qa/*.md` |
-| База знаний | Фреймворк | `.aidd/knowledge/quality/testing.md` |
-| **Результат** | ЦП | `ai-docs/docs/reports/qa-report.md` |
-
----
-
-### Этап 7: Validation Pipeline
-
-| Параметр | Значение |
-|----------|----------|
-| **Команда** | `/aidd-validate` |
-| **Агент** | Валидатор |
-| **Предусловия** | `QA_PASSED` |
-| **Качественные ворота** | `ALL_GATES_PASSED` |
-
-#### Входные артефакты
-
-| Артефакт | Источник | Путь |
-|----------|----------|------|
-| Все артефакты | ЦП | `ai-docs/docs/` |
-| Весь код | ЦП | `services/` |
+| План | ЦП | `ai-docs/docs/architecture/{name}-plan.md` |
+| Docker Compose | ЦП | `docker-compose.yml` |
+| Makefile | ЦП | `Makefile` |
 | Состояние | ЦП | `.pipeline-state.json` |
 
 #### Выходные артефакты
 
 | Артефакт | Путь в ЦП |
 |----------|-----------|
-| Отчёт валидации | `ai-docs/docs/reports/validation-report.md` |
-| RTM | `ai-docs/docs/rtm.md` |
+| **Completion Report** | `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md` |
+
+**Completion Report содержит** (единственный артефакт вместо 4 файлов):
+- Executive Summary
+- Code Review Summary
+- Testing Summary
+- Requirements Traceability
+- ADR (Architecture Decision Records)
+- Scope Changes
+- Known Limitations
+- Метрики качества
+
+#### Два режима работы
+
+| Режим | Ворота | Артефакт |
+|-------|--------|----------|
+| **Полный** (рекомендуется) | `REVIEW_OK` → `QA_PASSED` → `ALL_GATES_PASSED` → `DEPLOYED` | Production-ready Completion Report |
+| **Быстрый** | `DOCUMENTED` | DRAFT Completion Report (только static analysis) |
+
+#### Действия (Полный режим)
+
+| Шаг | Действия | Проверки |
+|-----|----------|----------|
+| 1. Review | Quality Cascade (17 проверок), Security checklist | DDD, HTTP-only, conventions.md |
+| 2. Test | `pytest --cov --cov-fail-under=75` | Coverage ≥75%, все FR-* |
+| 3. Validate | Проверка всех ворот, финальная security проверка | ALL_GATES_PASSED |
+| 4. Deploy | `make build && make up && make health` | Контейнеры запущены, Completion Report создан |
 
 #### Источники файлов
 
 | Файл | Источник | Путь |
 |------|----------|------|
-| Инструкции команды | Фреймворк | `.aidd/.claude/commands/aidd-validate.md` |
+| Инструкции команды | Фреймворк | `.aidd/.claude/commands/aidd-finalize.md` |
 | Инструкции агента | Фреймворк | `.aidd/.claude/agents/validator.md` |
-| Детальные инструкции | Фреймворк | `.aidd/roles/validator/*.md` |
-| Шаблон RTM | Фреймворк | `.aidd/templates/documents/rtm-template.md` |
-| **Результат** | ЦП | `ai-docs/docs/reports/validation-report.md`, `ai-docs/docs/rtm.md` |
-
----
-
-### Этап 8: Deploy Pipeline
-
-| Параметр | Значение |
-|----------|----------|
-| **Команда** | `/aidd-deploy` |
-| **Агент** | Валидатор |
-| **Предусловия** | `ALL_GATES_PASSED` |
-| **Качественные ворота** | `DEPLOYED` |
-
-#### Входные артефакты
-
-| Артефакт | Источник | Путь |
-|----------|----------|------|
-| Docker Compose | ЦП | `docker-compose.yml` |
-| Makefile | ЦП | `Makefile` |
-| Сервисы | ЦП | `services/` |
-
-#### Действия
-
-| # | Команда | Описание |
-|---|---------|----------|
-| 1 | `make build` | Сборка образов |
-| 2 | `make up` | Запуск контейнеров |
-| 3 | `make health` | Проверка health-check |
-| 4 | `make logs` | Проверка логов |
-
-#### Источники файлов
-
-| Файл | Источник | Путь |
-|------|----------|------|
-| Инструкции команды | Фреймворк | `.aidd/.claude/commands/aidd-deploy.md` |
-| Инструкции агента | Фреймворк | `.aidd/.claude/agents/validator.md` |
-| База знаний | Фреймворк | `.aidd/knowledge/infrastructure/docker.md` |
-| **Результат** | ЦП | Запущенные контейнеры |
+| **Библиотека Code Review** | Фреймворк | `.aidd/.claude/agents/code-review-library.md` |
+| **Библиотека Testing** | Фреймворк | `.aidd/.claude/agents/testing-library.md` |
+| Conventions | Фреймворк | `.aidd/conventions.md` |
+| Quality Cascade | Фреймворк | `.aidd/knowledge/quality/quality-cascade.md` |
+| Security Checklist | Фреймворк | `.aidd/knowledge/security/security-checklist.md` |
+| Шаблон Completion Report | Фреймворк | `.aidd/templates/documents/completion-report-template.md` |
+| **Результат** | ЦП | `ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md` |
 
 ---
 
@@ -434,10 +351,7 @@
 | 3 | Архитектура | `/aidd-plan` | Архитектор | `PLAN_APPROVED` | План архитектуры |
 | 3 | Архитектура | `/aidd-feature-plan` | Архитектор | `PLAN_APPROVED` | План фичи |
 | 4 | Реализация | `/aidd-generate` | Реализатор | `IMPLEMENT_OK` | Код сервисов |
-| 5 | Ревью | `/aidd-review` | Ревьюер | `REVIEW_OK` | Отчёт ревью |
-| 6 | QA | `/aidd-test` | QA | `QA_PASSED` | Отчёт QA |
-| 7 | Валидация | `/aidd-validate` | Валидатор | `ALL_GATES_PASSED` | RTM, отчёт |
-| 8 | Деплой | `/aidd-deploy` | Валидатор | `DEPLOYED` | Приложение |
+| 5 | Quality & Deploy | `/aidd-finalize` | Валидатор | `REVIEW_OK` → `QA_PASSED` → `ALL_GATES_PASSED` → `DEPLOYED` | **Completion Report** (`ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md`) |
 
 ---
 

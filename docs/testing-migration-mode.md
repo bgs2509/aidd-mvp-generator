@@ -1,5 +1,8 @@
 # Testing Migration Mode (v2.4)
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > **Цель**: Протестировать работу migration mode и убедиться что оба варианта команд (v2 и v3) работают корректно.
 
 ---

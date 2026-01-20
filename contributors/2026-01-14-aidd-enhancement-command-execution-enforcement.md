@@ -1,5 +1,8 @@
 # Enhancement: Command Execution Enforcement Mechanism
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 **Date**: 2026-01-14
 **Author**: AI Agent
 **Type**: Enhancement Request

@@ -1,5 +1,8 @@
 # Детальные рекомендации по исправлению расхождений
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 **Дата**: 2026-01-13
 **Автор**: AI Agent
 **Тип**: Документация / План исправлений
@@ -504,4 +507,3 @@ LOW (2):                    2 × 0.1 = -0.2 баллов
 - `knowledge/pipeline/automigration.md` - Автомиграция v1 → v2
 - `contributors/2026-01-13-aidd-issue-completion-report-gap.md` - Исходный issue
 - `contributors/2026-01-13-comprehensive-audit-report.md` - Комплексный аудит
-

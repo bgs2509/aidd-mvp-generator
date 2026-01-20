@@ -1,5 +1,8 @@
 # Комплексный аудит AIDD-MVP Generator — Codex (2025-01-13)
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 ## 1. Executive Summary
 ### Назначение проекта
 AIDD-MVP Generator — эталонный репозиторий методологии AI-Driven Development. Он определяет 9-этапный пайплайн, 7 ролей агентов, шаблоны сервисов (FastAPI, Aiogram, async workers) и документацию для быстрой сборки production-ready MVP за ~10 минут. Репозиторий служит «фабрикой инструкций» — `/aidd-*` команды и документация копируются в целевой проект и управляют качеством на каждом этапе.
@@ -325,4 +328,3 @@ $ ls docs/target-project-structure.md
 1. **Немедленно (неделя)**: добавить алиасы `.claude/commands/<cmd>.md`, удалить `current_feature`, исправить все битые ссылки (см. `/tmp/broken_links_precise.txt`). После этого повторно запустить `run_smoke_tests.sh` и Objective 2 для подтверждения.
 2. **Краткосрочно (месяц)**: обновить инструкции ролей и шаблоны (FR-XXX/placeholder), чтобы автоматизированные проверки проходили без ложных тревог. Одновременно исправить визуальные ворота в `workflow.md` и пересобрать документацию (`docs/history/*`) с корректными ссылками.
 3. **Долгосрочно**: добавить CI-задачу (например, GitHub Actions) с Python-линкчекером из Objective 2 и smoke-скриптом. Автоматизировать генерацию таблиц ссылок (docs/LINKS_REFERENCE.md) напрямую из содержимого `.claude/commands/`.
-

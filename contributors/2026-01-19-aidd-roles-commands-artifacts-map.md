@@ -1,5 +1,8 @@
 # Полная карта ролей AIDD-MVP Generator
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > **Цель**: Систематизировать все роли, команды, артефакты и связи между ними.
 
 > **⚠️ Naming Convention Migration (v2.4+)**:

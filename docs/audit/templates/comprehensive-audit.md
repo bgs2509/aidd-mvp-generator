@@ -1,5 +1,8 @@
 # Шаблон комплексного аудита документации AIDD-MVP Generator
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 ## Назначение
 
 Этот шаблон помогает AI-агентам проводить комплексный аудит документации фреймворка AIDD-MVP Generator для выявления и исправления структурных, консистентных и контентных проблем.
@@ -590,10 +593,7 @@ done
 | 2 | /aidd-research | researcher | RESEARCH_DONE |
 | 3 | /aidd-plan или /aidd-feature-plan | architect | PLAN_APPROVED |
 | 4 | /aidd-generate | implementer | IMPLEMENT_OK |
-| 5 | /aidd-review | reviewer | REVIEW_OK |
-| 6 | /aidd-test | qa | QA_PASSED |
-| 7 | /aidd-validate | validator | ALL_GATES_PASSED |
-| 8 | /aidd-deploy | validator | DEPLOYED |
+| 5 | /aidd-finalize | validator | REVIEW_OK → QA_PASSED → ALL_GATES_PASSED → DEPLOYED |
 
 ---
 

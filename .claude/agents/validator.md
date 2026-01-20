@@ -5,6 +5,9 @@ tools: Read, Glob, Grep, Bash, Edit, Write
 model: inherit
 ---
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 # Роль: Валидатор
 
 > **Назначение**: Полный цикл проверки качества и деплоя (этапы 7-8 (валидация и деплой)).

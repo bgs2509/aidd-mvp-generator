@@ -1,5 +1,8 @@
 # Система именования артефактов
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > **Назначение**: Спецификация системы именования и организации артефактов в долгосрочных проектах.
 > **Проблема**: В проектах с сотнями фич папка `ai-docs/docs/` превращается в хаос без понятной системы.
 
@@ -101,9 +104,7 @@ ai-docs/docs/
 | `prd` | Product Requirements Document | `prd/` | 1 |
 | `research` | Research Report | `research/` | 2 |
 | `plan` | Architecture/Feature Plan | `architecture/` или `plans/` | 3 |
-| `review` | Review Report | `reports/` | 5 |
-| `qa` | QA Report | `reports/` | 6 |
-| `validation` | Validation Report | `reports/` | 7 |
+| `completion` | Completion Report | `reports/` | 5 |
 
 ### 2.4 Версионирование (итерации)
 
@@ -245,7 +246,7 @@ ai-docs/docs/FEATURES.md
 
 FEATURES.md обновляется автоматически командами:
 - `/aidd-idea` — добавляет новую фичу (IN_PROGRESS)
-- `/aidd-deploy` — обновляет статус на DEPLOYED
+- `/aidd-finalize` — обновляет статус на DEPLOYED
 - При ручном архивировании — переносит в "Архивные"
 
 ---
@@ -393,16 +394,9 @@ ai-docs/docs/
 │   ├── 2024-12-20_F042_email-notify-plan.md
 │   └── ...
 │
-├── reports/                       # Отчёты этапов
-│   ├── review/
-│   │   ├── 2024-01-18_F001_user-auth-review.md
-│   │   └── ...
-│   ├── qa/
-│   │   ├── 2024-01-19_F001_user-auth-qa.md
-│   │   └── ...
-│   └── validation/
-│       ├── 2024-01-20_F001_user-auth-validation.md
-│       └── ...
+├── reports/                       # Completion Reports
+│   ├── 2024-01-20_F001_user-auth-completion.md
+│   └── ...
 │
 └── archive/                       # Устаревшие/отменённые фичи
     └── F010_integration-x/
@@ -625,14 +619,15 @@ migrated_at: 2024-12-23
 4. Сохранить путь в active_pipelines[FID].artifacts.plan
 ```
 
-### 10.3 /aidd-deploy
+### 10.3 /aidd-finalize
 
 ```python
-# При успешном деплое:
+# При успешном деплое (шаг 4: Deploy):
 1. Перенести фичу из active_pipelines в features_registry
 2. Добавить deployed_at и статус DEPLOYED
-3. Обновить FEATURES.md (перенести в "Завершённые")
-4. Удалить запись из active_pipelines
+3. Создать Completion Report
+4. Обновить FEATURES.md (перенести в "Завершённые")
+5. Удалить запись из active_pipelines
 ```
 
 ---

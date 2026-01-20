@@ -1,5 +1,8 @@
 # Git интеграция для параллельных пайплайнов
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > **Версия**: Pipeline State v2
 > **Связанные файлы**:
 > - `scripts/git_helpers.py` — утилиты командной строки
@@ -80,16 +83,13 @@ feature/{FID}-{slug}
 │    │  │     ├── /aidd-research                                          │
 │    │  │     ├── /aidd-plan                                              │
 │    │  │     ├── /aidd-generate                                          │
-│    │  │     ├── /aidd-review                                            │
-│    │  │     ├── /aidd-test                                              │
-│    │  │     ├── /aidd-validate                                          │
-│    │  │     └── /aidd-deploy ──────────────▶ DEPLOYED                   │
+│    │  │     └── /aidd-finalize ─────────────▶ DEPLOYED                   │
 │    │  │                                                                 │
 │    │  └── feature/F043-payments ──────────────────────▶ merge           │
 │    │        ├── /aidd-idea      (параллельно с F042!)                  │
 │    │        ├── /aidd-research                                          │
 │    │        ├── ...                                                     │
-│    │        └── /aidd-deploy ──────────────▶ DEPLOYED                   │
+│    │        └── /aidd-finalize ─────────────▶ DEPLOYED                   │
 │    │                                                                    │
 │    ▼                                                                    │
 │  main (с обеими фичами)                                                 │
@@ -219,7 +219,7 @@ $ python3 scripts/git_helpers.py conflicts F042 F043
 
 ### Завершение фичи
 
-После прохождения всех ворот и `/aidd-deploy`:
+После прохождения всех ворот и `/aidd-finalize`:
 
 ```bash
 # 1. Завершить фичу (перемещает в features_registry)
@@ -300,7 +300,7 @@ def merge_pipeline_states(main_state, feature_state, fid):
 
 AI автоматически проверяет конфликты при:
 - Запуске `/aidd-generate` (если есть другие активные фичи)
-- Запуске `/aidd-deploy` (перед завершением)
+- Запуске `/aidd-finalize` (перед завершением)
 
 ### Ручная проверка
 

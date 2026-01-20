@@ -1,5 +1,8 @@
 # Справочник ссылок AIDD-MVP Generator
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > **Назначение**: Централизованный справочник всех важных ссылок в генераторе.
 > Используйте этот файл для быстрого поиска нужного документа.
 
@@ -33,9 +36,14 @@
 | [.claude/agents/researcher.md](../.claude/agents/researcher.md) | Исследователь | 2 |
 | [.claude/agents/architect.md](../.claude/agents/architect.md) | Архитектор | 3 |
 | [.claude/agents/implementer.md](../.claude/agents/implementer.md) | Реализатор | 4 |
-| [.claude/agents/reviewer.md](../.claude/agents/reviewer.md) | Ревьюер | 5 |
-| [.claude/agents/qa.md](../.claude/agents/qa.md) | QA | 6 |
-| [.claude/agents/validator.md](../.claude/agents/validator.md) | Валидатор | 7, 8 |
+| [.claude/agents/validator.md](../.claude/agents/validator.md) | Валидатор | 5 |
+
+**Вспомогательные библиотеки инструкций** (используются внутри Валидатора):
+
+| Файл | Назначение |
+|------|-----------|
+| [.claude/agents/code-review-library.md](../.claude/agents/code-review-library.md) | Детальные инструкции для Code Review (Шаг 1) |
+| [.claude/agents/testing-library.md](../.claude/agents/testing-library.md) | Детальные инструкции для Testing (Шаг 2) |
 
 ---
 
@@ -60,7 +68,7 @@
 | [templates/documents/research-report-template.md](../templates/documents/research-report-template.md) | `ai-docs/docs/research/{name}-research.md` |
 | [templates/documents/architecture-template.md](../templates/documents/architecture-template.md) | `ai-docs/docs/architecture/{name}-plan.md` |
 | [templates/documents/feature-plan-template.md](../templates/documents/feature-plan-template.md) | `ai-docs/docs/plans/{feature}-plan.md` |
-| [templates/documents/rtm-template.md](../templates/documents/rtm-template.md) | `ai-docs/docs/rtm.md` |
+| [templates/documents/completion-report-template.md](../templates/documents/completion-report-template.md) | `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md` |
 | [templates/documents/pipeline-state-template.json](../templates/documents/pipeline-state-template.json) | `.pipeline-state.json` |
 
 ---

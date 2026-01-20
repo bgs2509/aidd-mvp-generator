@@ -1,5 +1,8 @@
 # Pipeline State v2: Параллельные пайплайны
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > **Версия**: 2.0
 > **Дата**: 2025-12-25
 
@@ -262,7 +265,7 @@ def create_feature(title: str) -> str:
 2. Отметить ворота как пройденные
 3. Записать путь к артефакту
 
-### 3. Завершение (`/aidd-deploy`)
+### 3. Завершение (`/aidd-finalize`)
 
 ```python
 def complete_feature(fid: str) -> None:
@@ -304,9 +307,6 @@ def complete_feature(fid: str) -> None:
         "prd": "prd/2024-12-23_F001_table-booking-prd.md",
         "research": "research/2024-12-23_F001_table-booking-research.md",
         "plan": "architecture/2024-12-23_F001_table-booking-plan.md",
-        "review": "reports/2024-12-23_F001_table-booking-review.md",
-        "qa": "reports/2024-12-24_F001_table-booking-qa.md",
-        "validation": "reports/2024-12-24_F001_table-booking-validation.md",
         "completion": "reports/2024-12-24_F001_table-booking-completion.md"
       },
       "services": ["booking_api", "booking_data"]

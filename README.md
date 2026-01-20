@@ -1,5 +1,8 @@
 # AIDD-MVP Generator
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > Фреймворк для быстрой генерации production-ready MVP проектов
 > с использованием методологии AI-Driven Development (AIDD)
 
@@ -70,10 +73,7 @@ claude
 /aidd-plan
 # ... утвердить план ...
 /aidd-generate
-/aidd-review
-/aidd-test
-/aidd-validate
-/aidd-deploy
+/aidd-finalize
 
 # 6. Запустить сгенерированный проект
 make build && make up
@@ -145,9 +145,7 @@ claude
 | **Исследователь** | `/aidd-research` | Анализ кода и технологий |
 | **Архитектор** | `/aidd-plan` | Проектирование системы |
 | **Реализатор** | `/aidd-generate` | Генерация кода |
-| **Ревьюер** | `/aidd-review` | Код-ревью |
-| **QA** | `/aidd-test` | Тестирование |
-| **Валидатор** | `/aidd-validate` | Проверка качества |
+| **Валидатор** | `/aidd-finalize` | Quality & Deploy (Review → Test → Validate → Deploy) |
 
 ---
 

@@ -3,6 +3,9 @@ allowed-tools: Read(*), Glob(*), Grep(*), Bash(git :*), Bash(python3 :*), Bash(d
 description: Инициализация целевого проекта (Bootstrap Pipeline)
 ---
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
 > 1. Найти секцию "Чеклист ворот" в конце этого файла
 > 2. Создать TodoWrite со ВСЕМИ пунктами (особенно 🔴)
@@ -938,8 +941,8 @@ def determine_naming_version() -> str:
 │  ────────────────────────────────────────────────────────────── │
 │  ✓ BOOTSTRAP_READY                                               │
 │                                                                  │
-│  Доступные команды: /aidd-idea /aidd-research /aidd-plan /aidd-generate /aidd-review     │
-│                     /aidd-test /aidd-validate /aidd-deploy /aidd-feature-plan       │
+│  Доступные команды: /aidd-idea /aidd-research /aidd-plan /aidd-generate            │
+│                     /aidd-finalize /aidd-feature-plan                                │
 │                                                                  │
 │  Следующий шаг: /aidd-idea "Описание вашего проекта"                 │
 │                                                                  │
@@ -1003,8 +1006,8 @@ def determine_naming_version() -> str:
 │  ────────────────────────────────────────────────────────────── │
 │  ✓ BOOTSTRAP_READY                                               │
 │                                                                  │
-│  Доступные команды: /aidd-idea /aidd-research /aidd-plan /aidd-generate /aidd-review     │
-│                     /aidd-test /aidd-validate /aidd-deploy /aidd-feature-plan       │
+│  Доступные команды: /aidd-idea /aidd-research /aidd-plan /aidd-generate            │
+│                     /aidd-finalize /aidd-feature-plan                                │
 │                                                                  │
 │  Следующий шаг: /aidd-idea "Описание новой фичи"                     │
 │                                                                  │

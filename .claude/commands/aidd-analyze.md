@@ -4,6 +4,9 @@ argument-hint: "[описание идеи проекта или фичи]"
 description: Создать PRD документ из идеи пользователя
 ---
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
 > 1. Найти секцию "Чеклист ворот" в конце этого файла
 > 2. Создать TodoWrite со ВСЕМИ пунктами (особенно 🔴)

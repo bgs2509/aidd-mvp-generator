@@ -1,5 +1,8 @@
 # Индекс файлов AIDD-MVP Generator
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > **Назначение**: Навигация по файлам ФРЕЙМВОРКА (генератора).
 > Для структуры целевого проекта см. [target-project-structure.md](target-project-structure.md)
 
@@ -100,10 +103,6 @@
 | План фичи (FEATURE) | [templates/documents/feature-plan-template.md](../templates/documents/feature-plan-template.md) | `ai-docs/docs/plans/{feature}-plan.md` |
 | План реализации | [templates/documents/implementation-plan-template.md](../templates/documents/implementation-plan-template.md) | `ai-docs/docs/architecture/{name}-impl.md` |
 | **Completion Report** | [templates/documents/completion-report-template.md](../templates/documents/completion-report-template.md) | `ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md` |
-| ~~Отчёт ревью~~ | ~~templates/documents/review-report-template.md~~ | ~~Устарел (заменён Completion Report)~~ |
-| ~~Отчёт QA~~ | ~~templates/documents/qa-report-template.md~~ | ~~Устарел (заменён Completion Report)~~ |
-| ~~Отчёт валидации~~ | ~~templates/documents/validation-report-template.md~~ | ~~Устарел (заменён Completion Report)~~ |
-| ~~RTM~~ | ~~templates/documents/rtm-template.md~~ | ~~Устарел (заменён Completion Report)~~ |
 | Состояние пайплайна | [templates/documents/pipeline-state-template.json](../templates/documents/pipeline-state-template.json) | `.pipeline-state.json` |
 
 ---

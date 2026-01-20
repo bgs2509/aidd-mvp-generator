@@ -1,5 +1,8 @@
 # Комплексный аудит документации AIDD-MVP Generator
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 **Дата**: 2026-01-13
 **Версия шаблона**: comprehensive-audit.md v1.0
 **Выполнил**: Claude Opus 4.5 (самостоятельно, без делегирования)

@@ -28,9 +28,7 @@ artifacts:
   prd: "prd/{YYYY-MM-DD}_{FID}_{slug}-prd.md"
   research: "research/{YYYY-MM-DD}_{FID}_{slug}-research.md"
   plan: "architecture/{YYYY-MM-DD}_{FID}_{slug}-plan.md"
-  review: "reports/{YYYY-MM-DD}_{FID}_{slug}-review.md"
-  qa: "reports/{YYYY-MM-DD}_{FID}_{slug}-qa.md"
-  validation: "reports/{YYYY-MM-DD}_{FID}_{slug}-validation.md"
+  # completion report — единственный артефакт этапа Quality & Deploy
 
 # Зависимости
 depends_on: []           # FID фич, от которых зависит эта
@@ -267,10 +265,6 @@ enables: []              # Потенциальные фичи, которые �
 | PRD | `ai-docs/docs/prd/{date}_{FID}_{slug}-prd.md` | ✅ | Требования |
 | Research | `ai-docs/docs/research/{date}_{FID}_{slug}-research.md` | ✅ | Анализ |
 | Architecture Plan | `ai-docs/docs/architecture/{date}_{FID}_{slug}-plan.md` | ✅ | Архитектура |
-| Review Report | `ai-docs/docs/reports/{date}_{FID}_{slug}-review.md` | ✅ | Код-ревью |
-| QA Report | `ai-docs/docs/reports/{date}_{FID}_{slug}-qa.md` | ✅ | Тестирование |
-| Validation Report | `ai-docs/docs/reports/{date}_{FID}_{slug}-validation.md` | ✅ | Валидация |
-| RTM | `ai-docs/docs/rtm.md` | ✅ | Трассировка |
 
 ---
 

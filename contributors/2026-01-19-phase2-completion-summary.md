@@ -1,5 +1,8 @@
 # Phase 2 Completion Summary
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > **Дата завершения**: 2026-01-19
 > **План**: `/home/bgs/.claude/plans/idempotent-drifting-wirth.md`
 

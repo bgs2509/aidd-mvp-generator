@@ -1,5 +1,8 @@
 # workflow.md — Процесс разработки AIDD-MVP
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > **Назначение**: Описание 6-этапного процесса разработки MVP (этапы 0-5).
 > AI-агент ОБЯЗАН следовать этому процессу и проходить качественные ворота.
 >
@@ -366,116 +369,102 @@ done
 
 ---
 
-### Этап 5: Quality & Deploy (Финализация)
+### Этап 5: Quality & Deploy
 
-> **Новый подход (v2.0)**: Объединённый этап вместо отдельных review/test/validate/deploy.
-> **v2.1**: Добавлены два режима — Full (production-ready) и Quick (DRAFT документация).
+**Команда**: `/aidd-finalize` (или `/aidd-validate` в v2.4+)
+**Роль**: Валидатор (`.claude/agents/validator.md`)
+**Предусловие**: `IMPLEMENT_OK` ✓
+**Артефакт**: `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md`
 
-| Параметр | Значение |
-|----------|----------|
-| **Команда** | `/aidd-finalize` |
-| **Агент** | Валидатор (расширенная роль) |
-| **Вход** | Сгенерированный код (IMPLEMENT_OK) |
-| **Выход** | 1 Completion Report + работающее приложение (Full) или DRAFT отчёт (Quick) |
-| **Ворота (Full)** | `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED` |
-| **Ворота (Quick)** | `DOCUMENTED` |
+#### Описание
 
-**Команда поддерживает два режима**:
+Этап Quality & Deploy выполняет полный цикл проверки качества и деплоя в 4 последовательных шага:
 
-1. **Полный режим (рекомендуется)**: 4 последовательных шага → Production-ready MVP
-2. **Быстрый режим**: Только Static Analysis + DRAFT Completion Report → для документации или незавершённых фич
+```
+┌──────────────────────────────────────────────────────────────┐
+│  Шаг 1: Code Review                                          │
+│  ├─ Архитектура (DDD, HTTP-only)                             │
+│  ├─ Quality Cascade (QC-1...QC-17)                           │
+│  ├─ Log-Driven Design                                        │
+│  └─ Security checklist                                       │
+│  → Ворота: REVIEW_OK ✓                                       │
+├──────────────────────────────────────────────────────────────┤
+│  Шаг 2: Testing                                              │
+│  ├─ Запуск pytest с coverage                                 │
+│  ├─ Проверка покрытия ≥75%                                   │
+│  └─ Верификация требований FR-*                              │
+│  → Ворота: QA_PASSED ✓                                       │
+├──────────────────────────────────────────────────────────────┤
+│  Шаг 3: Validation                                           │
+│  ├─ Проверка всех ворот (PRD_READY...QA_PASSED)              │
+│  ├─ Верификация артефактов                                   │
+│  └─ Финальная проверка security                              │
+│  → Ворота: ALL_GATES_PASSED ✓                                │
+├──────────────────────────────────────────────────────────────┤
+│  Шаг 4: Deploy & Completion Report                           │
+│  ├─ docker-compose build                                     │
+│  ├─ docker-compose up                                        │
+│  ├─ Health-check                                             │
+│  ├─ Базовые сценарии                                         │
+│  ├─ СОЗДАНИЕ COMPLETION REPORT (обязательно!)                │
+│  └─ Перенос в features_registry                              │
+│  → Ворота: DEPLOYED ✓                                        │
+└──────────────────────────────────────────────────────────────┘
+```
 
-При запуске AI спрашивает у пользователя выбор режима через интерактивный диалог.
+#### Два режима работы
 
----
+| Режим | Когда использовать | Ворота |
+|-------|-------------------|--------|
+| **Полный** (рекомендуется) | Production-ready MVP | `REVIEW_OK` → `QA_PASSED` → `ALL_GATES_PASSED` → `DEPLOYED` |
+| **Быстрый** | Документация, застопорившаяся фича | `DOCUMENTED` (только static analysis) |
 
-#### Полный режим (Full Mode)
+**Быстрый режим**:
+- Выполняет только mypy, ruff, bandit (без тестов)
+- Создаёт DRAFT Completion Report с пометкой "⚠️ DRAFT — QA не выполнено"
+- Фича остаётся в `active_pipelines` (НЕ переносится в `features_registry`)
+- Позволяет переключиться на другую фичу без завершения текущей
 
-**Этап состоит из 4 последовательных шагов**:
+#### Библиотеки инструкций
 
-#### Шаг 1: Code Review → `REVIEW_OK`
-- [ ] Архитектура соответствует плану (DDD, HTTP-only)
-- [ ] Security checklist пройден (нет уязвимостей)
-- [ ] Code style соблюдён (conventions.md)
-- [ ] Log-Driven Design проверен
-- [ ] Quality Cascade (QC-1 до QC-17) пройден
+Валидатор использует две вспомогательные библиотеки:
 
-#### Шаг 2: Testing → `QA_PASSED`
-- [ ] Все тесты проходят (0 failed)
-- [ ] Coverage ≥ 75%
-- [ ] Integration тесты пройдены
-- [ ] Все FR-* требования верифицированы
+| Библиотека | Файл | Содержимое |
+|------------|------|-----------|
+| **Code Review** | `.claude/agents/code-review-library.md` | Quality Cascade (17 проверок), Log-Driven Design, Security |
+| **Testing** | `.claude/agents/testing-library.md` | Тестовые сценарии, Coverage, Верификация требований |
 
-#### Шаг 3: Validation → `ALL_GATES_PASSED`
-- [ ] Все предыдущие ворота пройдены (PRD_READY...QA_PASSED)
-- [ ] Все артефакты существуют и актуальны
-- [ ] Security BLOCKER issues = 0
-- [ ] Security CRITICAL issues = 0
+#### Completion Report
 
-#### Шаг 4: Deploy & Completion Report → `DEPLOYED`
-- [ ] Docker-контейнеры собраны и запущены (`make build`, `make up`)
-- [ ] Health-check проходит (`make health`)
-- [ ] Базовые сценарии работают (API запросы успешны)
-- [ ] Логи проверены (нет ошибок)
-- [ ] **Completion Report создан** ← ОБЯЗАТЕЛЬНО!
-- [ ] Фича перенесена в `features_registry`
+Единственный артефакт этапа Quality & Deploy. Содержит:
 
----
+- Executive Summary
+- Code Review Summary (результаты 17 проверок)
+- Testing Summary (coverage, требования)
+- Requirements Traceability (соответствие FR-*)
+- ADR (архитектурные решения)
+- Scope Changes (план vs факт)
+- Known Limitations
+- Метрики качества
 
-#### Быстрый режим (Quick Mode)
+**Путь**: `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md`
 
-**Используется когда**: документационная фича, застопорившаяся фича, временный коммит.
+#### Команды
 
-**Шаг 0: Static Analysis Only → `DOCUMENTED`**
-- [ ] mypy — type checking (0 errors)
-- [ ] ruff — code style (0 errors)
-- [ ] bandit — security scan (0 critical)
-- [ ] **DRAFT Completion Report создан** с пометкой "QA не выполнено"
-- [ ] Gate `DOCUMENTED` отмечен как passed
-- [ ] Фича остаётся в `active_pipelines` (НЕ переносится в `features_registry`)
-
-**Результат**: DRAFT документация без гарантии работоспособности. Позволяет переключиться на другую фичу.
-
----
-
-**Единственный артефакт** (в целевом проекте, оба режима):
-
-| Артефакт | Путь | Описание |
-|----------|------|----------|
-| **Completion Report** | `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md` | Single Source of Truth |
-
-**Completion Report содержит**:
-
-| Секция | Full Mode | Quick Mode |
-|--------|-----------|------------|
-| Executive Summary | Что реализовано | ⚠️ DRAFT — QA не выполнено |
-| Code Review Summary | Полный code review | Static Analysis (mypy, ruff, bandit) |
-| Testing Summary | Результаты тестов + coverage | "Skipped (Quick mode)" |
-| Requirements Traceability | RTM: FR-* → тесты | Из PRD (если доступно) |
-| ADR | Из Architecture Plan | Из Architecture Plan |
-| Scope Changes | План vs факт | План vs факт (если доступно) |
-| Known Limitations | Список ограничений | Список ограничений |
-| Метрики | Coverage, tests, security | Только static analysis |
-| Timeline | Полный timeline | Полный timeline |
-
-> **Преимущества**: -3 файла, -900 строк кода команд, -180 токенов на проект.
-> Вся информация о фиче в одном месте — Single Source of Truth для AI.
-
-**Команды**:
 ```bash
-# Вместо 4 отдельных команд:
-# /aidd-review → /aidd-test → /aidd-validate → /aidd-deploy
-
-# Теперь одна команда:
+# Полный режим (рекомендуется)
 /aidd-finalize
 
-# Результат:
-# ✓ Step 1/4: Code Review → REVIEW_OK
-# ✓ Step 2/4: Testing (Coverage 82%) → QA_PASSED
-# ✓ Step 3/4: Validation → ALL_GATES_PASSED
-# ✓ Step 4/4: Deploy → DEPLOYED
-# ✓ Completion Report: ai-docs/docs/reports/2024-12-23_F001_table-booking-completion.md
+# Быстрый режим (явное указание)
+/aidd-finalize --mode=quick
+
+# Alias (v2.4+)
+/aidd-validate
 ```
+
+#### Детальные инструкции
+
+См. `.claude/commands/aidd-finalize.md` → секции по каждому шагу.
 
 ---
 
@@ -499,24 +488,6 @@ done
 >
 > Файлы команд: [docs/INDEX.md](docs/INDEX.md#slash-команды)
 
-### Почему 6 этапов (0-5) и 5 ролей
-
-> **Историческая справка**: До v2.0 пайплайн включал 9 этапов (0-8) с отдельными
-> командами для Review, Test, Validate, Deploy. В v2.0 эти этапы были объединены
-> в один — Quality & Deploy (/aidd-finalize).
-
-Валидатор в v2.0 выполняет объединённый Этап 5 (Quality & Deploy):
-- **Шаг 1**: Code Review → REVIEW_OK
-- **Шаг 2**: Testing → QA_PASSED
-- **Шаг 3**: Validation → ALL_GATES_PASSED
-- **Шаг 4**: Deploy + Completion Report → DEPLOYED
-
-Преимущества объединения:
-- Единый Completion Report вместо 4 отчётов
-- -3 файла артефактов, -900 строк кода команд
-- Single Source of Truth для AI
-
----
 
 ## Артефакты по этапам (в целевом проекте)
 

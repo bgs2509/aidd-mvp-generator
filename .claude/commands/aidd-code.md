@@ -3,6 +3,9 @@ allowed-tools: Read(*), Glob(*), Grep(*), Edit(**), Write(**), Bash(make :*), Ba
 description: Генерация кода на основе утверждённого плана
 ---
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
 > 1. Найти секцию "Чеклист ворот" в конце этого файла
 > 2. Создать TodoWrite со ВСЕМИ пунктами (особенно 🔴)

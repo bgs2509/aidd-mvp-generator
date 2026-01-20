@@ -1,5 +1,8 @@
 # CLAUDE.md — Главная точка входа для AI-агентов
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > **Философия**: VERIFY BEFORE ACT — Проверяй перед действием.
 > **Принцип**: Артефакты = Память. Не полагаемся на контекст чата.
 >
@@ -162,7 +165,7 @@ AI выполняет команду по инструкциям
 - Каждая фича разрабатывается в отдельной git ветке `feature/{FID}-{slug}`
 - Ворота изолированы: `active_pipelines[FID].gates` вместо общих `gates`
 - Контекст фичи определяется автоматически по текущей git ветке
-- При `/aidd-deploy` фича переносится в `features_registry`
+- При `/aidd-finalize` (DEPLOYED) фича переносится в `features_registry`
 
 **Правила параллельной разработки**:
 - ✅ **Можно** начинать новую фичу даже если предыдущая не завершена (DEPLOYED)
@@ -309,12 +312,14 @@ AI выполняет команду по инструкциям
 #### Что содержит
 
 1. **Executive Summary** — что сделано (2-3 предложения)
-2. **Реализованные компоненты** — сервисы, модели, интеграции
-3. **ADR** — архитектурные решения с обоснованием
-4. **Scope Changes** — отклонения от плана
-5. **Known Limitations** — ограничения и workarounds
-6. **Метрики** — coverage, tests, security
-7. **Ссылки** — на все артефакты
+2. **Code Review Summary** — результаты проверки качества
+3. **Testing Summary** — результаты тестирования
+4. **Requirements Traceability** — соответствие требованиям
+5. **ADR** — архитектурные решения с обоснованием
+6. **Scope Changes** — отклонения от плана
+7. **Known Limitations** — ограничения и workarounds
+8. **Метрики** — coverage, tests, security
+9. **Ссылки** — на все артефакты
 
 #### Когда AI ОБЯЗАН читать
 
@@ -345,9 +350,13 @@ ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md
 | **Исследователь** | `researcher.md` | 2 | Анализ кода/требований |
 | **Архитектор → Планировщик** | `architect.md` / `planner.md` | 3 | Проектирование |
 | **Реализатор → Программист** | `implementer.md` / `coder.md` | 4 | Генерация кода |
-| **Валидатор** | `validator.md` | 5 | Quality & Deploy (Review, QA, Validate, Deploy) |
+| **Валидатор** | `validator.md` | 5 | Quality & Deploy (4 шага) |
 
 > **Migration Mode**: Роли с двумя названиями доступны в обоих файлах (идентичное содержимое)
+
+**Вспомогательные библиотеки инструкций** (используются внутри Валидатора):
+- `code-review-library.md` — детальные инструкции для Code Review (Шаг 1)
+- `testing-library.md` — детальные инструкции для Testing (Шаг 2)
 
 ---
 
@@ -537,7 +546,7 @@ python3 .aidd/scripts/migrate-naming-v3.py
 
 ## Выполнение команд /aidd-*
 
-> **Lesson Learned**: F007 (2026-01-14) — пропущен Completion Report при `/aidd-deploy`
+> **Lesson Learned**: F007 (2026-01-14) — пропущен Completion Report при `/aidd-finalize`
 
 ### Обязательный алгоритм
 

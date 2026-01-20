@@ -1,5 +1,8 @@
 # Алгоритм инициализации AI-агента
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > **Назначение**: Единый источник истины для порядка чтения файлов при запуске любой команды.
 >
 > **Принцип**: Сначала понять ГДЕ мы (контекст ЦП), потом КАК действовать (фреймворк).
@@ -186,10 +189,7 @@ if context.mode == "FEATURE" or len(state.get("features_registry", {})) > 0:
 | `/aidd-plan` | `PRD_READY`, `RESEARCH_DONE` | "Сначала выполните /research" |
 | `/aidd-feature-plan` | `PRD_READY`, `RESEARCH_DONE` | "Сначала выполните /research" |
 | `/aidd-generate` | `PLAN_APPROVED` | "Сначала утвердите план" |
-| `/aidd-review` | `IMPLEMENT_OK` | "Сначала выполните /generate" |
-| `/aidd-test` | `REVIEW_OK` | "Сначала выполните /review" |
-| `/aidd-validate` | `QA_PASSED` | "Сначала выполните /test" |
-| `/aidd-deploy` | `ALL_GATES_PASSED` | "Сначала выполните /validate" |
+| `/aidd-finalize` | `IMPLEMENT_OK` | "Сначала выполните /generate" |
 
 ### Алгоритм проверки
 
@@ -260,10 +260,7 @@ read(role_file)
 | `/aidd-plan` | architect |
 | `/aidd-feature-plan` | architect |
 | `/aidd-generate` | implementer |
-| `/aidd-review` | reviewer |
-| `/aidd-test` | qa |
-| `/aidd-validate` | validator |
-| `/aidd-deploy` | validator |
+| `/aidd-finalize` | validator |
 
 ---
 
@@ -443,10 +440,7 @@ def detect_mode(state: dict, existing_artifacts: dict) -> str:
 | `/aidd-plan` | CLAUDE.md, state, PRD | PRD_READY, RESEARCH_DONE | CLAUDE, workflow, plan.md, architect.md | architecture-template, knowledge/architecture |
 | `/aidd-feature-plan` | CLAUDE.md, state, PRD, существующая архитектура | PRD_READY, RESEARCH_DONE | CLAUDE, workflow, feature-plan.md, architect.md | — |
 | `/aidd-generate` | CLAUDE.md, state, план | PLAN_APPROVED | CLAUDE, workflow, generate.md, implementer.md | templates/services, knowledge/services |
-| `/aidd-review` | CLAUDE.md, state, код | IMPLEMENT_OK | CLAUDE, workflow, review.md, reviewer.md | conventions.md |
-| `/aidd-test` | CLAUDE.md, state, PRD, код | REVIEW_OK | CLAUDE, workflow, test.md, qa.md | knowledge/quality |
-| `/aidd-validate` | CLAUDE.md, state, все артефакты | QA_PASSED | CLAUDE, workflow, validate.md, validator.md | — |
-| `/aidd-deploy` | CLAUDE.md, state, инфраструктура | ALL_GATES_PASSED | CLAUDE, workflow, deploy.md, validator.md | knowledge/infrastructure |
+| `/aidd-finalize` | CLAUDE.md, state, код, все артефакты | IMPLEMENT_OK | CLAUDE, workflow, finalize.md, validator.md, code-review-library.md, testing-library.md | conventions.md, knowledge/quality, knowledge/infrastructure |
 
 ---
 

@@ -1,5 +1,8 @@
 # План реализации команды /aidd-finalize
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 **Дата**: 2026-01-19
 **Цель**: Объединить 4 этапа пайплайна (review/test/validate/deploy) в одну команду
 **Артефакт**: Один итоговый `reports/{date}_{FID}_{slug}-completion.md` вместо 4 отдельных отчётов
@@ -448,4 +451,3 @@ git submodule add <aidd-mvp-generator> .aidd
 
 **Статус плана**: Готов к реализации
 **Приоритет**: Высокий (упрощение и оптимизация)
-

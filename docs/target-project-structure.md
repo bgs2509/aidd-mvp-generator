@@ -1,5 +1,8 @@
 # Структура целевого проекта
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > **Назначение**: Описание структуры проекта, который СОЗДАЁТСЯ генератором.
 > **ВАЖНО**: НЕ путать со структурой самого генератора (aidd-mvp-generator)!
 
@@ -52,12 +55,8 @@
 │       ├── research/          ← Отчёты исследований
 │       │   └── {YYYY-MM-DD}_{FID}_{slug}-research.md
 │       │
-│       ├── reports/           ← Отчёты этапов
-│       │   ├── {YYYY-MM-DD}_{FID}_{slug}-review.md
-│       │   ├── {YYYY-MM-DD}_{FID}_{slug}-qa.md
-│       │   └── {YYYY-MM-DD}_{FID}_{slug}-validation.md
-│       │
-│       └── rtm.md             ← Requirements Traceability Matrix
+│       └── reports/           ← Completion Reports
+│           └── {YYYY-MM-DD}_{FID}_{slug}-completion.md
 │
 ├── services/                  ← Код сервисов (DDD/Hexagonal)
 │   ├── {name}_api/            ← Business API
@@ -119,11 +118,7 @@
 | 3. Архитектура (CREATE) | План | `ai-docs/docs/architecture/{date}_{FID}_{slug}-plan.md` |
 | 3. Архитектура (FEATURE) | План фичи | `ai-docs/docs/plans/{date}_{FID}_{slug}-plan.md` |
 | 4. Реализация | Код | `services/*/` |
-| 5. Ревью | Отчёт | `ai-docs/docs/reports/{date}_{FID}_{slug}-review.md` |
-| 6. QA | Отчёт | `ai-docs/docs/reports/{date}_{FID}_{slug}-qa.md` |
-| 7. Валидация | RTM | `ai-docs/docs/rtm.md` |
-| 7. Валидация | Отчёт | `ai-docs/docs/reports/{date}_{FID}_{slug}-validation.md` |
-| 8. Деплой | — | — |
+| 5. Quality & Deploy | Completion Report | `ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md` |
 
 ### Примеры имён файлов
 
@@ -131,9 +126,7 @@
 2024-12-23_F001_table-booking-prd.md
 2024-12-23_F001_table-booking-research.md
 2024-12-23_F001_table-booking-plan.md
-2024-12-23_F001_table-booking-review.md
-2024-12-23_F001_table-booking-qa.md
-2024-12-23_F001_table-booking-validation.md
+2024-12-23_F001_table-booking-completion.md
 ```
 
 ---
@@ -188,9 +181,7 @@
         "prd": "prd/2025-12-20_F001_table-booking-prd.md",
         "research": "research/2025-12-20_F001_table-booking-research.md",
         "plan": "architecture/2025-12-20_F001_table-booking-plan.md",
-        "review": "reports/2025-12-20_F001_table-booking-review.md",
-        "qa": "reports/2025-12-20_F001_table-booking-qa.md",
-        "validation": "reports/2025-12-21_F001_table-booking-validation.md"
+        "completion": "reports/2025-12-21_F001_table-booking-completion.md"
       },
       "services": ["booking_api", "booking_data"]
     }
@@ -215,7 +206,7 @@
 ```
 1. /aidd-idea создаёт active_pipelines[FID] с новым Feature ID
 2. Каждый этап обновляет gates и artifacts в active_pipelines[FID]
-3. /aidd-deploy переносит фичу в features_registry
+3. /aidd-finalize переносит фичу в features_registry (при DEPLOYED)
 4. Запись удаляется из active_pipelines
 5. Готово для следующей фичи (или параллельной разработки)
 ```
@@ -289,9 +280,7 @@ cp .aidd/templates/project/.claude/settings.local.json.example .claude/settings.
 | План архитектуры | `-plan.md` | `2024-12-23_F001_table-booking-plan.md` |
 | План фичи | `-plan.md` | `2024-12-23_F042_email-notify-plan.md` |
 | Исследование | `-research.md` | `2024-12-23_F001_table-booking-research.md` |
-| Отчёт ревью | `-review.md` | `2024-12-23_F001_table-booking-review.md` |
-| Отчёт QA | `-qa.md` | `2024-12-23_F001_table-booking-qa.md` |
-| Отчёт валидации | `-validation.md` | `2024-12-23_F001_table-booking-validation.md` |
+| Completion Report | `-completion.md` | `2024-12-23_F001_table-booking-completion.md` |
 
 > Подробная спецификация: [artifact-naming.md](artifact-naming.md)
 

@@ -3,6 +3,9 @@ allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md), Bash(gi
 description: Quality & Deploy — полный цикл проверки качества и деплоя
 ---
 
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+
+
 > ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
 > 1. Найти секцию "Чеклист ворот" в конце этого файла
 > 2. Создать TodoWrite со ВСЕМИ пунктами (особенно 🔴)
@@ -83,12 +86,11 @@ Completion Report содержит:
 
 ## Агент
 
-**Валидатор** (`.claude/agents/validator.md`) с расширенными обязанностями:
-- Выполняет код-ревью (роль Reviewer)
-- Запускает тесты (роль QA)
-- Валидирует все ворота
-- Выполняет деплой
-- Создаёт итоговый Completion Report
+**Валидатор** (`.claude/agents/validator.md`) выполняет полный цикл:
+- Code Review (см. библиотеку: `.claude/agents/code-review-library.md`)
+- Testing (см. библиотеку: `.claude/agents/testing-library.md`)
+- Validation (собственная логика)
+- Deploy & Completion Report (собственная логика)
 
 ---
 
@@ -1061,4 +1063,3 @@ docker-compose logs -f
 │                                             │
 └─────────────────────────────────────────────┘
 ```
-
