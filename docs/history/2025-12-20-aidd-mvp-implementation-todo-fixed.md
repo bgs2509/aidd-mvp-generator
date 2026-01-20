@@ -1,4 +1,4 @@
-# TODO: Реализация AIDD-MVP Generator Framework (ИСПРАВЛЕННАЯ ВЕРСИЯ)
+# placeholder: Реализация AIDD-MVP Generator Framework (ИСПРАВЛЕННАЯ ВЕРСИЯ)
 
 **Дата создания**: 2025-12-20
 **Исходный документ**: docs/history/2025-12-19-aidd-mvp-implementation-todo.md

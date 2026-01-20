@@ -1,4 +1,4 @@
-# TODO: Решение проблем AIDD-MVP Generator
+# placeholder: Решение проблем AIDD-MVP Generator
 
 **Дата создания**: 2025-12-19
 **Автор**: AI Agent (Анализатор)

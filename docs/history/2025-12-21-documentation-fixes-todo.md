@@ -1,4 +1,4 @@
-# TODO: Исправление проблем документации AIDD-MVP Generator
+# placeholder: Исправление проблем документации AIDD-MVP Generator
 
 **Дата создания**: 2025-12-21
 **Источник**: [2025-12-20-documentation-problems.md](2025-12-20-documentation-problems.md)

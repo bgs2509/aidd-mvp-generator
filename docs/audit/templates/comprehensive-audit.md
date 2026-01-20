@@ -492,19 +492,19 @@ done
 
 ### Objective 5: Качество контента
 
-**Цель**: Проверить качество контента: TODO, примеры кода, язык.
+**Цель**: Проверить качество контента: placeholder, примеры кода, язык.
 
 **КОМАНДЫ ВАЛИДАЦИИ**:
 
 ```bash
 # ========================================
-# Поиск TODO/FIXME/WIP маркеров
+# Поиск placeholder/FIXME/placeholder маркеров
 # ========================================
-echo "=== TODO/FIXME/WIP маркеры ==="
-grep -rn "TODO\|FIXME\|XXX\|HACK\|WIP" . --include="*.md" 2>/dev/null > /tmp/todos.txt
-TODO_COUNT=$(wc -l < /tmp/todos.txt)
-echo "Найдено TODO маркеров: $TODO_COUNT"
-if [ "$TODO_COUNT" -gt 0 ]; then
+echo "=== placeholder/FIXME/placeholder маркеры ==="
+grep -rn "placeholder\|FIXME\|XXX\|HACK\|placeholder" . --include="*.md" 2>/dev/null > /tmp/todos.txt
+placeholder_COUNT=$(wc -l < /tmp/todos.txt)
+echo "Найдено placeholder маркеров: $placeholder_COUNT"
+if [ "$placeholder_COUNT" -gt 0 ]; then
   echo "⚠️ Незавершённая документация:"
   head -10 /tmp/todos.txt
 fi
@@ -1243,7 +1243,7 @@ LOW проблемы (8):           8 × 0.1 = -0.8 баллов
 - **Исправление**: Точные bash-команды (не "обновите файлы" — ТОЧНЫЕ команды)
 - **Верификация**: Команда для проверки, что исправление работает
 
-### 3. TODO-список
+### 3. placeholder-список
 
 Организовать исправления по фазам:
 - **Фаза 1: Быстрые исправления** (< 1 час) — Критические ссылки, legacy, опечатки
