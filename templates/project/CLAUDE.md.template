@@ -42,9 +42,9 @@
 | 0 | `/init` | Инициализация проекта | — | — | BOOTSTRAP_READY |
 | 1 | `/idea` | Создание PRD документа | Аналитик | BOOTSTRAP_READY | PRD_READY |
 | 2 | `/research` | Анализ кодовой базы | Исследователь | PRD_READY | RESEARCH_DONE |
-| 3 | `/plan` | Архитектурный план (CREATE) | Архитектор | RESEARCH_DONE | PLAN_APPROVED |
-| 3 | `/feature-plan` | План фичи (FEATURE) | Архитектор | RESEARCH_DONE | PLAN_APPROVED |
-| 4 | `/generate` | Генерация кода | Реализатор | PLAN_APPROVED | IMPLEMENT_OK |
+| 3 | `/plan` | Архитектурный план (CREATE) | Планировщик | RESEARCH_DONE | PLAN_APPROVED |
+| 3 | `/feature-plan` | План фичи (FEATURE) | Планировщик | RESEARCH_DONE | PLAN_APPROVED |
+| 4 | `/generate` | Генерация кода | Программист | PLAN_APPROVED | IMPLEMENT_OK |
 | 5 | `/review` | Код-ревью | Ревьюер | IMPLEMENT_OK | REVIEW_OK |
 | 6 | `/test` | Тестирование и QA | QA | REVIEW_OK | QA_PASSED |
 | 7 | `/validate` | Финальная проверка | Валидатор | QA_PASSED | ALL_GATES_PASSED |
@@ -68,8 +68,8 @@
 |------|-----------------|-------|-----------------|
 | Аналитик | `.aidd/.claude/agents/analyst.md` | 1 | PRD, требования |
 | Исследователь | `.aidd/.claude/agents/researcher.md` | 2 | Анализ кода/требований |
-| Архитектор | `.aidd/.claude/agents/architect.md` | 3 | Проектирование |
-| Реализатор | `.aidd/.claude/agents/implementer.md` | 4 | Генерация кода |
+| Планировщик | `.aidd/.claude/agents/planner.md` | 3 | Проектирование |
+| Программист | `.aidd/.claude/agents/coder.md` | 4 | Генерация кода |
 | Ревьюер | `.aidd/.claude/agents/reviewer.md` | 5 | Качество кода |
 | QA | `.aidd/.claude/agents/qa.md` | 6 | Тестирование |
 | Валидатор | `.aidd/.claude/agents/validator.md` | 7-8 | Финальная проверка, деплой |
