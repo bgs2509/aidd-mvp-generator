@@ -109,10 +109,11 @@ Stage 4.5: Telegram Bot (если нужен)
 ├── States
 └── Тесты
 
-Stage 4.6: Тесты
-├── Unit тесты
-├── Integration тесты
-└── Проверка coverage
+Stage 4.6: Реализация тестов
+├── Smoke тесты (обязательно)
+├── Unit тесты (если TRQ-005 = Да)
+├── Integration тесты (если TRQ-006 = Да)
+└── E2E тесты (если TRQ-007 = Да)
 ```
 
 ### 2. Использование шаблонов
@@ -136,10 +137,25 @@ templates/services/postgres_data_api/    → services/{name}_data/
 
 ### 4. Написание тестов
 
-Для каждого модуля:
-- Unit-тесты для бизнес-логики
-- Integration-тесты для API
-- Фикстуры в conftest.py
+Порядок реализации (последовательно):
+
+1. **Smoke тесты** (ОБЯЗАТЕЛЬНО, внутри каждого сервиса)
+   - services/{service}/tests/smoke/test_health.py — health checks
+   - services/{service}/tests/smoke/test_containers.py — контейнеры запускаются
+   - services/{service}/tests/smoke/test_endpoints_happy.py — 100% endpoints happy-path
+
+2. **Unit тесты** (если TRQ-005 = Да)
+   - services/{service}/tests/unit/ — coverage ≥ {порог}
+   - Использовать AsyncMock для зависимостей
+
+3. **Integration тесты** (если TRQ-006 = Да)
+   - services/{service}/tests/integration/ — критические пайплайны
+   - Использовать testcontainers для {БД из PRD}
+
+4. **E2E тесты** (если TRQ-007 = Да, глобально)
+   - tests/e2e/ — сквозные сценарии между сервисами
+
+Фикстуры — в `conftest.py` каждого сервиса/категории.
 
 ```python
 # Формат именования тестов

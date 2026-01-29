@@ -269,7 +269,7 @@ def update_after_generate(state: dict, fid: str, services: list[str]):
 | Структура | DDD/Hexagonal соблюдена |
 | Типы | Type hints везде |
 | Документация | Docstrings на русском |
-| Тесты | Unit-тесты проходят |
+| Тесты | Smoke тесты проходят, остальные по требованиям TRQ |
 
 ---
 
@@ -301,7 +301,11 @@ def update_after_generate(state: dict, fid: str, services: list[str]):
 
 - [ ] 🔴 Весь код сгенерирован согласно плану
 - [ ] 🔴 Все сервисы созданы в `services/`
-- [ ] 🔴 Unit тесты написаны
+- [ ] 🔴 Smoke тесты реализованы (TRQ-001..TRQ-004)
+- [ ] 🔴 Smoke тесты проходят
+- [ ] 🟡 Unit тесты реализованы (TRQ-005, если требуется)
+- [ ] 🟡 Integration тесты реализованы (TRQ-006, если требуется)
+- [ ] ⚪ E2E тесты реализованы (TRQ-007, если требуется)
 - [ ] 🔴 Type hints добавлены (100%)
 - [ ] 🔴 `.pipeline-state.json` обновлён (gate: IMPLEMENT_OK)
 - [ ] 🟡 Quality Cascade (17 checks) пройден

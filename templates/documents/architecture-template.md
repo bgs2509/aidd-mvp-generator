@@ -411,6 +411,35 @@ CREATE INDEX idx_{entities}_created_at ON {entities}(created_at);
 
 ---
 
+## 9. План тестирования
+
+### 9.1 Smoke тесты (обязательно, внутри сервисов)
+
+| Сервис | Endpoint | Тест | Статус |
+|--------|----------|------|--------|
+| {api} | GET /health | test_health_check | План |
+| {api} | POST /users | test_create_user_happy | План |
+
+### 9.2 Unit тесты (если TRQ-005 = Да)
+
+| Модуль | Функция | Тест | Моки |
+|--------|---------|------|------|
+| services/user | create_user() | test_create_user | DataApiClient |
+
+### 9.3 Integration тесты (если TRQ-006 = Да)
+
+| Пайплайн | Тест | Тестовая БД |
+|----------|------|-------------|
+| User registration | test_registration_flow | testcontainers для {БД из PRD} |
+
+### 9.4 E2E тесты (если TRQ-007 = Да, глобально)
+
+| Сценарий | Тест | Описание |
+|----------|------|----------|
+| {сценарий} | test_{name}_e2e | {описание} |
+
+---
+
 ## Качественные ворота
 
 ### PLAN_APPROVED Checklist

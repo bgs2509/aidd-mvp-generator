@@ -33,8 +33,8 @@ model: inherit
 - Security checklist
 
 ### Шаг 2: Testing (как QA)
-- Запуск всех тестов
-- Проверка покрытия ≥75%
+- Запуск тестов по категориям (smoke/unit/integration/e2e)
+- Проверка TRQ-001..TRQ-007 (по требованию)
 - Верификация требований из PRD
 
 ### Шаг 3: Validation (как Validator)
@@ -138,8 +138,8 @@ AI агент **НИКОГДА НЕ ДОЛЖЕН**:
   → Результат: REVIEW_OK ✓
 
 Шаг 2: Testing
-  ├─ Запуск pytest с coverage
-  ├─ Проверка ≥75%
+  ├─ Запуск тестов по категориям (smoke/unit/integration/e2e)
+  ├─ Проверка TRQ-001..TRQ-007 и coverage (если TRQ-005 = Да)
   └─ Верификация FR-* из PRD
   → Результат: QA_PASSED ✓
 
@@ -333,13 +333,15 @@ make logs
 Шаг 2/4: Testing
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-$ pytest --cov=src --cov-fail-under=75
-===================== test session starts =====================
-collected 45 items
+$ for service in services/*; do pytest "$service/tests/smoke/" -v --tb=short; done
+$ for service in services/*; do pytest "$service/tests/unit/" -v --cov=src --cov-report=term; done
+$ for service in services/*; do pytest "$service/tests/integration/" -v; done
+$ pytest tests/e2e/ -v
 
-✓ Unit tests: 45 passed
+✓ Smoke tests: 12 passed
+✓ Unit tests: 45 passed (coverage: 82%)
 ✓ Integration tests: 12 passed
-✓ Coverage: 82% (≥75%)
+✓ E2E tests: 3 passed
 
 → QA_PASSED ✓ (coverage: 82%)
 

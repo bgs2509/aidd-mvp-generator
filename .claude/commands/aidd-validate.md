@@ -34,7 +34,7 @@ description: Quality & Deploy — полный цикл проверки кач�
 
 Объединяет 4 последовательных этапа пайплайна:
 1. **Code Review** — проверка архитектуры, соглашений, качества
-2. **Testing** — запуск тестов, проверка покрытия ≥75%
+2. **Testing** — запуск тестов по категориям, верификация TRQ-001..TRQ-007
 3. **Validation** — финальная проверка всех ворот
 4. **Deploy** — сборка Docker-контейнеров, запуск, health-check
 
@@ -391,19 +391,33 @@ else:  # v2 (по умолчанию)
 
 | Критерий | Описание |
 |----------|----------|
-| Тесты | Все тесты проходят (0 failed) |
-| Покрытие | Coverage ≥75% |
+| Smoke | TRQ-001..TRQ-004 выполнены |
+| Unit | Coverage ≥ {порог} (если TRQ-005 = Да) |
+| Integration | TRQ-006 выполнен (если требуется) |
+| E2E | TRQ-007 выполнен (если требуется) |
 | FR-* | Все функциональные требования верифицированы |
 | Баги | Нет Critical/Blocker багов |
 
 #### Команды тестирования
 
 ```bash
-# Unit-тесты с покрытием
-pytest --cov=src --cov-report=html --cov-fail-under=75
+# 1. Smoke (ОБЯЗАТЕЛЬНО, по сервисам)
+for service in services/*; do
+    pytest "$service/tests/smoke/" -v --tb=short
+done
 
-# Через Makefile (если есть)
-make test
+# 2. Unit (если TRQ-005 = Да, по сервисам)
+for service in services/*; do
+    pytest "$service/tests/unit/" -v --cov=src --cov-report=term
+done
+
+# 3. Integration (если TRQ-006 = Да, по сервисам)
+for service in services/*; do
+    pytest "$service/tests/integration/" -v
+done
+
+# 4. E2E (если TRQ-007 = Да, глобально)
+pytest tests/e2e/ -v
 ```
 
 ### Шаг 3: ALL_GATES_PASSED
@@ -606,33 +620,47 @@ gates["REVIEW_OK"] = {
 
 ### Шаг 2: Testing
 
-**Цель**: Запустить все тесты и проверить покрытие ≥75%.
+**Цель**: Запустить тесты по категориям и верифицировать требования TRQ-*.
 
-#### 2.1. Запуск unit-тестов
+#### 2.1. Запуск тестов по категориям
 
 ```bash
-# Перейти в директорию каждого сервиса
-cd services/{service_name}
+# 1. Smoke (ОБЯЗАТЕЛЬНО, по сервисам)
+for service in services/*; do
+    pytest "$service/tests/smoke/" -v --tb=short
+    # Должно быть: 100% passed
+done
 
-# Запустить тесты с покрытием
-pytest --cov=src --cov-report=term-missing --cov-fail-under=75 -v
+# 2. Unit (если TRQ-005 = Да, по сервисам)
+for service in services/*; do
+    pytest "$service/tests/unit/" -v --cov=src --cov-report=term
+    # Проверить: coverage ≥ {порог}
+done
+
+# 3. Integration (если TRQ-006 = Да, по сервисам)
+for service in services/*; do
+    pytest "$service/tests/integration/" -v
+    # Должно быть: 100% passed
+done
+
+# 4. E2E (если TRQ-007 = Да, глобально)
+pytest tests/e2e/ -v
+# Должно быть: 100% passed
 ```
 
-#### 2.2. Анализ результатов
+#### 2.2. Верификация требований
 
-Проверить:
-- [ ] Все тесты проходят (`0 failed`)
-- [ ] Coverage ≥75%
-- [ ] Нет пропущенных тестов (`0 skipped` или обоснованы)
+| TRQ | Требование | Результат | Статус |
+|-----|-----------|-----------|--------|
+| TRQ-001 | 100% endpoints smoke | {X}/{Y} passed | ✅/❌ |
+| TRQ-002 | Контейнеры запускаются | {passed/failed} | ✅/❌ |
+| TRQ-003 | Health checks 200 | {X}/{Y} passed | ✅/❌ |
+| TRQ-004 | Базы данных доступны | {passed/failed} | ✅/❌ |
+| TRQ-005 | Coverage ≥ {порог} | {X}% coverage | ✅/❌/N/A |
+| TRQ-006 | Integration критичных | {X}/{Y} passed | ✅/❌/N/A |
+| TRQ-007 | E2E сценарии | {X}/{Y} passed | ✅/❌/N/A |
 
-Если coverage < 75%:
-```bash
-# Посмотреть, какие файлы не покрыты
-pytest --cov=src --cov-report=html
-# Открыть htmlcov/index.html
-```
-
-#### 2.3. Верификация требований
+#### 2.3. Проверка PRD
 
 Прочитать PRD (`ai-docs/docs/_analysis/{name}-prd.md`) и проверить:
 - [ ] Все FR-* требования имеют тесты
@@ -646,7 +674,7 @@ pytest --cov=src --cov-report=html
 gates["QA_PASSED"] = {
     "passed": True,
     "passed_at": datetime.now().isoformat(),
-    "coverage": 82  # Реальное значение из pytest
+    "coverage": 82  # Реальное значение из pytest (если TRQ-005 = Да)
 }
 ```
 
@@ -983,7 +1011,7 @@ docker-compose logs -f
 
 # Результат:
 # ✓ Step 1: Code Review → REVIEW_OK
-# ✓ Step 2: Testing (Coverage 82%) → QA_PASSED
+# ✓ Step 2: Testing (Smoke/Unit/Integration/E2E) → QA_PASSED
 # ✓ Step 3: Validation → ALL_GATES_PASSED
 # ✓ Step 4: Deploy → DEPLOYED
 # ✓ Completion Report: ai-docs/docs/_validation/2024-12-23_F001_table-booking-completion.md
@@ -1073,11 +1101,15 @@ docker-compose logs -f
 
 #### Шаг 2: Testing
 
-- [ ] 🔴 Все тесты проходят (0 failed)
-- [ ] 🔴 Coverage ≥ 75%
-- [ ] 🟡 Integration тесты пройдены
+- [ ] 🔴 TRQ-001: Все smoke тесты endpoints проходят
+- [ ] 🔴 TRQ-002: Контейнеры запускаются успешно
+- [ ] 🔴 TRQ-003: Health checks отвечают 200
+- [ ] 🔴 TRQ-004: Базы данных доступны
+- [ ] 🟡 TRQ-005: Unit coverage ≥ {порог} (если требуется)
+- [ ] 🟡 TRQ-006: Integration тесты проходят (если требуется)
+- [ ] ⚪ TRQ-007: E2E тесты проходят (если требуется)
 - [ ] 🟡 Все FR-* требования верифицированы
-- [ ] 🔴 Gate `QA_PASSED` отмечен как passed (с coverage)
+- [ ] 🔴 Gate `QA_PASSED` отмечен как passed (с coverage, если TRQ-005 = Да)
 
 #### Шаг 3: Validation
 

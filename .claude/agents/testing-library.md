@@ -23,7 +23,7 @@ model: inherit
 
 QA отвечает за:
 - Создание тестовых сценариев на основе PRD
-- Выполнение тестов
+- Выполнение тестов по категориям (smoke/unit/integration/e2e)
 - Проверку покрытия кода
 - Верификацию требований
 - Формирование QA отчёта
@@ -70,22 +70,28 @@ QA отвечает за:
 ### 2. Выполнение тестов
 
 ```bash
-# Запуск unit-тестов
-pytest tests/unit/ -v
+# 1. Smoke (ОБЯЗАТЕЛЬНО, по сервисам)
+for service in services/*; do
+    pytest "$service/tests/smoke/" -v --tb=short
+done
 
-# Запуск integration-тестов
-pytest tests/integration/ -v
+# 2. Unit (если TRQ-005 = Да, по сервисам)
+for service in services/*; do
+    pytest "$service/tests/unit/" -v --cov=src --cov-report=term
+done
 
-# Запуск с покрытием
-pytest --cov=src --cov-report=html --cov-fail-under=75
+# 3. Integration (если TRQ-006 = Да, по сервисам)
+for service in services/*; do
+    pytest "$service/tests/integration/" -v
+done
 
-# Запуск всех тестов
-make test
+# 4. E2E (если TRQ-007 = Да, глобально)
+pytest tests/e2e/ -v
 ```
 
 ### 3. Проверка покрытия
 
-Минимальное покрытие для MVP: **≥75%**
+Минимальное покрытие для MVP: **≥75%** (если TRQ-005 = Да)
 
 ```
 Проверить:
@@ -100,6 +106,18 @@ make test
 - [ ] Требование реализовано
 - [ ] Есть тест, проверяющий требование
 - [ ] Тест проходит
+
+Отдельно зафиксировать TRQ-результаты:
+
+| TRQ | Требование | Результат | Статус |
+|-----|-----------|-----------|--------|
+| TRQ-001 | 100% endpoints smoke | {X}/{Y} passed | ✅/❌ |
+| TRQ-002 | Контейнеры запускаются | {passed/failed} | ✅/❌ |
+| TRQ-003 | Health checks 200 | {X}/{Y} passed | ✅/❌ |
+| TRQ-004 | Базы данных доступны | {passed/failed} | ✅/❌ |
+| TRQ-005 | Coverage ≥ {порог} | {X}% coverage | ✅/❌/N/A |
+| TRQ-006 | Integration критичных | {X}/{Y} passed | ✅/❌/N/A |
+| TRQ-007 | E2E сценарии | {X}/{Y} passed | ✅/❌/N/A |
 
 ### 5. Формирование QA отчёта
 
@@ -151,8 +169,10 @@ make test
 
 Перед передачей на следующий этап проверить:
 
-- [ ] Все тесты проходят (0 failed)
-- [ ] Покрытие кода ≥75%
+- [ ] TRQ-001..TRQ-004 (smoke) выполнены
+- [ ] TRQ-005 coverage ≥ {порог} (если требуется)
+- [ ] TRQ-006 integration тесты проходят (если требуется)
+- [ ] TRQ-007 E2E тесты проходят (если требуется)
 - [ ] Нет критических багов (Critical/Blocker)
 - [ ] Все FR-* требования верифицированы
 - [ ] QA отчёт создан

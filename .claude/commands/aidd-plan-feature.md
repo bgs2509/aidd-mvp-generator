@@ -244,6 +244,7 @@ artifact_path = f"{folder}/{filename}"
 | Интеграция | Точки интеграции определены |
 | Изменения | Необходимые изменения описаны |
 | Риски | Потенциальные риски учтены |
+| План тестирования | Раздел тестирования заполнен (smoke/unit/integration/e2e) |
 | **Утверждение** | План утверждён пользователем |
 
 **ВАЖНО**: Требуется явное подтверждение от пользователя!
@@ -347,6 +348,7 @@ artifact_path = f"{folder}/{filename}"
   - v2: `ai-docs/docs/_plans/features/{feature}-plan.md`
   - v3: `ai-docs/docs/_plans/features/{feature}.md`
 - [ ] 🔴 Интеграция с существующим кодом описана
+- [ ] 🔴 План тестирования заполнен (smoke/unit/integration/e2e)
 - [ ] 🔴 **Пользователь утвердил план** ← КРИТИЧЕСКИ ВАЖНО
 - [ ] 🔴 `.pipeline-state.json` обновлён (gate: PLAN_APPROVED, artifact path соответствует naming_version)
 - [ ] 🟡 Breaking changes определены
