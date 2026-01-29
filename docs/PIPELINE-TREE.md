@@ -186,7 +186,7 @@
 | Параметр | Значение CREATE | Значение FEATURE |
 |----------|-----------------|------------------|
 | **Команда** | `/aidd-plan` | `/aidd-plan-feature` |
-| **Агент** | Архитектор | Архитектор |
+| **Агент** | Планировщик | Планировщик |
 | **Предусловия** | `PRD_READY`, `RESEARCH_DONE` | `PRD_READY`, `RESEARCH_DONE` |
 | **Качественные ворота** | `PLAN_APPROVED` | `PLAN_APPROVED` |
 
@@ -222,7 +222,7 @@
 | Параметр | Значение |
 |----------|----------|
 | **Команда** | `/aidd-code` |
-| **Агент** | Реализатор |
+| **Агент** | Программист |
 | **Предусловия** | `PLAN_APPROVED` |
 | **Качественные ворота** | `IMPLEMENT_OK` |
 
@@ -348,9 +348,9 @@
 | 0 | Bootstrap | `/aidd-init` | — | `BOOTSTRAP_READY` | Структура ЦП |
 | 1 | Идея | `/aidd-analyze` | Аналитик | `PRD_READY` | PRD документ |
 | 2 | Исследование | `/aidd-research` | Исследователь | `RESEARCH_DONE` | Research Report (`ai-docs/docs/research/{name}-research.md`) |
-| 3 | Архитектура | `/aidd-plan` | Архитектор | `PLAN_APPROVED` | План архитектуры |
-| 3 | Архитектура | `/aidd-plan-feature` | Архитектор | `PLAN_APPROVED` | План фичи |
-| 4 | Реализация | `/aidd-code` | Реализатор | `IMPLEMENT_OK` | Код сервисов |
+| 3 | Архитектура | `/aidd-plan` | Планировщик | `PLAN_APPROVED` | План архитектуры |
+| 3 | Архитектура | `/aidd-plan-feature` | Планировщик | `PLAN_APPROVED` | План фичи |
+| 4 | Реализация | `/aidd-code` | Программист | `IMPLEMENT_OK` | Код сервисов |
 | 5 | Quality & Deploy | `/aidd-validate` | Валидатор | `REVIEW_OK` → `QA_PASSED` → `ALL_GATES_PASSED` → `DEPLOYED` | **Completion Report** (`ai-docs/docs/_validation/{date}_{FID}_{slug}-completion.md`) |
 
 ---

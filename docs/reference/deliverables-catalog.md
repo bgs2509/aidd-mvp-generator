@@ -66,7 +66,7 @@ templates/services/*             →    services/{name}_{type}/
 | Параметр | Значение |
 |----------|----------|
 | **Команда** | `/plan` |
-| **Агент** | Архитектор |
+| **Агент** | Планировщик |
 | **Шаблон (генератор)** | `templates/documents/architecture-template.md` |
 | **Путь (целевой проект)** | `ai-docs/docs/_plans/mvp/{name}-plan.md` |
 | **Ворота** | `PLAN_APPROVED` |
@@ -76,7 +76,7 @@ templates/services/*             →    services/{name}_{type}/
 | Параметр | Значение |
 |----------|----------|
 | **Команда** | `/feature-plan` |
-| **Агент** | Архитектор |
+| **Агент** | Планировщик |
 | **Шаблон (генератор)** | `templates/documents/feature-plan-template.md` |
 | **Путь (целевой проект)** | `ai-docs/docs/_plans/features/{feature}-plan.md` |
 | **Ворота** | `PLAN_APPROVED` |

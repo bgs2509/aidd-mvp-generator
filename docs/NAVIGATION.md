@@ -139,7 +139,7 @@
 ## Этап 3: Архитектура
 
 **Команда**: `/aidd-plan` (CREATE) или `/aidd-plan-feature` (FEATURE)
-**Агент**: Архитектор
+**Агент**: Планировщик
 **Ворота**: `PLAN_APPROVED`
 
 ### Режим CREATE (`/aidd-plan`)
@@ -186,7 +186,7 @@
 ## Этап 4: Реализация
 
 **Команда**: `/aidd-code`
-**Агент**: Реализатор
+**Агент**: Программист
 **Ворота**: `IMPLEMENT_OK`
 
 | Фаза | # | Читать | Условие |
@@ -340,8 +340,8 @@
 | 0 | Bootstrap | `/aidd-init` | — | init.md, target-structure | Структура ЦП | BOOTSTRAP_READY |
 | 1 | Идея | `/aidd-analyze` | Аналитик | CLAUDE, workflow, analyst, prd-template | PRD, state | PRD_READY |
 | 2 | Исследование | `/aidd-research` | Исследователь | researcher, knowledge | (state) | RESEARCH_DONE |
-| 3 | Архитектура | `/aidd-plan` | Архитектор | architect, ddd, http-only | План | PLAN_APPROVED |
-| 4 | Реализация | `/aidd-code` | Реализатор | implementer, conventions, templates | Код, тесты | IMPLEMENT_OK |
+| 3 | Архитектура | `/aidd-plan` | Планировщик | planner, ddd, http-only | План | PLAN_APPROVED |
+| 4 | Реализация | `/aidd-code` | Программист | coder, conventions, templates | Код, тесты | IMPLEMENT_OK |
 | 5 | Quality & Deploy | `/aidd-validate` | Валидатор | validator, code-review-library, testing-library, completion-report-template | Completion Report | REVIEW_OK → QA_PASSED → ALL_GATES_PASSED → DEPLOYED |
 
 > **Примечание (v2.4+)**: Унификация naming conventions:

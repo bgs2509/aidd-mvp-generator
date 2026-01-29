@@ -34,8 +34,8 @@
 |------|------|------|
 | [.claude/agents/analyst.md](../.claude/agents/analyst.md) | Аналитик | 1 |
 | [.claude/agents/researcher.md](../.claude/agents/researcher.md) | Исследователь | 2 |
-| [.claude/agents/planner.md](../.claude/agents/planner.md) | Архитектор | 3 |
-| [.claude/agents/coder.md](../.claude/agents/coder.md) | Реализатор | 4 |
+| [.claude/agents/planner.md](../.claude/agents/planner.md) | Планировщик | 3 |
+| [.claude/agents/coder.md](../.claude/agents/coder.md) | Программист | 4 |
 | [.claude/agents/validator.md](../.claude/agents/validator.md) | Валидатор | 5 |
 
 **Вспомогательные библиотеки инструкций** (используются внутри Валидатора):
