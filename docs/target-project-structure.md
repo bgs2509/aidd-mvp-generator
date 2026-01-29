@@ -1,6 +1,6 @@
 # Структура целевого проекта
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 > **Назначение**: Описание структуры проекта, который СОЗДАЁТСЯ генератором.
@@ -113,12 +113,12 @@
 | Этап | Артефакт | Путь в целевом проекте |
 |------|----------|------------------------|
 | — | Реестр фич | `ai-docs/docs/FEATURES.md` |
-| 1. Идея | PRD | `ai-docs/docs/prd/{date}_{FID}_{slug}-prd.md` |
+| 1. Идея | PRD | `ai-docs/docs/_analysis/{date}_{FID}_{slug}-prd.md` |
 | 2. Исследование | Отчёт исследования | `ai-docs/docs/research/{date}_{FID}_{slug}-research.md` |
-| 3. Архитектура (CREATE) | План | `ai-docs/docs/architecture/{date}_{FID}_{slug}-plan.md` |
-| 3. Архитектура (FEATURE) | План фичи | `ai-docs/docs/plans/{date}_{FID}_{slug}-plan.md` |
+| 3. Архитектура (CREATE) | План | `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}-plan.md` |
+| 3. Архитектура (FEATURE) | План фичи | `ai-docs/docs/_plans/features/{date}_{FID}_{slug}-plan.md` |
 | 4. Реализация | Код | `services/*/` |
-| 5. Quality & Deploy | Completion Report | `ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md` |
+| 5. Quality & Deploy | Completion Report | `ai-docs/docs/_validation/{date}_{FID}_{slug}-completion.md` |
 
 ### Примеры имён файлов
 
@@ -204,9 +204,9 @@
 ### Жизненный цикл фичи (v2)
 
 ```
-1. /aidd-idea создаёт active_pipelines[FID] с новым Feature ID
+1. /aidd-analyze создаёт active_pipelines[FID] с новым Feature ID
 2. Каждый этап обновляет gates и artifacts в active_pipelines[FID]
-3. /aidd-finalize переносит фичу в features_registry (при DEPLOYED)
+3. /aidd-validate переносит фичу в features_registry (при DEPLOYED)
 4. Запись удаляется из active_pipelines
 5. Готово для следующей фичи (или параллельной разработки)
 ```
@@ -300,7 +300,7 @@ cp .aidd/templates/project/.claude/settings.local.json.example .claude/settings.
 
 ## Bootstrap: Инициализация структуры
 
-При первом запуске `/aidd-idea` в пустой директории создаётся:
+При первом запуске `/aidd-analyze` в пустой директории создаётся:
 
 ```bash
 mkdir -p ai-docs/docs/{prd,architecture,plans,reports,research}

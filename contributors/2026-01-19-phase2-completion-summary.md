@@ -1,6 +1,6 @@
 # Phase 2 Completion Summary
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 > **Дата завершения**: 2026-01-19
@@ -13,7 +13,7 @@
 ✅ **Phase 2 (Migration mode) полностью завершена!**
 
 Фреймворк AIDD-MVP Generator теперь поддерживает оба режима именования (v2 и v3) одновременно:
-- Старые команды: `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`
+- Старые команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`
 - Новые команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`
 
 Все команды работают параллельно, создавая артефакты в разных папках в зависимости от `naming_version` в `.pipeline-state.json`.
@@ -82,8 +82,8 @@
 
 | Компонент | v2 (старый) | v3 (новый) | Backward Compatible |
 |-----------|-------------|------------|---------------------|
-| **Команды** | `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan` | `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature` | ✅ |
-| **Агенты** | `architect.md`, `implementer.md` | `planner.md`, `coder.md` | ✅ |
+| **Команды** | `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature` | `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature` | ✅ |
+| **Агенты** | `planner.md`, `coder.md` | `planner.md`, `coder.md` | ✅ |
 | **Артефакты** | `prd/`, `research/`, `architecture/`, `plans/`, `reports/` | `_analysis/`, `_research/`, `_plans/mvp/`, `_plans/features/`, `_validation/` | ✅ |
 | **Именование файлов** | `{name}-prd.md`, `{name}-plan.md` | `{name}.md` | ✅ |
 
@@ -122,7 +122,7 @@
 mkdir test-v2-project && cd test-v2-project
 git init
 git submodule add https://github.com/your-org/aidd-mvp-generator.git .aidd
-# Выполнить /aidd-init, /aidd-idea, /aidd-research, ...
+# Выполнить /aidd-init, /aidd-analyze, /aidd-research, ...
 # Проверить что артефакты создаются в prd/, research/, architecture/
 
 # Тест 2: Новый проект с v3
@@ -161,9 +161,9 @@ python3 scripts/migrate-naming-v3.py
 - **v3** (после миграции): Новая структура `_analysis/`, `_plans/`
 
 Команды доступны в двух вариантах:
-- `/aidd-idea` → `/aidd-analyze`
-- `/aidd-generate` → `/aidd-code`
-- `/aidd-finalize` → `/aidd-validate`
+- `/aidd-analyze` → `/aidd-analyze`
+- `/aidd-code` → `/aidd-code`
+- `/aidd-validate` → `/aidd-validate`
 
 Для миграции: `python3 scripts/migrate-naming-v3.py`
 ```

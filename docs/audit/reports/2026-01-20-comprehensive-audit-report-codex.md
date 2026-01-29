@@ -1,6 +1,6 @@
 # Комплексный аудит документации AIDD-MVP Generator (Codex)
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 Дата: 2026-01-20
@@ -39,7 +39,7 @@ LOW проблемы (1):           1 × 0.1 = -0.1 балл
 | Приоритет | Кол-во | Топ-3 примера (file:line) | Влияние |
 |-----------|--------|---------------------------|---------|
 | **CRITICAL** | 3 | `docs/LINKS_REFERENCE.md:51`, `README.md:73`, `contributors/2026-01-13-detailed-fix-recommendations.md:13` | Блокирует этапы пайплайна / сбивает аудит |
-| **HIGH** | 16 | `CLAUDE.md:15`, `docs/history/2025-12-20-pipeline-integration-problem.md:1617`, `.claude/commands/aidd-idea.md:391` | Ломает навигацию и консистентность пайплайна |
+| **HIGH** | 16 | `CLAUDE.md:15`, `docs/history/2025-12-20-pipeline-integration-problem.md:1617`, `.claude/commands/aidd-analyze.md:391` | Ломает навигацию и консистентность пайплайна |
 | **MEDIUM** | 2 | `CLAUDE.md:244`, `.claude/agents/validator.md:10` | Проблемы интерпретации этапов |
 | **LOW** | 1 | `templates/documents/completion-report-template.md:159` | Шум/неоконченные маркеры |
 | **ИТОГО** | 22 |  |  |
@@ -137,9 +137,9 @@ rg -n "aidd-review|aidd-test|aidd-deploy" docs/LINKS_REFERENCE.md README.md
 
 **Команда исправления**:
 ```bash
-cp .claude/commands/aidd-finalize.md .claude/commands/aidd-review.md
-cp .claude/commands/aidd-finalize.md .claude/commands/aidd-test.md
-cp .claude/commands/aidd-finalize.md .claude/commands/aidd-deploy.md
+cp .claude/commands/aidd-validate.md .claude/commands/aidd-review.md
+cp .claude/commands/aidd-validate.md .claude/commands/aidd-test.md
+cp .claude/commands/aidd-validate.md .claude/commands/aidd-deploy.md
 ```
 
 **Верификация**:
@@ -243,7 +243,7 @@ PY
 **Список**:
 1. `.claude/commands/aidd-analyze.md:419 -> prd/2024-12-23_F001_table-booking-prd.md`
 2. `.claude/commands/aidd-analyze.md:426 -> _analysis/2024-12-23_F001_table-booking.md`
-3. `.claude/commands/aidd-idea.md:391 -> prd/2024-12-23_F001_table-booking-prd.md`
+3. `.claude/commands/aidd-analyze.md:391 -> prd/2024-12-23_F001_table-booking-prd.md`
 4. `contributors/2025-01-13-comprehensive-audit-report-codex.md:300 -> ../../CLAUDE.md`
 5. `contributors/2025-01-13-comprehensive-audit-report-codex.md:309 -> ../target-project-structure.md`
 6. `docs/LINKS_REFERENCE.md:51 -> ../.claude/commands/aidd-review.md`
@@ -261,14 +261,14 @@ PY
 ```bash
 # 1–3: корректные относительные пути в примерах FEATURES.md
 perl -0pi -e "s/\\[PRD\\]\\(prd\\//[PRD](..\\/prd\\//g; s/\\[PRD\\]\\(_analysis\\//[PRD](..\\/_analysis\\//g" \
-  .claude/commands/aidd-analyze.md .claude/commands/aidd-idea.md
+  .claude/commands/aidd-analyze.md .claude/commands/aidd-analyze.md
 
 # 4–5: корректные ссылки в отчёте
 perl -0pi -e "s/\\[CLAUDE\\.md\\]\\(\\.\\.\\/\\.\\.\\/CLAUDE\\.md\\)/`CLAUDE.md (root)`/g; s/\\[target-project-structure\\.md\\]\\(\\.\\.\\/target-project-structure\\.md\\)/`docs\\/target-project-structure.md`/g" \
   contributors/2025-01-13-comprehensive-audit-report-codex.md
 
 # 6–8: заменить на aidd-finalize (или создать алиасы, см. C2)
-perl -0pi -e "s/aidd-review\\.md/aidd-finalize.md/g; s/aidd-test\\.md/aidd-finalize.md/g; s/aidd-deploy\\.md/aidd-finalize.md/g" \
+perl -0pi -e "s/aidd-review\\.md/aidd-validate.md/g; s/aidd-test\\.md/aidd-validate.md/g; s/aidd-deploy\\.md/aidd-validate.md/g" \
   docs/LINKS_REFERENCE.md
 
 # 9: убрать ссылку на несуществующий PRD (пример)

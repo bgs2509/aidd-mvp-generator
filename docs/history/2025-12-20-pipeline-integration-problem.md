@@ -220,7 +220,7 @@ User Input: /idea "Создать сервис бронирования стол
 │ Команда: /plan                                                           │
 ├──────────────────────────────────────────────────────────────────────────┤
 │ Читает:                                                                  │
-│   1. .claude/agents/architect.md   ← Инструкции роли                     │
+│   1. .claude/agents/planner.md   ← Инструкции роли                     │
 │   2. roles/architect/*.md          ← Детальные функции                   │
 │   3. knowledge/architecture/       ← Архитектурные принципы              │
 │   4. docs/prd/{name}-prd.md        ← PRD                                 │
@@ -241,7 +241,7 @@ User Input: /idea "Создать сервис бронирования стол
 │ Команда: /generate                                                       │
 ├──────────────────────────────────────────────────────────────────────────┤
 │ Читает:                                                                  │
-│   1. .claude/agents/implementer.md ← Инструкции роли                     │
+│   1. .claude/agents/coder.md ← Инструкции роли                     │
 │   2. roles/implementer/*.md        ← Детальные функции                   │
 │   3. templates/services/           ← Шаблоны сервисов                    │
 │   4. templates/shared/             ← Общие компоненты                    │
@@ -684,7 +684,7 @@ User Input: /idea "Добавить систему уведомлений по e
 │ 1. ЗАГРУЗКА ДОКУМЕНТАЦИИ                                                 │
 ├──────────────────────────────────────────────────────────────────────────┤
 │ Читает:                                                                  │
-│   1. .claude/agents/architect.md                                         │
+│   1. .claude/agents/planner.md                                         │
 │   2. .claude/commands/plan.md                                            │
 │   3. roles/architect/architecture-design.md                              │
 │   4. roles/architect/maturity-level-selection.md                         │
@@ -789,7 +789,7 @@ User Input: /idea "Добавить систему уведомлений по e
 │ 1. ЗАГРУЗКА ДОКУМЕНТАЦИИ                                                 │
 ├──────────────────────────────────────────────────────────────────────────┤
 │ Читает:                                                                  │
-│   1. .claude/agents/architect.md                                         │
+│   1. .claude/agents/planner.md                                         │
 │   2. .claude/commands/feature-plan.md                                    │
 │   3. roles/architect/*.md                                                │
 │   4. docs/prd/{name}-prd.md        ← Существующий PRD                    │
@@ -870,7 +870,7 @@ User Input: /idea "Добавить систему уведомлений по e
 │ 1. ЗАГРУЗКА ДОКУМЕНТАЦИИ                                                 │
 ├──────────────────────────────────────────────────────────────────────────┤
 │ Читает:                                                                  │
-│   1. .claude/agents/implementer.md                                       │
+│   1. .claude/agents/coder.md                                       │
 │   2. .claude/commands/generate.md                                        │
 │   3. roles/implementer/infrastructure-setup.md                           │
 │   4. roles/implementer/data-service.md                                   │

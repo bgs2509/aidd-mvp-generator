@@ -1,6 +1,6 @@
 # Шаблон комплексного аудита документации AIDD-MVP Generator
 
-**Примечание:** В migration mode v2.4 доступны алиасы: `/aidd-idea` ↔ `/aidd-analyze`, `/aidd-generate` ↔ `/aidd-code`, `/aidd-finalize` ↔ `/aidd-validate`, `/aidd-feature-plan` ↔ `/aidd-plan-feature`. Все пары равноправны и поддерживаются.
+**Примечание:** В migration mode v2.4 доступны алиасы: `/aidd-analyze` ↔ `/aidd-analyze`, `/aidd-code` ↔ `/aidd-code`, `/aidd-validate` ↔ `/aidd-validate`, `/aidd-plan-feature` ↔ `/aidd-plan-feature`. Все пары равноправны и поддерживаются.
 
 
 ## Назначение
@@ -152,7 +152,7 @@ echo "(5 уникальных ролей + 2 алиаса + 2 библиотек
 ```bash
 echo "=== SMOKE TEST 7: Slash-команды пайплайна ==="
 # Migration mode v2.4: команды доступны в двух вариантах (старые/новые названия)
-# Consolidation Stage 5: review, test, deploy → /aidd-finalize (also /aidd-validate in v2.4)
+# Consolidation Stage 5: review, test, deploy → /aidd-validate (also /aidd-validate in v2.4)
 COMMANDS=(init idea analyze research plan feature-plan plan-feature generate code finalize validate)
 missing=0
 for cmd in "${COMMANDS[@]}"; do
@@ -247,9 +247,9 @@ grep -c "CREATE" CLAUDE.md workflow.md docs/NAVIGATION.md 2>/dev/null | paste -s
 echo "FEATURE упоминания:"
 grep -c "FEATURE" CLAUDE.md workflow.md docs/NAVIGATION.md 2>/dev/null | paste -sd+ | bc
 
-# Проверка /aidd-plan vs /aidd-feature-plan (migration mode)
+# Проверка /aidd-plan vs /aidd-plan-feature (migration mode)
 [ -f ".claude/commands/aidd-plan.md" ] && echo "✅ /aidd-plan (CREATE mode)" || echo "❌ /aidd-plan"
-[ -f ".claude/commands/aidd-feature-plan.md" ] && echo "✅ /aidd-feature-plan (FEATURE mode)" || echo "❌ /aidd-feature-plan"
+[ -f ".claude/commands/aidd-plan-feature.md" ] && echo "✅ /aidd-plan-feature (FEATURE mode)" || echo "❌ /aidd-plan-feature"
 # Ожидание: Оба режима описаны, обе команды существуют
 ```
 
@@ -652,18 +652,18 @@ done
 **Ожидаемые результаты**:
 - Все 6 этапов (0-5) описаны во всех трёх файлах
 - Номера этапов совпадают с командами
-- **Примечание**: Stage 5 был консолидирован — 4 команды (/review, /test, /validate, /deploy) объединены в /aidd-finalize (alias: /aidd-validate)
+- **Примечание**: Stage 5 был консолидирован — 4 команды (/review, /test, /validate, /deploy) объединены в /aidd-validate (alias: /aidd-validate)
 - Этап 5 консолидирует 4 шага: Review → Test → Validate → Deploy
 
 | Этап | Команда (старая → новая) | Агент | Ворота |
 |------|--------------------------|-------|--------|
 | 0 | /aidd-init | — | BOOTSTRAP_READY |
-| 1 | /aidd-idea → /aidd-analyze | analyst | PRD_READY |
+| 1 | /aidd-analyze → /aidd-analyze | analyst | PRD_READY |
 | 2 | /aidd-research | researcher | RESEARCH_DONE |
 | 3 (CREATE) | /aidd-plan | architect → planner | PLAN_APPROVED |
-| 3 (FEATURE) | /aidd-feature-plan → /aidd-plan-feature | architect → planner | PLAN_APPROVED |
-| 4 | /aidd-generate → /aidd-code | implementer → coder | IMPLEMENT_OK |
-| 5 | /aidd-finalize → /aidd-validate | validator | **Full**: REVIEW_OK → QA_PASSED → ALL_GATES_PASSED → DEPLOYED <br> **Quick**: DOCUMENTED |
+| 3 (FEATURE) | /aidd-plan-feature → /aidd-plan-feature | architect → planner | PLAN_APPROVED |
+| 4 | /aidd-code → /aidd-code | implementer → coder | IMPLEMENT_OK |
+| 5 | /aidd-validate → /aidd-validate | validator | **Full**: REVIEW_OK → QA_PASSED → ALL_GATES_PASSED → DEPLOYED <br> **Quick**: DOCUMENTED |
 
 ---
 
@@ -824,7 +824,7 @@ for file in CLAUDE.md workflow.md docs/NAVIGATION.md; do
 done
 
 echo ""
-echo "Примечание: Quick mode (/aidd-finalize --mode=quick) минует sub-gates (REVIEW_OK/QA_PASSED/ALL_GATES_PASSED)"
+echo "Примечание: Quick mode (/aidd-validate --mode=quick) минует sub-gates (REVIEW_OK/QA_PASSED/ALL_GATES_PASSED)"
 echo "             и завершается воротами DOCUMENTED вместо DEPLOYED (draft completion report)"
 ```
 
@@ -863,9 +863,9 @@ if [ -f ".claude/commands/aidd-plan.md" ]; then
   fi
 fi
 
-if [ -f ".claude/commands/aidd-feature-plan.md" ]; then
-  echo "✅ /aidd-feature-plan (FEATURE mode)"
-  if grep -qi "FEATURE\|добавление\|существующий" ".claude/commands/aidd-feature-plan.md" 2>/dev/null; then
+if [ -f ".claude/commands/aidd-plan-feature.md" ]; then
+  echo "✅ /aidd-plan-feature (FEATURE mode)"
+  if grep -qi "FEATURE\|добавление\|существующий" ".claude/commands/aidd-plan-feature.md" 2>/dev/null; then
     echo "   ✅ Описывает FEATURE mode"
   else
     echo "   ⚠️ Не описывает FEATURE mode явно"
@@ -1411,7 +1411,7 @@ grep -n "developer.md" docs/NAVIGATION.md
 
 **Команда исправления**:
 ```bash
-sed -i 's|.claude/agents/developer.md|.claude/agents/implementer.md|g' \
+sed -i 's|.claude/agents/developer.md|.claude/agents/coder.md|g' \
   docs/NAVIGATION.md
 ```
 

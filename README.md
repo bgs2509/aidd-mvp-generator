@@ -1,8 +1,5 @@
 # AIDD-MVP Generator
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
-
-
 > Фреймворк для быстрой генерации production-ready MVP проектов
 > с использованием методологии AI-Driven Development (AIDD)
 
@@ -68,12 +65,12 @@ claude
 
 ```bash
 # 5. Следовать 6-этапному процессу (этапы 0-5)
-/aidd-idea "Создать сервис бронирования столиков в ресторанах"
+/aidd-analyze "Создать сервис бронирования столиков в ресторанах"
 /aidd-research
 /aidd-plan
 # ... утвердить план ...
-/aidd-generate
-/aidd-finalize
+/aidd-code
+/aidd-validate
 
 # 6. Запустить сгенерированный проект
 make build && make up
@@ -92,9 +89,9 @@ claude
 /aidd-init
 
 # 4. Описать фичу (Claude автоматически определит режим FEATURE)
-/aidd-idea "Добавить систему уведомлений по email"
+/aidd-analyze "Добавить систему уведомлений по email"
 
-# 5. Следовать пайплайну: /aidd-research → /aidd-feature-plan → /aidd-generate → ...
+# 5. Следовать пайплайну: /aidd-research → /aidd-plan-feature → /aidd-code → ...
 ```
 
 ---
@@ -110,7 +107,7 @@ claude
 ┌───────────┐  ┌───────────┐  ┌───────────┐  ┌───────────┐
 │   ИДЕЯ    │─▶│ ИССЛЕДО-  │─▶│ АРХИТЕК-  │─▶│ РЕАЛИЗА-  │
 │           │  │   ВАНИЕ   │  │   ТУРА    │  │    ЦИЯ    │
-│/aidd-idea │  │ /aidd-    │  │  /aidd-   │  │  /aidd-   │
+│/aidd-analyze │  │ /aidd-    │  │  /aidd-   │  │  /aidd-   │
 │           │  │ research  │  │   plan    │  │ generate  │
 └─────┬─────┘  └─────┬─────┘  └─────┬─────┘  └─────┬─────┘
       │              │              │              │
@@ -122,7 +119,7 @@ claude
                                                      ▼
                       ┌──────────────────────────────────────┐
                       │      QUALITY & DEPLOY                │
-                      │      /aidd-finalize                  │
+                      │      /aidd-validate                  │
                       │                                      │
                       │  Review → Test → Validate → Deploy   │
                       └───────────────┬──────────────────────┘
@@ -141,11 +138,11 @@ claude
 
 | Роль | Команда | Задача |
 |------|---------|--------|
-| **Аналитик** | `/aidd-idea` | Создание PRD из идеи |
+| **Аналитик** | `/aidd-analyze` | Создание PRD из идеи |
 | **Исследователь** | `/aidd-research` | Анализ кода и технологий |
-| **Архитектор** | `/aidd-plan` | Проектирование системы |
-| **Реализатор** | `/aidd-generate` | Генерация кода |
-| **Валидатор** | `/aidd-finalize` | Quality & Deploy (Review → Test → Validate → Deploy) |
+| **Планировщик** | `/aidd-plan` | Проектирование системы |
+| **Программист** | `/aidd-code` | Генерация кода |
+| **Валидатор** | `/aidd-validate` | Quality & Deploy (Review → Test → Validate → Deploy) |
 
 ---
 

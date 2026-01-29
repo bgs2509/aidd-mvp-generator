@@ -12,9 +12,9 @@
 **Цель**: {Краткое описание цели чек-листа}
 
 **Связанные документы** (в целевом проекте):
-- PRD: `ai-docs/docs/prd/{name}-prd.md`
+- PRD: `ai-docs/docs/_analysis/{name}-prd.md`
 - Research Report: `ai-docs/docs/research/{name}-research.md`
-- План: `ai-docs/docs/architecture/{name}-plan.md`
+- План: `ai-docs/docs/_plans/mvp/{name}-plan.md`
 
 ---
 

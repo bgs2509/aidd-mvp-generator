@@ -22,13 +22,13 @@
 Используется Аналитиком для формирования требований:
 
 ```bash
-/aidd-idea "Описание проекта или фичи"
+/aidd-analyze "Описание проекта или фичи"
 # или (migration mode v2.4+)
 /aidd-analyze "Описание проекта или фичи"
 ```
 
 **Выходной файл** (целевой проект):
-- **naming v2** (по умолчанию): `ai-docs/docs/prd/{date}_{FID}_{slug}-prd.md`
+- **naming v2** (по умолчанию): `ai-docs/docs/_analysis/{date}_{FID}_{slug}-prd.md`
 - **naming v3**: `ai-docs/docs/_analysis/{date}_{FID}_{slug}.md`
 
 ### 2. Research Report Template
@@ -52,7 +52,7 @@
 ```
 
 **Выходной файл** (целевой проект):
-- **naming v2**: `ai-docs/docs/architecture/{date}_{FID}_{slug}-plan.md`
+- **naming v2**: `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}-plan.md`
 - **naming v3**: `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}.md`
 
 ### 4. Feature Plan Template
@@ -60,13 +60,13 @@
 Используется Архитектором/Планировщиком для планирования фичи (FEATURE mode):
 
 ```bash
-/aidd-feature-plan
+/aidd-plan-feature
 # или (migration mode v2.4+)
 /aidd-plan-feature
 ```
 
 **Выходной файл** (целевой проект):
-- **naming v2**: `ai-docs/docs/plans/{date}_{FID}_{slug}-plan.md`
+- **naming v2**: `ai-docs/docs/_plans/features/{date}_{FID}_{slug}-plan.md`
 - **naming v3**: `ai-docs/docs/_plans/features/{date}_{FID}_{slug}.md`
 
 ### 5. Implementation Plan Template
@@ -76,11 +76,11 @@
 ```bash
 /aidd-plan
 # или
-/aidd-feature-plan  # для FEATURE mode
+/aidd-plan-feature  # для FEATURE mode
 ```
 
 **Выходной файл** (целевой проект):
-- **naming v2**: `ai-docs/docs/plans/{date}_{FID}_{slug}-implementation.md`
+- **naming v2**: `ai-docs/docs/_plans/features/{date}_{FID}_{slug}-implementation.md`
 - **naming v3**: `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}-implementation.md` или `_plans/features/{date}_{FID}_{slug}-implementation.md`
 
 ### 6. Completion Report Template
@@ -88,7 +88,7 @@
 Используется Валидатором для комплексного Quality & Deploy (Stage 5):
 
 ```bash
-/aidd-finalize
+/aidd-validate
 # или (migration mode v2.4+)
 /aidd-validate
 ```
@@ -98,7 +98,7 @@
 - **Quick**: Draft Completion Report + Static Analysis (для документации/незавершенных фич)
 
 **Выходной файл** (целевой проект):
-- **naming v2**: `ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md`
+- **naming v2**: `ai-docs/docs/_validation/{date}_{FID}_{slug}-completion.md`
 - **naming v3**: `ai-docs/docs/_validation/{date}_{FID}_{slug}.md`
 
 **Содержание Completion Report**:

@@ -15,7 +15,7 @@
 
 | Артефакт | Путь | Описание |
 |----------|------|----------|
-| PRD | `ai-docs/docs/prd/{name}-prd.md` | Требования |
+| PRD | `ai-docs/docs/_analysis/{name}-prd.md` | Требования |
 | Анализ кода | `ai-docs/docs/research/{name}-research.md` | Для FEATURE режима |
 | Ворота | PRD_READY | Должны быть пройдены |
 
@@ -228,7 +228,7 @@ User ──▶ Business API ──▶ Data API ──▶ PostgreSQL
 - [ ] Определены API контракты
 - [ ] Контракты покрывают все FR
 - [ ] Определены взаимодействия между компонентами
-- [ ] Документ сохранён в `ai-docs/docs/architecture/`
+- [ ] Документ сохранён в `ai-docs/docs/_plans/mvp/`
 
 ---
 

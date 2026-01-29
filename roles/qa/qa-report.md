@@ -276,10 +276,10 @@ Minor:
 ## Путь сохранения
 
 ```
-ai-docs/docs/reports/qa-report.md
+ai-docs/docs/_validation/qa-report.md
 
 Или с датой:
-ai-docs/docs/reports/{YYYY-MM-DD}-qa-report.md
+ai-docs/docs/_validation/{YYYY-MM-DD}-qa-report.md
 ```
 
 ---

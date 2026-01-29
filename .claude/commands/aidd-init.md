@@ -3,7 +3,7 @@ allowed-tools: Read(*), Glob(*), Grep(*), Bash(git :*), Bash(python3 :*), Bash(d
 description: Инициализация целевого проекта (Bootstrap Pipeline)
 ---
 
-**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
+**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
 
 
 > ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
@@ -48,11 +48,11 @@ description: Инициализация целевого проекта (Bootstr
 
 | Сценарий | Рекомендация |
 |----------|--------------|
-| Новый проект, первый запуск | `/aidd-init` (рекомендуется) или сразу `/aidd-idea` |
+| Новый проект, первый запуск | `/aidd-init` (рекомендуется) или сразу `/aidd-analyze` |
 | Проверить готовность окружения | `/aidd-init` |
 | Исправить проблемы инициализации | `/aidd-init` |
 
-**Примечание**: Команда `/aidd-idea` автоматически выполняет проверки bootstrap,
+**Примечание**: Команда `/aidd-analyze` автоматически выполняет проверки bootstrap,
 но `/aidd-init` позволяет выполнить их явно и получить детальную диагностику.
 
 ---
@@ -895,7 +895,7 @@ def determine_naming_version() -> str:
 ```
 
 **Использование**:
-- Команды `/aidd-idea`, `/aidd-plan` проверяют `naming_version` и создают артефакты в соответствующих папках
+- Команды `/aidd-analyze`, `/aidd-plan` проверяют `naming_version` и создают артефакты в соответствующих папках
 - Миграция v2 → v3: `python .aidd/scripts/migrate-naming-v3.py`
 
 ---
@@ -941,10 +941,10 @@ def determine_naming_version() -> str:
 │  ────────────────────────────────────────────────────────────── │
 │  ✓ BOOTSTRAP_READY                                               │
 │                                                                  │
-│  Доступные команды: /aidd-idea /aidd-research /aidd-plan /aidd-generate            │
-│                     /aidd-finalize /aidd-feature-plan                                │
+│  Доступные команды: /aidd-analyze /aidd-research /aidd-plan /aidd-code            │
+│                     /aidd-validate /aidd-plan-feature                                │
 │                                                                  │
-│  Следующий шаг: /aidd-idea "Описание вашего проекта"                 │
+│  Следующий шаг: /aidd-analyze "Описание вашего проекта"                 │
 │                                                                  │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -1006,10 +1006,10 @@ def determine_naming_version() -> str:
 │  ────────────────────────────────────────────────────────────── │
 │  ✓ BOOTSTRAP_READY                                               │
 │                                                                  │
-│  Доступные команды: /aidd-idea /aidd-research /aidd-plan /aidd-generate            │
-│                     /aidd-finalize /aidd-feature-plan                                │
+│  Доступные команды: /aidd-analyze /aidd-research /aidd-plan /aidd-code            │
+│                     /aidd-validate /aidd-plan-feature                                │
 │                                                                  │
-│  Следующий шаг: /aidd-idea "Описание новой фичи"                     │
+│  Следующий шаг: /aidd-analyze "Описание новой фичи"                     │
 │                                                                  │
 └─────────────────────────────────────────────────────────────────┘
 ```

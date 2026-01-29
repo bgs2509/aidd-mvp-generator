@@ -79,7 +79,7 @@ artifact_path = f"ai-docs/docs/{folder}/{date}_{FID}_{slug}.md"  # v3 (без д
 
 Искать строки типа:
 ```python
-artifact_path = f"ai-docs/docs/prd/{date}_{FID}_{slug}-prd.md"
+artifact_path = f"ai-docs/docs/_analysis/{date}_{FID}_{slug}-prd.md"
 ```
 
 ### Шаг 2: Заменить на динамический выбор
@@ -126,7 +126,7 @@ artifact_path = f"ai-docs/docs/{folder}/{filename}"
 
 # 2. Создать PRD
 /aidd-analyze "test idea"
-# → ai-docs/docs/prd/2026-01-19_F001_test-idea-prd.md ✓
+# → ai-docs/docs/_analysis/2026-01-19_F001_test-idea-prd.md ✓
 ```
 
 ### Тест v3 (после миграции)

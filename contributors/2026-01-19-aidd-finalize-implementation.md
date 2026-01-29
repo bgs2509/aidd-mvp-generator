@@ -1,6 +1,6 @@
-# План реализации команды /aidd-finalize
+# План реализации команды /aidd-validate
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 **Дата**: 2026-01-19
@@ -38,7 +38,7 @@
 
 ---
 
-## 2. Архитектура новой команды /aidd-finalize
+## 2. Архитектура новой команды /aidd-validate
 
 ### 2.1 Концепция
 
@@ -74,7 +74,7 @@ IMPLEMENT_OK → [Review] → [Test] → [Validate] → [Deploy + Report] → DE
     "REVIEW_OK": {
       "passed": false,
       "timestamp": null,
-      "internal": true  // Промежуточное ворота внутри /aidd-finalize
+      "internal": true  // Промежуточное ворота внутри /aidd-validate
     },
     "QA_PASSED": {
       "passed": false,
@@ -104,7 +104,7 @@ IMPLEMENT_OK → [Review] → [Test] → [Validate] → [Deploy + Report] → DE
 
 ## 3. Структура Completion Report (единственный артефакт)
 
-**Путь**: `ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md`
+**Путь**: `ai-docs/docs/_validation/{date}_{FID}_{slug}-completion.md`
 
 **Содержит всю информацию о фиче**:
 
@@ -179,7 +179,7 @@ IMPLEMENT_OK → [Review] → [Test] → [Validate] → [Deploy + Report] → DE
 
 ### Шаг 1: Создать команду aidd-finalize.md
 
-**Файл**: `.claude/commands/aidd-finalize.md`
+**Файл**: `.claude/commands/aidd-validate.md`
 
 **Ключевые секции**:
 - Front matter с allowed-tools
@@ -214,11 +214,11 @@ IMPLEMENT_OK → [Review] → [Test] → [Validate] → [Deploy + Report] → DE
 | # | Этап | Команда | Агент | Ворота | Артефакт |
 |---|------|---------|-------|--------|----------|
 | 0 | Bootstrap | /aidd-init | — | BOOTSTRAP_READY | Структура ЦП |
-| 1 | Идея | /aidd-idea | Аналитик | PRD_READY | prd/{name}-prd.md |
+| 1 | Идея | /aidd-analyze | Аналитик | PRD_READY | prd/{name}-prd.md |
 | 2 | Исследование | /aidd-research | Исследователь | RESEARCH_DONE | research/{name}-research.md |
 | 3 | Архитектура | /aidd-plan | Архитектор | PLAN_APPROVED | architecture/{name}-plan.md |
-| 4 | Реализация | /aidd-generate | Реализатор | IMPLEMENT_OK | services/, тесты |
-| 5 | Quality & Deploy | /aidd-finalize | Валидатор | DEPLOYED | reports/, RTM, running app |
+| 4 | Реализация | /aidd-code | Реализатор | IMPLEMENT_OK | services/, тесты |
+| 5 | Quality & Deploy | /aidd-validate | Валидатор | DEPLOYED | reports/, RTM, running app |
 ```
 
 #### Описание этапа 5:
@@ -226,7 +226,7 @@ IMPLEMENT_OK → [Review] → [Test] → [Validate] → [Deploy + Report] → DE
 ```markdown
 ### Этап 5: Quality & Deploy
 
-**Команда**: `/aidd-finalize`
+**Команда**: `/aidd-validate`
 **Агент**: Валидатор
 **Вход**: `IMPLEMENT_OK` gate passed
 **Выход**: `DEPLOYED` gate passed
@@ -262,7 +262,7 @@ IMPLEMENT_OK → [Review] → [Test] → [Validate] → [Deploy + Report] → DE
 ├──────────────────────────────────────────────────────────────────────┤
 │                                                                      │
 │  ┌────────────┐  ┌──────────────┐  ┌───────────┐  ┌──────────────┐  │
-│  │/aidd-init  │─▶│/aidd-research│─▶│/aidd-plan │─▶│/aidd-generate│  │
+│  │/aidd-init  │─▶│/aidd-research│─▶│/aidd-plan │─▶│/aidd-code│  │
 │  │  Этап 0    │  │   Этап 2     │  │  Этап 3   │  │   Этап 4     │  │
 │  └─────┬──────┘  └──────┬───────┘  └─────┬─────┘  └──────┬───────┘  │
 │        │                │                │               │           │
@@ -272,7 +272,7 @@ IMPLEMENT_OK → [Review] → [Test] → [Validate] → [Deploy + Report] → DE
 │                                    пользователя!                     │
 │                                                                      │
 │  ┌────────────────────────┐                                          │
-│  │ /aidd-finalize         │                                          │
+│  │ /aidd-validate         │                                          │
 │  │   Этап 5               │                                          │
 │  │ (Quality & Deploy)     │                                          │
 │  └──────┬─────────────────┘                                          │
@@ -292,12 +292,12 @@ IMPLEMENT_OK → [Review] → [Test] → [Validate] → [Deploy + Report] → DE
 | # | Этап | Команда | Агент | Ворота | Артефакт |
 |---|------|---------|-------|--------|----------|
 | 0 | Bootstrap | `/aidd-init` | — | `BOOTSTRAP_READY` | Структура ЦП |
-| 1 | Идея | `/aidd-idea` | Аналитик | `PRD_READY` | `prd/{name}-prd.md` |
+| 1 | Идея | `/aidd-analyze` | Аналитик | `PRD_READY` | `prd/{name}-prd.md` |
 | 2 | Исследование | `/aidd-research` | Исследователь | `RESEARCH_DONE` | `research/{name}-research.md` |
 | 3 | Архитектура (CREATE) | `/aidd-plan` | Архитектор | `PLAN_APPROVED` | `architecture/{name}-plan.md` |
-| 3 | Архитектура (FEATURE) | `/aidd-feature-plan` | Архитектор | `PLAN_APPROVED` | `plans/{feature}-plan.md` |
-| 4 | Реализация | `/aidd-generate` | Реализатор | `IMPLEMENT_OK` | `services/`, тесты |
-| 5 | Quality & Deploy | `/aidd-finalize` | Валидатор | `DEPLOYED` | reports/, RTM, app |
+| 3 | Архитектура (FEATURE) | `/aidd-plan-feature` | Архитектор | `PLAN_APPROVED` | `plans/{feature}-plan.md` |
+| 4 | Реализация | `/aidd-code` | Реализатор | `IMPLEMENT_OK` | `services/`, тесты |
+| 5 | Quality & Deploy | `/aidd-validate` | Валидатор | `DEPLOYED` | reports/, RTM, app |
 ```
 
 ---
@@ -317,7 +317,7 @@ IMPLEMENT_OK → [Review] → [Test] → [Validate] → [Deploy + Report] → DE
 **Процесс**:
 1. Создать backup старых команд (git commit перед удалением)
 2. Удалить 4 файла
-3. Протестировать /aidd-finalize на тестовом проекте
+3. Протестировать /aidd-validate на тестовом проекте
 4. Если проблемы — откатить через git revert
 
 ---
@@ -352,7 +352,7 @@ IMPLEMENT_OK → [Review] → [Test] → [Validate] → [Deploy + Report] → DE
 
 ### Шаг 9: Создать тестовый проект
 
-**Цель**: Протестировать /aidd-finalize на реальном проекте
+**Цель**: Протестировать /aidd-validate на реальном проекте
 
 **План теста**:
 ```bash
@@ -364,14 +364,14 @@ git submodule add <aidd-mvp-generator> .aidd
 
 # 2. Выполнить этапы 0-4
 /aidd-init
-/aidd-idea "Простой CRUD API для задач"
+/aidd-analyze "Простой CRUD API для задач"
 /aidd-research
 /aidd-plan
 # Утвердить план
-/aidd-generate
+/aidd-code
 
-# 3. Запустить /aidd-finalize
-/aidd-finalize
+# 3. Запустить /aidd-validate
+/aidd-validate
 
 # 4. Проверить результаты
 - [ ] REVIEW_OK gate установлен
@@ -407,16 +407,16 @@ git submodule add <aidd-mvp-generator> .aidd
 - [ ] Создан backup текущего состояния (git commit)
 
 ### Реализация
-- [ ] Шаг 1: Создан файл `.claude/commands/aidd-finalize.md` (с 4 шагами + Completion Report)
+- [ ] Шаг 1: Создан файл `.claude/commands/aidd-validate.md` (с 4 шагами + Completion Report)
 - [ ] Шаг 2: Обновлен файл `.claude/agents/validator.md` (расширенные ответственности)
 - [ ] Шаг 3: Обновлен файл `workflow.md` (6 этапов вместо 9)
 - [ ] Шаг 4: Обновлен файл `CLAUDE.md` (ASCII пайплайн, таблица команд)
 - [ ] Шаг 5: Обновлен файл `docs/INDEX.md` (список команд)
-- [ ] Шаг 6: Протестирована команда `/aidd-finalize` на тестовом проекте
+- [ ] Шаг 6: Протестирована команда `/aidd-validate` на тестовом проекте
 - [ ] Шаг 7: Удалены 4 старые команды (review/test/validate/deploy)
 
 ### Валидация
-- [ ] `/aidd-finalize` завершается без ошибок
+- [ ] `/aidd-validate` завершается без ошибок
 - [ ] Единственный артефакт: `reports/{date}_{FID}_{slug}-completion.md`
 - [ ] Completion Report содержит все секции (Executive Summary, Code Review, Testing, Traceability, ADR, Deployment, Metrics)
 - [ ] docker-compose up работает

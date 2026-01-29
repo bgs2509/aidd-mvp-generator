@@ -1,8 +1,5 @@
 # Changelog
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
-
-
 All notable changes to AIDD-MVP Generator will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
@@ -12,11 +9,104 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Planned for v4.0 (April 2026)
-- **BREAKING**: Remove old command names (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`)
-- **BREAKING**: Remove old role files (`architect.md`, `implementer.md`)
-- **BREAKING**: Only v3 naming conventions supported
-- Require migration to v3 before upgrade
+---
+
+## [4.0.0] - 2026-01-29
+
+### 🔥 Removed - Immediate Deprecation (BREAKING CHANGES)
+
+**Phase 3 Complete**: All legacy naming removed. Unified system based on 5 keywords:
+**analyst, researcher, planner, coder, validator**
+
+#### Removed Legacy Commands
+- ❌ `/aidd-idea` → Use `/aidd-analyze`
+- ❌ `/aidd-generate` → Use `/aidd-code`
+- ❌ `/aidd-finalize` → Use `/aidd-validate`
+- ❌ `/aidd-feature-plan` → Use `/aidd-plan-feature`
+
+#### Removed Legacy Agent Files
+- ❌ `architect.md` → Use `planner.md`
+- ❌ `implementer.md` → Use `coder.md`
+
+#### Changed Default Naming Version
+- **v3 is now default** for all new projects
+- `naming_version: "v3"` in `.pipeline-state.json`
+- New artifact structure: `_analysis/`, `_research/`, `_plans/`, `_validation/`
+- Removed file name duplication: `{name}.md` instead of `{name}-prd.md`
+
+#### Removed Migration Support
+- ❌ `gate_aliases` removed from `.pipeline-state.json` (no longer needed)
+- Migration Mode (v2.4) documentation removed
+- Dual naming references removed from all documentation
+
+### 🔄 Changed
+
+#### Documentation (82 files updated)
+- Updated all command references to new naming
+- Updated all role names: Архитектор → Планировщик, Реализатор → Программист
+- Updated all artifact paths to v3 structure
+- Removed migration mode disclaimers
+- Simplified all tables (no dual naming columns)
+
+#### Critical Files Updated
+- `CLAUDE.md` - Main entry point (migration mode section removed)
+- `README.md` - Project README (deprecation notice removed)
+- `workflow.md` - 6-stage process (all v2 references removed)
+- `docs/INDEX.md` - Navigation hub (role names updated)
+- `templates/documents/pipeline-state-template.json` - v3 as default
+
+### ✅ Migration Path
+
+**For existing projects:**
+
+**Option 1: Continue with v2 (deprecated but functional)**
+```bash
+# Just update commands:
+# /aidd-idea → /aidd-analyze
+# /aidd-generate → /aidd-code
+# /aidd-finalize → /aidd-validate
+```
+
+**Option 2: Migrate to v3 (recommended)**
+```bash
+python3 .aidd/scripts/migrate-naming-v3.py
+```
+
+**For new projects:**
+- v3 is default
+- Only new commands available
+- Clean artifact structure from the start
+
+### 📚 Documentation
+
+- Added migration guide: `docs/migration-guide-v4.md`
+- Updated: `CLAUDE.md`, `README.md`, `workflow.md`, `docs/INDEX.md`
+- Automated replacement: 82 markdown files (942 insertions, 942 deletions)
+
+### 📊 Metrics
+
+- **6 files** deleted (4 commands + 2 agents)
+- **82 files** updated (automated sed replacement)
+- **5 files** manually reviewed (CLAUDE.md, README.md, workflow.md, docs/INDEX.md, pipeline-state-template.json)
+- **~2800 lines** of legacy code removed
+- **~2000 lines** of documentation updated
+
+### 🔗 References
+
+- Migration guide: `docs/migration-guide-v4.md`
+- Phase 3 plan: `/home/bgs/.claude/plans/zazzy-wishing-panda.md`
+- Previous migration completion: `contributors/2026-01-19-phase2-completion-summary.md`
+
+### ⚠️ Breaking Changes
+
+**This release contains BREAKING CHANGES. All users must update their workflows:**
+
+1. **Legacy commands removed** - update all scripts and documentation
+2. **Legacy agent files removed** - framework will use only new names
+3. **v3 is default** - new projects use new naming automatically
+4. **No backward compatibility** - old command names will not work
+
+**Upgrade carefully and test thoroughly!**
 
 ---
 
@@ -33,8 +123,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `/aidd-plan-feature` - alias for `/aidd-feature-plan` (feature planning)
 
 #### New Agent Roles (aliases, fully functional)
-- `planner.md` - alias for `architect.md`
-- `coder.md` - alias for `implementer.md`
+- `planner.md` - alias for `planner.md`
+- `coder.md` - alias for `coder.md`
 
 #### Artifact Structure Versioning
 - `naming_version` field in `.pipeline-state.json` controls artifact paths

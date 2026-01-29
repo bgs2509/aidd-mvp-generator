@@ -30,8 +30,8 @@
 
 | Legacy (УДАЛЕНО) | New (ОБЯЗАТЕЛЬНО) |
 |------------------|-------------------|
-| `architect.md` | `planner.md` |
-| `implementer.md` | `coder.md` |
+| `planner.md` | `planner.md` |
+| `coder.md` | `coder.md` |
 
 ### Изменения в артефактах
 
@@ -195,8 +195,8 @@ claude
 ### 2. Legacy агенты удалены
 
 **Файлы удалены**:
-- `.claude/agents/architect.md`
-- `.claude/agents/implementer.md`
+- `.claude/agents/planner.md`
+- `.claude/agents/coder.md`
 
 **Заменены на**:
 - `.claude/agents/planner.md`

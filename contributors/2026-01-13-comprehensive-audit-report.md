@@ -1,6 +1,6 @@
 # Комплексный аудит документации AIDD-MVP Generator
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 **Дата**: 2026-01-13
@@ -42,7 +42,7 @@ LOW проблемы (3):           3 × 0.1 = -0.3 баллов
 | **CRITICAL** | 0 | — | — |
 | **HIGH** | 12 | `docs/NAVIGATION.md:87`, `docs/NAVIGATION.md:119`, `docs/initialization.md:473` | AI-агенты не найдут файлы команд |
 | **MEDIUM** | 8 | `workflow.md` (4 алгоритма), `contributors/*` (4 файла) | Неполная документация |
-| **LOW** | 3 | `workflow.md` (HTTP-only), `.claude/commands/aidd-idea.md:131` | Мелкие улучшения |
+| **LOW** | 3 | `workflow.md` (HTTP-only), `.claude/commands/aidd-analyze.md:131` | Мелкие улучшения |
 | **ИТОГО** | 23 | | |
 
 ---
@@ -73,7 +73,7 @@ LOW проблемы (3):           3 × 0.1 = -0.3 баллов
 #### Проблема H1: Устаревшие ссылки на команды в NAVIGATION.md
 
 **Файл**: `docs/NAVIGATION.md:87, 119, 151, 199, 234, 263, 292, 325` и другие
-**Проблема**: Ссылки на `.aidd/.claude/commands/idea.md` вместо `.aidd/.claude/commands/aidd-idea.md`
+**Проблема**: Ссылки на `.aidd/.claude/commands/idea.md` вместо `.aidd/.claude/commands/aidd-analyze.md`
 **Влияние**: AI-агенты не смогут найти файлы команд по указанным путям
 **Категория**: Валидация ссылок
 
@@ -96,11 +96,11 @@ grep "commands.*\.md" docs/NAVIGATION.md | head -10
 **Команда исправления**:
 ```bash
 sed -i 's|/commands/init\.md|/commands/aidd-init.md|g' docs/NAVIGATION.md
-sed -i 's|/commands/idea\.md|/commands/aidd-idea.md|g' docs/NAVIGATION.md
+sed -i 's|/commands/idea\.md|/commands/aidd-analyze.md|g' docs/NAVIGATION.md
 sed -i 's|/commands/research\.md|/commands/aidd-research.md|g' docs/NAVIGATION.md
 sed -i 's|/commands/plan\.md|/commands/aidd-plan.md|g' docs/NAVIGATION.md
-sed -i 's|/commands/feature-plan\.md|/commands/aidd-feature-plan.md|g' docs/NAVIGATION.md
-sed -i 's|/commands/generate\.md|/commands/aidd-generate.md|g' docs/NAVIGATION.md
+sed -i 's|/commands/feature-plan\.md|/commands/aidd-plan-feature.md|g' docs/NAVIGATION.md
+sed -i 's|/commands/generate\.md|/commands/aidd-code.md|g' docs/NAVIGATION.md
 sed -i 's|/commands/review\.md|/commands/aidd-review.md|g' docs/NAVIGATION.md
 sed -i 's|/commands/test\.md|/commands/aidd-test.md|g' docs/NAVIGATION.md
 sed -i 's|/commands/validate\.md|/commands/aidd-validate.md|g' docs/NAVIGATION.md
@@ -128,8 +128,8 @@ grep "commands/idea\.md\|commands/generate\.md" docs/initialization.md
 
 **Команда исправления**:
 ```bash
-sed -i 's|/commands/idea\.md|/commands/aidd-idea.md|g' docs/initialization.md
-sed -i 's|/commands/generate\.md|/commands/aidd-generate.md|g' docs/initialization.md
+sed -i 's|/commands/idea\.md|/commands/aidd-analyze.md|g' docs/initialization.md
+sed -i 's|/commands/generate\.md|/commands/aidd-code.md|g' docs/initialization.md
 ```
 
 ---
@@ -171,7 +171,7 @@ sed -i 's|/commands/generate\.md|/commands/aidd-generate.md|g' docs/initializati
 
 #### Проблема L2: legacy_gates в aidd-idea.md
 
-**Файл**: `.claude/commands/aidd-idea.md:131-132`
+**Файл**: `.claude/commands/aidd-analyze.md:131-132`
 **Проблема**: Код обработки legacy формата gates
 **Примечание**: Это backward compatibility код, НЕ требует исправления
 

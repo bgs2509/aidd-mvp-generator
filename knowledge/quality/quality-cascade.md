@@ -222,8 +222,8 @@
 | Документ | Описание |
 |----------|----------|
 | `.claude/agents/researcher.md` | 7 проверок для Researcher |
-| `.claude/agents/architect.md` | 16 проверок для Architect |
-| `.claude/agents/implementer.md` | 17 проверок для Implementer |
+| `.claude/agents/planner.md` | 16 проверок для Architect |
+| `.claude/agents/coder.md` | 17 проверок для Implementer |
 | `.claude/agents/code-review-library.md` | 17 проверок для Code Review (используется Валидатором) |
 | `knowledge/quality/dry-kiss-yagni.md` | Детали DRY/KISS/YAGNI |
 | `contributors/2026-01-13-aidd-enhancement-quality-cascade.md` | Исходное предложение |

@@ -115,7 +115,7 @@ allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md)
 
 **Реализатор (implementer)**:
 ```yaml
-# .claude/agents/implementer.md
+# .claude/agents/coder.md
 tools: Read, Glob, Grep, Edit, Write, Bash
 
 # .claude/commands/generate.md
@@ -398,8 +398,8 @@ aidd-mvp-generator/           ← ОСНОВНОЙ ПРОЕКТ (неполны�
 
 **В `roles/validator/artifact-verification.md`**:
 ```markdown
-| PRD | `ai-docs/docs/prd/{name}-prd.md` | Анализ | Да |
-| Architecture | `ai-docs/docs/architecture/{name}-arch.md` | Архитектура | Да |
+| PRD | `ai-docs/docs/_analysis/{name}-prd.md` | Анализ | Да |
+| Architecture | `ai-docs/docs/_plans/mvp/{name}-arch.md` | Архитектура | Да |
 ```
 
 **В `workflow.md` и других документах**:
@@ -586,7 +586,7 @@ docs/
 ### P-007: Несогласованные пути артефактов
 
 **Тип**: Конфликт документов
-**Файлы**: `workflow.md`, `.claude/agents/architect.md`
+**Файлы**: `workflow.md`, `.claude/agents/planner.md`
 
 **Описание**:
 Разные документы указывают разные пути для одних и тех же артефактов:
@@ -594,7 +594,7 @@ docs/
 **Архитектурный план (CREATE)**:
 ```
 workflow.md (строка 126):     docs/architecture/{name}-plan.md
-architect.md (строка 40):      docs/architecture/{name}-plan.md
+planner.md (строка 40):      docs/architecture/{name}-plan.md
 ```
 ✓ Согласовано
 
@@ -602,7 +602,7 @@ architect.md (строка 40):      docs/architecture/{name}-plan.md
 ```
 workflow.md (строка 143):     docs/plans/{feature}-plan.md
 feature-plan.md (строка 54):  docs/plans/{feature}-plan.md
-architect.md (строка 41):     docs/plans/{feature}-plan.md
+planner.md (строка 41):     docs/plans/{feature}-plan.md
 ```
 ✓ Согласовано, но директория не существует
 
@@ -631,7 +631,7 @@ analyst.md (строка 41):       docs/rtm.md (секция требовани
 | Аспект | /plan | /feature-plan |
 |--------|-------|---------------|
 | Выходной путь | `docs/architecture/` | `docs/plans/` |
-| Шаблон плана | Есть в architect.md | Нет шаблона |
+| Шаблон плана | Есть в planner.md | Нет шаблона |
 | Пример | Есть | Нет |
 | Инструкции | Подробные | Минимальные |
 
@@ -765,8 +765,8 @@ Bash(make :*), Bash(docker :*), Bash(curl :*)
 **Проблемные ссылки в других агентах**:
 | Агент | Битая ссылка |
 |-------|--------------|
-| architect.md | `knowledge/architecture/` — частично |
-| implementer.md | `knowledge/services/` — частично |
+| planner.md | `knowledge/architecture/` — частично |
+| coder.md | `knowledge/services/` — частично |
 | validator.md | `knowledge/infrastructure/docker-compose.md` — НЕ СУЩЕСТВУЕТ |
 
 **Влияние на пайплайн**:

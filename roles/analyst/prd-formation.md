@@ -154,16 +154,16 @@
 ## Путь сохранения (в целевом проекте)
 
 ```
-ai-docs/docs/prd/{project-name}-prd.md
+ai-docs/docs/_analysis/{project-name}-prd.md
 
 Примеры:
-- ai-docs/docs/prd/booking-restaurant-prd.md
-- ai-docs/docs/prd/personal-finance-prd.md
+- ai-docs/docs/_analysis/booking-restaurant-prd.md
+- ai-docs/docs/_analysis/personal-finance-prd.md
 ```
 
 Для режима FEATURE:
 ```
-ai-docs/docs/prd/{feature-name}-feature-prd.md
+ai-docs/docs/_analysis/{feature-name}-feature-prd.md
 ```
 
 ---
@@ -185,7 +185,7 @@ ai-docs/docs/prd/{feature-name}-feature-prd.md
 - [ ] Секция 9 (Вопросы) не имеет Open блокеров
 - [ ] Все ID уникальны (FR-*, NF-*, UI-*, INT-*)
 - [ ] Все Must-требования имеют критерии приёмки
-- [ ] Документ сохранён в `ai-docs/docs/prd/` (целевой проект)
+- [ ] Документ сохранён в `ai-docs/docs/_analysis/` (целевой проект)
 
 ---
 

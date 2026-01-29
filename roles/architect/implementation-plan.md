@@ -228,11 +228,11 @@ Data API PG → templates/services/postgres_data_api/
 ## Путь сохранения
 
 ```
-ai-docs/docs/plans/{name}-implementation-plan.md
+ai-docs/docs/_plans/features/{name}-implementation-plan.md
 
 Примеры:
-- ai-docs/docs/plans/booking-implementation-plan.md
-- ai-docs/docs/plans/notifications-feature-plan.md
+- ai-docs/docs/_plans/features/booking-implementation-plan.md
+- ai-docs/docs/_plans/features/notifications-feature-plan.md
 ```
 
 ---

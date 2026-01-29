@@ -29,7 +29,7 @@ findings_count: 0                      # Количество ключевых �
 
 ## 1. Контекст
 
-- **Ссылка на PRD**: `ai-docs/docs/prd/{name}-prd.md`
+- **Ссылка на PRD**: `ai-docs/docs/_analysis/{name}-prd.md`
 - **Режим**: {CREATE или FEATURE}
 - **Цели исследования**: {Что нужно выяснить}
 

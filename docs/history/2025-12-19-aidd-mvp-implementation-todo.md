@@ -111,8 +111,8 @@
 |---|--------|------|------|----------|------------|
 | 1.2.1 | [x] | `.claude/agents/analyst.md` | Аналитик | Раздел 3.4, таблица 3.3.1 | 0.1.1 |
 | 1.2.2 | [x] | `.claude/agents/researcher.md` | Исследователь | Раздел 3.4, таблица 3.3.2 | 0.1.1 |
-| 1.2.3 | [x] | `.claude/agents/architect.md` | Архитектор | Раздел 3.4, таблица 3.3.3 | 0.1.1 |
-| 1.2.4 | [x] | `.claude/agents/implementer.md` | Реализатор | Раздел 3.4, таблица 3.3.4 | 0.1.1 |
+| 1.2.3 | [x] | `.claude/agents/planner.md` | Архитектор | Раздел 3.4, таблица 3.3.3 | 0.1.1 |
+| 1.2.4 | [x] | `.claude/agents/coder.md` | Реализатор | Раздел 3.4, таблица 3.3.4 | 0.1.1 |
 | 1.2.5 | [x] | `.claude/agents/reviewer.md` | Ревьюер | Раздел 3.4, таблица 3.3.5 | 0.1.1 |
 | 1.2.6 | [x] | `.claude/agents/qa.md` | QA | Раздел 3.4, таблица 3.3.6 | 0.1.1 |
 | 1.2.7 | [x] | `.claude/agents/validator.md` | Валидатор | Раздел 3.4, таблица 3.3.7 | 0.1.1 |
@@ -157,7 +157,7 @@
 - conventions.md — соглашения
 
 Выходные данные:
-- ai-docs/docs/prd/{name}-prd.md
+- ai-docs/docs/_analysis/{name}-prd.md
 
 Инструкции:
 1. Инициализация (roles/analyst/initialization.md)
@@ -242,7 +242,7 @@
 - Нет (это первый этап пайплайна)
 
 Выходные артефакты:
-- ai-docs/docs/prd/{name}-prd.md
+- ai-docs/docs/_analysis/{name}-prd.md
 - ai-docs/docs/rtm.md (начальная секция)
 
 Качественные ворота:

@@ -17,12 +17,12 @@
 
 | Артефакт | Путь | Этап | Обязательный |
 |----------|------|------|--------------|
-| PRD | `ai-docs/docs/prd/{name}-prd.md` | Анализ | Да |
+| PRD | `ai-docs/docs/_analysis/{name}-prd.md` | Анализ | Да |
 | Research Report | `ai-docs/docs/research/{name}-research.md` | Исследование | Да |
-| Architecture | `ai-docs/docs/architecture/{name}-arch.md` | Архитектура | Да |
-| Implementation Plan | `ai-docs/docs/plans/{name}-plan.md` | Архитектура | Да |
-| Review Report | `ai-docs/docs/reports/review-report.md` | Ревью | Да |
-| QA Report | `ai-docs/docs/reports/qa-report.md` | QA | Да |
+| Architecture | `ai-docs/docs/_plans/mvp/{name}-arch.md` | Архитектура | Да |
+| Implementation Plan | `ai-docs/docs/_plans/features/{name}-plan.md` | Архитектура | Да |
+| Review Report | `ai-docs/docs/_validation/review-report.md` | Ревью | Да |
+| QA Report | `ai-docs/docs/_validation/qa-report.md` | QA | Да |
 | RTM | `ai-docs/docs/rtm.md` | Все этапы | Да |
 
 ### Код (services/)
@@ -63,7 +63,7 @@
 # Проверить наличие документов
 
 # PRD
-if [ -f "ai-docs/docs/prd/*-prd.md" ]; then
+if [ -f "ai-docs/docs/_analysis/*-prd.md" ]; then
     echo "✓ PRD exists"
 else
     echo "✗ PRD missing"
@@ -77,21 +77,21 @@ else
 fi
 
 # Architecture
-if [ -f "ai-docs/docs/architecture/*-arch.md" ]; then
+if [ -f "ai-docs/docs/_plans/mvp/*-arch.md" ]; then
     echo "✓ Architecture exists"
 else
     echo "✗ Architecture missing"
 fi
 
 # Plan
-if [ -f "ai-docs/docs/plans/*-plan.md" ]; then
+if [ -f "ai-docs/docs/_plans/features/*-plan.md" ]; then
     echo "✓ Plan exists"
 else
     echo "✗ Plan missing"
 fi
 
 # Reports
-ls ai-docs/docs/reports/
+ls ai-docs/docs/_validation/
 
 # RTM
 if [ -f "ai-docs/docs/rtm.md" ]; then
@@ -168,7 +168,7 @@ def validate_rtm(path):
     content = read(path)
 
     # Должна содержать все FR из PRD
-    prd = read("ai-docs/docs/prd/*.md")
+    prd = read("ai-docs/docs/_analysis/*.md")
     fr_ids = extract_fr_ids(prd)
 
     for fr_id in fr_ids:
@@ -228,11 +228,11 @@ def validate_rtm(path):
 
 | Артефакт | Статус | Путь | Комментарий |
 |----------|--------|------|-------------|
-| PRD | ✓ | ai-docs/docs/prd/booking-prd.md | — |
-| Architecture | ✓ | ai-docs/docs/architecture/booking-arch.md | — |
-| Plan | ✓ | ai-docs/docs/plans/booking-plan.md | — |
-| Review Report | ✓ | ai-docs/docs/reports/review-report.md | — |
-| QA Report | ✓ | ai-docs/docs/reports/qa-report.md | — |
+| PRD | ✓ | ai-docs/docs/_analysis/booking-prd.md | — |
+| Architecture | ✓ | ai-docs/docs/_plans/mvp/booking-arch.md | — |
+| Plan | ✓ | ai-docs/docs/_plans/features/booking-plan.md | — |
+| Review Report | ✓ | ai-docs/docs/_validation/review-report.md | — |
+| QA Report | ✓ | ai-docs/docs/_validation/qa-report.md | — |
 | RTM | ✓ | ai-docs/docs/rtm.md | Актуальна |
 
 ### Код

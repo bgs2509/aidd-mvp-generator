@@ -9,9 +9,9 @@
 
 ```
 ГЕНЕРАТОР (шаблоны)              →    ЦЕЛЕВОЙ ПРОЕКТ (артефакты)
-templates/documents/prd-template.md   →    ai-docs/docs/prd/{name}-prd.md
+templates/documents/prd-template.md   →    ai-docs/docs/_analysis/{name}-prd.md
 templates/documents/research-report-template.md →    ai-docs/docs/research/{name}-research.md
-templates/documents/architecture-*.md →    ai-docs/docs/architecture/{name}-plan.md
+templates/documents/architecture-*.md →    ai-docs/docs/_plans/mvp/{name}-plan.md
 templates/services/*             →    services/{name}_{type}/
 ```
 
@@ -26,7 +26,7 @@ templates/services/*             →    services/{name}_{type}/
 | **Команда** | `/idea` |
 | **Агент** | Аналитик |
 | **Шаблон (генератор)** | `templates/documents/prd-template.md` |
-| **Путь (целевой проект)** | `ai-docs/docs/prd/{name}-prd.md` |
+| **Путь (целевой проект)** | `ai-docs/docs/_analysis/{name}-prd.md` |
 | **Ворота** | `PRD_READY` |
 
 **Критерии готовности**:
@@ -68,7 +68,7 @@ templates/services/*             →    services/{name}_{type}/
 | **Команда** | `/plan` |
 | **Агент** | Архитектор |
 | **Шаблон (генератор)** | `templates/documents/architecture-template.md` |
-| **Путь (целевой проект)** | `ai-docs/docs/architecture/{name}-plan.md` |
+| **Путь (целевой проект)** | `ai-docs/docs/_plans/mvp/{name}-plan.md` |
 | **Ворота** | `PLAN_APPROVED` |
 
 ### План фичи (FEATURE)
@@ -78,7 +78,7 @@ templates/services/*             →    services/{name}_{type}/
 | **Команда** | `/feature-plan` |
 | **Агент** | Архитектор |
 | **Шаблон (генератор)** | `templates/documents/feature-plan-template.md` |
-| **Путь (целевой проект)** | `ai-docs/docs/plans/{feature}-plan.md` |
+| **Путь (целевой проект)** | `ai-docs/docs/_plans/features/{feature}-plan.md` |
 | **Ворота** | `PLAN_APPROVED` |
 
 **Критерии готовности**:
@@ -137,7 +137,7 @@ templates/services/*             →    services/{name}_{type}/
 |----------|----------|
 | **Команда** | `/review` |
 | **Агент** | Ревьюер |
-| **Путь (целевой проект)** | `ai-docs/docs/reports/review-report.md` |
+| **Путь (целевой проект)** | `ai-docs/docs/_validation/review-report.md` |
 | **Ворота** | `REVIEW_OK` |
 
 **Критерии готовности**:
@@ -156,7 +156,7 @@ templates/services/*             →    services/{name}_{type}/
 |----------|----------|
 | **Команда** | `/test` |
 | **Агент** | QA |
-| **Путь (целевой проект)** | `ai-docs/docs/reports/qa-report.md` |
+| **Путь (целевой проект)** | `ai-docs/docs/_validation/qa-report.md` |
 | **Ворота** | `QA_PASSED` |
 
 **Критерии готовности**:
@@ -175,7 +175,7 @@ templates/services/*             →    services/{name}_{type}/
 |----------|----------|
 | **Команда** | `/validate` |
 | **Агент** | Валидатор |
-| **Путь (целевой проект)** | `ai-docs/docs/reports/validation-report.md` |
+| **Путь (целевой проект)** | `ai-docs/docs/_validation/validation-report.md` |
 | **Ворота** | `ALL_GATES_PASSED` |
 
 ### RTM (Requirements Traceability Matrix)
@@ -228,13 +228,13 @@ templates/services/*             →    services/{name}_{type}/
 
 | Этап | Артефакт | Путь в целевом проекте | Ворота |
 |------|----------|------------------------|--------|
-| 1 | PRD | `ai-docs/docs/prd/{name}-prd.md` | PRD_READY |
+| 1 | PRD | `ai-docs/docs/_analysis/{name}-prd.md` | PRD_READY |
 | 2 | Research Report | `ai-docs/docs/research/{name}-research.md` | RESEARCH_DONE |
-| 3 | План | `ai-docs/docs/architecture/{name}-plan.md` | PLAN_APPROVED |
+| 3 | План | `ai-docs/docs/_plans/mvp/{name}-plan.md` | PLAN_APPROVED |
 | 4 | Код | `services/`, `docker-compose.yml` | IMPLEMENT_OK |
-| 5 | Ревью | `ai-docs/docs/reports/review-report.md` | REVIEW_OK |
-| 6 | QA | `ai-docs/docs/reports/qa-report.md` | QA_PASSED |
-| 7 | Валидация | `ai-docs/docs/reports/validation-report.md`, `rtm.md` | ALL_GATES_PASSED |
+| 5 | Ревью | `ai-docs/docs/_validation/review-report.md` | REVIEW_OK |
+| 6 | QA | `ai-docs/docs/_validation/qa-report.md` | QA_PASSED |
+| 7 | Валидация | `ai-docs/docs/_validation/validation-report.md`, `rtm.md` | ALL_GATES_PASSED |
 | 8 | Деплой | Работающее приложение | DEPLOYED |
 
 ---

@@ -7,20 +7,10 @@
   "init_mode": "NEW_PROJECT",
   "init_decisions": {},
   "parallel_mode": false,
-  "naming_version": "v2",
-  "$comment_naming": "v2 = старая структура (prd/, architecture/), v3 = новая (_analysis/, _plans/)",
+  "naming_version": "v3",
+  "$comment_naming": "v3 = структура с префиксами (_analysis/, _plans/, _research/, _validation/)",
   "created_at": "",
   "updated_at": "",
-
-  "gate_aliases": {
-    "$comment": "Алиасы ворот для унификации naming (v2.4+). Старые и новые имена работают одновременно.",
-    "PRD_READY": "ANALYSIS_READY",
-    "RESEARCH_DONE": "RESEARCH_READY",
-    "IMPLEMENT_OK": "CODE_READY",
-    "REVIEW_OK": "REVIEW_READY",
-    "QA_PASSED": "TESTING_READY",
-    "ALL_GATES_PASSED": "VALIDATION_READY"
-  },
 
   "global_gates": {
     "$comment": "Глобальные ворота — проверяются один раз на проект",

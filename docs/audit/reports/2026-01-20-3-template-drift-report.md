@@ -114,7 +114,7 @@ COMMANDS=(init idea research plan feature-plan generate review test validate dep
 
 **Текущее состояние**:
 - Команды **review, test, validate, deploy удалены** (коммит 7b4907d)
-- Всё объединено в `/aidd-finalize` (или `/aidd-validate`)
+- Всё объединено в `/aidd-validate` (или `/aidd-validate`)
 - **6 уникальных команд** с алиасами (migration mode v2.4):
   1. `init`
   2. `idea` / `analyze`
@@ -255,8 +255,8 @@ ROLES=(analyst researcher architect implementer reviewer qa validator)
 - **5 базовых ролей** + дубликаты + библиотеки:
   - `analyst.md`
   - `researcher.md`
-  - `architect.md` / `planner.md` (дубликаты)
-  - `implementer.md` / `coder.md` (дубликаты)
+  - `planner.md` / `planner.md` (дубликаты)
+  - `coder.md` / `coder.md` (дубликаты)
   - `validator.md` (объединяет reviewer + qa)
   - `code-review-library.md` (библиотека, не роль)
   - `testing-library.md` (библиотека, не роль)
@@ -338,17 +338,17 @@ TEMPLATES=(
 
 ---
 
-### 6. MEDIUM: Два режима /aidd-finalize (Full vs Quick)
+### 6. MEDIUM: Два режима /aidd-validate (Full vs Quick)
 
 **Локация в шаблоне**: Не упоминается
 
 **Что отсутствует**:
-- Проверка режимов работы `/aidd-finalize` (Full vs Quick)
+- Проверка режимов работы `/aidd-validate` (Full vs Quick)
 - Ворота `DOCUMENTED` для Quick режима
 
 **Текущее состояние** (workflow.md:416-427):
 - **Full режим** (по умолчанию): Review → Test → Validate → Deploy → `DEPLOYED`
-- **Quick режим** (`/aidd-finalize --mode=quick`): Static analysis + DRAFT отчёт → `DOCUMENTED`
+- **Quick режим** (`/aidd-validate --mode=quick`): Static analysis + DRAFT отчёт → `DOCUMENTED`
 
 **Влияние**:
 - ⚠️ Smoke Test 10 (ворота) не учитывает ворота `DOCUMENTED`
@@ -358,9 +358,9 @@ TEMPLATES=(
 
 Добавить в Smoke Test 10 (после строки 223):
 ```bash
-# Проверка режимов /aidd-finalize
+# Проверка режимов /aidd-validate
 echo ""
-echo "=== Режимы /aidd-finalize ===\"
+echo "=== Режимы /aidd-validate ===\"
 echo "Full режим: REVIEW_OK → QA_PASSED → ALL_GATES_PASSED → DEPLOYED"
 echo "Quick режим: DOCUMENTED (static analysis only)"
 
@@ -431,7 +431,7 @@ SERVICES=(fastapi_business_api postgres_data_api mongo_data_api aiogram_bot asyn
 ### Приоритет 3: СРЕДНИЙ (в течение месяца)
 
 8. ✅ **Обновить Smoke Test 9 и Objective 12** — шаблоны документов (completion-report)
-9. ✅ **Добавить описание режимов** — Full vs Quick для /aidd-finalize
+9. ✅ **Добавить описание режимов** — Full vs Quick для /aidd-validate
 10. ✅ **Обновить таблицу команд** (строка 286) — 6 этапов, а не 9
 
 ### Приоритет 4: НИЗКИЙ (когда появится время)
@@ -472,7 +472,7 @@ grep -E "этап [6-8]|stage [6-8]" docs/audit/templates/comprehensive-audit.md
 - **workflow.md**: Процесс и ворота
 - **Phase 2 Completion**: `contributors/2026-01-19-phase2-completion-summary.md`
 - **Ключевые коммиты**:
-  - 7b4907d: "refactor: remove obsolete commands, consolidate to /aidd-finalize"
+  - 7b4907d: "refactor: remove obsolete commands, consolidate to /aidd-validate"
   - 6808beb: "fix(docs): resolve C-PIPELINE-1 - unify pipeline stage count to 6 (0-5)"
 
 ---

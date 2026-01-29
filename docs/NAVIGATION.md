@@ -1,6 +1,6 @@
 # Навигационная матрица AIDD-MVP Generator
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 > **Назначение**: Явная таблица "роль → какие документы читать → какие создавать"
@@ -43,7 +43,7 @@
 
 ## Этап 0: Bootstrap (Инициализация)
 
-**Команда**: `/aidd-init` (ручной) или авто с `/aidd-idea`
+**Команда**: `/aidd-init` (ручной) или авто с `/aidd-analyze`
 **Агент**: — (системный)
 **Ворота**: `BOOTSTRAP_READY`
 
@@ -75,7 +75,7 @@
 
 ## Этап 1: Идея → PRD
 
-**Команда**: `/aidd-idea`
+**Команда**: `/aidd-analyze`
 **Агент**: Аналитик
 **Ворота**: `PRD_READY`
 
@@ -83,16 +83,16 @@
 |------|---|--------|---------|
 | **1. ЦП** | 1 | `./CLAUDE.md` | Если существует |
 | **1. ЦП** | 2 | `./.pipeline-state.json` | Если существует |
-| **1. ЦП** | 3 | `./ai-docs/docs/prd/` | Для FEATURE режима |
+| **1. ЦП** | 3 | `./ai-docs/docs/_analysis/` | Для FEATURE режима |
 | **2. Ворота** | — | Нет предусловий | Первый этап |
 | **3. Фреймворк** | 4 | `.aidd/CLAUDE.md` | Всегда |
 | **3. Фреймворк** | 5 | `.aidd/workflow.md` | Всегда |
-| **3. Фреймворк** | 6 | `.aidd/.claude/commands/aidd-idea.md` | Всегда |
+| **3. Фреймворк** | 6 | `.aidd/.claude/commands/aidd-analyze.md` | Всегда |
 | **3. Фреймворк** | 7 | `.aidd/.claude/agents/analyst.md` | Всегда |
 | **4. Шаблоны** | 8 | `.aidd/templates/documents/prd-template.md` | Если PRD не существует |
 
 **Создавать (в ЦП)**:
-- `ai-docs/docs/prd/{name}-prd.md`
+- `ai-docs/docs/_analysis/{name}-prd.md`
 - `.pipeline-state.json`
 
 **Чек-лист ворот PRD_READY**:
@@ -114,7 +114,7 @@
 |------|---|--------|---------|
 | **1. ЦП** | 1 | `./CLAUDE.md` | Если существует |
 | **1. ЦП** | 2 | `./.pipeline-state.json` | Обязательно |
-| **1. ЦП** | 3 | `./ai-docs/docs/prd/*.md` | Обязательно |
+| **1. ЦП** | 3 | `./ai-docs/docs/_analysis/*.md` | Обязательно |
 | **1. ЦП** | 4 | `./services/` | Для FEATURE режима |
 | **2. Ворота** | — | `gates.PRD_READY.passed == true` | Обязательно |
 | **3. Фреймворк** | 5 | `.aidd/CLAUDE.md` | Всегда |
@@ -138,7 +138,7 @@
 
 ## Этап 3: Архитектура
 
-**Команда**: `/aidd-plan` (CREATE) или `/aidd-feature-plan` (FEATURE)
+**Команда**: `/aidd-plan` (CREATE) или `/aidd-plan-feature` (FEATURE)
 **Агент**: Архитектор
 **Ворота**: `PLAN_APPROVED`
 
@@ -148,31 +148,31 @@
 |------|---|--------|---------|
 | **1. ЦП** | 1 | `./CLAUDE.md` | Если существует |
 | **1. ЦП** | 2 | `./.pipeline-state.json` | Обязательно |
-| **1. ЦП** | 3 | `./ai-docs/docs/prd/*.md` | Обязательно |
+| **1. ЦП** | 3 | `./ai-docs/docs/_analysis/*.md` | Обязательно |
 | **1. ЦП** | 4 | `./ai-docs/docs/research/*.md` | Обязательно |
 | **2. Ворота** | — | `gates.PRD_READY + RESEARCH_DONE` | Обязательно |
 | **3. Фреймворк** | 5 | `.aidd/.claude/commands/aidd-plan.md` | Всегда |
-| **3. Фреймворк** | 6 | `.aidd/.claude/agents/architect.md` | Всегда |
+| **3. Фреймворк** | 6 | `.aidd/.claude/agents/planner.md` | Всегда |
 | **4. Шаблоны** | 7 | `.aidd/templates/documents/architecture-template.md` | Всегда |
 | **4. База знаний** | 8 | `.aidd/knowledge/architecture/*.md` | Всегда |
 
-### Режим FEATURE (`/aidd-feature-plan`)
+### Режим FEATURE (`/aidd-plan-feature`)
 
 | Фаза | # | Читать | Условие |
 |------|---|--------|---------|
 | **1. ЦП** | 1 | `./CLAUDE.md` | Если существует |
 | **1. ЦП** | 2 | `./.pipeline-state.json` | Обязательно |
-| **1. ЦП** | 3 | `./ai-docs/docs/prd/*.md` | Обязательно |
+| **1. ЦП** | 3 | `./ai-docs/docs/_analysis/*.md` | Обязательно |
 | **1. ЦП** | 4 | `./ai-docs/docs/research/*.md` | Обязательно |
-| **1. ЦП** | 5 | `./ai-docs/docs/architecture/*.md` | Обязательно |
+| **1. ЦП** | 5 | `./ai-docs/docs/_plans/mvp/*.md` | Обязательно |
 | **1. ЦП** | 6 | `./services/` | Обязательно |
 | **2. Ворота** | — | `mode == FEATURE + gates` | Обязательно |
-| **3. Фреймворк** | 7 | `.aidd/.claude/commands/aidd-feature-plan.md` | Всегда |
-| **3. Фреймворк** | 8 | `.aidd/.claude/agents/architect.md` | Всегда |
+| **3. Фреймворк** | 7 | `.aidd/.claude/commands/aidd-plan-feature.md` | Всегда |
+| **3. Фреймворк** | 8 | `.aidd/.claude/agents/planner.md` | Всегда |
 
 **Создавать (в ЦП)**:
-- CREATE: `ai-docs/docs/architecture/{name}-plan.md`
-- FEATURE: `ai-docs/docs/plans/{feature}-plan.md`
+- CREATE: `ai-docs/docs/_plans/mvp/{name}-plan.md`
+- FEATURE: `ai-docs/docs/_plans/features/{feature}-plan.md`
 
 **Чек-лист ворот PLAN_APPROVED**:
 - [ ] Компоненты системы описаны
@@ -185,7 +185,7 @@
 
 ## Этап 4: Реализация
 
-**Команда**: `/aidd-generate`
+**Команда**: `/aidd-code`
 **Агент**: Реализатор
 **Ворота**: `IMPLEMENT_OK`
 
@@ -193,14 +193,14 @@
 |------|---|--------|---------|
 | **1. ЦП** | 1 | `./CLAUDE.md` | Если существует |
 | **1. ЦП** | 2 | `./.pipeline-state.json` | Обязательно |
-| **1. ЦП** | 3 | `./ai-docs/docs/prd/*.md` | Обязательно |
-| **1. ЦП** | 4 | `./ai-docs/docs/architecture/*.md` | Для CREATE |
-| **1. ЦП** | 5 | `./ai-docs/docs/plans/*.md` | Для FEATURE |
+| **1. ЦП** | 3 | `./ai-docs/docs/_analysis/*.md` | Обязательно |
+| **1. ЦП** | 4 | `./ai-docs/docs/_plans/mvp/*.md` | Для CREATE |
+| **1. ЦП** | 5 | `./ai-docs/docs/_plans/features/*.md` | Для FEATURE |
 | **1. ЦП** | 6 | `./services/` | Для FEATURE |
 | **2. Ворота** | — | `gates.PLAN_APPROVED.passed + approved_by` | Обязательно |
 | **3. Фреймворк** | 7 | `.aidd/conventions.md` | Всегда |
-| **3. Фреймворк** | 8 | `.aidd/.claude/commands/aidd-generate.md` | Всегда |
-| **3. Фреймворк** | 9 | `.aidd/.claude/agents/implementer.md` | Всегда |
+| **3. Фреймворк** | 8 | `.aidd/.claude/commands/aidd-code.md` | Всегда |
+| **3. Фреймворк** | 9 | `.aidd/.claude/agents/coder.md` | Всегда |
 | **4. Шаблоны** | 10 | `.aidd/templates/services/*.md` | Всегда |
 | **4. Шаблоны** | 11 | `.aidd/templates/infrastructure/*.md` | Всегда |
 
@@ -221,10 +221,10 @@
 
 ## Этап 5: Quality & Deploy
 
-**Команда**: `/aidd-finalize` (или `/aidd-validate` в v2.4+)
+**Команда**: `/aidd-validate` (или `/aidd-validate` в v2.4+)
 **Роль**: Валидатор (`.claude/agents/validator.md`)
 **Предусловие**: `IMPLEMENT_OK` ✓
-**Артефакт**: `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md`
+**Артефакт**: `ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}-completion.md`
 
 ### Описание
 
@@ -245,14 +245,14 @@
 |------|---|--------|---------|
 | **1. ЦП** | 1 | `./CLAUDE.md` | Если существует |
 | **1. ЦП** | 2 | `./.pipeline-state.json` | Обязательно |
-| **1. ЦП** | 3 | `./ai-docs/docs/prd/*.md` | Обязательно |
-| **1. ЦП** | 4 | `./ai-docs/docs/architecture/*.md` | Обязательно |
+| **1. ЦП** | 3 | `./ai-docs/docs/_analysis/*.md` | Обязательно |
+| **1. ЦП** | 4 | `./ai-docs/docs/_plans/mvp/*.md` | Обязательно |
 | **1. ЦП** | 5 | `./services/` | Обязательно |
 | **1. ЦП** | 6 | `./docker-compose.yml`, `./Makefile` | Для шага 4 (Deploy) |
 | **2. Ворота** | — | Проверка `IMPLEMENT_OK` | Обязательно (для Full режима) |
 | **3. Фреймворк** | 7 | `.aidd/CLAUDE.md` | Всегда |
 | **3. Фреймворк** | 8 | `.aidd/workflow.md` | Всегда |
-| **3. Фреймворк** | 9 | `.aidd/.claude/commands/aidd-finalize.md` | Главные инструкции |
+| **3. Фреймворк** | 9 | `.aidd/.claude/commands/aidd-validate.md` | Главные инструкции |
 | **3. Фреймворк** | 10 | `.aidd/.claude/agents/validator.md` | Роль Валидатора |
 | **3. Фреймворк** | 11 | `.aidd/.claude/agents/code-review-library.md` | Библиотека для шага 1 |
 | **3. Фреймворк** | 12 | `.aidd/.claude/agents/testing-library.md` | Библиотека для шага 2 |
@@ -276,7 +276,7 @@
 
 ### Создаваемый артефакт (единственный)
 
-- `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md`
+- `ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}-completion.md`
 
 **Completion Report** содержит:
 - Executive Summary
@@ -338,24 +338,24 @@
 | # | Этап | Команда | Агент | Читает | Создаёт | Ворота |
 |---|------|---------|-------|--------|---------|--------|
 | 0 | Bootstrap | `/aidd-init` | — | init.md, target-structure | Структура ЦП | BOOTSTRAP_READY |
-| 1 | Идея | `/aidd-idea` | Аналитик | CLAUDE, workflow, analyst, prd-template | PRD, state | PRD_READY |
+| 1 | Идея | `/aidd-analyze` | Аналитик | CLAUDE, workflow, analyst, prd-template | PRD, state | PRD_READY |
 | 2 | Исследование | `/aidd-research` | Исследователь | researcher, knowledge | (state) | RESEARCH_DONE |
 | 3 | Архитектура | `/aidd-plan` | Архитектор | architect, ddd, http-only | План | PLAN_APPROVED |
-| 4 | Реализация | `/aidd-generate` | Реализатор | implementer, conventions, templates | Код, тесты | IMPLEMENT_OK |
-| 5 | Quality & Deploy | `/aidd-finalize` | Валидатор | validator, code-review-library, testing-library, completion-report-template | Completion Report | REVIEW_OK → QA_PASSED → ALL_GATES_PASSED → DEPLOYED |
+| 4 | Реализация | `/aidd-code` | Реализатор | implementer, conventions, templates | Код, тесты | IMPLEMENT_OK |
+| 5 | Quality & Deploy | `/aidd-validate` | Валидатор | validator, code-review-library, testing-library, completion-report-template | Completion Report | REVIEW_OK → QA_PASSED → ALL_GATES_PASSED → DEPLOYED |
 
 > **Примечание (v2.4+)**: Унификация naming conventions:
 >
 > | Старое | Новое | Статус |
 > |--------|-------|--------|
-> | `/aidd-idea` | `/aidd-analyze` | ✅ Оба работают |
-> | `/aidd-feature-plan` | `/aidd-plan-feature` | ✅ Оба работают |
-> | `/aidd-generate` | `/aidd-code` | ✅ Оба работают |
-> | `/aidd-finalize` | `/aidd-validate` | ✅ Оба работают |
-> | `architect.md` | `planner.md` | ✅ Оба доступны |
-> | `implementer.md` | `coder.md` | ✅ Оба доступны |
+> | `/aidd-analyze` | `/aidd-analyze` | ✅ Оба работают |
+> | `/aidd-plan-feature` | `/aidd-plan-feature` | ✅ Оба работают |
+> | `/aidd-code` | `/aidd-code` | ✅ Оба работают |
+> | `/aidd-validate` | `/aidd-validate` | ✅ Оба работают |
+> | `planner.md` | `planner.md` | ✅ Оба доступны |
+> | `coder.md` | `coder.md` | ✅ Оба доступны |
 >
-> **Важно**: `/aidd-finalize` (или `/aidd-validate`) объединяет этапы 5-8 в один цикл Quality & Deploy.
+> **Важно**: `/aidd-validate` (или `/aidd-validate`) объединяет этапы 5-8 в один цикл Quality & Deploy.
 
 ---
 

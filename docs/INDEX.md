@@ -1,7 +1,5 @@
 # Индекс файлов AIDD-MVP Generator
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
-
 
 > **Назначение**: Навигация по файлам ФРЕЙМВОРКА (генератора).
 > Для структуры целевого проекта см. [target-project-structure.md](target-project-structure.md)
@@ -26,8 +24,8 @@
 |------|------|-------|--------|
 | [.claude/agents/analyst.md](../.claude/agents/analyst.md) | Аналитик | 1 | PRD_READY |
 | [.claude/agents/researcher.md](../.claude/agents/researcher.md) | Исследователь | 2 | RESEARCH_DONE |
-| [.claude/agents/architect.md](../.claude/agents/architect.md) | Архитектор | 3 | PLAN_APPROVED |
-| [.claude/agents/implementer.md](../.claude/agents/implementer.md) | Реализатор | 4 | IMPLEMENT_OK |
+| [.claude/agents/planner.md](../.claude/agents/planner.md) | Планировщик | 3 | PLAN_APPROVED |
+| [.claude/agents/coder.md](../.claude/agents/coder.md) | Программист | 4 | IMPLEMENT_OK |
 | [.claude/agents/validator.md](../.claude/agents/validator.md) | Валидатор | 5 | REVIEW_OK, QA_PASSED, ALL_GATES_PASSED, DEPLOYED |
 
 ---
@@ -37,12 +35,12 @@
 | Команда | Файл | Описание |
 |---------|------|----------|
 | `/aidd-init` | [.claude/commands/aidd-init.md](../.claude/commands/aidd-init.md) | Bootstrap (инициализация ЦП) |
-| `/aidd-idea` | [.claude/commands/aidd-idea.md](../.claude/commands/aidd-idea.md) | Создание PRD |
+| `/aidd-analyze` | [.claude/commands/aidd-analyze.md](../.claude/commands/aidd-analyze.md) | Создание PRD |
 | `/aidd-research` | [.claude/commands/aidd-research.md](../.claude/commands/aidd-research.md) | Исследование |
 | `/aidd-plan` | [.claude/commands/aidd-plan.md](../.claude/commands/aidd-plan.md) | Архитектура (CREATE) |
-| `/aidd-feature-plan` | [.claude/commands/aidd-feature-plan.md](../.claude/commands/aidd-feature-plan.md) | План фичи (FEATURE) |
-| `/aidd-generate` | [.claude/commands/aidd-generate.md](../.claude/commands/aidd-generate.md) | Генерация кода |
-| `/aidd-finalize` | [.claude/commands/aidd-finalize.md](../.claude/commands/aidd-finalize.md) | Quality & Deploy (Review → Test → Validate → Deploy) |
+| `/aidd-plan-feature` | [.claude/commands/aidd-plan-feature.md](../.claude/commands/aidd-plan-feature.md) | План фичи (FEATURE) |
+| `/aidd-code` | [.claude/commands/aidd-code.md](../.claude/commands/aidd-code.md) | Генерация кода |
+| `/aidd-validate` | [.claude/commands/aidd-validate.md](../.claude/commands/aidd-validate.md) | Quality & Deploy (Review → Test → Validate → Deploy) |
 
 > Обзор пайплайна: [CLAUDE.md](../CLAUDE.md#6-этапный-пайплайн)
 
@@ -97,12 +95,12 @@
 
 | Шаблон | Путь в генераторе | Создаёт в целевом проекте |
 |--------|-------------------|---------------------------|
-| PRD | [templates/documents/prd-template.md](../templates/documents/prd-template.md) | `ai-docs/docs/prd/{name}-prd.md` |
-| Research Report | [templates/documents/research-report-template.md](../templates/documents/research-report-template.md) | `ai-docs/docs/research/{name}-research.md` |
-| Архитектура | [templates/documents/architecture-template.md](../templates/documents/architecture-template.md) | `ai-docs/docs/architecture/{name}-plan.md` |
-| План фичи (FEATURE) | [templates/documents/feature-plan-template.md](../templates/documents/feature-plan-template.md) | `ai-docs/docs/plans/{feature}-plan.md` |
-| План реализации | [templates/documents/implementation-plan-template.md](../templates/documents/implementation-plan-template.md) | `ai-docs/docs/architecture/{name}-impl.md` |
-| **Completion Report** | [templates/documents/completion-report-template.md](../templates/documents/completion-report-template.md) | `ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md` |
+| PRD | [templates/documents/prd-template.md](../templates/documents/prd-template.md) | `ai-docs/docs/_analysis/{name}.md` |
+| Research Report | [templates/documents/research-report-template.md](../templates/documents/research-report-template.md) | `ai-docs/docs/_research/{name}.md` |
+| Архитектура | [templates/documents/architecture-template.md](../templates/documents/architecture-template.md) | `ai-docs/docs/_plans/mvp/{name}.md` |
+| План фичи (FEATURE) | [templates/documents/feature-plan-template.md](../templates/documents/feature-plan-template.md) | `ai-docs/docs/_plans/features/{name}.md` |
+| План реализации | [templates/documents/implementation-plan-template.md](../templates/documents/implementation-plan-template.md) | `ai-docs/docs/_plans/mvp/{name}-impl.md` |
+| **Completion Report** | [templates/documents/completion-report-template.md](../templates/documents/completion-report-template.md) | `ai-docs/docs/_validation/{date}_{FID}_{slug}.md` |
 | Состояние пайплайна | [templates/documents/pipeline-state-template.json](../templates/documents/pipeline-state-template.json) | `.pipeline-state.json` |
 
 ---
@@ -160,7 +158,7 @@
 | [roles/researcher/pattern-identification.md](../roles/researcher/pattern-identification.md) | Выявление паттернов |
 | [roles/researcher/constraint-identification.md](../roles/researcher/constraint-identification.md) | Ограничения |
 
-### Архитектор
+### Планировщик
 | Файл | Функция |
 |------|---------|
 | [roles/architect/architecture-design.md](../roles/architect/architecture-design.md) | Проектирование |
@@ -168,7 +166,7 @@
 | [roles/architect/service-naming.md](../roles/architect/service-naming.md) | Именование |
 | [roles/architect/api-contracts.md](../roles/architect/api-contracts.md) | API контракты |
 
-### Реализатор
+### Программист
 | Файл | Функция |
 |------|---------|
 | [roles/implementer/infrastructure-setup.md](../roles/implementer/infrastructure-setup.md) | Инфраструктура |

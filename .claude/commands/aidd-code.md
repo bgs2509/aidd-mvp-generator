@@ -3,7 +3,7 @@ allowed-tools: Read(*), Glob(*), Grep(*), Edit(**), Write(**), Bash(make :*), Ba
 description: Генерация кода на основе утверждённого плана
 ---
 
-**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
+**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
 
 
 > ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
@@ -31,7 +31,7 @@ description: Генерация кода на основе утверждённ�
 
 ## Описание
 
-Команда `/aidd-generate` создаёт код на основе утверждённого плана:
+Команда `/aidd-code` создаёт код на основе утверждённого плана:
 - Инфраструктуру (Docker, CI/CD)
 - Data Services
 - Business Services
@@ -44,7 +44,7 @@ description: Генерация кода на основе утверждённ�
 
 ## Агент
 
-**Реализатор** (`.claude/agents/implementer.md`)
+**Реализатор** (`.claude/agents/coder.md`)
 
 ---
 
@@ -59,9 +59,9 @@ description: Генерация кода на основе утверждённ�
 |---|------|---------|-------|
 | 1 | `./CLAUDE.md` | Если существует | Специфика проекта |
 | 2 | `./.pipeline-state.json` | Обязательно | Режим, этап, ворота |
-| 3 | `./ai-docs/docs/prd/*.md` | Обязательно | Требования |
-| 4 | `./ai-docs/docs/architecture/*.md` | Для CREATE | Архитектурный план |
-| 5 | `./ai-docs/docs/plans/*.md` | Для FEATURE | План фичи |
+| 3 | `./ai-docs/docs/_analysis/*.md` | Обязательно | Требования |
+| 4 | `./ai-docs/docs/_plans/mvp/*.md` | Для CREATE | Архитектурный план |
+| 5 | `./ai-docs/docs/_plans/features/*.md` | Для FEATURE | План фичи |
 | 6 | `./services/` | Для FEATURE | Существующий код |
 
 ### Фаза 2: Автомиграция и предусловия
@@ -84,7 +84,7 @@ description: Генерация кода на основе утверждённ�
 | 8 | `.aidd/workflow.md` | Процесс и ворота |
 | 9 | `.aidd/conventions.md` | Соглашения о коде |
 | 10 | `.aidd/.claude/commands/generate.md` | Этот файл |
-| 11 | `.aidd/.claude/agents/implementer.md` | Инструкции роли |
+| 11 | `.aidd/.claude/agents/coder.md` | Инструкции роли |
 
 ### Фаза 4: Шаблоны
 
@@ -129,7 +129,7 @@ def check_generate_preconditions() -> tuple[str, dict] | None:
     state_path = Path(".pipeline-state.json")
     if not state_path.exists():
         print("❌ Пайплайн не инициализирован")
-        print("   → Сначала выполните /aidd-idea")
+        print("   → Сначала выполните /aidd-analyze")
         return None
 
     state = json.loads(state_path.read_text())
@@ -173,7 +173,7 @@ def check_generate_preconditions() -> tuple[str, dict] | None:
 
     if not plan_gate.get("passed"):
         print(f"❌ Ворота PLAN_APPROVED не пройдены для {fid}")
-        print("   → Сначала выполните /aidd-plan или /aidd-feature-plan")
+        print("   → Сначала выполните /aidd-plan или /aidd-plan-feature")
         return None
 
     if not plan_gate.get("approved_by"):

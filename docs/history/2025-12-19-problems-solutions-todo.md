@@ -274,7 +274,7 @@ REQUEST_LATENCY = Histogram(
 **Задачи:**
 
 - [ ] **2.1** Создать файл `roles/implementer/metrics.md` с содержимым выше
-- [ ] **2.2** Добавить ссылку в `.claude/agents/implementer.md`
+- [ ] **2.2** Добавить ссылку в `.claude/agents/coder.md`
 - [ ] **2.3** Создать `knowledge/quality/metrics/prometheus-setup.md`
 - [ ] **2.4** Создать `knowledge/quality/metrics/custom-metrics.md`
 
@@ -979,7 +979,7 @@ Requirements Traceability Matrix (RTM) упоминается с разными 
 
 - [ ] **#2** Создать metrics.md
   - [ ] 2.1 roles/implementer/metrics.md
-  - [ ] 2.2 Обновить implementer.md
+  - [ ] 2.2 Обновить coder.md
   - [ ] 2.3 knowledge/quality/metrics/prometheus-setup.md
   - [ ] 2.4 knowledge/quality/metrics/custom-metrics.md
 

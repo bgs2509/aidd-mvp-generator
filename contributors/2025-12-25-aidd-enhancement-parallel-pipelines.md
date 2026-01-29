@@ -1,6 +1,6 @@
 # Enhancement: Поддержка параллельных пайплайнов для разных фич
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 > **Дата**: 2025-12-25
@@ -45,15 +45,15 @@
 | Сценарий | Проблема |
 |----------|----------|
 | Фича A проходит `PLAN_APPROVED` | Записывает `gates.PLAN_APPROVED.passed = true` |
-| Фича B на этапе `/aidd-idea` | Видит `PLAN_APPROVED = true` — думает, что можно `/aidd-generate` |
+| Фича B на этапе `/aidd-analyze` | Видит `PLAN_APPROVED = true` — думает, что можно `/aidd-code` |
 | Результат | Генерация кода без утверждённого плана! |
 
 #### 4. Перезапись артефактов
 
 При совпадении FID (из-за гонки):
 ```
-ai-docs/docs/prd/2024-12-25_F042_auth-prd.md      # Фича A
-ai-docs/docs/prd/2024-12-25_F042_payments-prd.md  # Фича B — перезапишет!
+ai-docs/docs/_analysis/2024-12-25_F042_auth-prd.md      # Фича A
+ai-docs/docs/_analysis/2024-12-25_F042_payments-prd.md  # Фича B — перезапишет!
 ```
 
 ---
@@ -271,14 +271,14 @@ def pass_gate(fid: str, gate: str, artifact_path: str = None) -> None:
 ```bash
 # Вариант 1: Автоопределение по git ветке
 git checkout feature/F042-oauth
-/aidd-generate
+/aidd-code
 # → Генерирует код для F042
 
 # Вариант 2: Явное указание
-/aidd-generate --feature=F042
+/aidd-code --feature=F042
 
 # Вариант 3: Интерактивный выбор (если несколько фич)
-/aidd-generate
+/aidd-code
 # → "Обнаружено 2 активные фичи. Выберите:
 #    [1] F042 — OAuth авторизация (stage: IMPLEMENT)
 #    [2] F043 — Интеграция платежей (stage: RESEARCH)"
@@ -288,10 +288,10 @@ git checkout feature/F042-oauth
 
 | Команда | Изменения |
 |---------|-----------|
-| `/aidd-idea` | Создаёт запись в `active_pipelines`, возвращает FID |
+| `/aidd-analyze` | Создаёт запись в `active_pipelines`, возвращает FID |
 | `/aidd-research` | Требует контекст фичи, обновляет `gates[fid]` |
 | `/aidd-plan` | Требует контекст фичи |
-| `/aidd-generate` | Требует контекст фичи |
+| `/aidd-code` | Требует контекст фичи |
 | `/aidd-review` | Требует контекст фичи |
 | `/aidd-test` | Требует контекст фичи |
 | `/aidd-validate` | Требует контекст фичи |
@@ -330,17 +330,17 @@ git checkout feature/F042-oauth
 │  main                                                           │
 │    │                                                            │
 │    ├──┬── feature/F042-oauth ─────────────────────▶ merge       │
-│    │  │     ├── /aidd-idea                                      │
+│    │  │     ├── /aidd-analyze                                      │
 │    │  │     ├── /aidd-research                                  │
 │    │  │     ├── /aidd-plan                                      │
-│    │  │     ├── /aidd-generate                                  │
+│    │  │     ├── /aidd-code                                  │
 │    │  │     ├── /aidd-review                                    │
 │    │  │     ├── /aidd-test                                      │
 │    │  │     ├── /aidd-validate                                  │
 │    │  │     └── /aidd-deploy ──────────▶ DEPLOYED               │
 │    │  │                                                         │
 │    │  └── feature/F043-payments ──────────────────▶ merge       │
-│    │        ├── /aidd-idea     (параллельно с F042!)           │
+│    │        ├── /aidd-analyze     (параллельно с F042!)           │
 │    │        ├── /aidd-research                                  │
 │    │        ├── ...                                             │
 │    │        └── /aidd-deploy ──────────▶ DEPLOYED               │
@@ -503,7 +503,7 @@ def ensure_state_v2():
 | Файл | Изменения |
 |------|-----------|
 | `templates/documents/pipeline-state-template.json` | Новая схема v2 |
-| `.claude/commands/aidd-idea.md` | Создание в `active_pipelines` |
+| `.claude/commands/aidd-analyze.md` | Создание в `active_pipelines` |
 | `.claude/commands/aidd-*.md` | Контекст фичи по git branch, работа с `gates[fid]` |
 | `CLAUDE.md` | Документация параллельного режима |
 | `workflow.md` | Описание параллельного workflow |
@@ -526,8 +526,8 @@ def ensure_state_v2():
 
 ### Фаза 2: Модификация команд ✅ ЗАВЕРШЕНА
 
-- [x] Модифицировать `/aidd-idea` для создания в `active_pipelines`
-  - Файл: `.claude/commands/aidd-idea.md`
+- [x] Модифицировать `/aidd-analyze` для создания в `active_pipelines`
+  - Файл: `.claude/commands/aidd-analyze.md`
 - [x] Добавить определение контекста фичи по git branch
   - Функция `get_current_feature_context()` добавлена во все команды
 - [x] Обновить все команды для работы с `gates[fid]`
@@ -535,8 +535,8 @@ def ensure_state_v2():
 
 ### Фаза 3: Интеграция с Git ✅ ЗАВЕРШЕНА
 
-- [x] Автосоздание веток при `/aidd-idea`
-  - Реализовано в `.claude/commands/aidd-idea.md` (функция `create_feature`)
+- [x] Автосоздание веток при `/aidd-analyze`
+  - Реализовано в `.claude/commands/aidd-analyze.md` (функция `create_feature`)
 - [x] Merge-хелперы для `.pipeline-state.json`
   - Файл: `scripts/git_helpers.py`
   - Функции: `merge_pipeline_states()`, `complete_feature_merge()`

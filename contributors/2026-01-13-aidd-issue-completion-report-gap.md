@@ -67,7 +67,7 @@
 ## Step 5: Create Completion Report
 
 Create the Completion Report at:
-`ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md`
+`ai-docs/docs/_validation/{date}_{FID}_{slug}-completion.md`
 
 The report should contain:
 - Executive Summary

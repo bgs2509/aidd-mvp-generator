@@ -62,8 +62,8 @@
 
 **Проблема**:
 ```markdown
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`,
-`/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды:
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`,
+`/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды:
 `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 ```
 
@@ -76,16 +76,16 @@
 **Факт**:
 ```
 Migration Mode v2.4 (активен до Phase 3, апрель 2026):
-- /aidd-idea и /aidd-analyze — оба работают идентично
-- /aidd-generate и /aidd-code — оба работают идентично
-- /aidd-finalize и /aidd-validate — оба работают идентично
-- /aidd-feature-plan и /aidd-plan-feature — оба работают идентично
+- /aidd-analyze и /aidd-analyze — оба работают идентично
+- /aidd-code и /aidd-code — оба работают идентично
+- /aidd-validate и /aidd-validate — оба работают идентично
+- /aidd-plan-feature и /aidd-plan-feature — оба работают идентично
 ```
 
 **Исправление**:
 ```markdown
 **Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд —
-legacy naming (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`)
+legacy naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`)
 и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`)
 работают идентично. Используйте любой вариант.
 ```
@@ -289,8 +289,8 @@ head -5 docs/audit/templates/comprehensive-audit.md
 ```
 # Шаблон комплексного аудита документации AIDD-MVP Generator
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`,
-`/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды:
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`,
+`/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды:
 `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 ```
 

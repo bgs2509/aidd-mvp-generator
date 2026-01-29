@@ -1,6 +1,6 @@
 # Enhancement: Command Execution Enforcement Mechanism
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 **Date**: 2026-01-14
@@ -168,11 +168,11 @@
 | `.aidd/.claude/commands/aidd-validate.md` | Add explicit ALL_GATES_PASSED checklist + header | HIGH |
 | `.aidd/.claude/commands/aidd-review.md` | Add explicit REVIEW_OK checklist + header | MEDIUM |
 | `.aidd/.claude/commands/aidd-test.md` | Add explicit QA_PASSED checklist + header | MEDIUM |
-| `.aidd/.claude/commands/aidd-generate.md` | Add explicit IMPLEMENT_OK checklist + header | MEDIUM |
+| `.aidd/.claude/commands/aidd-code.md` | Add explicit IMPLEMENT_OK checklist + header | MEDIUM |
 | `.aidd/.claude/commands/aidd-plan.md` | Add explicit PLAN_APPROVED checklist + header | MEDIUM |
-| `.aidd/.claude/commands/aidd-feature-plan.md` | Add explicit PLAN_APPROVED checklist + header | MEDIUM |
+| `.aidd/.claude/commands/aidd-plan-feature.md` | Add explicit PLAN_APPROVED checklist + header | MEDIUM |
 | `.aidd/.claude/commands/aidd-research.md` | Add explicit RESEARCH_DONE checklist + header | LOW |
-| `.aidd/.claude/commands/aidd-idea.md` | Add explicit PRD_READY checklist + header | LOW |
+| `.aidd/.claude/commands/aidd-analyze.md` | Add explicit PRD_READY checklist + header | LOW |
 
 ---
 

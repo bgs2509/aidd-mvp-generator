@@ -228,7 +228,7 @@ Stage 5: 71 упоминаний (Quality & Deploy)
 
 **Команда**:
 ```bash
-ROLES=(analyst.md researcher.md architect.md planner.md implementer.md coder.md \
+ROLES=(analyst.md researcher.md planner.md planner.md coder.md coder.md \
        validator.md code-review-library.md testing-library.md)
 count=0
 for role in "${ROLES[@]}"; do
@@ -246,9 +246,9 @@ echo "Итого: $count/9 ролей"
 ```
 ✅ analyst.md (291 строк)
 ✅ researcher.md (351 строк)
-✅ architect.md (393 строк) — alias для planner.md
+✅ planner.md (393 строк) — alias для planner.md
 ✅ planner.md (393 строк)
-✅ implementer.md (409 строк) — alias для coder.md
+✅ coder.md (409 строк) — alias для coder.md
 ✅ coder.md (409 строк)
 ✅ validator.md (1128 строк)
 ✅ code-review-library.md (1056 строк)
@@ -685,7 +685,7 @@ done
 
 | Аспект | CREATE | FEATURE |
 |--------|--------|---------|
-| Команда планирования | `/aidd-plan` | `/aidd-feature-plan` |
+| Команда планирования | `/aidd-plan` | `/aidd-plan-feature` |
 | Артефакт плана | `architecture/{name}-plan.md` | `plans/{name}-plan.md` |
 | Цель | Полный MVP с нуля | Интеграция в существующий проект |
 
@@ -1108,7 +1108,7 @@ done
 
 ### Smoke Test 6: Роли
 ```bash
-ROLES=(analyst.md researcher.md architect.md planner.md implementer.md coder.md \
+ROLES=(analyst.md researcher.md planner.md planner.md coder.md coder.md \
        validator.md code-review-library.md testing-library.md)
 for role in "${ROLES[@]}"; do
   [ -f ".claude/agents/$role" ] && wc -l ".claude/agents/$role" || echo "❌ $role"

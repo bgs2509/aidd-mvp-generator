@@ -58,7 +58,7 @@ project/
 │   │   ├── analyst.md
 │   │   ├── researcher.md
 │   │   ├── planner.md
-│   │   ├── implementer.md
+│   │   ├── coder.md
 │   │   ├── reviewer.md
 │   │   ├── qa.md
 │   │   ├── tech-writer.md
@@ -407,11 +407,11 @@ Dockerfile                  # Образ Nginx
 > 📋 **Пайплайн (команды, агенты, ворота)** см. таблицу в [разделе 3.1](#31-единый-пайплайн-aidd-mvp-generator)
 
 **Пути артефактов:**
-- PRD: `ai-docs/docs/prd/{name}-prd.md`
+- PRD: `ai-docs/docs/_analysis/{name}-prd.md`
 - Research: `ai-docs/docs/research/{name}-research.md`
-- Plan: `ai-docs/docs/architecture/{name}-plan.md` (CREATE) или `ai-docs/docs/plans/{name}-plan.md` (FEATURE)
-- Review: `ai-docs/docs/reports/{name}-review.md`
-- QA: `ai-docs/docs/reports/{name}-qa.md`
+- Plan: `ai-docs/docs/_plans/mvp/{name}-plan.md` (CREATE) или `ai-docs/docs/_plans/features/{name}-plan.md` (FEATURE)
+- Review: `ai-docs/docs/_validation/{name}-review.md`
+- QA: `ai-docs/docs/_validation/{name}-qa.md`
 
 ---
 
@@ -600,7 +600,7 @@ Dockerfile                  # Образ Nginx
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Вопросы о целевой аудитории и бизнес-целях | `ai-docs/docs/prd/{project}-prd.md` — исходный PRD (для FEATURE) | — |
+| Вопросы о целевой аудитории и бизнес-целях | `ai-docs/docs/_analysis/{project}-prd.md` — исходный PRD (для FEATURE) | — |
 | Уточнение функциональных требований | `ai-docs/conventions.md` — соглашения проекта | — |
 | Определение нефункциональных требований | `ai-docs/workflow.md` — процесс разработки | — |
 | Выявление ограничений и допущений | — | — |
@@ -610,21 +610,21 @@ Dockerfile                  # Образ Nginx
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Создание структурированного документа | Шаблон PRD из фреймворка | 📝 `ai-docs/docs/prd/{name}-prd.md` |
-| Присвоение ID требованиям (FR-001, NF-001) | `ai-docs/docs/rtm.md` — последние ID (для FEATURE) | 📝 `ai-docs/docs/prd/{name}-prd.md` |
-| Определение приоритетов (MoSCoW) | — | 📝 `ai-docs/docs/prd/{name}-prd.md` |
-| Фиксация открытых вопросов и рисков | — | 📝 `ai-docs/docs/prd/{name}-prd.md` |
+| Создание структурированного документа | Шаблон PRD из фреймворка | 📝 `ai-docs/docs/_analysis/{name}-prd.md` |
+| Присвоение ID требованиям (FR-001, NF-001) | `ai-docs/docs/rtm.md` — последние ID (для FEATURE) | 📝 `ai-docs/docs/_analysis/{name}-prd.md` |
+| Определение приоритетов (MoSCoW) | — | 📝 `ai-docs/docs/_analysis/{name}-prd.md` |
+| Фиксация открытых вопросов и рисков | — | 📝 `ai-docs/docs/_analysis/{name}-prd.md` |
 
 #### 4. Валидация PRD
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Проверка заполненности секций | `ai-docs/docs/prd/{name}-prd.md` | — |
-| Проверка на противоречия | `ai-docs/docs/prd/{name}-prd.md` | 📝 Исправления в PRD |
-| Подтверждение критериев приёмки | `ai-docs/docs/prd/{name}-prd.md` | 📝 `ai-docs/docs/rtm.md` — начальная секция RTM |
+| Проверка заполненности секций | `ai-docs/docs/_analysis/{name}-prd.md` | — |
+| Проверка на противоречия | `ai-docs/docs/_analysis/{name}-prd.md` | 📝 Исправления в PRD |
+| Подтверждение критериев приёмки | `ai-docs/docs/_analysis/{name}-prd.md` | 📝 `ai-docs/docs/rtm.md` — начальная секция RTM |
 
 **Итоговые артефакты:**
-- 📝 `ai-docs/docs/prd/{name}-prd.md` — документ требований
+- 📝 `ai-docs/docs/_analysis/{name}-prd.md` — документ требований
 - 📝 `ai-docs/docs/rtm.md` — обновление матрицы трассировки (добавление новых ID)
 
 **Ворота**: `PRD_READY`
@@ -653,7 +653,7 @@ Dockerfile                  # Образ Nginx
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Поиск релевантных файлов | `ai-docs/docs/prd/{feature}-prd.md` — требования для поиска | — |
+| Поиск релевантных файлов | `ai-docs/docs/_analysis/{feature}-prd.md` — требования для поиска | — |
 | Анализ паттернов и соглашений | `ai-docs/conventions.md`, существующий код в `services/` | — |
 | Определение точек интеграции | `services/*/src/api/v1/*.py` — эндпоинты | — |
 | | `services/*/src/domain/entities/*.py` — модели | — |
@@ -700,8 +700,8 @@ Dockerfile                  # Образ Nginx
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Изучение PRD | `ai-docs/docs/prd/{name}-prd.md` | — |
-| Выделение архитектурно-значимых требований | `ai-docs/docs/prd/{name}-prd.md` — секции FR, NF | — |
+| Изучение PRD | `ai-docs/docs/_analysis/{name}-prd.md` | — |
+| Выделение архитектурно-значимых требований | `ai-docs/docs/_analysis/{name}-prd.md` — секции FR, NF | — |
 | Определение технических ограничений | `ai-docs/conventions.md`, `.claude/project-context.md` | — |
 | Оценка интеграций (для FEATURE) | `ai-docs/docs/research/{feature}-research.md` | — |
 
@@ -710,37 +710,37 @@ Dockerfile                  # Образ Nginx
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
 | Определение набора сервисов | Шаблоны из `templates/services/` фреймворка | 📝 План архитектуры |
-| Выбор баз данных | `ai-docs/docs/prd/{name}-prd.md` — требования к данным | 📝 План архитектуры |
-| Проектирование схемы взаимодействия | `ai-docs/docs/architecture/{project}-plan.md` (для FEATURE) | 📝 План архитектуры |
+| Выбор баз данных | `ai-docs/docs/_analysis/{name}-prd.md` — требования к данным | 📝 План архитектуры |
+| Проектирование схемы взаимодействия | `ai-docs/docs/_plans/mvp/{project}-plan.md` (для FEATURE) | 📝 План архитектуры |
 | Применение DDD/Hexagonal | `ai-docs/conventions.md` | 📝 План архитектуры |
 
 #### 3. Детализация компонентов
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Описание структуры каждого сервиса | Шаблоны `templates/services/` | 📝 `ai-docs/docs/architecture/{name}-plan.md` |
-| Определение контрактов API | `shared/schemas/` (для FEATURE) | 📝 `ai-docs/docs/architecture/{name}-plan.md` |
-| Проектирование моделей данных | `services/*/src/models/` (для FEATURE) | 📝 `ai-docs/docs/architecture/{name}-plan.md` |
-| Планирование инфраструктуры | `docker-compose.yml`, `nginx/` | 📝 `ai-docs/docs/architecture/{name}-plan.md` |
+| Описание структуры каждого сервиса | Шаблоны `templates/services/` | 📝 `ai-docs/docs/_plans/mvp/{name}-plan.md` |
+| Определение контрактов API | `shared/schemas/` (для FEATURE) | 📝 `ai-docs/docs/_plans/mvp/{name}-plan.md` |
+| Проектирование моделей данных | `services/*/src/models/` (для FEATURE) | 📝 `ai-docs/docs/_plans/mvp/{name}-plan.md` |
+| Планирование инфраструктуры | `docker-compose.yml`, `nginx/` | 📝 `ai-docs/docs/_plans/mvp/{name}-plan.md` |
 
 #### 4. Декомпозиция на задачи
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Разбиение на атомарные задачи | План архитектуры | 📝 `ai-docs/docs/architecture/{name}-plan.md` — секция Tasks |
-| Определение порядка и зависимостей | — | 📝 `ai-docs/docs/architecture/{name}-plan.md` — секция Tasks |
-| Формулирование критериев приёмки | `ai-docs/docs/prd/{name}-prd.md` | 📝 `ai-docs/docs/architecture/{name}-plan.md` — секция Tasks |
+| Разбиение на атомарные задачи | План архитектуры | 📝 `ai-docs/docs/_plans/mvp/{name}-plan.md` — секция Tasks |
+| Определение порядка и зависимостей | — | 📝 `ai-docs/docs/_plans/mvp/{name}-plan.md` — секция Tasks |
+| Формулирование критериев приёмки | `ai-docs/docs/_analysis/{name}-prd.md` | 📝 `ai-docs/docs/_plans/mvp/{name}-plan.md` — секция Tasks |
 
 #### 5. Трассировка требований
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Связывание задач с требованиями | `ai-docs/docs/prd/{name}-prd.md` — ID требований | 📝 `ai-docs/docs/architecture/{name}-plan.md` — секция RTM |
+| Связывание задач с требованиями | `ai-docs/docs/_analysis/{name}-prd.md` — ID требований | 📝 `ai-docs/docs/_plans/mvp/{name}-plan.md` — секция RTM |
 | Заполнение RTM | `ai-docs/docs/rtm.md` — существующие связи | 📝 `ai-docs/docs/rtm.md` — обновление |
 
 **Итоговые артефакты:**
-- 📝 CREATE: `ai-docs/docs/architecture/{project}-plan.md`
-- 📝 FEATURE: `ai-docs/docs/plans/{feature}-plan.md`
+- 📝 CREATE: `ai-docs/docs/_plans/mvp/{project}-plan.md`
+- 📝 FEATURE: `ai-docs/docs/_plans/features/{feature}-plan.md`
 - 📝 `ai-docs/docs/rtm.md` — обновление матрицы (связь требований с задачами)
 
 **Ворота**: `PLAN_APPROVED`
@@ -763,7 +763,7 @@ Dockerfile                  # Образ Nginx
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Изучение архитектурного плана | `ai-docs/docs/architecture/{name}-plan.md` или `ai-docs/docs/plans/{feature}-plan.md` | — |
+| Изучение архитектурного плана | `ai-docs/docs/_plans/mvp/{name}-plan.md` или `ai-docs/docs/_plans/features/{feature}-plan.md` | — |
 | Загрузка шаблонов | Шаблоны из `templates/services/` фреймворка | — |
 | Определение порядка создания файлов | План — секция Tasks | — |
 | Изучение соглашений | `ai-docs/conventions.md` | — |
@@ -851,38 +851,38 @@ Dockerfile                  # Образ Nginx
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Проверка соответствия плану | `ai-docs/docs/architecture/{name}-plan.md`, код в `services/` | 📝 `ai-docs/docs/reports/{name}-review.md` |
-| Валидация структуры (DDD/Hexagonal) | `services/*/src/` — структура директорий | 📝 `ai-docs/docs/reports/{name}-review.md` |
-| Проверка HTTP-only доступа к данным | `services/*/src/infrastructure/` — нет прямых БД вызовов | 📝 `ai-docs/docs/reports/{name}-review.md` |
-| Проверка соглашений | `ai-docs/conventions.md`, код проекта | 📝 `ai-docs/docs/reports/{name}-review.md` |
+| Проверка соответствия плану | `ai-docs/docs/_plans/mvp/{name}-plan.md`, код в `services/` | 📝 `ai-docs/docs/_validation/{name}-review.md` |
+| Валидация структуры (DDD/Hexagonal) | `services/*/src/` — структура директорий | 📝 `ai-docs/docs/_validation/{name}-review.md` |
+| Проверка HTTP-only доступа к данным | `services/*/src/infrastructure/` — нет прямых БД вызовов | 📝 `ai-docs/docs/_validation/{name}-review.md` |
+| Проверка соглашений | `ai-docs/conventions.md`, код проекта | 📝 `ai-docs/docs/_validation/{name}-review.md` |
 
 #### 3. Ревью качества кода
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Оценка читаемости | Весь новый/изменённый код | 📝 `ai-docs/docs/reports/{name}-review.md` |
-| Проверка DRY, KISS, YAGNI | Весь код | 📝 `ai-docs/docs/reports/{name}-review.md` |
-| Поиск потенциальных багов | Весь код | 📝 `ai-docs/docs/reports/{name}-review.md` |
-| Проверка обработки ошибок | `services/*/src/api/`, `services/*/src/application/` | 📝 `ai-docs/docs/reports/{name}-review.md` |
+| Оценка читаемости | Весь новый/изменённый код | 📝 `ai-docs/docs/_validation/{name}-review.md` |
+| Проверка DRY, KISS, YAGNI | Весь код | 📝 `ai-docs/docs/_validation/{name}-review.md` |
+| Поиск потенциальных багов | Весь код | 📝 `ai-docs/docs/_validation/{name}-review.md` |
+| Проверка обработки ошибок | `services/*/src/api/`, `services/*/src/application/` | 📝 `ai-docs/docs/_validation/{name}-review.md` |
 
 #### 4. Ревью безопасности
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Проверка валидации входных данных | `services/*/src/api/`, `shared/schemas/` | 📝 `ai-docs/docs/reports/{name}-review.md` |
-| Поиск уязвимостей (OWASP Top 10) | Весь код | 📝 `ai-docs/docs/reports/{name}-review.md` |
-| Проверка управления секретами | `.env.example`, `docker-compose.yml`, код | 📝 `ai-docs/docs/reports/{name}-review.md` |
+| Проверка валидации входных данных | `services/*/src/api/`, `shared/schemas/` | 📝 `ai-docs/docs/_validation/{name}-review.md` |
+| Поиск уязвимостей (OWASP Top 10) | Весь код | 📝 `ai-docs/docs/_validation/{name}-review.md` |
+| Проверка управления секретами | `.env.example`, `docker-compose.yml`, код | 📝 `ai-docs/docs/_validation/{name}-review.md` |
 
 #### 5. Формирование отчёта
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Классификация замечаний | Результаты всех проверок | 📝 `ai-docs/docs/reports/{name}-review.md` |
-| Указание файлов и строк | — | 📝 `ai-docs/docs/reports/{name}-review.md` |
-| Предложение исправлений | — | 📝 `ai-docs/docs/reports/{name}-review.md` |
+| Классификация замечаний | Результаты всех проверок | 📝 `ai-docs/docs/_validation/{name}-review.md` |
+| Указание файлов и строк | — | 📝 `ai-docs/docs/_validation/{name}-review.md` |
+| Предложение исправлений | — | 📝 `ai-docs/docs/_validation/{name}-review.md` |
 
 **Итоговые артефакты:**
-- 📝 `ai-docs/docs/reports/{name}-review.md` — отчёт ревью с секциями:
+- 📝 `ai-docs/docs/_validation/{name}-review.md` — отчёт ревью с секциями:
   - Результаты статического анализа (Ruff, Mypy, Bandit)
   - Замечания по архитектуре
   - Замечания по качеству кода
@@ -916,47 +916,47 @@ Dockerfile                  # Образ Nginx
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Измерение code coverage | Результаты pytest-cov | 📝 `ai-docs/docs/reports/{name}-qa.md` — секция Coverage |
-| Проверка порога ≥85% | Coverage report | 📝 `ai-docs/docs/reports/{name}-qa.md` |
-| Выявление непокрытых путей | Coverage HTML report | 📝 `ai-docs/docs/reports/{name}-qa.md` |
+| Измерение code coverage | Результаты pytest-cov | 📝 `ai-docs/docs/_validation/{name}-qa.md` — секция Coverage |
+| Проверка порога ≥85% | Coverage report | 📝 `ai-docs/docs/_validation/{name}-qa.md` |
+| Выявление непокрытых путей | Coverage HTML report | 📝 `ai-docs/docs/_validation/{name}-qa.md` |
 
 #### 3. Функциональное тестирование
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Проверка реализации требований | `ai-docs/docs/prd/{name}-prd.md` — список FR/NF | 📝 `ai-docs/docs/reports/{name}-qa.md` |
-| Тестирование happy path | API эндпоинты, бот команды | 📝 `ai-docs/docs/reports/{name}-qa.md` |
-| Тестирование edge cases | Граничные условия | 📝 `ai-docs/docs/reports/{name}-qa.md` |
-| Валидация критериев приёмки | `ai-docs/docs/prd/{name}-prd.md` — Acceptance Criteria | 📝 `ai-docs/docs/reports/{name}-qa.md` |
+| Проверка реализации требований | `ai-docs/docs/_analysis/{name}-prd.md` — список FR/NF | 📝 `ai-docs/docs/_validation/{name}-qa.md` |
+| Тестирование happy path | API эндпоинты, бот команды | 📝 `ai-docs/docs/_validation/{name}-qa.md` |
+| Тестирование edge cases | Граничные условия | 📝 `ai-docs/docs/_validation/{name}-qa.md` |
+| Валидация критериев приёмки | `ai-docs/docs/_analysis/{name}-prd.md` — Acceptance Criteria | 📝 `ai-docs/docs/_validation/{name}-qa.md` |
 
 #### 4. Проверка инфраструктуры
 
 | Действие | 📖 Читает/Выполняет | 📝 Создаёт/Обновляет |
 |----------|---------------------|---------------------|
-| Запуск docker-compose | `docker-compose.yml`, `docker-compose.dev.yml` | 📝 `ai-docs/docs/reports/{name}-qa.md` |
-| Тестирование health check | `http://localhost:*/health` для всех сервисов | 📝 `ai-docs/docs/reports/{name}-qa.md` |
-| Проверка nginx роутинга | `nginx/nginx.conf`, HTTP запросы | 📝 `ai-docs/docs/reports/{name}-qa.md` |
-| Проверка переменных окружения | `.env.example`, `docker-compose.yml` | 📝 `ai-docs/docs/reports/{name}-qa.md` |
+| Запуск docker-compose | `docker-compose.yml`, `docker-compose.dev.yml` | 📝 `ai-docs/docs/_validation/{name}-qa.md` |
+| Тестирование health check | `http://localhost:*/health` для всех сервисов | 📝 `ai-docs/docs/_validation/{name}-qa.md` |
+| Проверка nginx роутинга | `nginx/nginx.conf`, HTTP запросы | 📝 `ai-docs/docs/_validation/{name}-qa.md` |
+| Проверка переменных окружения | `.env.example`, `docker-compose.yml` | 📝 `ai-docs/docs/_validation/{name}-qa.md` |
 
 #### 5. Регрессионное тестирование (для FEATURE)
 
 | Действие | 📖 Читает/Выполняет | 📝 Создаёт/Обновляет |
 |----------|---------------------|---------------------|
-| Запуск всех существующих тестов | Все `tests/` в проекте | 📝 `ai-docs/docs/reports/{name}-qa.md` |
-| Проверка существующей функциональности | Существующие API эндпоинты | 📝 `ai-docs/docs/reports/{name}-qa.md` |
-| Сравнение с предыдущими результатами | Предыдущие QA отчёты | 📝 `ai-docs/docs/reports/{name}-qa.md` |
+| Запуск всех существующих тестов | Все `tests/` в проекте | 📝 `ai-docs/docs/_validation/{name}-qa.md` |
+| Проверка существующей функциональности | Существующие API эндпоинты | 📝 `ai-docs/docs/_validation/{name}-qa.md` |
+| Сравнение с предыдущими результатами | Предыдущие QA отчёты | 📝 `ai-docs/docs/_validation/{name}-qa.md` |
 
 #### 6. Формирование QA отчёта
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Составление списка тестов | Результаты всех тестов | 📝 `ai-docs/docs/reports/{name}-qa.md` |
-| Документирование багов | Найденные проблемы | 📝 `ai-docs/docs/reports/{name}-qa.md` |
-| Вердикт о готовности | Все результаты | 📝 `ai-docs/docs/reports/{name}-qa.md` |
+| Составление списка тестов | Результаты всех тестов | 📝 `ai-docs/docs/_validation/{name}-qa.md` |
+| Документирование багов | Найденные проблемы | 📝 `ai-docs/docs/_validation/{name}-qa.md` |
+| Вердикт о готовности | Все результаты | 📝 `ai-docs/docs/_validation/{name}-qa.md` |
 | Обновление RTM | `ai-docs/docs/rtm.md` | 📝 `ai-docs/docs/rtm.md` — статус тестов |
 
 **Итоговые артефакты:**
-- 📝 `ai-docs/docs/reports/{name}-qa.md` — QA отчёт с секциями:
+- 📝 `ai-docs/docs/_validation/{name}-qa.md` — QA отчёт с секциями:
   - Результаты unit/integration/e2e тестов
   - Code coverage (% и непокрытые файлы)
   - Функциональное тестирование (требование → результат)
@@ -984,49 +984,49 @@ Dockerfile                  # Образ Nginx
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Проверка PRD_READY | `ai-docs/docs/prd/{name}-prd.md` — наличие и полнота | 📝 `ai-docs/docs/reports/{name}-validation.md` |
-| Проверка RESEARCH_DONE | `ai-docs/docs/research/{name}-research.md` | 📝 `ai-docs/docs/reports/{name}-validation.md` |
-| Проверка PLAN_APPROVED | `ai-docs/docs/architecture/{name}-plan.md` или `ai-docs/docs/plans/{name}-plan.md` | 📝 `ai-docs/docs/reports/{name}-validation.md` |
-| Проверка IMPLEMENT_OK | Код в `services/`, `shared/`, тесты | 📝 `ai-docs/docs/reports/{name}-validation.md` |
-| Проверка REVIEW_OK | `ai-docs/docs/reports/{name}-review.md` — 0 Critical/Major | 📝 `ai-docs/docs/reports/{name}-validation.md` |
-| Проверка QA_PASSED | `ai-docs/docs/reports/{name}-qa.md` — все тесты ✅ | 📝 `ai-docs/docs/reports/{name}-validation.md` |
+| Проверка PRD_READY | `ai-docs/docs/_analysis/{name}-prd.md` — наличие и полнота | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
+| Проверка RESEARCH_DONE | `ai-docs/docs/research/{name}-research.md` | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
+| Проверка PLAN_APPROVED | `ai-docs/docs/_plans/mvp/{name}-plan.md` или `ai-docs/docs/_plans/features/{name}-plan.md` | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
+| Проверка IMPLEMENT_OK | Код в `services/`, `shared/`, тесты | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
+| Проверка REVIEW_OK | `ai-docs/docs/_validation/{name}-review.md` — 0 Critical/Major | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
+| Проверка QA_PASSED | `ai-docs/docs/_validation/{name}-qa.md` — все тесты ✅ | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
 
 #### 2. Проверка трассировки требований
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Сверка RTM — все требования реализованы | `ai-docs/docs/rtm.md`, `ai-docs/docs/prd/{name}-prd.md` | 📝 `ai-docs/docs/reports/{name}-validation.md` |
-| Проверка покрытия тестами | `ai-docs/docs/rtm.md` — колонка "Тест" | 📝 `ai-docs/docs/reports/{name}-validation.md` |
-| Валидация соответствия плану | `ai-docs/docs/architecture/{name}-plan.md`, код | 📝 `ai-docs/docs/reports/{name}-validation.md` |
+| Сверка RTM — все требования реализованы | `ai-docs/docs/rtm.md`, `ai-docs/docs/_analysis/{name}-prd.md` | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
+| Проверка покрытия тестами | `ai-docs/docs/rtm.md` — колонка "Тест" | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
+| Валидация соответствия плану | `ai-docs/docs/_plans/mvp/{name}-plan.md`, код | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
 
 #### 3. Проверка готовности к развёртыванию
 
 | Действие | 📖 Читает/Выполняет | 📝 Создаёт/Обновляет |
 |----------|---------------------|---------------------|
-| Сборка Docker образов | `services/*/Dockerfile` → `docker build` | 📝 `ai-docs/docs/reports/{name}-validation.md` |
-| Проверка переменных окружения | `.env.example` — все переменные документированы | 📝 `ai-docs/docs/reports/{name}-validation.md` |
-| Проверка CI/CD | `.github/workflows/ci.yml`, `.github/workflows/cd.yml` | 📝 `ai-docs/docs/reports/{name}-validation.md` |
+| Сборка Docker образов | `services/*/Dockerfile` → `docker build` | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
+| Проверка переменных окружения | `.env.example` — все переменные документированы | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
+| Проверка CI/CD | `.github/workflows/ci.yml`, `.github/workflows/cd.yml` | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
 
 #### 4. Развёртывание (команда /deploy)
 
 | Действие | 📖 Читает/Выполняет | 📝 Создаёт/Обновляет |
 |----------|---------------------|---------------------|
-| Запуск docker-compose | `docker-compose.yml` → `docker-compose up -d` | 📝 `ai-docs/docs/reports/{name}-validation.md` |
-| Проверка health checks | `http://localhost:*/health` для всех сервисов | 📝 `ai-docs/docs/reports/{name}-validation.md` |
-| Валидация nginx | `nginx/nginx.conf`, HTTP запросы | 📝 `ai-docs/docs/reports/{name}-validation.md` |
-| Smoke-тесты | Основные API эндпоинты | 📝 `ai-docs/docs/reports/{name}-validation.md` |
+| Запуск docker-compose | `docker-compose.yml` → `docker-compose up -d` | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
+| Проверка health checks | `http://localhost:*/health` для всех сервисов | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
+| Валидация nginx | `nginx/nginx.conf`, HTTP запросы | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
+| Smoke-тесты | Основные API эндпоинты | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
 
 #### 5. Финальный отчёт
 
 | Действие | 📖 Читает | 📝 Создаёт/Обновляет |
 |----------|-----------|---------------------|
-| Составление статуса ворот | Все артефакты | 📝 `ai-docs/docs/reports/{name}-validation.md` |
+| Составление статуса ворот | Все артефакты | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
 | Формирование итогового RTM | `ai-docs/docs/rtm.md` | 📝 `ai-docs/docs/rtm.md` — финальный статус |
-| Документирование инструкций | — | 📝 `ai-docs/docs/reports/{name}-validation.md` |
+| Документирование инструкций | — | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
 | Обновление контекста проекта | — | 📝 `.claude/project-context.md` — добавление фичи |
 
 **Итоговые артефакты:**
-- 📝 `ai-docs/docs/reports/{name}-validation.md` — отчёт валидации:
+- 📝 `ai-docs/docs/_validation/{name}-validation.md` — отчёт валидации:
   - Статус всех ворот (✅/❌)
   - Результаты проверки RTM (100% реализовано?)
   - Результаты сборки Docker
@@ -1127,8 +1127,8 @@ aidd-mvp-generator/
 ├── .claude/
 │   ├── agents/                  # Определения ролей агентов
 │   │   ├── analyst.md           # Инструкции для Аналитика
-│   │   ├── architect.md         # Инструкции для Архитектора
-│   │   ├── implementer.md       # Инструкции для Реализатора
+│   │   ├── planner.md         # Инструкции для Архитектора
+│   │   ├── coder.md       # Инструкции для Реализатора
 │   │   ├── reviewer.md          # Инструкции для Ревьюера
 │   │   ├── qa.md                # Инструкции для QA
 │   │   ├── researcher.md        # Инструкции для Исследователя
@@ -1221,13 +1221,13 @@ aidd-mvp-generator/
 
 | Тип документа | Путь | Создаётся на этапе |
 |---------------|------|-------------------|
-| PRD | `ai-docs/docs/prd/{project}-prd.md` | /idea |
-| Архитектура | `ai-docs/docs/architecture/{project}-plan.md` | /plan |
+| PRD | `ai-docs/docs/_analysis/{project}-prd.md` | /idea |
+| Архитектура | `ai-docs/docs/_plans/mvp/{project}-plan.md` | /plan |
 | Исследование | `ai-docs/docs/research/{feature}-research.md` | /research |
-| План фичи | `ai-docs/docs/plans/{feature}-plan.md` | /feature-plan |
-| Ревью отчёт | `ai-docs/docs/reports/{name}-review.md` | /review |
-| QA отчёт | `ai-docs/docs/reports/{name}-qa.md` | /test |
-| Валидация | `ai-docs/docs/reports/{name}-validation.md` | /validate |
+| План фичи | `ai-docs/docs/_plans/features/{feature}-plan.md` | /feature-plan |
+| Ревью отчёт | `ai-docs/docs/_validation/{name}-review.md` | /review |
+| QA отчёт | `ai-docs/docs/_validation/{name}-qa.md` | /test |
+| Валидация | `ai-docs/docs/_validation/{name}-validation.md` | /validate |
 | RTM (сводка) | `ai-docs/docs/rtm.md` | /idea, обновляется на каждом этапе |
 | Контекст для AI | `.claude/project-context.md` | /idea |
 
@@ -1286,13 +1286,13 @@ aidd-mvp-generator/
 
 | № | Команда | Агент | Действия | Выход | Ворота |
 |---|---------|-------|----------|-------|--------|
-| 1 | `/idea` | Аналитик | Верификация промпта, сбор требований к фиче, определение критериев приёмки | `ai-docs/docs/prd/notifications-prd.md` | PRD_READY |
+| 1 | `/idea` | Аналитик | Верификация промпта, сбор требований к фиче, определение критериев приёмки | `ai-docs/docs/_analysis/notifications-prd.md` | PRD_READY |
 | 2 | `/research` | Исследователь | Анализ существующего кода: какие сервисы затронуты, точки интеграции, используемые паттерны | `ai-docs/docs/research/notifications-research.md` | RESEARCH_DONE |
-| 3 | `/feature-plan` | Архитектор | Планирование изменений: новые компоненты, изменения в существующих, миграции БД, новые тесты | `ai-docs/docs/plans/notifications-plan.md` | PLAN_APPROVED |
+| 3 | `/feature-plan` | Архитектор | Планирование изменений: новые компоненты, изменения в существующих, миграции БД, новые тесты | `ai-docs/docs/_plans/features/notifications-plan.md` | PLAN_APPROVED |
 | 4 | `/generate` | Реализатор | Генерация кода по плану: создание новых файлов, модификация существующих, добавление тестов, обновление миграций | Изменения в коде | IMPLEMENT_OK |
-| 5 | `/review` | Ревьюер | Проверка изменений: соответствие плану, качество кода (Ruff, Mypy), безопасность (Bandit) | `ai-docs/docs/reports/notifications-review.md` | REVIEW_OK |
-| 6 | `/test` | QA | Запуск тестов: unit тесты, интеграционные тесты, проверка покрытия (≥85%) | `ai-docs/docs/reports/notifications-qa.md` | QA_PASSED |
-| 7 | `/validate` | Валидатор | Проверка ВСЕХ ворот: PRD_READY, RESEARCH_DONE, PLAN_APPROVED, IMPLEMENT_OK, REVIEW_OK, QA_PASSED | `ai-docs/docs/reports/notifications-validation.md` | ALL_GATES_PASSED |
+| 5 | `/review` | Ревьюер | Проверка изменений: соответствие плану, качество кода (Ruff, Mypy), безопасность (Bandit) | `ai-docs/docs/_validation/notifications-review.md` | REVIEW_OK |
+| 6 | `/test` | QA | Запуск тестов: unit тесты, интеграционные тесты, проверка покрытия (≥85%) | `ai-docs/docs/_validation/notifications-qa.md` | QA_PASSED |
+| 7 | `/validate` | Валидатор | Проверка ВСЕХ ворот: PRD_READY, RESEARCH_DONE, PLAN_APPROVED, IMPLEMENT_OK, REVIEW_OK, QA_PASSED | `ai-docs/docs/_validation/notifications-validation.md` | ALL_GATES_PASSED |
 | 8 | `/deploy` | Валидатор | Развёртывание: запуск docker-compose, проверка health checks, обновление ai-docs/docs/rtm.md | Развёрнутый проект | DEPLOYED |
 
 ---
@@ -1368,8 +1368,8 @@ workflow.md (формат)           →  /workflow.md
 # Агенты (7 ролей)
 .claude/agents/analyst.md      →  /.claude/agents/analyst.md
 .claude/agents/researcher.md   →  /.claude/agents/researcher.md
-.claude/agents/planner.md      →  /.claude/agents/architect.md
-.claude/agents/implementer.md  →  /.claude/agents/implementer.md
+.claude/agents/planner.md      →  /.claude/agents/planner.md
+.claude/agents/coder.md  →  /.claude/agents/coder.md
 .claude/agents/reviewer.md     →  /.claude/agents/reviewer.md
 .claude/agents/qa.md           →  /.claude/agents/qa.md
 .claude/agents/validator.md    →  /.claude/agents/validator.md

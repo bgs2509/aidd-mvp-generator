@@ -131,7 +131,7 @@ cp .aidd/.claude/commands/*.md .claude/commands/
 [Содержимое analyst.md]
 
 ### Архитектор
-[Содержимое architect.md]
+[Содержимое planner.md]
 
 ...
 ```

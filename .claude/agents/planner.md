@@ -27,7 +27,7 @@ model: inherit
 
 | Источник | Описание |
 |----------|----------|
-| PRD документ | `ai-docs/docs/prd/{name}-prd.md` (в целевом проекте) |
+| PRD документ | `ai-docs/docs/_analysis/{name}-prd.md` (в целевом проекте) |
 | Результаты исследования | Паттерны, ограничения |
 | `knowledge/architecture/` | Архитектурные принципы (в генераторе) |
 | `templates/services/` | Доступные шаблоны (в генераторе) |
@@ -38,8 +38,8 @@ model: inherit
 
 | Артефакт | Путь |
 |----------|------|
-| Архитектурный план | `ai-docs/docs/architecture/{name}-plan.md` |
-| План фичи | `ai-docs/docs/plans/{feature}-plan.md` (для FEATURE) |
+| Архитектурный план | `ai-docs/docs/_plans/mvp/{name}-plan.md` |
+| План фичи | `ai-docs/docs/_plans/features/{feature}-plan.md` (для FEATURE) |
 
 ---
 
@@ -99,7 +99,7 @@ Infrastructure:
 
 ### 4. Создание Implementation Plan
 
-Создать `ai-docs/docs/architecture/{name}-plan.md`:
+Создать `ai-docs/docs/_plans/mvp/{name}-plan.md`:
 
 ```markdown
 # Архитектурный план: {Название}

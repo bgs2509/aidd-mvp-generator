@@ -15,8 +15,8 @@ Docker конфигурацию, CI pipeline и вспомогательные �
 
 | Артефакт | Путь | Описание |
 |----------|------|----------|
-| Implementation Plan | `ai-docs/docs/plans/{name}-plan.md` | План реализации |
-| Архитектура | `ai-docs/docs/architecture/{name}-arch.md` | Архитектурное решение |
+| Implementation Plan | `ai-docs/docs/_plans/features/{name}-plan.md` | План реализации |
+| Архитектура | `ai-docs/docs/_plans/mvp/{name}-arch.md` | Архитектурное решение |
 | Ворота | PLAN_APPROVED | Должны быть пройдены |
 
 ---

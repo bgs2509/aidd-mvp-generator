@@ -1,6 +1,6 @@
 # План исправления (только реальные проблемы)
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 Дата: 2026-01-20
@@ -15,11 +15,11 @@
 - Вариант исправления: заменить на реально существующий пример или на нейтральный placeholder без markdown‑ссылки (например, кодовый путь в inline‑коде).
 - Верификация: `rg -n "2024-12-23_F001_table-booking" .claude/commands/aidd-analyze.md`
 
-## .claude/commands/aidd-idea.md
+## .claude/commands/aidd-analyze.md
 
 - Заменить ссылку на несуществующий PRD `../prd/2024-12-23_F001_table-booking-prd.md`.
 - Вариант исправления: указать существующий пример или сделать ссылку текстом без markdown.
-- Верификация: `rg -n "2024-12-23_F001_table-booking-prd" .claude/commands/aidd-idea.md`
+- Верификация: `rg -n "2024-12-23_F001_table-booking-prd" .claude/commands/aidd-analyze.md`
 
 ## CLAUDE.md
 
@@ -47,13 +47,13 @@
 
 ## docs/LINKS_REFERENCE.md
 
-- Устранить расхождение команд: либо заменить `/aidd-review`, `/aidd-test`, `/aidd-deploy` на `/aidd-finalize`, либо добавить явное объяснение, что это стадии одной команды.
+- Устранить расхождение команд: либо заменить `/aidd-review`, `/aidd-test`, `/aidd-deploy` на `/aidd-validate`, либо добавить явное объяснение, что это стадии одной команды.
 - Верификация: `rg -n "aidd-review|aidd-test|aidd-deploy" docs/LINKS_REFERENCE.md`
 
 ## workflow.md
 
 - Согласовать описание этапов с выбранной схемой (6 или 9).
-- Если оставлять 6 этапов, пересмотреть секции, где используются `/aidd-review`, `/aidd-test`, `/aidd-deploy`, чтобы отражали один этап 5 (`/aidd-finalize`).
+- Если оставлять 6 этапов, пересмотреть секции, где используются `/aidd-review`, `/aidd-test`, `/aidd-deploy`, чтобы отражали один этап 5 (`/aidd-validate`).
 - Верификация:
   - `rg -n "6-этап|6 этапов|9-этап|9 этап" workflow.md`
   - `rg -n "aidd-review|aidd-test|aidd-deploy" workflow.md`

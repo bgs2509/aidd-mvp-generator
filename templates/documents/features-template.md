@@ -73,10 +73,10 @@ ls ai-docs/docs/*/2024-12-*
 ### По типу
 ```bash
 # Все PRD
-ls ai-docs/docs/prd/
+ls ai-docs/docs/_analysis/
 
 # Все планы
-ls ai-docs/docs/architecture/ ai-docs/docs/plans/
+ls ai-docs/docs/_plans/mvp/ ai-docs/docs/_plans/features/
 ```
 
 ---

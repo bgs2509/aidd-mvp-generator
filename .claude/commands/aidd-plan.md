@@ -3,7 +3,7 @@ allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md), Bash(gi
 description: Создать архитектурный план для нового MVP проекта
 ---
 
-**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
+**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
 
 
 > ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
@@ -41,7 +41,7 @@ description: Создать архитектурный план для ново�
 
 ## Агент
 
-**Архитектор** (`.claude/agents/architect.md`)
+**Архитектор** (`.claude/agents/planner.md`)
 
 ---
 
@@ -56,7 +56,7 @@ description: Создать архитектурный план для ново�
 |---|------|---------|-------|
 | 1 | `./CLAUDE.md` | Если существует | Специфика проекта |
 | 2 | `./.pipeline-state.json` | Обязательно | Режим, этап, ворота |
-| 3 | `./ai-docs/docs/prd/*.md` | Обязательно | Требования из PRD |
+| 3 | `./ai-docs/docs/_analysis/*.md` | Обязательно | Требования из PRD |
 
 ### Фаза 2: Автомиграция и предусловия
 
@@ -77,7 +77,7 @@ description: Создать архитектурный план для ново�
 | 4 | `.aidd/CLAUDE.md` | Правила фреймворка |
 | 5 | `.aidd/workflow.md` | Процесс и ворота |
 | 6 | `.aidd/.claude/commands/plan.md` | Этот файл |
-| 7 | `.aidd/.claude/agents/architect.md` | Инструкции роли |
+| 7 | `.aidd/.claude/agents/planner.md` | Инструкции роли |
 
 ### Фаза 4: Шаблоны и база знаний
 
@@ -93,7 +93,7 @@ description: Создать архитектурный план для ново�
 
 Только **CREATE** — для новых проектов.
 
-Для добавления фичи в существующий проект используйте `/aidd-feature-plan`.
+Для добавления фичи в существующий проект используйте `/aidd-plan-feature`.
 
 ---
 
@@ -116,7 +116,7 @@ def check_plan_preconditions() -> tuple[str, dict] | None:
     # 1. Проверить и мигрировать state
     state = ensure_v2_state()  # см. knowledge/pipeline/automigration.md
     if not state:
-        print("❌ Пайплайн не инициализирован → /aidd-idea")
+        print("❌ Пайплайн не инициализирован → /aidd-analyze")
         return None
 
     # 2. Определить FID по текущей git ветке
@@ -130,7 +130,7 @@ def check_plan_preconditions() -> tuple[str, dict] | None:
     # 3. Проверить PRD_READY
     if not gates.get("PRD_READY", {}).get("passed"):
         print(f"❌ Ворота PRD_READY не пройдены для {fid}")
-        print("   → Сначала выполните /aidd-idea")
+        print("   → Сначала выполните /aidd-analyze")
         return None
 
     # 4. Проверить RESEARCH_DONE
@@ -149,7 +149,7 @@ def check_plan_preconditions() -> tuple[str, dict] | None:
 
 | Артефакт | Путь (v2) | Путь (v3) |
 |----------|-----------|-----------|
-| Архитектурный план (MVP) | `ai-docs/docs/architecture/{YYYY-MM-DD}_{FID}_{slug}-plan.md` | `ai-docs/docs/_plans/mvp/{YYYY-MM-DD}_{FID}_{slug}.md` |
+| Архитектурный план (MVP) | `ai-docs/docs/_plans/mvp/{YYYY-MM-DD}_{FID}_{slug}-plan.md` | `ai-docs/docs/_plans/mvp/{YYYY-MM-DD}_{FID}_{slug}.md` |
 
 > **Примечание (v2.4+)**:
 > - **v2** (по умолчанию): Старая структура `architecture/`, имя с дублированием `{name}-plan.md`
@@ -261,7 +261,7 @@ artifact_path = f"{folder}/{filename}"
 > ⚠️ AI ОБЯЗАН создать TodoWrite с этими пунктами.
 
 - [ ] 🔴 Architecture Plan создан в правильной папке:
-  - v2: `ai-docs/docs/architecture/{name}-plan.md`
+  - v2: `ai-docs/docs/_plans/mvp/{name}-plan.md`
   - v3: `ai-docs/docs/_plans/mvp/{name}.md`
 - [ ] 🔴 Все сервисы определены с типами
 - [ ] 🔴 API контракты описаны

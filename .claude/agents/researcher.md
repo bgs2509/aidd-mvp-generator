@@ -26,7 +26,7 @@ model: inherit
 
 | Источник | Описание |
 |----------|----------|
-| PRD документ | `ai-docs/docs/prd/{name}-prd.md` (в целевом проекте) |
+| PRD документ | `ai-docs/docs/_analysis/{name}-prd.md` (в целевом проекте) |
 | Существующий код | Для режима FEATURE |
 | `CLAUDE.md` | Контекст фреймворка |
 | `knowledge/architecture/` | Архитектурные принципы (в генераторе) |

@@ -184,7 +184,7 @@ find knowledge/ -name "*.md" | wc -l
 ### Проблема 1 — Битые ссылки на PRD‑артефакты
 **Приоритет**: HIGH  
 **Расположение**:  
-- `.claude/commands/aidd-idea.md:394`  
+- `.claude/commands/aidd-analyze.md:394`  
 - `.claude/commands/aidd-analyze.md:422`  
 - `.claude/commands/aidd-analyze.md:429`  
 
@@ -193,13 +193,13 @@ find knowledge/ -name "*.md" | wc -l
 
 **Как обнаружено**:
 ```bash
-rg -n "2024-12-23_F001_table-booking" .claude/commands/aidd-idea.md .claude/commands/aidd-analyze.md
+rg -n "2024-12-23_F001_table-booking" .claude/commands/aidd-analyze.md .claude/commands/aidd-analyze.md
 ```
 
 **Команда исправления (пример)**:
 ```bash
-sed -i 's|\[PRD\](../prd/2024-12-23_F001_table-booking-prd.md)|PRD: ai-docs/docs/prd/2024-12-23_F001_table-booking-prd.md|g' \
-  .claude/commands/aidd-idea.md .claude/commands/aidd-analyze.md
+sed -i 's|\[PRD\](../prd/2024-12-23_F001_table-booking-prd.md)|PRD: ai-docs/docs/_analysis/2024-12-23_F001_table-booking-prd.md|g' \
+  .claude/commands/aidd-analyze.md .claude/commands/aidd-analyze.md
 sed -i 's|\[PRD\](../_analysis/2024-12-23_F001_table-booking.md)|PRD: ai-docs/docs/_analysis/2024-12-23_F001_table-booking.md|g' \
   .claude/commands/aidd-analyze.md
 ```
@@ -362,7 +362,7 @@ test -f .claude/agents/qa.md && echo OK
 **Расположение**:  
 - `CHANGELOG.md:179`  
 - `knowledge/pipeline/state-v2.md:366`  
-- `.claude/commands/aidd-idea.md:142-143`  
+- `.claude/commands/aidd-analyze.md:142-143`  
 - `.claude/commands/aidd-analyze.md:142-143`  
 
 **Описание**: маркеры legacy/deprecated присутствуют, что по шаблону аудита считается критическим.  
@@ -375,7 +375,7 @@ rg --hidden -ni "legacy|deprecated|old-docs|DEPRECATED" -g "*.md" -g "!**/histor
 
 **Команда исправления (пример)**:
 ```bash
-sed -i 's/legacy_gates/v1_gates/g' .claude/commands/aidd-idea.md .claude/commands/aidd-analyze.md
+sed -i 's/legacy_gates/v1_gates/g' .claude/commands/aidd-analyze.md .claude/commands/aidd-analyze.md
 sed -i 's/Deprecated поля/Backward compatibility (v1) поля/g' knowledge/pipeline/state-v2.md
 # При необходимости — заменить термин в CHANGELOG.md
 ```
@@ -435,14 +435,14 @@ LOW:      1 → -0.1
 
 ### Spot Check 1: битая ссылка
 ```bash
-sed -n '392,395p' .claude/commands/aidd-idea.md
+sed -n '392,395p' .claude/commands/aidd-analyze.md
 [ -f prd/2024-12-23_F001_table-booking-prd.md ] && echo exists || echo missing
 ```
 **Результат**: ссылка присутствует, файл отсутствует → ✅ подтверждено.
 
 ### Spot Check 2: legacy marker
 ```bash
-sed -n '139,143p' .claude/commands/aidd-idea.md
+sed -n '139,143p' .claude/commands/aidd-analyze.md
 ```
 **Результат**: `legacy_gates` присутствует → ✅ подтверждено.
 
@@ -457,7 +457,7 @@ sed -n '6,16p' workflow.md
 ## 6) Placeholder‑план исправлений
 
 ### Фаза 1 (быстро, < 1ч)
-- Исправить битые ссылки в `.claude/commands/aidd-idea.md` и `.claude/commands/aidd-analyze.md`.
+- Исправить битые ссылки в `.claude/commands/aidd-analyze.md` и `.claude/commands/aidd-analyze.md`.
 - Добавить `.claude/agents/reviewer.md` и `.claude/agents/qa.md`.
 
 ### Фаза 2 (1–4ч)

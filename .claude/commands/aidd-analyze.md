@@ -4,7 +4,7 @@ argument-hint: "[описание идеи проекта или фичи]"
 description: Создать PRD документ из идеи пользователя
 ---
 
-**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
+**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
 
 
 > ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
@@ -32,7 +32,7 @@ description: Создать PRD документ из идеи пользова�
 
 ## Описание
 
-Команда `/aidd-idea` — точка входа в пайплайн AIDD-MVP. Преобразует текстовое
+Команда `/aidd-analyze` — точка входа в пайплайн AIDD-MVP. Преобразует текстовое
 описание идеи в структурированный PRD (Product Requirements Document).
 
 > **VERIFY BEFORE ACT**: Перед созданием файлов/директорий проверьте их
@@ -57,7 +57,7 @@ description: Создать PRD документ из идеи пользова�
 |---|------|---------|-------|
 | 1 | `./CLAUDE.md` | Если существует | Специфика проекта |
 | 2 | `./.pipeline-state.json` | Если существует | Режим, этап, ворота |
-| 3 | `./ai-docs/docs/prd/` | Если существует | Существующий PRD (для FEATURE) |
+| 3 | `./ai-docs/docs/_analysis/` | Если существует | Существующий PRD (для FEATURE) |
 
 ### Фаза 2: Предусловия и автомиграция
 
@@ -99,7 +99,7 @@ def ensure_v2_state():
     return state
 ```
 
-Нет других предусловий — `/aidd-idea` это первый этап пайплайна.
+Нет других предусловий — `/aidd-analyze` это первый этап пайплайна.
 
 ### Фаза 3: Инструкции фреймворка
 
@@ -107,7 +107,7 @@ def ensure_v2_state():
 |---|------|-------|
 | 4 | `.aidd/CLAUDE.md` | Правила фреймворка |
 | 5 | `.aidd/workflow.md` | Процесс и ворота |
-| 6 | `.aidd/.claude/commands/aidd-idea.md` | Этот файл |
+| 6 | `.aidd/.claude/commands/aidd-analyze.md` | Этот файл |
 | 7 | `.aidd/.claude/agents/analyst.md` | Инструкции роли |
 
 ### Фаза 4: Шаблоны
@@ -120,7 +120,7 @@ def ensure_v2_state():
 
 ## Bootstrap: Проверка и инициализация
 
-> **Важно**: Перед созданием PRD команда `/aidd-idea` автоматически проверяет
+> **Важно**: Перед созданием PRD команда `/aidd-analyze` автоматически проверяет
 > готовность окружения (Bootstrap Pipeline). При ошибках — предлагает `/aidd-init`.
 
 ### Алгоритм Bootstrap-проверок
@@ -128,7 +128,7 @@ def ensure_v2_state():
 ```python
 def auto_bootstrap() -> bool:
     """
-    Автоматическая проверка и инициализация перед /aidd-idea.
+    Автоматическая проверка и инициализация перед /aidd-analyze.
 
     Returns:
         True если BOOTSTRAP_READY, False если нужен /init
@@ -216,7 +216,7 @@ fi
 
 | Ворота | Проверка |
 |--------|----------|
-| `BOOTSTRAP_READY` | Авто-проверка при запуске `/aidd-idea` |
+| `BOOTSTRAP_READY` | Авто-проверка при запуске `/aidd-analyze` |
 
 Если `BOOTSTRAP_READY` не пройден:
 ```
@@ -248,7 +248,7 @@ fi
 
 | Артефакт | Путь (v2) | Путь (v3) |
 |----------|-----------|-----------|
-| PRD документ | `ai-docs/docs/prd/{YYYY-MM-DD}_{FID}_{slug}-prd.md` | `ai-docs/docs/_analysis/{YYYY-MM-DD}_{FID}_{slug}.md` |
+| PRD документ | `ai-docs/docs/_analysis/{YYYY-MM-DD}_{FID}_{slug}-prd.md` | `ai-docs/docs/_analysis/{YYYY-MM-DD}_{FID}_{slug}.md` |
 | Реестр фич | `ai-docs/docs/FEATURES.md` | `ai-docs/docs/FEATURES.md` |
 | Состояние | `.pipeline-state.json` | `.pipeline-state.json` |
 
@@ -576,7 +576,7 @@ def pass_prd_ready_gate(state: dict, fid: str, artifact_path: str):
 > ⚠️ AI ОБЯЗАН создать TodoWrite с этими пунктами.
 
 - [ ] 🔴 PRD документ создан в правильной папке:
-  - v2: `ai-docs/docs/prd/{name}-prd.md`
+  - v2: `ai-docs/docs/_analysis/{name}-prd.md`
   - v3: `ai-docs/docs/_analysis/{name}.md`
 - [ ] 🔴 Все FR-* требования определены
 - [ ] 🔴 NFR-* требования определены

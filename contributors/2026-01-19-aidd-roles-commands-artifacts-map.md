@@ -1,6 +1,6 @@
 # Полная карта ролей AIDD-MVP Generator
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 > **Цель**: Систематизировать все роли, команды, артефакты и связи между ними.
@@ -11,7 +11,7 @@
 >
 > **Изменения в этом документе**:
 > - Роли: `architect` → `planner` (оба доступны), `implementer` → `coder` (оба доступны)
-> - Команды: `/aidd-idea` → `/aidd-analyze`, `/aidd-feature-plan` → `/aidd-plan-feature`, `/aidd-generate` → `/aidd-code`, `/aidd-finalize` → `/aidd-validate`
+> - Команды: `/aidd-analyze` → `/aidd-analyze`, `/aidd-plan-feature` → `/aidd-plan-feature`, `/aidd-code` → `/aidd-code`, `/aidd-validate` → `/aidd-validate`
 > - Все старые названия продолжают работать (backward compatible)
 >
 > **Полный план**: `/home/bgs/.claude/plans/idempotent-drifting-wirth.md`
@@ -26,13 +26,13 @@
 | # | Роль (старая/новая) | Команда (старая → новая) | Этап | Ворота | Артефакт (v2 → v3) |
 |---|---------------------|--------------------------|------|--------|-------------------|
 | 0 | — | `/aidd-init` | Bootstrap | `BOOTSTRAP_READY` | Структура ЦП, `.pipeline-state.json` |
-| 1 | **Аналитик**<br>`analyst.md` | `/aidd-idea` → `/aidd-analyze` | Идея | `PRD_READY` | `prd/{name}-prd.md` → `_analysis/{name}.md` |
+| 1 | **Аналитик**<br>`analyst.md` | `/aidd-analyze` → `/aidd-analyze` | Идея | `PRD_READY` | `prd/{name}-prd.md` → `_analysis/{name}.md` |
 | 2 | **Исследователь**<br>`researcher.md` | `/aidd-research` | Исследование | `RESEARCH_DONE` | `research/{name}-research.md` → `_research/{name}.md` |
-| 3a | **Архитектор → Планировщик**<br>`architect.md` / `planner.md` | `/aidd-plan` | Архитектура (CREATE) | `PLAN_APPROVED`⚠️ | `architecture/{name}-plan.md` → `_plans/mvp/{name}.md` |
-| 3b | **Архитектор → Планировщик**<br>`architect.md` / `planner.md` | `/aidd-feature-plan` → `/aidd-plan-feature` | Архитектура (FEATURE) | `PLAN_APPROVED`⚠️ | `plans/{feature}-plan.md` → `_plans/features/{name}.md` |
-| 4 | **Реализатор → Программист**<br>`implementer.md` / `coder.md` | `/aidd-generate` → `/aidd-code` | Реализация | `IMPLEMENT_OK` | `services/`, тесты, инфраструктура |
-| 5 | **Валидатор**<br>`validator.md` | `/aidd-finalize` → `/aidd-validate` (Full) | Quality & Deploy | `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED` | `reports/{name}-completion.md` → `_validation/{name}.md` |
-| 5b | **Валидатор**<br>`validator.md` | `/aidd-finalize` → `/aidd-validate` (Quick) | Static Analysis | `DOCUMENTED` | DRAFT Completion Report |
+| 3a | **Архитектор → Планировщик**<br>`planner.md` / `planner.md` | `/aidd-plan` | Архитектура (CREATE) | `PLAN_APPROVED`⚠️ | `architecture/{name}-plan.md` → `_plans/mvp/{name}.md` |
+| 3b | **Архитектор → Планировщик**<br>`planner.md` / `planner.md` | `/aidd-plan-feature` → `/aidd-plan-feature` | Архитектура (FEATURE) | `PLAN_APPROVED`⚠️ | `plans/{feature}-plan.md` → `_plans/features/{name}.md` |
+| 4 | **Реализатор → Программист**<br>`coder.md` / `coder.md` | `/aidd-code` → `/aidd-code` | Реализация | `IMPLEMENT_OK` | `services/`, тесты, инфраструктура |
+| 5 | **Валидатор**<br>`validator.md` | `/aidd-validate` → `/aidd-validate` (Full) | Quality & Deploy | `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED` | `reports/{name}-completion.md` → `_validation/{name}.md` |
+| 5b | **Валидатор**<br>`validator.md` | `/aidd-validate` → `/aidd-validate` (Quick) | Static Analysis | `DOCUMENTED` | DRAFT Completion Report |
 
 > ⚠️ `PLAN_APPROVED` требует **явного подтверждения пользователя**
 >
@@ -51,7 +51,7 @@
 **Назначение**: Преобразование идеи пользователя в структурированный PRD документ.
 
 **Команды** (migration mode):
-- `/aidd-idea` (старая) → `/aidd-analyze` (новая) — создание PRD
+- `/aidd-analyze` (старая) → `/aidd-analyze` (новая) — создание PRD
 - Обе команды работают одинаково
 
 **Инструменты**:
@@ -64,7 +64,7 @@
 - `workflow.md` — процесс разработки
 
 **Выходные артефакты** (зависит от `naming_version`):
-- **v2**: `ai-docs/docs/prd/{date}_{FID}_{slug}-prd.md` — Product Requirements Document
+- **v2**: `ai-docs/docs/_analysis/{date}_{FID}_{slug}-prd.md` — Product Requirements Document
 - **v3**: `ai-docs/docs/_analysis/{date}_{FID}_{slug}.md` — Product Requirements Document
 - `ai-docs/docs/rtm.md` (начало) — Requirements Traceability Matrix
 
@@ -139,7 +139,7 @@
 ### 3. Архитектор → Планировщик (Architect → Planner)
 
 **Файлы** (migration mode):
-- `.claude/agents/architect.md` (старая)
+- `.claude/agents/planner.md` (старая)
 - `.claude/agents/planner.md` (новая)
 - Оба файла идентичны, используется для backward compatibility
 
@@ -147,7 +147,7 @@
 
 **Команды** (migration mode):
 - `/aidd-plan` — для CREATE режима
-- `/aidd-feature-plan` (старая) → `/aidd-plan-feature` (новая) — для FEATURE режима
+- `/aidd-plan-feature` (старая) → `/aidd-plan-feature` (новая) — для FEATURE режима
 - Обе версии команд работают одинаково
 
 **Инструменты**:
@@ -160,9 +160,9 @@
 - `templates/services/` — доступные шаблоны
 
 **Выходные артефакты** (зависит от `naming_version`):
-- **CREATE (v2)**: `ai-docs/docs/architecture/{date}_{FID}_{slug}-plan.md`
+- **CREATE (v2)**: `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}-plan.md`
 - **CREATE (v3)**: `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}.md`
-- **FEATURE (v2)**: `ai-docs/docs/plans/{date}_{FID}_{slug}-plan.md`
+- **FEATURE (v2)**: `ai-docs/docs/_plans/features/{date}_{FID}_{slug}-plan.md`
 - **FEATURE (v3)**: `ai-docs/docs/_plans/features/{date}_{FID}_{slug}.md`
 
 **Качественные ворота**:
@@ -200,14 +200,14 @@
 ### 4. Реализатор → Программист (Implementer → Coder)
 
 **Файлы** (migration mode):
-- `.claude/agents/implementer.md` (старая)
+- `.claude/agents/coder.md` (старая)
 - `.claude/agents/coder.md` (новая)
 - Оба файла идентичны, используется для backward compatibility
 
 **Назначение**: Генерация кода на основе утверждённого плана.
 
 **Команды** (migration mode):
-- `/aidd-generate` (старая) → `/aidd-code` (новая) — генерация кода
+- `/aidd-code` (старая) → `/aidd-code` (новая) — генерация кода
 - Обе команды работают одинаково
 
 **Инструменты**:
@@ -264,7 +264,7 @@
 **Назначение**: Полный цикл Quality & Deploy (объединяет Reviewer + QA).
 
 **Команды** (migration mode):
-- `/aidd-finalize` (старая) → `/aidd-validate` (новая) — с двумя режимами:
+- `/aidd-validate` (старая) → `/aidd-validate` (новая) — с двумя режимами:
   - **Full Mode** (рекомендуется) — 4 шага → Production-ready MVP
   - **Quick Mode** — Static Analysis → DRAFT документация
 - Обе команды работают одинаково
@@ -280,7 +280,7 @@
 - `.pipeline-state.json` — состояние пайплайна
 
 **Выходные артефакты** (зависит от `naming_version`):
-- **Full Mode (v2)**: `ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md` — Completion Report
+- **Full Mode (v2)**: `ai-docs/docs/_validation/{date}_{FID}_{slug}-completion.md` — Completion Report
 - **Full Mode (v3)**: `ai-docs/docs/_validation/{date}_{FID}_{slug}.md` — Completion Report
 - **Quick Mode**: DRAFT Completion Report с пометкой "⚠️ DRAFT — QA не выполнено"
 
@@ -315,7 +315,7 @@
 - ❌ Пропуск создания Completion Report
 
 **Связанные документы**:
-- `.claude/commands/aidd-finalize.md` — главная инструкция
+- `.claude/commands/aidd-validate.md` — главная инструкция
 - `templates/documents/completion-report-template.md`
 - `conventions.md`
 - `knowledge/quality/quality-cascade.md`
@@ -333,14 +333,14 @@
 **Назначение**: Код-ревью на соответствие стандартам.
 
 **Команды**:
-- Нет отдельной команды, используется внутри `/aidd-finalize` (Шаг 1)
+- Нет отдельной команды, используется внутри `/aidd-validate` (Шаг 1)
 
 **Инструменты**:
 - Read, Glob, Grep, Edit, Write
 
 **Входные данные**:
 - `services/` — сгенерированный код
-- `ai-docs/docs/architecture/{name}-plan.md` — Plan
+- `ai-docs/docs/_plans/mvp/{name}-plan.md` — Plan
 - `conventions.md` — соглашения
 - `knowledge/quality/dry-kiss-yagni.md` — принципы
 
@@ -378,13 +378,13 @@
 **Назначение**: Тестирование и верификация качества кода.
 
 **Команды**:
-- Нет отдельной команды, используется внутри `/aidd-finalize` (Шаг 2)
+- Нет отдельной команды, используется внутри `/aidd-validate` (Шаг 2)
 
 **Инструменты**:
 - Read, Glob, Grep, Bash, Edit, Write
 
 **Входные данные**:
-- `ai-docs/docs/prd/{name}-prd.md` — PRD
+- `ai-docs/docs/_analysis/{name}-prd.md` — PRD
 - `services/` — код после ревью
 - `services/*/tests/` — существующие тесты
 - `knowledge/quality/testing/` — документация по тестированию
@@ -417,15 +417,15 @@
 | Ворота | Этап | Команда | Кто проверяет | Блокирует переход |
 |--------|------|---------|---------------|-------------------|
 | `BOOTSTRAP_READY` | 0 | `/aidd-init` | — | Да |
-| `PRD_READY` | 1 | `/aidd-idea` | Аналитик | Да |
+| `PRD_READY` | 1 | `/aidd-analyze` | Аналитик | Да |
 | `RESEARCH_DONE` | 2 | `/aidd-research` | Исследователь | Да |
-| `PLAN_APPROVED`⚠️ | 3 | `/aidd-plan` или `/aidd-feature-plan` | Архитектор + **Пользователь** | Да |
-| `IMPLEMENT_OK` | 4 | `/aidd-generate` | Реализатор | Да |
-| `REVIEW_OK` | 5.1 | `/aidd-finalize` (Шаг 1) | Валидатор (как Reviewer) | Да |
-| `QA_PASSED` | 5.2 | `/aidd-finalize` (Шаг 2) | Валидатор (как QA) | Да |
-| `ALL_GATES_PASSED` | 5.3 | `/aidd-finalize` (Шаг 3) | Валидатор | Да |
-| `DEPLOYED` | 5.4 | `/aidd-finalize` (Шаг 4) | Валидатор | Нет (финальные ворота) |
-| `DOCUMENTED` | 5.0 | `/aidd-finalize` (Quick) | Валидатор | Нет (DRAFT) |
+| `PLAN_APPROVED`⚠️ | 3 | `/aidd-plan` или `/aidd-plan-feature` | Архитектор + **Пользователь** | Да |
+| `IMPLEMENT_OK` | 4 | `/aidd-code` | Реализатор | Да |
+| `REVIEW_OK` | 5.1 | `/aidd-validate` (Шаг 1) | Валидатор (как Reviewer) | Да |
+| `QA_PASSED` | 5.2 | `/aidd-validate` (Шаг 2) | Валидатор (как QA) | Да |
+| `ALL_GATES_PASSED` | 5.3 | `/aidd-validate` (Шаг 3) | Валидатор | Да |
+| `DEPLOYED` | 5.4 | `/aidd-validate` (Шаг 4) | Валидатор | Нет (финальные ворота) |
+| `DOCUMENTED` | 5.0 | `/aidd-validate` (Quick) | Валидатор | Нет (DRAFT) |
 
 ### Типы артефактов
 
@@ -433,14 +433,14 @@
 |----------|------|---------|--------|------------|
 | `CLAUDE.md` | `./CLAUDE.md` | `/aidd-init` | Все роли | Точка входа ЦП |
 | `.pipeline-state.json` | `./.pipeline-state.json` | `/aidd-init`, все команды | Все роли | Состояние пайплайна (v2) |
-| **PRD** | `ai-docs/docs/prd/{name}-prd.md` | Аналитик | Исследователь, Архитектор, QA | Product Requirements |
+| **PRD** | `ai-docs/docs/_analysis/{name}-prd.md` | Аналитик | Исследователь, Архитектор, QA | Product Requirements |
 | **Research Report** | `ai-docs/docs/research/{name}-research.md` | Исследователь | Архитектор | Анализ кода/требований |
-| **Architecture Plan** | `ai-docs/docs/architecture/{name}-plan.md` | Архитектор (CREATE) | Реализатор, Валидатор | Архитектурный план |
-| **Feature Plan** | `ai-docs/docs/plans/{feature}-plan.md` | Архитектор (FEATURE) | Реализатор, Валидатор | План фичи |
+| **Architecture Plan** | `ai-docs/docs/_plans/mvp/{name}-plan.md` | Архитектор (CREATE) | Реализатор, Валидатор | Архитектурный план |
+| **Feature Plan** | `ai-docs/docs/_plans/features/{feature}-plan.md` | Архитектор (FEATURE) | Реализатор, Валидатор | План фичи |
 | **Сервисы** | `services/{name}/` | Реализатор | Валидатор | Код сервисов |
 | **Тесты** | `services/{name}/tests/` | Реализатор | QA, Валидатор | Unit/Integration тесты |
 | **Инфраструктура** | `docker-compose.yml`, `Makefile` | Реализатор | Валидатор | Настройка окружения |
-| **Completion Report** | `ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md` | Валидатор | AI в будущих сессиях | Итоговый отчёт о фиче |
+| **Completion Report** | `ai-docs/docs/_validation/{date}_{FID}_{slug}-completion.md` | Валидатор | AI в будущих сессиях | Итоговый отчёт о фиче |
 
 ### Quality Cascade уровни
 
@@ -456,9 +456,9 @@
 | Режим | Признак | Команда архитектуры | Артефакт плана |
 |-------|---------|---------------------|----------------|
 | **CREATE** | Нет `services/` или `docker-compose.yml` | `/aidd-plan` | `architecture/{name}-plan.md` |
-| **FEATURE** | Есть `services/` или `docker-compose.yml` | `/aidd-feature-plan` | `plans/{feature}-plan.md` |
+| **FEATURE** | Есть `services/` или `docker-compose.yml` | `/aidd-plan-feature` | `plans/{feature}-plan.md` |
 
-### Два режима `/aidd-finalize`
+### Два режима `/aidd-validate`
 
 | Режим | Шаги | Ворота | Результат | Когда использовать |
 |-------|------|--------|-----------|-------------------|
@@ -529,7 +529,7 @@
 ## Итоговая статистика
 
 **Количество ролей**: 7 (5 основных + 2 вспомогательных)
-**Количество команд**: 7 (`/aidd-init`, `/aidd-idea`, `/aidd-research`, `/aidd-plan`, `/aidd-feature-plan`, `/aidd-generate`, `/aidd-finalize`)
+**Количество команд**: 7 (`/aidd-init`, `/aidd-analyze`, `/aidd-research`, `/aidd-plan`, `/aidd-plan-feature`, `/aidd-code`, `/aidd-validate`)
 **Количество ворот**: 9 (`BOOTSTRAP_READY`, `PRD_READY`, `RESEARCH_DONE`, `PLAN_APPROVED`, `IMPLEMENT_OK`, `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED`) + 1 Quick mode (`DOCUMENTED`)
 **Количество этапов**: 6 (0-5)
 **Количество артефактов**: 10+ типов

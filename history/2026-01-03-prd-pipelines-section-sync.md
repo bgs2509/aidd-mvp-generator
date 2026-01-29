@@ -1,6 +1,6 @@
 # Отчёт: Синхронизация фреймворка после добавления раздела "Пайплайны" в PRD
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 > **Статус**: ВЫПОЛНЕНО
@@ -54,8 +54,8 @@
 
 | # | Файл | Изменение |
 |---|------|-----------|
-| 5 | `.claude/agents/architect.md` | Добавлено "Определение точек интеграции (INT-*)" в описание, раздел 3.1 с инструкциями, таблица INT-* в план, чек-лист PLAN_APPROVED |
-| 6 | `.claude/agents/implementer.md` | Добавлен Stage 4.2.1 "Интеграции (INT-*)", обновлён чек-лист IMPLEMENT_OK |
+| 5 | `.claude/agents/planner.md` | Добавлено "Определение точек интеграции (INT-*)" в описание, раздел 3.1 с инструкциями, таблица INT-* в план, чек-лист PLAN_APPROVED |
+| 6 | `.claude/agents/coder.md` | Добавлен Stage 4.2.1 "Интеграции (INT-*)", обновлён чек-лист IMPLEMENT_OK |
 | 7 | `.claude/agents/reviewer.md` | Добавлен пункт "Точки интеграции (INT-*) реализованы согласно плану" в архитектурный чек-лист, обновлён REVIEW_OK |
 | 8 | `.claude/agents/validator.md` | Добавлен раздел "Интеграционные требования" в пример RTM, добавлены критерии INT-* в ALL_GATES_PASSED |
 
@@ -78,7 +78,7 @@
 
 | # | Файл | Результат проверки |
 |---|------|-------------------|
-| 14 | `.claude/commands/aidd-idea.md` | Изменения не требуются (общий вызов analyst) |
+| 14 | `.claude/commands/aidd-analyze.md` | Изменения не требуются (общий вызов analyst) |
 | 15 | `docs/INDEX.md` | Изменения не требуются (только ссылки на файлы) |
 
 ---

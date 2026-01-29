@@ -1,8 +1,5 @@
 # workflow.md — Процесс разработки AIDD-MVP
 
-**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
-
-
 > **Назначение**: Описание 6-этапного процесса разработки MVP (этапы 0-5).
 > AI-агент ОБЯЗАН следовать этому процессу и проходить качественные ворота.
 >
@@ -42,7 +39,7 @@ AIDD-MVP Generator использует 6-этапный конвейер раз
 │                                                                              │
 │                                     ▼                                        │
 │  ┌───────────────────────────────────────────────────────────────┐          │
-│  │            QUALITY & DEPLOY (/aidd-finalize)                  │          │
+│  │            QUALITY & DEPLOY (/aidd-validate)                  │          │
 │  │  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────────────┐      │          │
 │  │  │ Review │─▶│  Test  │─▶│Validate│─▶│Deploy + Report │      │          │
 │  │  └────┬───┘  └────┬───┘  └────┬───┘  └────┬───────────┘      │          │
@@ -65,7 +62,7 @@ AIDD-MVP Generator использует 6-этапный конвейер раз
 Полный 6-этапный процесс (этапы 0-5) для создания проекта с нуля.
 
 ```bash
-/aidd-idea "Создать сервис бронирования столиков в ресторанах"
+/aidd-analyze "Создать сервис бронирования столиков в ресторанах"
 ```
 
 ### FEATURE — Добавление функционала
@@ -73,12 +70,12 @@ AIDD-MVP Generator использует 6-этапный конвейер раз
 Адаптированный процесс для добавления фичи в существующий проект.
 
 ```bash
-/aidd-idea "Добавить систему уведомлений по email"
+/aidd-analyze "Добавить систему уведомлений по email"
 ```
 
 **Отличия режима FEATURE**:
 - Этап 2 (Исследование) — анализ существующего кода
-- Этап 3 (Архитектура) — `/aidd-feature-plan` вместо `/aidd-plan`
+- Этап 3 (Архитектура) — `/aidd-plan-feature` вместо `/aidd-plan`
 - Интеграция с существующими компонентами
 
 ---
@@ -106,7 +103,7 @@ AIDD-MVP Generator использует 6-этапный конвейер раз
 
 ### Предварительные условия
 
-Перед запуском `/aidd-idea` фреймворк должен быть подключен:
+Перед запуском `/aidd-analyze` фреймворк должен быть подключен:
 
 ```bash
 # Если фреймворк ещё не подключен
@@ -114,9 +111,9 @@ git submodule add https://github.com/your-org/aidd-mvp-generator.git .aidd
 git submodule update --init --recursive
 ```
 
-### Автоматическая инициализация при `/aidd-idea`
+### Автоматическая инициализация при `/aidd-analyze`
 
-При первом запуске `/aidd-idea` AI-агент выполняет:
+При первом запуске `/aidd-analyze` AI-агент выполняет:
 
 > **VERIFY BEFORE ACT**: Перед созданием проверяем существование директорий.
 
@@ -128,9 +125,11 @@ if [ -d "ai-docs/docs" ]; then
 fi
 
 # 2. ACT: Создать только недостающие директории
-for dir in prd architecture plans reports research; do
-    [ -d "ai-docs/docs/$dir" ] || mkdir -p "ai-docs/docs/$dir"
-done
+mkdir -p "ai-docs/docs/_analysis"
+mkdir -p "ai-docs/docs/_research"
+mkdir -p "ai-docs/docs/_plans/mvp"
+mkdir -p "ai-docs/docs/_plans/features"
+mkdir -p "ai-docs/docs/_validation"
 
 # 2. Инициализация состояния пайплайна (v2 формат)
 cat > .pipeline-state.json << 'EOF'
@@ -193,7 +192,7 @@ def detect_mode() -> str:
 
 **Важно**: Режим можно переопределить явно:
 ```bash
-/aidd-idea --mode=FEATURE "Добавить фичу"
+/aidd-analyze --mode=FEATURE "Добавить фичу"
 ```
 
 ---
@@ -204,7 +203,7 @@ def detect_mode() -> str:
 
 | Параметр | Значение |
 |----------|----------|
-| **Команда** | `/aidd-init` (ручной) или авто с `/aidd-idea` |
+| **Команда** | `/aidd-init` (ручной) или авто с `/aidd-analyze` |
 | **Агент** | — (системный) |
 | **Вход** | Пустая директория с git и .aidd/ |
 | **Выход** | Структура ЦП, `.pipeline-state.json`, `CLAUDE.md` |
@@ -239,9 +238,11 @@ docker --version
 
 ```bash
 # 1. VERIFY + ACT: Создать только недостающие директории
-for dir in prd architecture plans reports research; do
-    [ -d "ai-docs/docs/$dir" ] || mkdir -p "ai-docs/docs/$dir"
-done
+mkdir -p "ai-docs/docs/_analysis"
+mkdir -p "ai-docs/docs/_research"
+mkdir -p "ai-docs/docs/_plans/mvp"
+mkdir -p "ai-docs/docs/_plans/features"
+mkdir -p "ai-docs/docs/_validation"
 
 # 2. Инициализация состояния (если не существует, v2 формат)
 [ -f ".pipeline-state.json" ] || echo '{"version":"2.0","project_name":"","mode":"CREATE","global_gates":{"BOOTSTRAP_READY":{"passed":true}},"active_pipelines":{},"next_feature_id":1}' > .pipeline-state.json
@@ -250,7 +251,7 @@ done
 [ -f "CLAUDE.md" ] || echo "# Project\n\nСм. .aidd/CLAUDE.md" > CLAUDE.md
 ```
 
-**Примечание**: Этап 0 выполняется автоматически при первом `/aidd-idea`, если проверки
+**Примечание**: Этап 0 выполняется автоматически при первом `/aidd-analyze`, если проверки
 не были пройдены ранее. Явный запуск `/aidd-init` рекомендуется для диагностики.
 
 ---
@@ -259,10 +260,10 @@ done
 
 | Параметр | Значение |
 |----------|----------|
-| **Команда** | `/aidd-idea "описание"` |
+| **Команда** | `/aidd-analyze "описание"` |
 | **Агент** | Аналитик |
 | **Вход** | Описание идеи от пользователя |
-| **Выход** | `ai-docs/docs/prd/{name}-prd.md` |
+| **Выход** | `ai-docs/docs/_analysis/{name}.md` |
 | **Ворота** | `PRD_READY` |
 
 **Критерии прохождения ворот PRD_READY**:
@@ -274,8 +275,8 @@ done
 **Артефакты** (в целевом проекте):
 ```
 {project-name}/
-└── ai-docs/docs/prd/
-    └── booking-restaurant-prd.md
+└── ai-docs/docs/_analysis/
+    └── booking-restaurant.md
 ```
 
 ---
@@ -287,7 +288,7 @@ done
 | **Команда** | `/aidd-research` |
 | **Агент** | Исследователь |
 | **Вход** | PRD, существующий код (для FEATURE) |
-| **Выход** | `ai-docs/docs/research/{name}-research.md` |
+| **Выход** | `ai-docs/docs/_research/{name}.md` |
 | **Ворота** | `RESEARCH_DONE` |
 
 **Критерии прохождения ворот RESEARCH_DONE**:
@@ -295,7 +296,7 @@ done
 - [ ] Архитектурные паттерны выявлены и описаны в отчёте
 - [ ] Технические ограничения определены
 - [ ] Рекомендации по интеграции сформулированы
-- [ ] Отчёт исследования сохранён в `ai-docs/docs/research/{name}-research.md`
+- [ ] Отчёт исследования сохранён в `ai-docs/docs/_research/{name}.md`
 
 **Режим CREATE**: Анализ требований, выбор технологий, фиксация гипотез.
 **Режим FEATURE**: Анализ кода, выявление точек расширения, фиксация выводов.
@@ -303,8 +304,8 @@ done
 **Артефакты** (в целевом проекте):
 ```
 {project-name}/
-└── ai-docs/docs/research/
-    └── booking-restaurant-research.md
+└── ai-docs/docs/_research/
+    └── booking-restaurant.md
 ```
 
 ---
@@ -313,10 +314,10 @@ done
 
 | Параметр | Значение |
 |----------|----------|
-| **Команда** | `/aidd-plan` (CREATE) или `/aidd-feature-plan` (FEATURE) |
-| **Агент** | Архитектор |
+| **Команда** | `/aidd-plan` (CREATE) или `/aidd-plan-feature` (FEATURE) |
+| **Агент** | Планировщик |
 | **Вход** | PRD, Research Report |
-| **Выход** | `ai-docs/docs/architecture/{name}-plan.md` |
+| **Выход** | `ai-docs/docs/_plans/mvp/{name}.md` |
 | **Ворота** | `PLAN_APPROVED` |
 
 **Критерии прохождения ворот PLAN_APPROVED**:
@@ -331,10 +332,11 @@ done
 ```
 {project-name}/
 └── ai-docs/docs/
-    ├── architecture/
-    │   └── booking-restaurant-plan.md
-    └── plans/
-        └── notification-feature-plan.md  # для FEATURE
+    └── _plans/
+        ├── mvp/
+        │   └── booking-restaurant.md
+        └── features/
+            └── notification-feature.md  # для FEATURE
 ```
 
 ---
@@ -343,8 +345,8 @@ done
 
 | Параметр | Значение |
 |----------|----------|
-| **Команда** | `/aidd-generate` |
-| **Агент** | Реализатор |
+| **Команда** | `/aidd-code` |
+| **Агент** | Программист |
 | **Вход** | Утверждённый план |
 | **Выход** | Код сервисов, тесты, инфраструктура |
 | **Ворота** | `IMPLEMENT_OK` |
@@ -371,10 +373,10 @@ done
 
 ### Этап 5: Quality & Deploy
 
-**Команда**: `/aidd-finalize` (или `/aidd-validate` в v2.4+)
+**Команда**: `/aidd-validate`
 **Роль**: Валидатор (`.claude/agents/validator.md`)
 **Предусловие**: `IMPLEMENT_OK` ✓
-**Артефакт**: `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md`
+**Артефакт**: `ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}.md`
 
 #### Описание
 
@@ -447,42 +449,37 @@ done
 - Known Limitations
 - Метрики качества
 
-**Путь**: `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md`
+**Путь**: `ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}.md`
 
 #### Команды
 
 ```bash
 # Полный режим (рекомендуется)
-/aidd-finalize
+/aidd-validate
 
 # Быстрый режим (явное указание)
-/aidd-finalize --mode=quick
-
-# Alias (v2.4+)
-/aidd-validate
+/aidd-validate --mode=quick
 ```
 
 #### Детальные инструкции
 
-См. `.claude/commands/aidd-finalize.md` → секции по каждому шагу.
+См. `.claude/commands/aidd-validate.md` → секции по каждому шагу.
 
 ---
 
 ## Таблица команд и ворот
 
-| # | Этап | Команда (старая → новая) | Агент | Ворота | Артефакт (v2 → v3) |
-|---|------|--------------------------|-------|--------|-------------------|
+| # | Этап | Команда | Агент | Ворота | Артефакт |
+|---|------|---------|-------|--------|----------|
 | 0 | Bootstrap | `/aidd-init` | — | `BOOTSTRAP_READY` | Структура ЦП |
-| 1 | Идея | `/aidd-idea` → `/aidd-analyze` | Аналитик | `PRD_READY` | `prd/{name}-prd.md` → `_analysis/{name}.md` |
-| 2 | Исследование | `/aidd-research` | Исследователь | `RESEARCH_DONE` | `research/{name}-research.md` → `_research/{name}.md` |
-| 3 | Архитектура (CREATE) | `/aidd-plan` | Архитектор → Планировщик | `PLAN_APPROVED` | `architecture/{name}-plan.md` → `_plans/mvp/{name}.md` |
-| 3 | Архитектура (FEATURE) | `/aidd-feature-plan` → `/aidd-plan-feature` | Архитектор → Планировщик | `PLAN_APPROVED` | `plans/{feature}-plan.md` → `_plans/features/{name}.md` |
-| 4 | Реализация | `/aidd-generate` → `/aidd-code` | Реализатор → Программист | `IMPLEMENT_OK` | `services/`, тесты |
-| 5 | Quality & Deploy | `/aidd-finalize` → `/aidd-validate` | Валидатор | **Full**: `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED` <br> **Quick**: `DOCUMENTED` | `reports/{name}-completion.md` → `_validation/{name}.md` |
+| 1 | Идея | `/aidd-analyze` | Аналитик | `PRD_READY` | `_analysis/{name}.md` |
+| 2 | Исследование | `/aidd-research` | Исследователь | `RESEARCH_DONE` | `_research/{name}.md` |
+| 3 | Архитектура (CREATE) | `/aidd-plan` | Планировщик | `PLAN_APPROVED` | `_plans/mvp/{name}.md` |
+| 3 | Архитектура (FEATURE) | `/aidd-plan-feature` | Планировщик | `PLAN_APPROVED` | `_plans/features/{name}.md` |
+| 4 | Реализация | `/aidd-code` | Программист | `IMPLEMENT_OK` | `services/`, тесты |
+| 5 | Quality & Deploy | `/aidd-validate` | Валидатор | **Full**: `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED` <br> **Quick**: `DOCUMENTED` | `_validation/{name}.md` |
 
-> **Migration Mode (v2.4+)**: Все команды доступны в двух вариантах — обе работают одинаково. Артефакты создаются в разных папках в зависимости от `naming_version` в `.pipeline-state.json`.
->
-> **Примечание**: `/aidd-finalize` (или `/aidd-validate`) поддерживает два режима:
+> **Примечание**: `/aidd-validate` поддерживает два режима:
 > - **Полный (рекомендуется)**: Review → Test → Validate → Deploy → Production-ready MVP
 > - **Быстрый**: Только DRAFT Completion Report + Static Analysis → для документации или незавершённых фич
 >
@@ -499,20 +496,20 @@ done
 ├── .pipeline-state.json             # Состояние пайплайна
 │
 └── ai-docs/docs/
-    ├── prd/
-    │   └── {name}-prd.md            # Этап 1: PRD документ
+    ├── _analysis/
+    │   └── {name}.md                # Этап 1: PRD документ
     │
-    ├── research/
-    │   └── {name}-research.md       # Этап 2: Research Report
+    ├── _research/
+    │   └── {name}.md                # Этап 2: Research Report
     │
-    ├── architecture/
-    │   └── {name}-plan.md           # Этап 3: Архитектурный план (CREATE)
+    ├── _plans/
+    │   ├── mvp/
+    │   │   └── {name}.md            # Этап 3: Архитектурный план (CREATE)
+    │   └── features/
+    │       └── {name}.md            # Этап 3: План фичи (FEATURE)
     │
-    ├── plans/
-    │   └── {feature}-plan.md        # Этап 3: План фичи (FEATURE)
-    │
-    └── reports/
-        └── {date}_{FID}_{slug}-completion.md  # Этап 5: Единый Completion Report
+    └── _validation/
+        └── {date}_{FID}_{slug}.md   # Этап 5: Единый Completion Report
 ```
 
 ---
@@ -521,7 +518,7 @@ done
 
 ```bash
 # 1. Описываем идею
-/aidd-idea "Создать сервис бронирования столиков в ресторанах.
+/aidd-analyze "Создать сервис бронирования столиков в ресторанах.
 Пользователи могут искать рестораны, смотреть свободные столики,
 бронировать на определённое время. Рестораны получают уведомления
 о новых бронях через Telegram."
@@ -538,26 +535,26 @@ done
 # 3. Архитектура
 /aidd-plan
 
-# Агент: Архитектор создаёт план
+# Агент: Планировщик создаёт план
 # Пользователь утверждает план
 # Ворота: PLAN_APPROVED ✓
 
 # 4. Реализация
-/aidd-generate
+/aidd-code
 
-# Агент: Реализатор генерирует код
+# Агент: Программист генерирует код
 # Создаются: infrastructure, data-api, business-api, bot
 # Ворота: IMPLEMENT_OK ✓
 
 # 5. Quality & Deploy
-/aidd-finalize
+/aidd-validate
 
 # Агент: Валидатор выполняет 4 шага
 # ✓ Step 1/4: Code Review → REVIEW_OK
 # ✓ Step 2/4: Testing (Coverage 82%) → QA_PASSED
 # ✓ Step 3/4: Validation → ALL_GATES_PASSED
 # ✓ Step 4/4: Deploy + Completion Report → DEPLOYED
-# ✓ Completion Report: ai-docs/docs/reports/2025-12-23_F001_table-booking-completion.md
+# ✓ Completion Report: ai-docs/docs/_validation/2025-12-23_F001_table-booking.md
 
 # Готово! MVP запущен за ~10 минут
 ```
@@ -570,7 +567,7 @@ done
 
 ### Формат файла (v2 — параллельные пайплайны)
 
-Файл `.pipeline-state.json` создаётся в корне ЦЕЛЕВОГО ПРОЕКТА при первом `/aidd-idea`.
+Файл `.pipeline-state.json` создаётся в корне ЦЕЛЕВОГО ПРОЕКТА при первом `/aidd-analyze`.
 
 ```json
 {
@@ -595,9 +592,9 @@ done
         "PLAN_APPROVED": {"passed": true, "passed_at": "...", "approved_by": "user"}
       },
       "artifacts": {
-        "prd": "prd/2025-12-25_F042_oauth-auth-prd.md",
-        "research": "research/2025-12-25_F042_oauth-auth-research.md",
-        "plan": "plans/2025-12-25_F042_oauth-auth-plan.md"
+        "prd": "_analysis/2025-12-25_F042_oauth-auth.md",
+        "research": "_research/2025-12-25_F042_oauth-auth.md",
+        "plan": "_plans/features/2025-12-25_F042_oauth-auth.md"
       }
     }
   },
@@ -650,12 +647,12 @@ def find_artifact(artifact_type: str) -> Path | None:
 
     # 2. Glob по стандартным паттернам
     patterns = {
-        "prd": "ai-docs/docs/prd/*-prd.md",
-        "research": "ai-docs/docs/research/*-research.md",
-        "plan": "ai-docs/docs/architecture/*-plan.md",
-        "feature_plan": "ai-docs/docs/plans/*-plan.md",
-        "review_report": "ai-docs/docs/reports/review-*.md",
-        "qa_report": "ai-docs/docs/reports/qa-*.md",
+        "prd": "ai-docs/docs/_analysis/*.md",
+        "research": "ai-docs/docs/_research/*.md",
+        "plan": "ai-docs/docs/_plans/mvp/*.md",
+        "feature_plan": "ai-docs/docs/_plans/features/*.md",
+        "review_report": "ai-docs/docs/_validation/review-*.md",
+        "qa_report": "ai-docs/docs/_validation/qa-*.md",
         "rtm": "ai-docs/docs/rtm.md"
     }
 
@@ -669,15 +666,15 @@ def find_artifact(artifact_type: str) -> Path | None:
 
 ### Паттерны поиска
 
-| Артефакт | Паттерн | Суффикс |
-|----------|---------|---------|
-| PRD | `ai-docs/docs/prd/*-prd.md` | `-prd.md` |
-| Research Report | `ai-docs/docs/research/*-research.md` | `-research.md` |
-| План архитектуры | `ai-docs/docs/architecture/*-plan.md` | `-plan.md` |
-| План фичи | `ai-docs/docs/plans/*-plan.md` | `-plan.md` |
-| Отчёт ревью | `ai-docs/docs/reports/review-*.md` | `review-*.md` |
-| Отчёт QA | `ai-docs/docs/reports/qa-*.md` | `qa-*.md` |
-| RTM | `ai-docs/docs/rtm.md` | — |
+| Артефакт | Паттерн |
+|----------|---------|
+| PRD | `ai-docs/docs/_analysis/*.md` |
+| Research Report | `ai-docs/docs/_research/*.md` |
+| План архитектуры | `ai-docs/docs/_plans/mvp/*.md` |
+| План фичи | `ai-docs/docs/_plans/features/*.md` |
+| Отчёт ревью | `ai-docs/docs/_validation/review-*.md` |
+| Отчёт QA | `ai-docs/docs/_validation/qa-*.md` |
+| RTM | `ai-docs/docs/rtm.md` |
 
 ---
 
@@ -691,18 +688,18 @@ def check_preconditions(command: str) -> bool:
 
     preconditions = {
         "/aidd-init": [],  # Нет предусловий — первый этап
-        "/aidd-idea": ["BOOTSTRAP_READY"],  # Авто-bootstrap если не пройден
+        "/aidd-analyze": ["BOOTSTRAP_READY"],  # Авто-bootstrap если не пройден
         "/aidd-research": ["PRD_READY"],
         "/aidd-plan": ["PRD_READY", "RESEARCH_DONE"],
-        "/aidd-feature-plan": ["PRD_READY", "RESEARCH_DONE"],
-        "/aidd-generate": ["PLAN_APPROVED"],
-        "/aidd-finalize": ["IMPLEMENT_OK"],  # Full mode - требует реализации
-        # Quick mode (/aidd-finalize --quick) - без предусловий
+        "/aidd-plan-feature": ["PRD_READY", "RESEARCH_DONE"],
+        "/aidd-code": ["PLAN_APPROVED"],
+        "/aidd-validate": ["IMPLEMENT_OK"],  # Full mode - требует реализации
+        # Quick mode (/aidd-validate --quick) - без предусловий
     }
 
     state = read_json(".pipeline-state.json")
     if not state:
-        return command == "/aidd-idea"
+        return command == "/aidd-analyze"
 
     for gate in preconditions.get(command, []):
         if not state.get("gates", {}).get(gate, {}).get("passed"):
@@ -717,13 +714,13 @@ def check_preconditions(command: str) -> bool:
 | Команда | Требуемые ворота | Если не пройдены |
 |---------|-----------------|------------------|
 | `/aidd-init` | — | — |
-| `/aidd-idea` | BOOTSTRAP_READY | Авто-запуск bootstrap или "/aidd-init" |
-| `/aidd-research` | PRD_READY | "Сначала выполните /aidd-idea" |
+| `/aidd-analyze` | BOOTSTRAP_READY | Авто-запуск bootstrap или "/aidd-init" |
+| `/aidd-research` | PRD_READY | "Сначала выполните /aidd-analyze" |
 | `/aidd-plan` | PRD_READY, RESEARCH_DONE | "Сначала выполните /aidd-research" |
-| `/aidd-feature-plan` | PRD_READY, RESEARCH_DONE | "Сначала выполните /aidd-research" |
-| `/aidd-generate` | PLAN_APPROVED | "Сначала утвердите план" |
-| `/aidd-finalize` (Full) | IMPLEMENT_OK | "Сначала выполните /aidd-generate" |
-| `/aidd-finalize` (Quick) | — | Создаёт DRAFT отчёт без предусловий |
+| `/aidd-plan-feature` | PRD_READY, RESEARCH_DONE | "Сначала выполните /aidd-research" |
+| `/aidd-code` | PLAN_APPROVED | "Сначала утвердите план" |
+| `/aidd-validate` (Full) | IMPLEMENT_OK | "Сначала выполните /aidd-code" |
+| `/aidd-validate` (Quick) | — | Создаёт DRAFT отчёт без предусловий |
 
 ---
 
@@ -754,19 +751,19 @@ def check_gate(gate: str) -> GateResult:
             ("state_initialized", ".pipeline-state.json exists"),
         ],
         "PRD_READY": [
-            ("artifact_exists", "ai-docs/docs/prd/*-prd.md"),
+            ("artifact_exists", "ai-docs/docs/_analysis/*.md"),
             ("sections_complete", ["Обзор", "FR-*", "NF-*"]),
             ("ids_present", "Все требования имеют ID"),
             ("no_blockers", "Нет Open вопросов без решения"),
         ],
         "RESEARCH_DONE": [
-            ("artifact_exists", "ai-docs/docs/research/*-research.md"),
+            ("artifact_exists", "ai-docs/docs/_research/*.md"),
             ("analysis_complete", "Код проанализирован"),
             ("patterns_identified", "Паттерны выявлены"),
             ("constraints_defined", "Ограничения определены"),
         ],
         "PLAN_APPROVED": [
-            ("artifact_exists", "ai-docs/docs/architecture/*-plan.md"),
+            ("artifact_exists", "ai-docs/docs/_plans/mvp/*.md"),
             ("components_defined", "Компоненты определены"),
             ("api_contracts", "API контракты описаны"),
             ("user_approved", "Пользователь подтвердил"),  # Требует interaction
@@ -778,12 +775,12 @@ def check_gate(gate: str) -> GateResult:
             ("structure_ok", "DDD структура соблюдена"),
         ],
         "REVIEW_OK": [
-            ("artifact_exists", "ai-docs/docs/reports/review-*.md"),
+            ("artifact_exists", "ai-docs/docs/_validation/review-*.md"),
             ("no_blockers", "Нет Blocker замечаний"),
             ("no_critical", "Нет Critical замечаний"),
         ],
         "QA_PASSED": [
-            ("artifact_exists", "ai-docs/docs/reports/qa-*.md"),
+            ("artifact_exists", "ai-docs/docs/_validation/qa-*.md"),
             ("tests_pass", "Все тесты проходят"),
             ("coverage_ok", "Coverage >= 75%"),
             ("no_critical_bugs", "Нет Critical/Blocker багов"),
@@ -821,7 +818,7 @@ AI-агент **НЕ МОЖЕТ** перейти к следующему эта�
 
 ```
 ❌ PRD_READY не пройден → /aidd-plan заблокирована
-❌ PLAN_APPROVED не пройден → /aidd-generate заблокирована
+❌ PLAN_APPROVED не пройден → /aidd-code заблокирована
 ```
 
 ### 2. Откат и восстановление при неудаче (P-004)
@@ -878,11 +875,11 @@ def handle_gate_failure(gate: str, reason: str) -> Action:
 
 **Пример восстановления**:
 ```
-/aidd-finalize
+/aidd-validate
 → ❌ Step 2/4: Testing failed (Coverage 68%, требуется ≥75%)
 → Автоматическое действие: Добавить тесты
 [AI добавляет тесты]
-/aidd-finalize
+/aidd-validate
 → ✓ Step 2/4: Testing passed (Coverage 76%)
 → ✓ Step 3/4: Validation → ALL_GATES_PASSED
 → ✓ Step 4/4: Deploy → DEPLOYED
@@ -946,17 +943,17 @@ def handle_gate_failure(gate: str, reason: str) -> Action:
 |--------|--------|---------|
 | Цель | Новый MVP с нуля | Добавление фичи |
 | Этап 2 | Анализ требований | Анализ кода |
-| Этап 3 | `/aidd-plan` — полная архитектура | `/aidd-feature-plan` — план интеграции |
+| Этап 3 | `/aidd-plan` — полная архитектура | `/aidd-plan-feature` — план интеграции |
 | Артефакты | Новый `ai-docs/` | Интеграция в существующий |
 | Тесты | Создание с нуля | Расширение существующих |
 
 ### Полный процесс FEATURE
 
 ```
-Этап 1: /aidd-idea "Добавить email уведомления"
+Этап 1: /aidd-analyze "Добавить email уведомления"
 ├── Аналитик создаёт FEATURE_PRD
 ├── Фокус на интеграции с существующим функционалом
-└── Артефакт: ai-docs/docs/prd/notifications-prd.md
+└── Артефакт: ai-docs/docs/_analysis/notifications.md
 
 Этап 2: /aidd-research
 ├── Исследователь анализирует СУЩЕСТВУЮЩИЙ код
@@ -964,13 +961,13 @@ def handle_gate_failure(gate: str, reason: str) -> Action:
 ├── Определяет зависимости
 └── Рекомендации по интеграции
 
-Этап 3: /aidd-feature-plan (НЕ /aidd-plan!)
-├── Архитектор создаёт план ИНТЕГРАЦИИ
+Этап 3: /aidd-plan-feature (НЕ /aidd-plan!)
+├── Планировщик создаёт план ИНТЕГРАЦИИ
 ├── Учитывает существующие компоненты
 ├── Минимизирует изменения в существующем коде
-└── Артефакт: ai-docs/docs/plans/notifications-plan.md
+└── Артефакт: ai-docs/docs/_plans/features/notifications.md
 
-Этап 4: /aidd-generate
+Этап 4: /aidd-code
 ├── Реализатор создаёт новый код
 ├── Интегрирует с существующими сервисами
 ├── Расширяет, не ломает
@@ -986,7 +983,7 @@ def handle_gate_failure(gate: str, reason: str) -> Action:
 cd booking-service/
 
 # 2. Описываем фичу
-/aidd-idea "Добавить систему email уведомлений.
+/aidd-analyze "Добавить систему email уведомлений.
 При бронировании отправлять подтверждение на email.
 При отмене — уведомление об отмене."
 
@@ -998,15 +995,15 @@ cd booking-service/
 # - Существующие интеграции
 
 # 4. План фичи (НЕ /aidd-plan!)
-/aidd-feature-plan
+/aidd-plan-feature
 # Агент создаёт план интеграции:
 # - NotificationService в booking_api
 # - Интеграция с BookingService
 # - Новый HTTP клиент для email
 
 # 4-5. Генерация и финализация
-/aidd-generate
-/aidd-finalize
+/aidd-code
+/aidd-validate
 ```
 
 ### Маркеры режима FEATURE
@@ -1037,14 +1034,14 @@ AI определяет режим FEATURE при наличии:
 │  main                                                                   │
 │    │                                                                    │
 │    ├──┬── feature/F042-oauth ─────────────────────────▶ merge           │
-│    │  │     ├── /aidd-idea      ← Создаёт ветку автоматически          │
+│    │  │     ├── /aidd-analyze      ← Создаёт ветку автоматически          │
 │    │  │     ├── /aidd-research                                          │
 │    │  │     ├── /aidd-plan                                              │
-│    │  │     ├── /aidd-generate                                          │
-│    │  │     └── /aidd-finalize ───────────▶ DEPLOYED                   │
+│    │  │     ├── /aidd-code                                          │
+│    │  │     └── /aidd-validate ───────────▶ DEPLOYED                   │
 │    │  │                                                                 │
 │    │  └── feature/F043-payments ──────────────────────▶ merge           │
-│    │        ├── /aidd-idea      (параллельно с F042!)                  │
+│    │        ├── /aidd-analyze      (параллельно с F042!)                  │
 │    │        └── ...                                                     │
 │    ▼                                                                    │
 │  main (с обеими фичами)                                                 │
@@ -1104,7 +1101,7 @@ def get_current_feature_context(state: dict) -> tuple[str, dict] | None:
 
 ### Завершение фичи
 
-После `/aidd-finalize` фича переносится из `active_pipelines` в `features_registry`:
+После `/aidd-validate` фича переносится из `active_pipelines` в `features_registry`:
 
 ```python
 def complete_feature_deploy(state: dict, fid: str):
@@ -1119,7 +1116,7 @@ def complete_feature_deploy(state: dict, fid: str):
 
 > **Completion Report** — единый документ, который AI ОБЯЗАН читать при работе
 > с deployed фичами. Содержит: ADR, scope changes, known limitations, метрики.
-> **Путь**: `reports/{date}_{FID}_{slug}-completion.md`
+> **Путь**: `_validation/{date}_{FID}_{slug}.md`
 
 ### Git-хелперы
 
@@ -1145,14 +1142,14 @@ python3 scripts/git_helpers.py merge F042
 ### Именование версий
 
 ```
-ai-docs/docs/prd/
-├── booking-prd.md           ← Текущая версия
-├── booking-prd-v1.md        ← Архив v1
-└── booking-prd-v2.md        ← Архив v2
+ai-docs/docs/_analysis/
+├── booking.md               ← Текущая версия
+├── booking-v1.md            ← Архив v1
+└── booking-v2.md            ← Архив v2
 
-ai-docs/docs/architecture/
-├── booking-plan.md          ← Текущая версия
-└── booking-plan-v1.md       ← Архив v1
+ai-docs/docs/_plans/mvp/
+├── booking.md               ← Текущая версия
+└── booking-v1.md            ← Архив v1
 ```
 
 ### Когда создавать версию
@@ -1200,10 +1197,10 @@ def version_artifact(artifact_path: Path) -> Path:
 ```json
 {
   "artifacts": {
-    "prd": "ai-docs/docs/prd/booking-prd.md",
+    "prd": "ai-docs/docs/_analysis/booking.md",
     "prd_history": [
-      "ai-docs/docs/prd/booking-prd-v1.md",
-      "ai-docs/docs/prd/booking-prd-v2.md"
+      "ai-docs/docs/_analysis/booking-v1.md",
+      "ai-docs/docs/_analysis/booking-v2.md"
     ]
   }
 }

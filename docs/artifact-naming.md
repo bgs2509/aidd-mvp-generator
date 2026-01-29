@@ -1,6 +1,6 @@
 # Система именования артефактов
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 > **Назначение**: Спецификация системы именования и организации артефактов в долгосрочных проектах.
@@ -245,8 +245,8 @@ ai-docs/docs/FEATURES.md
 ### 4.3 Автоматическое обновление
 
 FEATURES.md обновляется автоматически командами:
-- `/aidd-idea` — добавляет новую фичу (IN_PROGRESS)
-- `/aidd-finalize` — обновляет статус на DEPLOYED
+- `/aidd-analyze` — добавляет новую фичу (IN_PROGRESS)
+- `/aidd-validate` — обновляет статус на DEPLOYED
 - При ручном архивировании — переносит в "Архивные"
 
 ---
@@ -523,10 +523,10 @@ ls -t ai-docs/docs/**/*.md | head -10
 
 ```bash
 # Все PRD
-ls ai-docs/docs/prd/
+ls ai-docs/docs/_analysis/
 
 # Все планы
-ls ai-docs/docs/architecture/ ai-docs/docs/plans/
+ls ai-docs/docs/_plans/mvp/ ai-docs/docs/_plans/features/
 ```
 
 ### 8.4 Через frontmatter (для AI)
@@ -569,12 +569,12 @@ def find_artifacts_by_feature(docs_dir: Path, fid: str) -> list[Path]:
 
 **До:**
 ```
-ai-docs/docs/prd/booking-prd.md
+ai-docs/docs/_analysis/booking-prd.md
 ```
 
 **После:**
 ```
-ai-docs/docs/prd/2024-02-20_F002_table-booking-prd.md
+ai-docs/docs/_analysis/2024-02-20_F002_table-booking-prd.md
 ```
 
 **Добавленный frontmatter:**
@@ -597,7 +597,7 @@ migrated_at: 2024-12-23
 
 ## 10. Интеграция с командами
 
-### 10.1 /aidd-idea
+### 10.1 /aidd-analyze
 
 ```python
 # При создании PRD:
@@ -609,7 +609,7 @@ migrated_at: 2024-12-23
 6. Обновить FEATURES.md
 ```
 
-### 10.2 /aidd-plan и /aidd-feature-plan
+### 10.2 /aidd-plan и /aidd-plan-feature
 
 ```python
 # При создании плана:
@@ -619,7 +619,7 @@ migrated_at: 2024-12-23
 4. Сохранить путь в active_pipelines[FID].artifacts.plan
 ```
 
-### 10.3 /aidd-finalize
+### 10.3 /aidd-validate
 
 ```python
 # При успешном деплое (шаг 4: Deploy):

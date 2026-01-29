@@ -5,13 +5,13 @@ tools: Read, Glob, Grep, Bash, Edit, Write
 model: inherit
 ---
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 # Роль: Валидатор
 
 > **Назначение**: Полный цикл проверки качества и деплоя (этапы 7-8 (валидация и деплой)).
-> Объединяет роли Reviewer, QA и Validator в одной команде `/aidd-finalize`.
+> Объединяет роли Reviewer, QA и Validator в одной команде `/aidd-validate`.
 >
 > **v2.1**: Поддерживает два режима — Full (production-ready) и Quick (DRAFT документация).
 
@@ -63,7 +63,7 @@ model: inherit
 
 **Результат**: DRAFT документация без гарантии работоспособности. Позволяет переключиться на другую фичу.
 
-> **Детальные инструкции**: См. `.claude/commands/aidd-finalize.md` → секция "Режим: Быстрый"
+> **Детальные инструкции**: См. `.claude/commands/aidd-validate.md` → секция "Режим: Быстрый"
 
 ---
 
@@ -72,8 +72,8 @@ model: inherit
 | Источник | Описание |
 |----------|----------|
 | Все артефакты проекта | `ai-docs/`, `services/` (в целевом проекте) |
-| PRD документ | `ai-docs/docs/prd/{name}-prd.md` (в целевом проекте) |
-| Architecture Plan | `ai-docs/docs/architecture/{name}-plan.md` (в целевом проекте) |
+| PRD документ | `ai-docs/docs/_analysis/{name}-prd.md` (в целевом проекте) |
+| Architecture Plan | `ai-docs/docs/_plans/mvp/{name}-plan.md` (в целевом проекте) |
 | Research | `ai-docs/docs/research/{name}-research.md` (в целевом проекте) |
 | `.pipeline-state.json` | Состояние пайплайна (v2) |
 
@@ -83,7 +83,7 @@ model: inherit
 
 | Артефакт | Путь | Описание |
 |----------|------|----------|
-| **Completion Report** | `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md` | Единый итоговый отчёт |
+| **Completion Report** | `ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}-completion.md` | Единый итоговый отчёт |
 
 **Completion Report содержит**:
 - Executive Summary — что сделано (2-3 предложения)
@@ -121,9 +121,9 @@ AI агент **НИКОГДА НЕ ДОЛЖЕН**:
 
 ## Инструкции
 
-> **Главный документ**: `.claude/commands/aidd-finalize.md`
+> **Главный документ**: `.claude/commands/aidd-validate.md`
 >
-> Все детальные инструкции по выполнению 4 шагов находятся в команде `/aidd-finalize`.
+> Все детальные инструкции по выполнению 4 шагов находятся в команде `/aidd-validate`.
 > Этот файл описывает общие принципы роли Валидатора.
 
 ### Общий алгоритм (4 шага)
@@ -294,7 +294,7 @@ make logs
 
 | Документ | Описание |
 |----------|----------|
-| **`.claude/commands/aidd-finalize.md`** | **Главная инструкция (все 4 шага)** |
+| **`.claude/commands/aidd-validate.md`** | **Главная инструкция (все 4 шага)** |
 | `templates/documents/completion-report-template.md` | Шаблон Completion Report |
 | `conventions.md` | Соглашения о коде |
 | `knowledge/quality/quality-cascade.md` | Quality Cascade (QC-1...QC-17) |
@@ -307,11 +307,11 @@ make logs
 
 ## Примеры
 
-### Пример выполнения /aidd-finalize
+### Пример выполнения /aidd-validate
 
 ```bash
 # Пользователь
-/aidd-finalize
+/aidd-validate
 
 # AI Валидатор
 ✓ Предусловия: IMPLEMENT_OK пройдены
@@ -370,7 +370,7 @@ $ make health
 
 ✓ Базовые сценарии работают
 ✓ Completion Report создан:
-  ai-docs/docs/reports/2024-12-23_F001_table-booking-completion.md
+  ai-docs/docs/_validation/2024-12-23_F001_table-booking-completion.md
 
 → DEPLOYED ✓
 

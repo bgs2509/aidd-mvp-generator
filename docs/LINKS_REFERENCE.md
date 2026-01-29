@@ -1,6 +1,6 @@
 # Справочник ссылок AIDD-MVP Generator
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 > **Назначение**: Централизованный справочник всех важных ссылок в генераторе.
@@ -34,8 +34,8 @@
 |------|------|------|
 | [.claude/agents/analyst.md](../.claude/agents/analyst.md) | Аналитик | 1 |
 | [.claude/agents/researcher.md](../.claude/agents/researcher.md) | Исследователь | 2 |
-| [.claude/agents/architect.md](../.claude/agents/architect.md) | Архитектор | 3 |
-| [.claude/agents/implementer.md](../.claude/agents/implementer.md) | Реализатор | 4 |
+| [.claude/agents/planner.md](../.claude/agents/planner.md) | Архитектор | 3 |
+| [.claude/agents/coder.md](../.claude/agents/coder.md) | Реализатор | 4 |
 | [.claude/agents/validator.md](../.claude/agents/validator.md) | Валидатор | 5 |
 
 **Вспомогательные библиотеки инструкций** (используются внутри Валидатора):
@@ -51,11 +51,11 @@
 
 | Файл | Команда | Этап |
 |------|---------|------|
-| [.claude/commands/aidd-idea.md](../.claude/commands/aidd-idea.md) | `/aidd-idea` | 1 |
+| [.claude/commands/aidd-analyze.md](../.claude/commands/aidd-analyze.md) | `/aidd-analyze` | 1 |
 | [.claude/commands/aidd-research.md](../.claude/commands/aidd-research.md) | `/aidd-research` | 2 |
 | [.claude/commands/aidd-plan.md](../.claude/commands/aidd-plan.md) | `/aidd-plan` | 3 (CREATE) |
-| [.claude/commands/aidd-feature-plan.md](../.claude/commands/aidd-feature-plan.md) | `/aidd-feature-plan` | 3 (FEATURE) |
-| [.claude/commands/aidd-generate.md](../.claude/commands/aidd-generate.md) | `/aidd-generate` | 4 |
+| [.claude/commands/aidd-plan-feature.md](../.claude/commands/aidd-plan-feature.md) | `/aidd-plan-feature` | 3 (FEATURE) |
+| [.claude/commands/aidd-code.md](../.claude/commands/aidd-code.md) | `/aidd-code` | 4 |
 | [.claude/commands/aidd-validate.md](../.claude/commands/aidd-validate.md) | `/aidd-validate` | 7 |
 
 ---
@@ -64,11 +64,11 @@
 
 | Шаблон (в генераторе) | Создаёт (в целевом проекте) |
 |-----------------------|-----------------------------|
-| [templates/documents/prd-template.md](../templates/documents/prd-template.md) | `ai-docs/docs/prd/{name}-prd.md` |
+| [templates/documents/prd-template.md](../templates/documents/prd-template.md) | `ai-docs/docs/_analysis/{name}-prd.md` |
 | [templates/documents/research-report-template.md](../templates/documents/research-report-template.md) | `ai-docs/docs/research/{name}-research.md` |
-| [templates/documents/architecture-template.md](../templates/documents/architecture-template.md) | `ai-docs/docs/architecture/{name}-plan.md` |
-| [templates/documents/feature-plan-template.md](../templates/documents/feature-plan-template.md) | `ai-docs/docs/plans/{feature}-plan.md` |
-| [templates/documents/completion-report-template.md](../templates/documents/completion-report-template.md) | `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md` |
+| [templates/documents/architecture-template.md](../templates/documents/architecture-template.md) | `ai-docs/docs/_plans/mvp/{name}-plan.md` |
+| [templates/documents/feature-plan-template.md](../templates/documents/feature-plan-template.md) | `ai-docs/docs/_plans/features/{feature}-plan.md` |
+| [templates/documents/completion-report-template.md](../templates/documents/completion-report-template.md) | `ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}-completion.md` |
 | [templates/documents/pipeline-state-template.json](../templates/documents/pipeline-state-template.json) | `.pipeline-state.json` |
 
 ---

@@ -1,6 +1,6 @@
 # Pipeline State v2: Параллельные пайплайны
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 > **Версия**: 2.0
@@ -229,7 +229,7 @@ def check_gate_with_alias(fid: str, gate: str) -> bool:
 
 ## Жизненный цикл фичи
 
-### 1. Создание (`/aidd-idea`)
+### 1. Создание (`/aidd-analyze`)
 
 ```python
 def create_feature(title: str) -> str:
@@ -265,7 +265,7 @@ def create_feature(title: str) -> str:
 2. Отметить ворота как пройденные
 3. Записать путь к артефакту
 
-### 3. Завершение (`/aidd-finalize`)
+### 3. Завершение (`/aidd-validate`)
 
 ```python
 def complete_feature(fid: str) -> None:

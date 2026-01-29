@@ -103,10 +103,10 @@ templates/documents/                  →    ai-docs/docs/
 
 | Шаблон генератора | Результат в целевом проекте | Этап |
 |-------------------|----------------------------|------|
-| `prd-template.md` | `ai-docs/docs/prd/{name}-prd.md` | 1 (Идея) |
+| `prd-template.md` | `ai-docs/docs/_analysis/{name}-prd.md` | 1 (Идея) |
 | `research-report-template.md` | `ai-docs/docs/research/{name}-research.md` | 2 (Исследование) |
-| `architecture-template.md` | `ai-docs/docs/architecture/{name}-plan.md` | 3 (Архитектура) |
-| `feature-plan-template.md` | `ai-docs/docs/plans/{feature}-plan.md` | 3 (FEATURE) |
+| `architecture-template.md` | `ai-docs/docs/_plans/mvp/{name}-plan.md` | 3 (Архитектура) |
+| `feature-plan-template.md` | `ai-docs/docs/_plans/features/{feature}-plan.md` | 3 (FEATURE) |
 | `rtm-template.md` | `ai-docs/docs/rtm.md` | 7 (Валидация) |
 | `pipeline-state-template.json` | `.pipeline-state.json` | 1 (Идея) |
 
@@ -168,8 +168,8 @@ templates/
 │   └── github-actions/        ─────→  .github/workflows/
 │
 └── templates/documents/
-    ├── prd-template.md        ─────→  ai-docs/docs/prd/*.md
-    ├── architecture-template.md ───→  ai-docs/docs/architecture/*.md
+    ├── prd-template.md        ─────→  ai-docs/docs/_analysis/*.md
+    ├── architecture-template.md ───→  ai-docs/docs/_plans/mvp/*.md
     └── rtm-template.md        ─────→  ai-docs/docs/rtm.md
 ```
 

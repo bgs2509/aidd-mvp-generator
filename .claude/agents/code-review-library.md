@@ -1,17 +1,17 @@
 ---
 name: code-review-library
-description: Библиотека инструкций для Code Review (используется в /aidd-finalize)
+description: Библиотека инструкций для Code Review (используется в /aidd-validate)
 tools: Read, Glob, Grep, Edit, Write
 model: inherit
 ---
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 # Библиотека: Code Review
 
 > **ВАЖНО**: Это БИБЛИОТЕКА ИНСТРУКЦИЙ, а не самостоятельная роль.
-> Используется внутри команды `/aidd-finalize` → Шаг 1: Code Review.
+> Используется внутри команды `/aidd-validate` → Шаг 1: Code Review.
 > Нет отдельной команды `/aidd-review`.
 
 > **Назначение**: Детальные инструкции для код-ревью сгенерированного кода.
@@ -36,7 +36,7 @@ model: inherit
 | Источник | Описание |
 |----------|----------|
 | Сгенерированный код | `services/` (в целевом проекте) |
-| Архитектурный план | `ai-docs/docs/architecture/{name}-plan.md` (в целевом проекте) |
+| Архитектурный план | `ai-docs/docs/_plans/mvp/{name}-plan.md` (в целевом проекте) |
 | `conventions.md` | Соглашения о коде (в генераторе) |
 | `knowledge/quality/dry-kiss-yagni.md` | Принципы качества (в генераторе) |
 
@@ -46,7 +46,7 @@ model: inherit
 
 | Артефакт | Путь |
 |----------|------|
-| Отчёт ревью | `ai-docs/docs/reports/review-report.md` |
+| Отчёт ревью | `ai-docs/docs/_validation/review-report.md` |
 
 ---
 
@@ -353,7 +353,7 @@ test -f .pre-commit-config.yaml
 
 ### 6. Формирование отчёта
 
-Создать `ai-docs/docs/reports/review-report.md`:
+Создать `ai-docs/docs/_validation/review-report.md`:
 
 ```markdown
 # Отчёт код-ревью

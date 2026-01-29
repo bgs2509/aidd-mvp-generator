@@ -41,7 +41,7 @@
 | 2 | Stage 5, 6, 7 | Обновлено на Stage 0-5 (6 этапов) | ✅ |
 | 3 | Роли "Ревьюер", "QA" | Заменены на "Валидатор" | ✅ |
 | 4 | Команды без `/aidd-` | Добавлен префикс ко всем командам | ✅ |
-| 5 | Удаленные команды | Заменены на `/aidd-finalize` | ✅ |
+| 5 | Удаленные команды | Заменены на `/aidd-validate` | ✅ |
 | 6 | Устаревшие ворота | `REVIEW_OK`, `DEPLOYED` | ✅ |
 | 7 | `rtm-template.md` | Упоминания удалены | ✅ |
 | 8 | naming v3 | Добавлена документация v2/v3 | ✅ |
@@ -94,8 +94,8 @@
 | 1 | 13-15 | Упоминает 3 несуществующих шаблона: `review-report-template.md`, `qa-report-template.md`, `validation-report-template.md` | Заменены на `completion-report-template.md` |
 | 2 | 13-15 | Упоминает Stage 5, 6, 7 | Пайплайн имеет 6 этапов (0-5) |
 | 3 | 13-15 | Упоминает роли "Ревьюер", "QA" | Заменены на "Валидатор" |
-| 4 | 25-90 | Команды без префикса `/aidd-`: `/idea`, `/research`, `/plan`, `/review`, `/test`, `/validate` | Все команды с префиксом: `/aidd-idea`, `/aidd-research`, etc. |
-| 5 | 67-90 | Команды `/review`, `/test`, `/validate` (старая) | Удалены, заменены на `/aidd-finalize` (или `/aidd-validate` как алиас) |
+| 4 | 25-90 | Команды без префикса `/aidd-`: `/idea`, `/research`, `/plan`, `/review`, `/test`, `/validate` | Все команды с префиксом: `/aidd-analyze`, `/aidd-research`, etc. |
+| 5 | 67-90 | Команды `/review`, `/test`, `/validate` (старая) | Удалены, заменены на `/aidd-validate` (или `/aidd-validate` как алиас) |
 | 6 | 144-146 | Ворота `REVIEW_PASSED`, `DEPLOY_READY` | Заменены на `REVIEW_OK`, `DEPLOYED` |
 | 7 | 16, 96 | Упоминает `rtm-template.md` | Файл **отсутствует** в `templates/documents/` |
 | 8 | 98-119 | Структура `ai-docs/` не учитывает naming v3 | Нет упоминания `_analysis/`, `_plans/mvp/`, `_plans/features/`, `_validation/` |
@@ -117,7 +117,7 @@
 cp templates/documents/README.md templates/documents/README.md.backup
 
 # Обновить README с учетом:
-# - Consolidation Stage 5 (/aidd-finalize вместо /review, /test, /validate, /deploy)
+# - Consolidation Stage 5 (/aidd-validate вместо /review, /test, /validate, /deploy)
 # - Migration Mode v2.4 (naming_version v2/v3)
 # - Completion Report вместо 3 отдельных отчетов
 # - Правильные ворота (REVIEW_OK, DEPLOYED)
@@ -156,9 +156,9 @@ grep -E "review-report-template|qa-report-template|validation-report-template" t
 .claude/agents/
 ├── analyst.md              (роль 1)
 ├── researcher.md           (роль 2)
-├── architect.md            (роль 3)
+├── planner.md            (роль 3)
 ├── planner.md              (алиас для architect)
-├── implementer.md          (роль 4)
+├── coder.md          (роль 4)
 ├── coder.md                (алиас для implementer)
 ├── validator.md            (роль 5 — консолидирует reviewer + qa)
 ├── code-review-library.md  (библиотека инструкций для validator)
@@ -222,7 +222,7 @@ grep -n "ролей AI-агентов\|агенты" CLAUDE.md | grep -E "7 ро
 | Количество ролей | Smoke Test 6 | 9 файлов (5 ролей + 2 алиаса + 2 библиотеки) | 9 файлов | ✅ |
 | Количество команд | Smoke Test 7 | 11 файлов (6 уникальных команд) | 11 файлов | ✅ |
 | Количество ворот | Smoke Test 10 | 10 ворот (6 main + 3 sub-gates + 1 Quick) | 10 ворот | ✅ |
-| Consolidation Stage 5 | Objective 6, таблица | `/aidd-finalize` консолидирует 4 шага | Да | ✅ |
+| Consolidation Stage 5 | Objective 6, таблица | `/aidd-validate` консолидирует 4 шага | Да | ✅ |
 | Migration Mode | Smoke Test 13 | Поддержка naming_version v2/v3 | Да | ✅ |
 | Шаблоны документов | Smoke Test 9 | 6 основных шаблонов + completion-report | Да | ✅ |
 
@@ -272,9 +272,9 @@ EXPECTED_GATES=(
 
 **Objective 6** (строки 606-667): Таблица команд и ворот
 ```markdown
-| 5 | Quality & Deploy | /aidd-finalize → /aidd-validate | validator | **Full**: REVIEW_OK → QA_PASSED → ALL_GATES_PASSED → DEPLOYED <br> **Quick**: DOCUMENTED |
+| 5 | Quality & Deploy | /aidd-validate → /aidd-validate | validator | **Full**: REVIEW_OK → QA_PASSED → ALL_GATES_PASSED → DEPLOYED <br> **Quick**: DOCUMENTED |
 ```
-✅ **Правильно** — описывает оба режима /aidd-finalize
+✅ **Правильно** — описывает оба режима /aidd-validate
 
 **Objective 7** (строки 670-758): Роли и консолидация
 ```bash
@@ -284,7 +284,7 @@ EXPECTED_GATES=(
 
 **Objective 8** (строки 760-829): Ворота
 ```bash
-echo "Примечание: Quick mode (/aidd-finalize --mode=quick) минует sub-gates (REVIEW_OK/QA_PASSED/ALL_GATES_PASSED)"
+echo "Примечание: Quick mode (/aidd-validate --mode=quick) минует sub-gates (REVIEW_OK/QA_PASSED/ALL_GATES_PASSED)"
 echo "             и завершается воротами DOCUMENTED вместо DEPLOYED (draft completion report)"
 ```
 ✅ **Правильно** — описывает оба режима Stage 5
@@ -319,7 +319,7 @@ DEPRECATED=(
 
 | Дата | Изменение | Влияние на audit template |
 |------|-----------|---------------------------|
-| 2026-01-19 | **Consolidation**: объединение 4 команд Stage 5 в `/aidd-finalize` | ✅ Учтено (Objective 6, 7, 12) |
+| 2026-01-19 | **Consolidation**: объединение 4 команд Stage 5 в `/aidd-validate` | ✅ Учтено (Objective 6, 7, 12) |
 | 2026-01-19 | **Migration Mode v2.4**: добавление naming_version support | ✅ Учтено (Smoke Test 13, Objective 2) |
 | 2026-01-19 | Удаление файлов `/aidd-review.md`, `/aidd-test.md`, `/aidd-validate.md` (старая), `/aidd-deploy.md` | ✅ Учтено (Smoke Test 7) |
 | 2026-01-19 | Создание библиотек `code-review-library.md`, `testing-library.md` | ✅ Учтено (Smoke Test 6) |

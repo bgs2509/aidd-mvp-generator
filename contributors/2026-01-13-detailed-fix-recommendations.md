@@ -1,6 +1,6 @@
 # Детальные рекомендации по исправлению расхождений
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 **Дата**: 2026-01-13
@@ -366,15 +366,15 @@ Completion Report | `reports/{date}_{FID}_{slug}-completion.md`
 
 **aidd-deploy.md** (строки 237, 390, 466):
 ```
-ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md
+ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}-completion.md
 ```
 
 #### Анализ:
 
 Все остальные артефакты в workflow.md указаны с полным путём `ai-docs/docs/...`:
-- PRD: `ai-docs/docs/prd/{name}-prd.md` (строка 264)
+- PRD: `ai-docs/docs/_analysis/{name}-prd.md` (строка 264)
 - Research: `ai-docs/docs/research/{name}-research.md` (строка 293)
-- Plan: `ai-docs/docs/architecture/{name}-plan.md` (строка 321)
+- Plan: `ai-docs/docs/_plans/mvp/{name}-plan.md` (строка 321)
 
 Completion Report должен быть согласован с остальными.
 
@@ -387,7 +387,7 @@ Completion Report должен быть согласован с остальны
 | **Completion Report** | `reports/{date}_{FID}_{slug}-completion.md` | Итоговый отчёт |
 
 # Стало:
-| **Completion Report** | `ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md` | Итоговый отчёт |
+| **Completion Report** | `ai-docs/docs/_validation/{date}_{FID}_{slug}-completion.md` | Итоговый отчёт |
 ```
 
 **Обоснование**: Для согласованности со всеми остальными артефактами.
@@ -434,11 +434,11 @@ Completion Report должен быть согласован с остальны
 | Строка | Было | Стало |
 |--------|------|-------|
 | 53 | `commands/init.md` | `commands/aidd-init.md` |
-| 87 | `commands/idea.md` | `commands/aidd-idea.md` |
+| 87 | `commands/idea.md` | `commands/aidd-analyze.md` |
 | 119 | `commands/research.md` | `commands/aidd-research.md` |
 | 151 | `commands/plan.md` | `commands/aidd-plan.md` |
-| 167 | `commands/feature-plan.md` | `commands/aidd-feature-plan.md` |
-| 199 | `commands/generate.md` | `commands/aidd-generate.md` |
+| 167 | `commands/feature-plan.md` | `commands/aidd-plan-feature.md` |
+| 199 | `commands/generate.md` | `commands/aidd-code.md` |
 | 234 | `commands/review.md` | `commands/aidd-review.md` |
 | 263 | `commands/test.md` | `commands/aidd-test.md` |
 | 292 | `commands/validate.md` | `commands/aidd-validate.md` |
@@ -448,8 +448,8 @@ Completion Report должен быть согласован с остальны
 
 | Строка | Было | Стало |
 |--------|------|-------|
-| 473 | `commands/idea.md` | `commands/aidd-idea.md` |
-| 512 | `commands/generate.md` | `commands/aidd-generate.md` |
+| 473 | `commands/idea.md` | `commands/aidd-analyze.md` |
+| 512 | `commands/generate.md` | `commands/aidd-code.md` |
 
 #### 3. workflow.md — HTTP-only добавлен
 

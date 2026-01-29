@@ -3,7 +3,7 @@ allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md), Bash(gi
 description: Создать план реализации новой фичи в существующем проекте
 ---
 
-**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
+**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
 
 
 > ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
@@ -31,7 +31,7 @@ description: Создать план реализации новой фичи в
 
 ## Описание
 
-Команда `/aidd-feature-plan` создаёт план реализации новой функции
+Команда `/aidd-plan-feature` создаёт план реализации новой функции
 в существующем проекте. Учитывает текущую архитектуру и паттерны.
 
 > **VERIFY BEFORE ACT**: Перед созданием файлов/директорий проверьте их
@@ -41,7 +41,7 @@ description: Создать план реализации новой фичи в
 
 ## Агент
 
-**Архитектор** (`.claude/agents/architect.md`)
+**Архитектор** (`.claude/agents/planner.md`)
 
 ---
 
@@ -56,8 +56,8 @@ description: Создать план реализации новой фичи в
 |---|------|---------|-------|
 | 1 | `./CLAUDE.md` | Если существует | Специфика проекта |
 | 2 | `./.pipeline-state.json` | Обязательно | Режим, этап, ворота |
-| 3 | `./ai-docs/docs/prd/*.md` | Обязательно | Требования фичи |
-| 4 | `./ai-docs/docs/architecture/*.md` | Обязательно | Существующая архитектура |
+| 3 | `./ai-docs/docs/_analysis/*.md` | Обязательно | Требования фичи |
+| 4 | `./ai-docs/docs/_plans/mvp/*.md` | Обязательно | Существующая архитектура |
 | 5 | `./services/` | Обязательно | Существующий код |
 
 ### Фаза 2: Автомиграция и предусловия
@@ -80,7 +80,7 @@ description: Создать план реализации новой фичи в
 | 6 | `.aidd/CLAUDE.md` | Правила фреймворка |
 | 7 | `.aidd/workflow.md` | Процесс и ворота |
 | 8 | `.aidd/.claude/commands/feature-plan.md` | Этот файл |
-| 9 | `.aidd/.claude/agents/architect.md` | Инструкции роли |
+| 9 | `.aidd/.claude/agents/planner.md` | Инструкции роли |
 
 ### Фаза 4: База знаний
 
@@ -117,12 +117,12 @@ def check_feature_plan_preconditions() -> tuple[str, dict] | None:
     # 1. Проверить и мигрировать state
     state = ensure_v2_state()  # см. knowledge/pipeline/automigration.md
     if not state:
-        print("❌ Пайплайн не инициализирован → /aidd-idea")
+        print("❌ Пайплайн не инициализирован → /aidd-analyze")
         return None
 
     # 2. Проверить режим
     if state.get("mode") != "FEATURE":
-        print("⚠️  Режим CREATE — используйте /aidd-plan вместо /aidd-feature-plan")
+        print("⚠️  Режим CREATE — используйте /aidd-plan вместо /aidd-plan-feature")
         return None
 
     # 3. Определить FID по текущей git ветке
@@ -136,7 +136,7 @@ def check_feature_plan_preconditions() -> tuple[str, dict] | None:
     # 4. Проверить PRD_READY
     if not gates.get("PRD_READY", {}).get("passed"):
         print(f"❌ Ворота PRD_READY не пройдены для {fid}")
-        print("   → Сначала выполните /aidd-idea")
+        print("   → Сначала выполните /aidd-analyze")
         return None
 
     # 5. Проверить RESEARCH_DONE
@@ -155,7 +155,7 @@ def check_feature_plan_preconditions() -> tuple[str, dict] | None:
 
 | Артефакт | Путь (v2) | Путь (v3) |
 |----------|-----------|-----------|
-| План фичи | `ai-docs/docs/plans/{YYYY-MM-DD}_{FID}_{slug}-plan.md` | `ai-docs/docs/_plans/features/{YYYY-MM-DD}_{FID}_{slug}.md` |
+| План фичи | `ai-docs/docs/_plans/features/{YYYY-MM-DD}_{FID}_{slug}-plan.md` | `ai-docs/docs/_plans/features/{YYYY-MM-DD}_{FID}_{slug}.md` |
 
 > **Примечание (v2.4+)**:
 > - **v2** (по умолчанию): Старая структура `plans/`, имя с дублированием `{name}-plan.md`
@@ -264,7 +264,7 @@ artifact_path = f"{folder}/{filename}"
 
 ## Отличия от /plan
 
-| Аспект | /aidd-plan (CREATE) | /aidd-feature-plan (FEATURE) |
+| Аспект | /aidd-plan (CREATE) | /aidd-plan-feature (FEATURE) |
 |--------|----------------|-------------------------|
 | Цель | Полная архитектура системы | План интеграции фичи |
 | Артефакт (v2) | `architecture/{name}-plan.md` | `plans/{feature}-plan.md` |
@@ -347,7 +347,7 @@ artifact_path = f"{folder}/{filename}"
 > ⚠️ AI ОБЯЗАН создать TodoWrite с этими пунктами.
 
 - [ ] 🔴 Feature Plan создан в правильной папке:
-  - v2: `ai-docs/docs/plans/{feature}-plan.md`
+  - v2: `ai-docs/docs/_plans/features/{feature}-plan.md`
   - v3: `ai-docs/docs/_plans/features/{feature}.md`
 - [ ] 🔴 Интеграция с существующим кодом описана
 - [ ] 🔴 **Пользователь утвердил план** ← КРИТИЧЕСКИ ВАЖНО

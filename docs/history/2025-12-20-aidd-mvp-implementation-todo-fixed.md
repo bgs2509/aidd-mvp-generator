@@ -190,7 +190,7 @@ description: Создать PRD документ из идеи пользова�
 1. Прочитай CLAUDE.md и conventions.md для понимания контекста
 2. Проанализируй идею пользователя
 3. Задай уточняющие вопросы если нужно
-4. Создай файл ai-docs/docs/prd/{name}-prd.md по шаблону
+4. Создай файл ai-docs/docs/_analysis/{name}-prd.md по шаблону
 
 ## Шаблон PRD
 
@@ -221,8 +221,8 @@ description: Создать PRD документ из идеи пользова�
 |---|--------|------|----------|----------|------------|
 | 1.3.1 | [x] | `.claude/agents/analyst.md` | analyst | Аналитик — создание PRD | — |
 | 1.3.2 | [x] | `.claude/agents/researcher.md` | researcher | Исследователь — анализ кода | — |
-| 1.3.3 | [x] | `.claude/agents/architect.md` | architect | Архитектор — проектирование | — |
-| 1.3.4 | [x] | `.claude/agents/implementer.md` | implementer | Реализатор — генерация кода | — |
+| 1.3.3 | [x] | `.claude/agents/planner.md` | architect | Архитектор — проектирование | — |
+| 1.3.4 | [x] | `.claude/agents/coder.md` | implementer | Реализатор — генерация кода | — |
 | 1.3.5 | [x] | `.claude/agents/reviewer.md` | reviewer | Ревьюер — код-ревью | — |
 | 1.3.6 | [x] | `.claude/agents/qa.md` | qa | QA — тестирование | — |
 | 1.3.7 | [x] | `.claude/agents/validator.md` | validator | Валидатор — проверка ворот | — |

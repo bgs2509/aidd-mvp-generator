@@ -114,11 +114,11 @@
 
 | Артефакт | Статус | Путь |
 |----------|--------|------|
-| PRD | ✓ | ai-docs/docs/prd/{name}-prd.md |
-| Architecture | ✓ | ai-docs/docs/architecture/{name}-arch.md |
-| Implementation Plan | ✓ | ai-docs/docs/plans/{name}-plan.md |
-| Review Report | ✓ | ai-docs/docs/reports/review-report.md |
-| QA Report | ✓ | ai-docs/docs/reports/qa-report.md |
+| PRD | ✓ | ai-docs/docs/_analysis/{name}-prd.md |
+| Architecture | ✓ | ai-docs/docs/_plans/mvp/{name}-arch.md |
+| Implementation Plan | ✓ | ai-docs/docs/_plans/features/{name}-plan.md |
+| Review Report | ✓ | ai-docs/docs/_validation/review-report.md |
+| QA Report | ✓ | ai-docs/docs/_validation/qa-report.md |
 | RTM | ✓ | ai-docs/docs/rtm.md |
 
 ### 3.2 Код
@@ -258,8 +258,8 @@
 
 ### B. Отчёты этапов
 
-- Review Report: ai-docs/docs/reports/review-report.md
-- QA Report: ai-docs/docs/reports/qa-report.md
+- Review Report: ai-docs/docs/_validation/review-report.md
+- QA Report: ai-docs/docs/_validation/qa-report.md
 
 ### C. CI/CD логи
 
@@ -299,10 +299,10 @@ BLOCKED:
 ## Путь сохранения
 
 ```
-ai-docs/docs/reports/validation-report.md
+ai-docs/docs/_validation/validation-report.md
 
 Или с датой:
-ai-docs/docs/reports/{YYYY-MM-DD}-validation-report.md
+ai-docs/docs/_validation/{YYYY-MM-DD}-validation-report.md
 ```
 
 ---

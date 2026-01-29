@@ -40,7 +40,7 @@
 - [ ] Критерии приёмки определены для Must
 - [ ] Нет блокирующих открытых вопросов
 
-Артефакт: ai-docs/docs/prd/{name}-prd.md
+Артефакт: ai-docs/docs/_analysis/{name}-prd.md
 ```
 
 ### 2. RESEARCH_DONE
@@ -66,8 +66,8 @@
 - [ ] Трассировка требований есть
 
 Артефакты:
-- ai-docs/docs/architecture/{name}-arch.md
-- ai-docs/docs/plans/{name}-plan.md
+- ai-docs/docs/_plans/mvp/{name}-arch.md
+- ai-docs/docs/_plans/features/{name}-plan.md
 ```
 
 ### 4. IMPLEMENT_OK
@@ -92,7 +92,7 @@
 - [ ] Нет критических проблем
 - [ ] Автоматические проверки проходят
 
-Артефакт: ai-docs/docs/reports/review-report.md
+Артефакт: ai-docs/docs/_validation/review-report.md
 ```
 
 ### 6. QA_PASSED
@@ -105,7 +105,7 @@
 - [ ] Нет критических дефектов
 - [ ] CI pipeline проходит
 
-Артефакт: ai-docs/docs/reports/qa-report.md
+Артефакт: ai-docs/docs/_validation/qa-report.md
 ```
 
 ### 7. ALL_GATES_PASSED
@@ -117,7 +117,7 @@
 - [ ] Все артефакты на месте
 - [ ] Нет открытых блокирующих вопросов
 
-Артефакт: ai-docs/docs/reports/validation-report.md
+Артефакт: ai-docs/docs/_validation/validation-report.md
 ```
 
 ### 8. DEPLOYED
@@ -141,16 +141,16 @@
 # Проверить наличие всех артефактов
 
 # PRD
-ls ai-docs/docs/prd/
+ls ai-docs/docs/_analysis/
 
 # Архитектура
-ls ai-docs/docs/architecture/
+ls ai-docs/docs/_plans/mvp/
 
 # План
-ls ai-docs/docs/plans/
+ls ai-docs/docs/_plans/features/
 
 # Отчёты
-ls ai-docs/docs/reports/
+ls ai-docs/docs/_validation/
 
 # RTM
 cat ai-docs/docs/rtm.md
@@ -177,7 +177,7 @@ cat ai-docs/docs/rtm.md
 # Псевдокод валидации
 
 def validate_prd_ready():
-    prd = read("ai-docs/docs/prd/*.md")
+    prd = read("ai-docs/docs/_analysis/*.md")
     assert prd.has_all_sections()
     assert prd.requirements_have_ids()
     assert prd.no_blocking_questions()
@@ -191,7 +191,7 @@ def validate_implement_ok():
     return True
 
 def validate_qa_passed():
-    qa_report = read("ai-docs/docs/reports/qa-report.md")
+    qa_report = read("ai-docs/docs/_validation/qa-report.md")
     assert qa_report.status in ["PASSED", "PASSED_WITH_ISSUES"]
     assert qa_report.coverage >= 75
     assert qa_report.all_tests_pass()

@@ -1,6 +1,6 @@
 # План исправления реальных проблем (сгруппировано по файлам)
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 **Дата**: 2026-01-20
@@ -101,12 +101,12 @@ rg -n "\\[.*\\]\\(prd\\/|\\[.*\\]\\(_analysis\\/" .claude/commands/aidd-analyze.
 
 **Исправление**:
 ```bash
-# Создать алиас /aidd-finalize
-cp .claude/commands/aidd-finalize.md .claude/commands/aidd-deploy.md
+# Создать алиас /aidd-validate
+cp .claude/commands/aidd-validate.md .claude/commands/aidd-deploy.md
 
 # Обновить заголовок
 perl -0pi -e "s/# aidd-finalize/# aidd-deploy/g" .claude/commands/aidd-deploy.md
-perl -0pi -e "s/\\/aidd-finalize/\\/aidd-deploy/g" .claude/commands/aidd-deploy.md
+perl -0pi -e "s/\\/aidd-validate/\\/aidd-deploy/g" .claude/commands/aidd-deploy.md
 ```
 
 **Верификация**:
@@ -119,7 +119,7 @@ head -n 1 .claude/commands/aidd-deploy.md | grep "aidd-deploy"
 
 ---
 
-### 4. `.claude/commands/aidd-idea.md`
+### 4. `.claude/commands/aidd-analyze.md`
 
 **Проблемы**: 1 HIGH
 
@@ -129,15 +129,15 @@ head -n 1 .claude/commands/aidd-deploy.md | grep "aidd-deploy"
 
 **Исправление**:
 ```bash
-sed -n '391p' .claude/commands/aidd-idea.md
+sed -n '391p' .claude/commands/aidd-analyze.md
 
 perl -0pi -e "s/\\[PRD\\]\\(prd\\/2024-12-23_F001_table-booking-prd\\.md\\)/[PRD пример](..\\\/..\\\/ai-docs\\\/docs\\\/prd\\\/2024-12-23_F001_table-booking-prd.md)/g" \
-  .claude/commands/aidd-idea.md
+  .claude/commands/aidd-analyze.md
 ```
 
 **Верификация**:
 ```bash
-rg -n "prd\\/2024-12-23_F001" .claude/commands/aidd-idea.md
+rg -n "prd\\/2024-12-23_F001" .claude/commands/aidd-analyze.md
 # Ожидание: правильный путь с ../../ai-docs/docs/
 ```
 
@@ -237,10 +237,10 @@ rg -n "_analysis\\/2024-12-23" .claude/commands/aidd-research.md
 
 **Исправление**:
 ```bash
-cp .claude/commands/aidd-finalize.md .claude/commands/aidd-review.md
+cp .claude/commands/aidd-validate.md .claude/commands/aidd-review.md
 
 perl -0pi -e "s/# aidd-finalize/# aidd-review/g" .claude/commands/aidd-review.md
-perl -0pi -e "s/\\/aidd-finalize/\\/aidd-review/g" .claude/commands/aidd-review.md
+perl -0pi -e "s/\\/aidd-validate/\\/aidd-review/g" .claude/commands/aidd-review.md
 ```
 
 **Верификация**:
@@ -262,10 +262,10 @@ perl -0pi -e "s/\\/aidd-finalize/\\/aidd-review/g" .claude/commands/aidd-review.
 
 **Исправление**:
 ```bash
-cp .claude/commands/aidd-finalize.md .claude/commands/aidd-test.md
+cp .claude/commands/aidd-validate.md .claude/commands/aidd-test.md
 
 perl -0pi -e "s/# aidd-finalize/# aidd-test/g" .claude/commands/aidd-test.md
-perl -0pi -e "s/\\/aidd-finalize/\\/aidd-test/g" .claude/commands/aidd-test.md
+perl -0pi -e "s/\\/aidd-validate/\\/aidd-test/g" .claude/commands/aidd-test.md
 ```
 
 **Верификация**:
@@ -399,9 +399,9 @@ sed -n '51,54p' docs/LINKS_REFERENCE.md
 **Дополнительное действие**: Если ссылки указывают на `aidd-finalize.md`, обновить:
 ```bash
 # Заменить на новые команды
-perl -0pi -e "s/aidd-finalize\\.md#review/aidd-review.md/g" docs/LINKS_REFERENCE.md
-perl -0pi -e "s/aidd-finalize\\.md#test/aidd-test.md/g" docs/LINKS_REFERENCE.md
-perl -0pi -e "s/aidd-finalize\\.md#deploy/aidd-deploy.md/g" docs/LINKS_REFERENCE.md
+perl -0pi -e "s/aidd-validate\\.md#review/aidd-review.md/g" docs/LINKS_REFERENCE.md
+perl -0pi -e "s/aidd-validate\\.md#test/aidd-test.md/g" docs/LINKS_REFERENCE.md
+perl -0pi -e "s/aidd-validate\\.md#deploy/aidd-deploy.md/g" docs/LINKS_REFERENCE.md
 ```
 
 **Верификация**:
@@ -631,8 +631,8 @@ perl -0pi -e "s/COMMANDS=\\(init idea/COMMANDS=(aidd-init aidd-idea/g; s/generat
 
 # 3. Создать команды
 for cmd in review test deploy; do
-  cp .claude/commands/aidd-finalize.md .claude/commands/aidd-$cmd.md
-  perl -0pi -e "s/aidd-finalize/aidd-$cmd/g" .claude/commands/aidd-$cmd.md
+  cp .claude/commands/aidd-validate.md .claude/commands/aidd-$cmd.md
+  perl -0pi -e "s/aidd-validate/aidd-$cmd/g" .claude/commands/aidd-$cmd.md
 done
 
 # Верификация CRITICAL
@@ -650,7 +650,7 @@ ls .claude/commands/aidd-{review,test,deploy}.md &>/dev/null && echo "✅ C-COMM
 
 **2.1. Slash-команды** (21 мин):
 - .claude/commands/aidd-analyze.md (5 мин)
-- .claude/commands/aidd-idea.md (3 мин)
+- .claude/commands/aidd-analyze.md (3 мин)
 - .claude/commands/aidd-init.md (3 мин)
 - .claude/commands/aidd-plan.md (3 мин)
 - .claude/commands/aidd-research.md (3 мин)
@@ -680,7 +680,7 @@ perl -0pi -e "s/\\[PRD\\]\\(prd\\//[PRD](..\\\/..\\\/ai-docs\\\/docs\\\/prd\\//g
 
 # aidd-idea.md
 perl -0pi -e "s/\\[PRD\\]\\(prd\\/2024-12-23/[PRD пример](..\\\/..\\\/ai-docs\\\/docs\\\/prd\\\/2024-12-23/g" \
-  .claude/commands/aidd-idea.md
+  .claude/commands/aidd-analyze.md
 
 # aidd-init.md
 perl -0pi -e "s/PIPELINE-TREE\\.md/NAVIGATION.md/g" \
@@ -705,7 +705,7 @@ perl -0pi -e "s/\\[.*templates\\/project\\/CLAUDE\\.md\\]\\(.*\\)/\`templates\\/
   docs/INDEX.md
 
 # docs/LINKS_REFERENCE.md
-perl -0pi -e "s/aidd-finalize\\.md#review/aidd-review.md/g; s/aidd-finalize\\.md#test/aidd-test.md/g; s/aidd-finalize\\.md#deploy/aidd-deploy.md/g" \
+perl -0pi -e "s/aidd-validate\\.md#review/aidd-review.md/g; s/aidd-validate\\.md#test/aidd-test.md/g; s/aidd-validate\\.md#deploy/aidd-deploy.md/g" \
   docs/LINKS_REFERENCE.md
 
 # docs/artifact-naming.md
@@ -909,8 +909,8 @@ perl -0pi -e "s/COMMANDS=\\(init idea research plan feature-plan generate review
 
 # C-COMMANDS-1
 for cmd in review test deploy; do
-  cp .claude/commands/aidd-finalize.md ".claude/commands/aidd-$cmd.md"
-  perl -0pi -e "s/aidd-finalize/aidd-$cmd/g" ".claude/commands/aidd-$cmd.md"
+  cp .claude/commands/aidd-validate.md ".claude/commands/aidd-$cmd.md"
+  perl -0pi -e "s/aidd-validate/aidd-$cmd/g" ".claude/commands/aidd-$cmd.md"
 done
 
 echo "✅ Фаза 1 завершена"
@@ -919,7 +919,7 @@ echo -e "\n🟠 Фаза 2: HIGH (60 мин)..."
 
 # Slash-команды
 perl -0pi -e "s/\\[PRD\\]\\(prd\\//[PRD](..\\\/..\\\/ai-docs\\\/docs\\\/prd\\//g" .claude/commands/aidd-analyze.md
-perl -0pi -e "s/\\[PRD\\]\\(prd\\/2024-12-23/[PRD](..\\\/..\\\/ai-docs\\\/docs\\\/prd\\\/2024-12-23/g" .claude/commands/aidd-idea.md
+perl -0pi -e "s/\\[PRD\\]\\(prd\\/2024-12-23/[PRD](..\\\/..\\\/ai-docs\\\/docs\\\/prd\\\/2024-12-23/g" .claude/commands/aidd-analyze.md
 perl -0pi -e "s/PIPELINE-TREE/NAVIGATION/g" .claude/commands/aidd-init.md
 
 # Docs

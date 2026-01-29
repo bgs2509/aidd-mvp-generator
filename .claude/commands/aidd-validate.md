@@ -3,7 +3,7 @@ allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md), Bash(gi
 description: Quality & Deploy — полный цикл проверки качества и деплоя
 ---
 
-**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
+**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
 
 
 > ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
@@ -31,7 +31,7 @@ description: Quality & Deploy — полный цикл проверки кач�
 
 ## Описание
 
-Команда `/aidd-finalize` завершает разработку фичи. Поддерживает **два режима**:
+Команда `/aidd-validate` завершает разработку фичи. Поддерживает **два режима**:
 
 ### 1. Полный режим (Рекомендуется)
 
@@ -69,7 +69,7 @@ description: Quality & Deploy — полный цикл проверки кач�
 ### Единственный артефакт (оба режима)
 
 ```
-ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md
+ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}-completion.md
 ```
 
 Completion Report содержит:
@@ -105,8 +105,8 @@ Completion Report содержит:
 |---|------|---------|-------|
 | 1 | `./CLAUDE.md` | Если существует | Специфика проекта |
 | 2 | `./.pipeline-state.json` | Обязательно | Состояние, ворота |
-| 3 | `./ai-docs/docs/prd/*.md` | Обязательно | Требования для верификации |
-| 4 | `./ai-docs/docs/architecture/*.md` | Обязательно | План для сверки |
+| 3 | `./ai-docs/docs/_analysis/*.md` | Обязательно | Требования для верификации |
+| 4 | `./ai-docs/docs/_plans/mvp/*.md` | Обязательно | План для сверки |
 | 5 | `./services/` | Обязательно | Код для проверки |
 | 6 | `./docker-compose.yml` | Обязательно | Инфраструктура |
 | 7 | `./Makefile` | Обязательно | Команды сборки |
@@ -161,7 +161,7 @@ def check_finalize_preconditions() -> tuple[str, dict] | None:
     # 1. Проверить и мигрировать state
     state = ensure_v2_state()  # см. knowledge/pipeline/automigration.md
     if not state:
-        print("❌ Пайплайн не инициализирован → /aidd-idea")
+        print("❌ Пайплайн не инициализирован → /aidd-analyze")
         return None
 
     # 2. Определить FID по текущей git ветке
@@ -175,7 +175,7 @@ def check_finalize_preconditions() -> tuple[str, dict] | None:
     # 3. Проверить IMPLEMENT_OK
     if not gates.get("IMPLEMENT_OK", {}).get("passed"):
         print(f"❌ Ворота IMPLEMENT_OK не пройдены для {fid}")
-        print("   → Сначала выполните /aidd-generate")
+        print("   → Сначала выполните /aidd-code")
         return None
 
     print(f"✓ Фича {fid}: {pipeline.get('title')}")
@@ -263,7 +263,7 @@ def execute_finalize(fid: str, pipeline: dict, mode: str):
 
 | Артефакт | Путь (v2) | Путь (v3) |
 |----------|-----------|-----------|
-| **Completion Report** | `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md` | `ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}.md` |
+| **Completion Report** | `ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}-completion.md` | `ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}.md` |
 
 > **Примечание (v2.4+)**:
 > - **v2** (по умолчанию): Старая структура `reports/`, имя с дублированием `{name}-completion.md`
@@ -497,7 +497,7 @@ def create_draft_completion_report(fid: str, pipeline: dict):
     )
 
     # Сохранить
-    path = f"ai-docs/docs/reports/{date}_{fid}_{slug}-completion.md"
+    path = f"ai-docs/docs/_validation/{date}_{fid}_{slug}-completion.md"
     write_file(path, content)
 
     return path
@@ -594,7 +594,7 @@ log_db_operation(...)
 - [ ] Нет SQL injection (используется ORM/параметризованные запросы)
 - [ ] Нет XSS (escaping в шаблонах, если есть)
 
-**Если найдены проблемы** → вернуться к `/aidd-generate` для исправления.
+**Если найдены проблемы** → вернуться к `/aidd-code` для исправления.
 
 **Если всё ОК** → отметить `REVIEW_OK`:
 
@@ -637,11 +637,11 @@ pytest --cov=src --cov-report=html
 
 #### 2.3. Верификация требований
 
-Прочитать PRD (`ai-docs/docs/prd/{name}-prd.md`) и проверить:
+Прочитать PRD (`ai-docs/docs/_analysis/{name}-prd.md`) и проверить:
 - [ ] Все FR-* требования имеют тесты
 - [ ] Acceptance criteria выполнены
 
-**Если тесты не проходят** → вернуться к `/aidd-generate` для исправления.
+**Если тесты не проходят** → вернуться к `/aidd-code` для исправления.
 
 **Если всё ОК** → отметить `QA_PASSED`:
 
@@ -764,7 +764,7 @@ curl -X POST http://localhost:8000/api/v1/bookings \
 
 **КРИТИЧЕСКИ ВАЖНО**: Этот шаг ОБЯЗАТЕЛЕН.
 
-**Путь**: `ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md`
+**Путь**: `ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}-completion.md`
 
 **Использовать шаблон**: `.aidd/templates/documents/completion-report-template.md`
 
@@ -886,7 +886,7 @@ Architecture Decision Records — ключевые решения с обосн�
 
 ```bash
 # Путь к файлу
-completion_path="ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md"
+completion_path="ai-docs/docs/_validation/{date}_{FID}_{slug}-completion.md"
 
 # Использовать шаблон
 template_path=".aidd/templates/documents/completion-report-template.md"
@@ -989,7 +989,7 @@ docker-compose logs -f
 # ✓ Step 2: Testing (Coverage 82%) → QA_PASSED
 # ✓ Step 3: Validation → ALL_GATES_PASSED
 # ✓ Step 4: Deploy → DEPLOYED
-# ✓ Completion Report: ai-docs/docs/reports/2024-12-23_F001_table-booking-completion.md
+# ✓ Completion Report: ai-docs/docs/_validation/2024-12-23_F001_table-booking-completion.md
 # ✓ Фича перенесена в features_registry
 ```
 
@@ -1006,12 +1006,12 @@ docker-compose logs -f
 
 # Результат:
 # ✓ Step 0: Static Analysis (mypy, ruff, bandit)
-# ✓ Completion Report (DRAFT): ai-docs/docs/reports/2024-12-23_F042_oauth-auth-completion.md
+# ✓ Completion Report (DRAFT): ai-docs/docs/_validation/2024-12-23_F042_oauth-auth-completion.md
 # ✓ Gate: DOCUMENTED (не DEPLOYED)
 # ⚠️ Фича остаётся в active_pipelines (не production-ready)
 
 # Теперь можно начать новую фичу
-/aidd-idea "Добавить систему платежей"
+/aidd-analyze "Добавить систему платежей"
 ```
 
 ---
@@ -1156,7 +1156,7 @@ def verify_completion_report_exists(fid: str, slug: str, naming_version: str = "
     if naming_version == "v3":
         completion_path = Path(f"ai-docs/docs/_validation/{date}_{fid}_{slug}.md")
     else:  # v2 (по умолчанию)
-        completion_path = Path(f"ai-docs/docs/reports/{date}_{fid}_{slug}-completion.md")
+        completion_path = Path(f"ai-docs/docs/_validation/{date}_{fid}_{slug}-completion.md")
 
     if not completion_path.exists():
         print("❌ BLOCKER: Completion Report не создан!")
@@ -1172,7 +1172,7 @@ def verify_completion_report_exists(fid: str, slug: str, naming_version: str = "
     return True
 
 
-# Использование в конце /aidd-finalize:
+# Использование в конце /aidd-validate:
 if not verify_completion_report_exists(fid, slug, naming_version):
     raise RuntimeError("BLOCKER: Completion Report не создан! Команда не может быть завершена.")
 ```

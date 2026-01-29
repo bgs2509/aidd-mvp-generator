@@ -1,6 +1,6 @@
 # Git интеграция для параллельных пайплайнов
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 > **Версия**: Pipeline State v2
@@ -79,17 +79,17 @@ feature/{FID}-{slug}
 │  main                                                                   │
 │    │                                                                    │
 │    ├──┬── feature/F042-oauth ─────────────────────────▶ merge           │
-│    │  │     ├── /aidd-idea      ← Создаёт ветку автоматически          │
+│    │  │     ├── /aidd-analyze      ← Создаёт ветку автоматически          │
 │    │  │     ├── /aidd-research                                          │
 │    │  │     ├── /aidd-plan                                              │
-│    │  │     ├── /aidd-generate                                          │
-│    │  │     └── /aidd-finalize ─────────────▶ DEPLOYED                   │
+│    │  │     ├── /aidd-code                                          │
+│    │  │     └── /aidd-validate ─────────────▶ DEPLOYED                   │
 │    │  │                                                                 │
 │    │  └── feature/F043-payments ──────────────────────▶ merge           │
-│    │        ├── /aidd-idea      (параллельно с F042!)                  │
+│    │        ├── /aidd-analyze      (параллельно с F042!)                  │
 │    │        ├── /aidd-research                                          │
 │    │        ├── ...                                                     │
-│    │        └── /aidd-finalize ─────────────▶ DEPLOYED                   │
+│    │        └── /aidd-validate ─────────────▶ DEPLOYED                   │
 │    │                                                                    │
 │    ▼                                                                    │
 │  main (с обеими фичами)                                                 │
@@ -101,9 +101,9 @@ feature/{FID}-{slug}
 
 ## Автосоздание веток
 
-### При выполнении `/aidd-idea`
+### При выполнении `/aidd-analyze`
 
-Команда `/aidd-idea` автоматически создаёт ветку:
+Команда `/aidd-analyze` автоматически создаёт ветку:
 
 ```python
 # Из aidd-idea.md, функция create_feature():
@@ -117,11 +117,11 @@ print(f"✓ Создана ветка: {branch}")
 ### Результат
 
 ```bash
-$ /aidd-idea "Добавить OAuth авторизацию"
+$ /aidd-analyze "Добавить OAuth авторизацию"
 
 ✓ Создана ветка: feature/F042-oauth-auth
 ✓ Фича F042 добавлена в active_pipelines
-✓ PRD создан: ai-docs/docs/prd/2025-12-25_F042_oauth-auth-prd.md
+✓ PRD создан: ai-docs/docs/_analysis/2025-12-25_F042_oauth-auth-prd.md
 ```
 
 ---
@@ -146,7 +146,7 @@ def get_current_feature_context(state: dict) -> tuple[str, dict] | None:
 ```bash
 # Ветка feature/F042-oauth → автоматически F042
 $ git checkout feature/F042-oauth
-$ /aidd-generate
+$ /aidd-code
 # → Генерирует код для F042
 
 # Ветка main, одна активная фича → используется она
@@ -156,7 +156,7 @@ $ /aidd-research
 
 # Ветка main, несколько фич → ошибка
 $ git checkout main
-$ /aidd-generate
+$ /aidd-code
 # → ❌ Несколько активных фич. Переключитесь на ветку фичи:
 #   git checkout feature/F042-oauth
 #   git checkout feature/F043-payments
@@ -219,7 +219,7 @@ $ python3 scripts/git_helpers.py conflicts F042 F043
 
 ### Завершение фичи
 
-После прохождения всех ворот и `/aidd-finalize`:
+После прохождения всех ворот и `/aidd-validate`:
 
 ```bash
 # 1. Завершить фичу (перемещает в features_registry)
@@ -299,8 +299,8 @@ def merge_pipeline_states(main_state, feature_state, fid):
 ### Автоматическая проверка
 
 AI автоматически проверяет конфликты при:
-- Запуске `/aidd-generate` (если есть другие активные фичи)
-- Запуске `/aidd-finalize` (перед завершением)
+- Запуске `/aidd-code` (если есть другие активные фичи)
+- Запуске `/aidd-validate` (перед завершением)
 
 ### Ручная проверка
 
@@ -393,7 +393,7 @@ git checkout feature/F042-oauth-auth
 ```bash
 git checkout feature/F042-oauth-auth
 # или
-/aidd-generate --feature=F042  # если поддерживается
+/aidd-code --feature=F042  # если поддерживается
 ```
 
 ### Ветка не существует

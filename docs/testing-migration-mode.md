@@ -1,6 +1,6 @@
 # Testing Migration Mode (v2.4)
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 > **Цель**: Протестировать работу migration mode и убедиться что оба варианта команд (v2 и v3) работают корректно.
@@ -27,20 +27,20 @@ claude
 
 **Ожидаемый результат**:
 - Создан `.pipeline-state.json` с `naming_version: "v2"`
-- Созданы папки: `ai-docs/docs/prd/`, `ai-docs/docs/research/`, `ai-docs/docs/architecture/`, `ai-docs/docs/reports/`
+- Созданы папки: `ai-docs/docs/_analysis/`, `ai-docs/docs/research/`, `ai-docs/docs/_plans/mvp/`, `ai-docs/docs/_validation/`
 
 ### Шаг 3: Выполнение команд (старые названия)
 
 ```bash
-/aidd-idea "Тестовый проект для бронирования"
+/aidd-analyze "Тестовый проект для бронирования"
 /aidd-research
 /aidd-plan
 ```
 
 **Ожидаемый результат**:
-- ✅ `ai-docs/docs/prd/{date}_{FID}_{slug}-prd.md` создан
+- ✅ `ai-docs/docs/_analysis/{date}_{FID}_{slug}-prd.md` создан
 - ✅ `ai-docs/docs/research/{date}_{FID}_{slug}-research.md` создан
-- ✅ `ai-docs/docs/architecture/{date}_{FID}_{slug}-plan.md` создан
+- ✅ `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}-plan.md` создан
 - Имена файлов содержат дублирование (`-prd`, `-research`, `-plan`)
 
 ### Шаг 4: Выполнение команд (новые названия)
@@ -63,7 +63,7 @@ git checkout -b feature/F002-test
 
 - [ ] `.pipeline-state.json` содержит `naming_version: "v2"`
 - [ ] Папки v2 созданы (`prd/`, `research/`, `architecture/`, `plans/`, `reports/`)
-- [ ] Старые команды работают (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`)
+- [ ] Старые команды работают (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`)
 - [ ] Новые команды работают (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`)
 - [ ] Артефакты в правильных папках (v2)
 - [ ] Имена файлов с дублированием (`-prd.md`, `-plan.md`)
@@ -125,9 +125,9 @@ claude
 ```bash
 # Создать новую фичу
 git checkout -b feature/F002-test
-/aidd-idea "Добавить уведомления"
+/aidd-analyze "Добавить уведомления"
 /aidd-research
-/aidd-feature-plan
+/aidd-plan-feature
 ```
 
 **Ожидаемый результат**:
@@ -141,7 +141,7 @@ git checkout -b feature/F002-test
 - [ ] `.pipeline-state.json` содержит `naming_version: "v3"`
 - [ ] Папки v3 созданы (`_analysis/`, `_research/`, `_plans/mvp/`, `_plans/features/`, `_validation/`)
 - [ ] Новые команды работают (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`)
-- [ ] Старые команды работают (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`)
+- [ ] Старые команды работают (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`)
 - [ ] Артефакты в правильных папках (v3)
 - [ ] Имена файлов без дублирования (`.md` вместо `-prd.md`)
 
@@ -167,7 +167,7 @@ cat .pipeline-state.json | grep naming_version
 # Должно быть: "naming_version": "v2"
 
 # Проверить имена файлов
-ls ai-docs/docs/prd/
+ls ai-docs/docs/_analysis/
 # Должны быть файлы с дублированием: *-prd.md
 ```
 
@@ -264,19 +264,19 @@ git checkout -b feature/F003-test-after-migration
 cd test-v2-project  # или test-v3-project
 
 # Использовать старую команду
-/aidd-idea "Фича 1"
+/aidd-analyze "Фича 1"
 
 # Использовать новую команду
 /aidd-research
 
 # Использовать старую команду
-/aidd-feature-plan
+/aidd-plan-feature
 
 # Использовать новую команду
 /aidd-code
 
 # Использовать старую команду
-/aidd-finalize
+/aidd-validate
 ```
 
 **Ожидаемый результат**:
@@ -351,7 +351,7 @@ cd test-v2-project  # или test-v3-project
 
 ### Команды
 
-- [ ] Все старые команды работают (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`)
+- [ ] Все старые команды работают (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`)
 - [ ] Все новые команды работают (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`)
 - [ ] Смешанное использование работает
 

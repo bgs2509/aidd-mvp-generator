@@ -1,6 +1,6 @@
 # Сравнительная матрица аудитов документации AIDD-MVP Generator
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 **Дата**: 2026-01-20
@@ -158,7 +158,7 @@ aidd-validate.md
 | **H-LINKS-14** | Неверный путь к `target-project-structure.md` | `docs/history/2025-12-21-documentation-master-todo.md:260` | ❌ Не упомянут | ✅ **H15** | ✅ **РЕАЛЬНАЯ** | Должно быть `../target-project-structure.md` |
 | **H-LINKS-15** | Ссылки в `aidd-analyze.md` | `.claude/commands/aidd-analyze.md:419` | ❌ Не упомянут | ✅ **H2** (из H2-H16) | ✅ **РЕАЛЬНАЯ** | `prd/2024-12-23_F001_table-booking-prd.md` |
 | **H-LINKS-16** | Ссылки в `aidd-analyze.md` | `.claude/commands/aidd-analyze.md:426` | ❌ Не упомянут | ✅ **H2** (из H2-H16) | ✅ **РЕАЛЬНАЯ** | `_analysis/2024-12-23_F001_table-booking.md` |
-| **H-LINKS-17** | Ссылки в `aidd-idea.md` | `.claude/commands/aidd-idea.md:391` | ❌ Не упомянут | ✅ **H3** (из H2-H16) | ✅ **РЕАЛЬНАЯ** | `prd/2024-12-23_F001_table-booking-prd.md` |
+| **H-LINKS-17** | Ссылки в `aidd-idea.md` | `.claude/commands/aidd-analyze.md:391` | ❌ Не упомянут | ✅ **H3** (из H2-H16) | ✅ **РЕАЛЬНАЯ** | `prd/2024-12-23_F001_table-booking-prd.md` |
 | **H-LINKS-18** | Ссылки в отчёте Codex | `contributors/2025-01-13-comprehensive-audit-report-codex.md:300` | ❌ Не упомянут | ✅ **H4** (из H2-H16) | ✅ **РЕАЛЬНАЯ** | `../../CLAUDE.md` избыточный путь |
 | **H-LINKS-19** | Ссылки в отчёте Codex | `contributors/2025-01-13-comprehensive-audit-report-codex.md:309` | ❌ Не упомянут | ✅ **H5** (из H2-H16) | ✅ **РЕАЛЬНАЯ** | `../target-project-structure.md` неверный путь |
 
@@ -387,9 +387,9 @@ $ rg -n "TODO|FIXME|XXX|HACK|WIP" -g "*.md" . | wc -l
 perl -0pi -e "s/6-этапный/9-этапный/g; s/6 этапов \\(0-5\\)/9 этапов (0-8)/g" CLAUDE.md
 
 # 2. Создать алиасы команд (C-COMMANDS-1)
-cp .claude/commands/aidd-finalize.md .claude/commands/aidd-review.md
-cp .claude/commands/aidd-finalize.md .claude/commands/aidd-test.md
-cp .claude/commands/aidd-finalize.md .claude/commands/aidd-deploy.md
+cp .claude/commands/aidd-validate.md .claude/commands/aidd-review.md
+cp .claude/commands/aidd-validate.md .claude/commands/aidd-test.md
+cp .claude/commands/aidd-validate.md .claude/commands/aidd-deploy.md
 
 # 3. Исправить audit-шаблон (C-COMMANDS-2)
 perl -0pi -e "s/COMMANDS=\\(init idea/COMMANDS=(aidd-init aidd-idea/g" \

@@ -1,6 +1,6 @@
 # Комплексный аудит документации AIDD-MVP Generator
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 **Дата выполнения**: 2026-01-20
@@ -132,7 +132,7 @@ grep -rno '\[.*\](.*\.md' . --include="*.md"
    - → `../.claude/commands/aidd-deploy.md` (удалён)
    - → `../.claude/commands/aidd-review.md` (удалён)
    - → `../.claude/commands/aidd-test.md` (удалён)
-   - **Причина**: Команды удалены в v2, заменены на `/aidd-finalize`
+   - **Причина**: Команды удалены в v2, заменены на `/aidd-validate`
 
 5. **`docs/audit/templates/comprehensive-audit.md:1541`** → `../../../workflow.md`
    - **Причина**: Неверный относительный путь
@@ -252,7 +252,7 @@ grep -rno '\[.*\](.*\.md' . --include="*.md"
 | `IMPLEMENT_OK` | ✅ | ✅ | ✅ |
 | `DEPLOYED` | ✅ | ✅ | ✅ |
 
-**Примечание**: `/aidd-finalize` имеет **4 дополнительных промежуточных ворот** (REVIEW_OK, QA_PASSED, ALL_GATES_PASSED) — это статусы внутри этапа 5, а не отдельные этапы.
+**Примечание**: `/aidd-validate` имеет **4 дополнительных промежуточных ворот** (REVIEW_OK, QA_PASSED, ALL_GATES_PASSED) — это статусы внутри этапа 5, а не отдельные этапы.
 
 ---
 
@@ -266,7 +266,7 @@ grep -rno '\[.*\](.*\.md' . --include="*.md"
 
 **Команды**:
 - ✅ `/aidd-plan` (CREATE mode)
-- ✅ `/aidd-feature-plan` / `/aidd-plan-feature` (FEATURE mode)
+- ✅ `/aidd-plan-feature` / `/aidd-plan-feature` (FEATURE mode)
 
 ---
 

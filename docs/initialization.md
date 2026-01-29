@@ -1,6 +1,6 @@
 # Алгоритм инициализации AI-агента
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 > **Назначение**: Единый источник истины для порядка чтения файлов при запуске любой команды.
@@ -11,7 +11,7 @@
 
 ## Обзор
 
-При запуске любой slash-команды (`/aidd-idea`, `/aidd-research`, `/aidd-plan` и т.д.) AI-агент
+При запуске любой slash-команды (`/aidd-analyze`, `/aidd-research`, `/aidd-plan` и т.д.) AI-агент
 ОБЯЗАН следовать 4-фазному алгоритму инициализации.
 
 ```
@@ -80,7 +80,7 @@
 
 | Нужно узнать | Источник | Файл |
 |--------------|----------|------|
-| Требования к фиче X | ЦП | `./ai-docs/docs/prd/X-prd.md` |
+| Требования к фиче X | ЦП | `./ai-docs/docs/_analysis/X-prd.md` |
 | Как писать FastAPI | Фреймворк | `.aidd/knowledge/services/fastapi.md` |
 | Какие сервисы уже есть | ЦП | `./services/` |
 | Шаблон нового сервиса | Фреймворк | `.aidd/templates/services/` |
@@ -133,11 +133,11 @@ else:
 
 ```python
 existing_artifacts = {
-    "prd": glob("./ai-docs/docs/prd/*-prd.md"),
-    "plan": glob("./ai-docs/docs/architecture/*-plan.md"),
-    "feature_plans": glob("./ai-docs/docs/plans/*-plan.md"),
+    "prd": glob("./ai-docs/docs/_analysis/*-prd.md"),
+    "plan": glob("./ai-docs/docs/_plans/mvp/*-plan.md"),
+    "feature_plans": glob("./ai-docs/docs/_plans/features/*-plan.md"),
     "services": exists("./services/"),
-    "reports": glob("./ai-docs/docs/reports/*.md"),
+    "reports": glob("./ai-docs/docs/_validation/*.md"),
 }
 ```
 
@@ -184,12 +184,12 @@ if context.mode == "FEATURE" or len(state.get("features_registry", {})) > 0:
 
 | Команда | Требуемые ворота | Если не пройдены |
 |---------|-----------------|------------------|
-| `/aidd-idea` | — | — (первый этап) |
+| `/aidd-analyze` | — | — (первый этап) |
 | `/aidd-research` | `PRD_READY` | "Сначала выполните /idea" |
 | `/aidd-plan` | `PRD_READY`, `RESEARCH_DONE` | "Сначала выполните /research" |
-| `/aidd-feature-plan` | `PRD_READY`, `RESEARCH_DONE` | "Сначала выполните /research" |
-| `/aidd-generate` | `PLAN_APPROVED` | "Сначала утвердите план" |
-| `/aidd-finalize` | `IMPLEMENT_OK` | "Сначала выполните /generate" |
+| `/aidd-plan-feature` | `PRD_READY`, `RESEARCH_DONE` | "Сначала выполните /research" |
+| `/aidd-code` | `PLAN_APPROVED` | "Сначала утвердите план" |
+| `/aidd-validate` | `IMPLEMENT_OK` | "Сначала выполните /generate" |
 
 ### Алгоритм проверки
 
@@ -215,7 +215,7 @@ def check_preconditions(command: str) -> bool:
 
     state = read_json("./.pipeline-state.json")
     if not state:
-        return command == "/idea"  # Только /aidd-idea можно без state
+        return command == "/idea"  # Только /aidd-analyze можно без state
 
     for gate in preconditions.get(command, []):
         if not state.get("gates", {}).get(gate, {}).get("passed"):
@@ -255,12 +255,12 @@ read(role_file)
 
 | Команда | Роль |
 |---------|------|
-| `/aidd-idea` | analyst |
+| `/aidd-analyze` | analyst |
 | `/aidd-research` | researcher |
 | `/aidd-plan` | architect |
-| `/aidd-feature-plan` | architect |
-| `/aidd-generate` | implementer |
-| `/aidd-finalize` | validator |
+| `/aidd-plan-feature` | architect |
+| `/aidd-code` | implementer |
+| `/aidd-validate` | validator |
 
 ---
 
@@ -339,11 +339,11 @@ def initialize_context(command: str) -> Context:
 
     # 1.3 Существующие артефакты
     context.existing_artifacts = {
-        "prd": glob("./ai-docs/docs/prd/*-prd.md"),
-        "plan": glob("./ai-docs/docs/architecture/*-plan.md"),
-        "feature_plans": glob("./ai-docs/docs/plans/*-plan.md"),
+        "prd": glob("./ai-docs/docs/_analysis/*-prd.md"),
+        "plan": glob("./ai-docs/docs/_plans/mvp/*-plan.md"),
+        "feature_plans": glob("./ai-docs/docs/_plans/features/*-plan.md"),
         "services": exists("./services/"),
-        "reports": glob("./ai-docs/docs/reports/*.md"),
+        "reports": glob("./ai-docs/docs/_validation/*.md"),
     }
 
     # 1.4 Completion Reports (память о deployed фичах)
@@ -435,19 +435,19 @@ def detect_mode(state: dict, existing_artifacts: dict) -> str:
 
 | Команда | Фаза 1 (ЦП) | Фаза 2 | Фаза 3 (Фреймворк) | Фаза 4 |
 |---------|-------------|--------|--------------------|---------
-| `/aidd-idea` | CLAUDE.md, state, ai-docs | — | CLAUDE, workflow, idea.md, analyst.md | prd-template (если PRD нет) |
+| `/aidd-analyze` | CLAUDE.md, state, ai-docs | — | CLAUDE, workflow, idea.md, analyst.md | prd-template (если PRD нет) |
 | `/aidd-research` | CLAUDE.md, state, PRD | PRD_READY | CLAUDE, workflow, research.md, researcher.md | knowledge/architecture |
-| `/aidd-plan` | CLAUDE.md, state, PRD | PRD_READY, RESEARCH_DONE | CLAUDE, workflow, plan.md, architect.md | architecture-template, knowledge/architecture |
-| `/aidd-feature-plan` | CLAUDE.md, state, PRD, существующая архитектура | PRD_READY, RESEARCH_DONE | CLAUDE, workflow, feature-plan.md, architect.md | — |
-| `/aidd-generate` | CLAUDE.md, state, план | PLAN_APPROVED | CLAUDE, workflow, generate.md, implementer.md | templates/services, knowledge/services |
-| `/aidd-finalize` | CLAUDE.md, state, код, все артефакты | IMPLEMENT_OK | CLAUDE, workflow, finalize.md, validator.md, code-review-library.md, testing-library.md | conventions.md, knowledge/quality, knowledge/infrastructure |
+| `/aidd-plan` | CLAUDE.md, state, PRD | PRD_READY, RESEARCH_DONE | CLAUDE, workflow, plan.md, planner.md | architecture-template, knowledge/architecture |
+| `/aidd-plan-feature` | CLAUDE.md, state, PRD, существующая архитектура | PRD_READY, RESEARCH_DONE | CLAUDE, workflow, feature-plan.md, planner.md | — |
+| `/aidd-code` | CLAUDE.md, state, план | PLAN_APPROVED | CLAUDE, workflow, generate.md, coder.md | templates/services, knowledge/services |
+| `/aidd-validate` | CLAUDE.md, state, код, все артефакты | IMPLEMENT_OK | CLAUDE, workflow, finalize.md, validator.md, code-review-library.md, testing-library.md | conventions.md, knowledge/quality, knowledge/infrastructure |
 
 ---
 
-## Пример: Инициализация для /aidd-idea
+## Пример: Инициализация для /aidd-analyze
 
 ```python
-# Пользователь запускает: /aidd-idea "Создать сервис бронирования"
+# Пользователь запускает: /aidd-analyze "Создать сервис бронирования"
 
 # ФАЗА 1: Контекст ЦП
 if exists("./CLAUDE.md"):
@@ -458,15 +458,15 @@ if exists("./.pipeline-state.json"):
 else:
     state = None  # → Новый проект
 
-artifacts = glob("./ai-docs/docs/prd/*-prd.md")  # → []
+artifacts = glob("./ai-docs/docs/_analysis/*-prd.md")  # → []
 
 # ФАЗА 2: Предусловия
-# /aidd-idea не требует предусловий — пропуск
+# /aidd-analyze не требует предусловий — пропуск
 
 # ФАЗА 3: Фреймворк
 read(".aidd/CLAUDE.md")
 read(".aidd/workflow.md")
-read(".aidd/.claude/commands/aidd-idea.md")
+read(".aidd/.claude/commands/aidd-analyze.md")
 read(".aidd/.claude/agents/analyst.md")
 
 # ФАЗА 4: Шаблоны
@@ -477,17 +477,17 @@ if not artifacts:  # PRD не существует
 mode = detect_mode(state, {"prd": artifacts, "services": False})
 # → mode = "CREATE"
 
-# Bootstrap (только для /aidd-idea при mode == None)
+# Bootstrap (только для /aidd-analyze при mode == None)
 mkdir("./ai-docs/docs/{prd,architecture,plans,reports,research}")
 write("./.pipeline-state.json", {"mode": "CREATE", ...})
 
 # Выполнение: создание PRD
-create_prd("./ai-docs/docs/prd/booking-prd.md")
+create_prd("./ai-docs/docs/_analysis/booking-prd.md")
 ```
 
 ---
 
-## Пример: Инициализация для /aidd-generate (середина пайплайна)
+## Пример: Инициализация для /aidd-code (середина пайплайна)
 
 ```python
 # Пользователь запускает: /generate
@@ -505,8 +505,8 @@ assert state["gates"]["PLAN_APPROVED"]["passed"]  # ✓
 # ФАЗА 3: Фреймворк
 read(".aidd/CLAUDE.md")
 read(".aidd/workflow.md")
-read(".aidd/.claude/commands/aidd-generate.md")
-read(".aidd/.claude/agents/implementer.md")
+read(".aidd/.claude/commands/aidd-code.md")
+read(".aidd/.claude/agents/coder.md")
 read(".aidd/conventions.md")
 
 # ФАЗА 4: Шаблоны и знания

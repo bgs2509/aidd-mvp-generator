@@ -125,7 +125,7 @@ LOW проблемы (0):           0 × 0.1 = -0 баллов
 #### ✅ Objective 9: Режимы CREATE/FEATURE
 - **Статус**: PASSED
 - **CREATE**: /aidd-plan существует
-- **FEATURE**: /aidd-feature-plan и /aidd-plan-feature существуют
+- **FEATURE**: /aidd-plan-feature и /aidd-plan-feature существуют
 - **Алгоритм detect_mode**: описан в workflow.md
 
 #### ✅ Objective 10: Валидация алгоритмов
@@ -190,7 +190,7 @@ ls -1 .claude/agents/*.md
 - `roles/qa/` — существует (4 файлов)
 - `.claude/agents/validator.md` — существует и описывает объединение ролей
 
-**Вывод**: Это не ошибка, а архитектурное решение. Роли reviewer и qa объединены в validator для упрощения процесса (команда `/aidd-finalize` выполняет все 4 шага: Review → Test → Validate → Deploy).
+**Вывод**: Это не ошибка, а архитектурное решение. Роли reviewer и qa объединены в validator для упрощения процесса (команда `/aidd-validate` выполняет все 4 шага: Review → Test → Validate → Deploy).
 
 ### Spot Check 2: Legacy переменные
 
@@ -198,7 +198,7 @@ ls -1 .claude/agents/*.md
 
 **Выполненная команда**:
 ```bash
-grep -n "legacy" .claude/commands/aidd-idea.md .claude/commands/aidd-analyze.md
+grep -n "legacy" .claude/commands/aidd-analyze.md .claude/commands/aidd-analyze.md
 ```
 
 **Результат**: ✅ Подтверждено
@@ -274,7 +274,7 @@ grep "9 этапов\|7 ролей\|10 команд" docs/audit/templates/compre
 **Приоритет**: MEDIUM
 **Категория**: Код
 **Файлы**:
-- `.claude/commands/aidd-idea.md:142-143`
+- `.claude/commands/aidd-analyze.md:142-143`
 - `.claude/commands/aidd-analyze.md:142-143`
 
 **Описание**:
@@ -285,7 +285,7 @@ grep "9 этапов\|7 ролей\|10 команд" docs/audit/templates/compre
 **Команда исправления** (опционально):
 ```bash
 # Переименовать legacy_gates → v1_gates для ясности
-sed -i 's/legacy_gates/v1_gates/g' .claude/commands/aidd-idea.md .claude/commands/aidd-analyze.md
+sed -i 's/legacy_gates/v1_gates/g' .claude/commands/aidd-analyze.md .claude/commands/aidd-analyze.md
 ```
 
 **Верификация**:
@@ -300,7 +300,7 @@ grep "legacy_gates" .claude/commands/aidd-*.md
 **Категория**: Документация
 **Файлы**:
 - `.claude/commands/aidd-analyze.md:429` → `../_analysis/2024-12-23_F001_table-booking.md`
-- `.claude/commands/aidd-idea.md:394` → `../prd/2024-12-23_F001_table-booking-prd.md`
+- `.claude/commands/aidd-analyze.md:394` → `../prd/2024-12-23_F001_table-booking-prd.md`
 
 **Описание**:
 Команды содержат ссылки на примеры артефактов, которые не существуют в репозитории.
@@ -330,7 +330,7 @@ grep "legacy_gates" .claude/commands/aidd-*.md
 
 2. **Создать примеры артефактов**
    - Добавить `ai-docs/docs/_analysis/example-project.md`
-   - Добавить `ai-docs/docs/prd/example-project-prd.md`
+   - Добавить `ai-docs/docs/_analysis/example-project-prd.md`
 
 ### Долгосрочные (когда понадобится)
 

@@ -101,15 +101,15 @@ aidd-mvp-generator/           ← ФРЕЙМВОРК
 Документация (workflow.md, CLAUDE.md, commands, agents) указывает пути артефактов `docs/prd/`, `docs/architecture/` как будто они находятся В ГЕНЕРАТОРЕ. Но:
 
 1. **Генератор** содержит только `templates/documents/` (шаблоны) и `docs/history/`
-2. **Целевой проект** содержит `ai-docs/docs/prd/`, `ai-docs/docs/architecture/` (артефакты)
+2. **Целевой проект** содержит `ai-docs/docs/_analysis/`, `ai-docs/docs/_plans/mvp/` (артефакты)
 
 **Несогласованности:**
 | Документ | Указывает путь | Правильный контекст |
 |----------|---------------|---------------------|
-| workflow.md | `docs/prd/{name}-prd.md` | Должно быть: `{target}/ai-docs/docs/prd/` |
-| /idea команда | `docs/prd/{name}-prd.md` | Должно быть: `{target}/ai-docs/docs/prd/` |
+| workflow.md | `docs/prd/{name}-prd.md` | Должно быть: `{target}/ai-docs/docs/_analysis/` |
+| /idea команда | `docs/prd/{name}-prd.md` | Должно быть: `{target}/ai-docs/docs/_analysis/` |
 | CLAUDE.md (строки 112-117) | `docs/prd/` как часть генератора | ОШИБКА! Это для целевого проекта |
-| project-structure.md | `ai-docs/docs/prd/` | ✓ Правильно |
+| project-structure.md | `ai-docs/docs/_analysis/` | ✓ Правильно |
 
 #### Решение
 
@@ -206,7 +206,7 @@ grep -r "docs/prd/template.md" --include="*.md"
 |---|--------|--------|------|
 | 3.1 | [ ] Добавить "Модель разрешений" в CLAUDE.md | ⬜ Ожидает | |
 | 3.2 | [ ] Уточнить ограничения в `.claude/agents/analyst.md` | ⬜ Ожидает | |
-| 3.3 | [ ] Уточнить ограничения в `.claude/agents/implementer.md` | ⬜ Ожидает | |
+| 3.3 | [ ] Уточнить ограничения в `.claude/agents/coder.md` | ⬜ Ожидает | |
 | 3.4 | [ ] Уточнить ограничения в `.claude/agents/qa.md` | ⬜ Ожидает | |
 | 3.5 | [ ] Добавить секцию разрешений во все `.claude/commands/*.md` | ⬜ Ожидает | |
 
@@ -276,8 +276,8 @@ grep -r "docs/prd/template.md" --include="*.md"
 ## Шаблоны документов (для целевого проекта)
 | Файл | Создаёт | Путь в целевом проекте |
 |------|---------|------------------------|
-| templates/documents/prd-template.md | /idea | ai-docs/docs/prd/{name}-prd.md |
-| templates/documents/architecture-template.md | /plan | ai-docs/docs/architecture/{name}-plan.md |
+| templates/documents/prd-template.md | /idea | ai-docs/docs/_analysis/{name}-prd.md |
+| templates/documents/architecture-template.md | /plan | ai-docs/docs/_plans/mvp/{name}-plan.md |
 ```
 
 ---
@@ -308,16 +308,16 @@ grep -r "docs/prd/template.md" --include="*.md"
   "gates": {
     "PRD_READY": {
       "passed": true,
-      "artifact": "ai-docs/docs/prd/booking-prd.md"
+      "artifact": "ai-docs/docs/_analysis/booking-prd.md"
     },
     "PLAN_APPROVED": {
       "passed": true,
-      "artifact": "ai-docs/docs/architecture/booking-plan.md"
+      "artifact": "ai-docs/docs/_plans/mvp/booking-plan.md"
     }
   },
   "artifacts": {
-    "prd": "ai-docs/docs/prd/booking-prd.md",
-    "plan": "ai-docs/docs/architecture/booking-plan.md"
+    "prd": "ai-docs/docs/_analysis/booking-prd.md",
+    "plan": "ai-docs/docs/_plans/mvp/booking-plan.md"
   }
 }
 ```
@@ -351,9 +351,9 @@ def find_artifact(artifact_type: str) -> Path | None:
 
     # 2. Glob по паттернам В ЦЕЛЕВОМ ПРОЕКТЕ
     patterns = {
-        "prd": "ai-docs/docs/prd/*-prd.md",
-        "plan": "ai-docs/docs/architecture/*-plan.md",
-        "feature_plan": "ai-docs/docs/plans/*-plan.md"
+        "prd": "ai-docs/docs/_analysis/*-prd.md",
+        "plan": "ai-docs/docs/_plans/mvp/*-plan.md",
+        "feature_plan": "ai-docs/docs/_plans/features/*-plan.md"
     }
     files = glob(patterns[artifact_type])
     if files:
@@ -366,12 +366,12 @@ def find_artifact(artifact_type: str) -> Path | None:
 ```markdown
 | Этап | Команда | Входные | Выходные (в целевом проекте) |
 |------|---------|---------|------------------------------|
-| 1 | /idea | — | ai-docs/docs/prd/{name}-prd.md |
+| 1 | /idea | — | ai-docs/docs/_analysis/{name}-prd.md |
 | 2 | /research | PRD | (в памяти) |
-| 3 | /plan | PRD | ai-docs/docs/architecture/{name}-plan.md |
+| 3 | /plan | PRD | ai-docs/docs/_plans/mvp/{name}-plan.md |
 | 4 | /generate | План | services/*, Makefile, docker-compose.yml |
-| 5 | /review | Код | ai-docs/docs/reports/review-*.md |
-| 6 | /test | Код | ai-docs/docs/reports/qa-*.md |
+| 5 | /review | Код | ai-docs/docs/_validation/review-*.md |
+| 6 | /test | Код | ai-docs/docs/_validation/qa-*.md |
 | 7 | /validate | Все | ai-docs/docs/rtm.md |
 | 8 | /deploy | Все | — |
 ```
@@ -457,17 +457,17 @@ def find_artifact(artifact_type: str) -> Path | None:
 #### Проблема (ПЕРЕФОРМУЛИРОВАНО в v2.0)
 Разные документы используют разные пути:
 - workflow.md, commands: `docs/prd/` (НЕПРАВИЛЬНО)
-- project-structure.md: `ai-docs/docs/prd/` (ПРАВИЛЬНО)
+- project-structure.md: `ai-docs/docs/_analysis/` (ПРАВИЛЬНО)
 
 #### Решение (ИСПРАВЛЕНО в v2.0)
 
-> **ВАЖНО**: Правильный путь — `ai-docs/docs/prd/` в ЦЕЛЕВОМ ПРОЕКТЕ!
-> Нужно исправить `docs/prd/` → `ai-docs/docs/prd/` везде где речь о целевом проекте.
+> **ВАЖНО**: Правильный путь — `ai-docs/docs/_analysis/` в ЦЕЛЕВОМ ПРОЕКТЕ!
+> Нужно исправить `docs/prd/` → `ai-docs/docs/_analysis/` везде где речь о целевом проекте.
 
 | # | Задача | Статус | Дата |
 |---|--------|--------|------|
 | 34.1 | [ ] Добавить "Стандарт путей целевого проекта" в CLAUDE.md | ⬜ Ожидает | |
-| 34.2 | [ ] Исправить пути в workflow.md: `docs/prd/` → `ai-docs/docs/prd/` | ⬜ Ожидает | |
+| 34.2 | [ ] Исправить пути в workflow.md: `docs/prd/` → `ai-docs/docs/_analysis/` | ⬜ Ожидает | |
 | 34.3 | [ ] Исправить пути во всех `.claude/commands/*.md` | ⬜ Ожидает | |
 | 34.4 | [ ] Исправить пути во всех `.claude/agents/*.md` | ⬜ Ожидает | |
 | 34.5 | [ ] Проверить `roles/validator/artifact-verification.md` | ⬜ Ожидает | |
@@ -476,11 +476,11 @@ def find_artifact(artifact_type: str) -> Path | None:
 ```markdown
 | Артефакт | Путь в целевом проекте | Суффикс |
 |----------|------------------------|---------|
-| PRD | ai-docs/docs/prd/{name}-prd.md | -prd.md |
-| Архитектура | ai-docs/docs/architecture/{name}-plan.md | -plan.md |
-| План фичи | ai-docs/docs/plans/{feature}-plan.md | -plan.md |
-| Отчёт ревью | ai-docs/docs/reports/review-{name}.md | review-*.md |
-| Отчёт QA | ai-docs/docs/reports/qa-{name}.md | qa-*.md |
+| PRD | ai-docs/docs/_analysis/{name}-prd.md | -prd.md |
+| Архитектура | ai-docs/docs/_plans/mvp/{name}-plan.md | -plan.md |
+| План фичи | ai-docs/docs/_plans/features/{feature}-plan.md | -plan.md |
+| Отчёт ревью | ai-docs/docs/_validation/review-{name}.md | review-*.md |
+| Отчёт QA | ai-docs/docs/_validation/qa-{name}.md | qa-*.md |
 | RTM | ai-docs/docs/rtm.md | — |
 ```
 
@@ -534,7 +534,7 @@ Navigation Matrix из .ai-framework/ полезна, но не адаптиро
 | Изучить процесс | workflow.md | — |
 | Изучить роль | .claude/agents/analyst.md | — |
 | Изучить шаблон | templates/documents/prd-template.md | — |
-| Создать PRD | — | ai-docs/docs/prd/{name}-prd.md |
+| Создать PRD | — | ai-docs/docs/_analysis/{name}-prd.md |
 | Обновить state | — | .pipeline-state.json |
 ```
 
@@ -605,8 +605,8 @@ def determine_mode() -> str:
 ## Пути в ЦЕЛЕВОМ ПРОЕКТЕ (создаётся генератором)
 | Тип | Путь |
 |-----|------|
-| PRD | ai-docs/docs/prd/{name}-prd.md |
-| Архитектура | ai-docs/docs/architecture/{name}-plan.md |
+| PRD | ai-docs/docs/_analysis/{name}-prd.md |
+| Архитектура | ai-docs/docs/_plans/mvp/{name}-plan.md |
 | Код сервисов | services/{name}_api/, services/{name}_data/ |
 ```
 
@@ -779,7 +779,7 @@ def determine_mode() -> str:
 
 ### PRD документ
 - **Шаблон (в генераторе)**: templates/documents/prd-template.md
-- **Путь (в целевом проекте)**: ai-docs/docs/prd/{name}-prd.md
+- **Путь (в целевом проекте)**: ai-docs/docs/_analysis/{name}-prd.md
 - **Критерии готовности**: ...
 ```
 
@@ -883,7 +883,7 @@ def determine_mode() -> str:
 **Ключевые изменения v2.0:**
 - Добавлена секция "ВАЖНО: Разделение генератора и целевого проекта"
 - P-001 переформулирована: не "создать директории", а "документировать структуру целевого проекта"
-- P-034 инвертирована: правильный путь `ai-docs/docs/prd/`, не `docs/prd/`
+- P-034 инвертирована: правильный путь `ai-docs/docs/_analysis/`, не `docs/prd/`
 - P-020, P-021, P-022 исправлены: пути для ЦЕЛЕВОГО проекта
 - P-036 исправлена: разделение "читать в генераторе / создавать в целевом проекте"
 - Критерии завершения обновлены

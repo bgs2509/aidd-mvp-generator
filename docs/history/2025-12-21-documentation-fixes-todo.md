@@ -194,7 +194,7 @@ grep -r "docs/prd/template.md" --include="*.md"
 #### Файлы для изменения
 - [ ] `CLAUDE.md` — добавить секцию "Модель разрешений"
 - [ ] `.claude/agents/analyst.md` — уточнить ограничения
-- [ ] `.claude/agents/implementer.md` — уточнить ограничения
+- [ ] `.claude/agents/coder.md` — уточнить ограничения
 - [ ] `.claude/agents/qa.md` — уточнить ограничения
 - [ ] `.claude/commands/idea.md` — добавить секцию разрешений
 - [ ] `.claude/commands/generate.md` — добавить секцию разрешений
@@ -315,8 +315,8 @@ grep -r "docs/prd/template.md" --include="*.md"
 |------|------|-------|
 | `analyst.md` | Аналитик | 1 |
 | `researcher.md` | Исследователь | 2 |
-| `architect.md` | Архитектор | 3 |
-| `implementer.md` | Реализатор | 4 |
+| `planner.md` | Архитектор | 3 |
+| `coder.md` | Реализатор | 4 |
 | `reviewer.md` | Ревьюер | 5 |
 | `qa.md` | QA инженер | 6 |
 | `validator.md` | Валидатор | 7, 8 |
@@ -984,7 +984,7 @@ Navigation Matrix из .ai-framework/ полезна, но не адаптиро
 | Что делать | Какие файлы читать | Какие файлы создавать |
 |------------|-------------------|----------------------|
 | Прочитать PRD | docs/prd/{name}-prd.md | — |
-| Изучить роль | .claude/agents/architect.md | — |
+| Изучить роль | .claude/agents/planner.md | — |
 | Изучить шаблон | templates/documents/architecture-template.md | — |
 | Изучить принципы | knowledge/architecture/*.md | — |
 | Создать план | — | docs/architecture/{name}-plan.md |
@@ -994,7 +994,7 @@ Navigation Matrix из .ai-framework/ полезна, но не адаптиро
 | Что делать | Какие файлы читать | Какие файлы создавать |
 |------------|-------------------|----------------------|
 | Прочитать план | docs/architecture/{name}-plan.md | — |
-| Изучить роль | .claude/agents/implementer.md | — |
+| Изучить роль | .claude/agents/coder.md | — |
 | Изучить шаблоны | templates/services/* | — |
 | Изучить shared | templates/shared/* | — |
 | Создать код | — | services/*, shared/* |
@@ -1251,7 +1251,7 @@ def determine_mode() -> str:
 #### Файлы для изменения
 - [ ] `CLAUDE.md` — добавить таблицу путей
 - [ ] `workflow.md` — синхронизировать пути
-- [ ] `.claude/agents/architect.md` — проверить пути
+- [ ] `.claude/agents/planner.md` — проверить пути
 - [ ] Все `.claude/commands/*.md` — проверить пути
 
 ---
@@ -1277,7 +1277,7 @@ def determine_mode() -> str:
 в существующий проект.
 
 ## Агент
-**Архитектор** (`.claude/agents/architect.md`)
+**Архитектор** (`.claude/agents/planner.md`)
 
 ## Предусловия
 | Ворота | Требование |
@@ -1630,8 +1630,8 @@ done
 
 #### Файлы для изменения
 - [ ] `.claude/agents/analyst.md` — исправить ссылку на шаблон
-- [ ] `.claude/agents/architect.md` — проверить ссылки
-- [ ] `.claude/agents/implementer.md` — проверить ссылки
+- [ ] `.claude/agents/planner.md` — проверить ссылки
+- [ ] `.claude/agents/coder.md` — проверить ссылки
 - [ ] `.claude/agents/validator.md` — проверить ссылки
 
 ---
@@ -1827,7 +1827,7 @@ services:
 #### Файлы для изменения
 - [ ] `workflow.md` — добавить детальное описание FEATURE
 - [ ] `.claude/commands/feature-plan.md` — расширить
-- [ ] `.claude/agents/architect.md` — добавить секцию FEATURE
+- [ ] `.claude/agents/planner.md` — добавить секцию FEATURE
 
 ---
 

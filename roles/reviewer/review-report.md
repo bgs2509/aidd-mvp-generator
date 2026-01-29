@@ -250,10 +250,10 @@ Minor (Незначительные):
 ## Путь сохранения
 
 ```
-ai-docs/docs/reports/review-report.md
+ai-docs/docs/_validation/review-report.md
 
 Или с датой:
-ai-docs/docs/reports/{YYYY-MM-DD}-review-report.md
+ai-docs/docs/_validation/{YYYY-MM-DD}-review-report.md
 ```
 
 ---

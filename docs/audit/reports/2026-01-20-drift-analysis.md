@@ -42,10 +42,10 @@
 ```bash
 $ ls .claude/agents/*.md
 analyst.md
-architect.md
+planner.md
 code-review-library.md
 coder.md
-implementer.md
+coder.md
 planner.md
 researcher.md
 testing-library.md
@@ -185,15 +185,15 @@ validate
 **Факт**:
 ```bash
 $ Проверка naming_version в командах
-⚠️ /aidd-idea не упоминает naming_version
+⚠️ /aidd-analyze не упоминает naming_version
 ✅ /aidd-analyze поддерживает naming_version
 ✅ /aidd-research поддерживает naming_version
 ✅ /aidd-plan поддерживает naming_version
-⚠️ /aidd-feature-plan не упоминает naming_version
+⚠️ /aidd-plan-feature не упоминает naming_version
 ✅ /aidd-plan-feature поддерживает naming_version
-⚠️ /aidd-generate не упоминает naming_version
 ⚠️ /aidd-code не упоминает naming_version
-⚠️ /aidd-finalize не упоминает naming_version
+⚠️ /aidd-code не упоминает naming_version
+⚠️ /aidd-validate не упоминает naming_version
 ✅ /aidd-validate поддерживает naming_version
 ```
 
@@ -217,11 +217,11 @@ done
 
 **Команда исправления**:
 Необходимо добавить поддержку naming_version в файлы команд:
-- `.claude/commands/aidd-idea.md`
-- `.claude/commands/aidd-feature-plan.md`
-- `.claude/commands/aidd-generate.md`
+- `.claude/commands/aidd-analyze.md`
+- `.claude/commands/aidd-plan-feature.md`
 - `.claude/commands/aidd-code.md`
-- `.claude/commands/aidd-finalize.md`
+- `.claude/commands/aidd-code.md`
+- `.claude/commands/aidd-validate.md`
 
 Алгоритм проверки naming_version (добавить в каждую команду):
 ```markdown
@@ -267,8 +267,8 @@ done
 **Проблема**:
 В ключевых файлах используется формулировка:
 ```markdown
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`,
-`/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды:
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`,
+`/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды:
 `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 ```
 
@@ -284,7 +284,7 @@ done
 **Рекомендуемая формулировка**:
 ```markdown
 **Примечание (Migration Mode v2.4+):** Команды доступны в двух вариантах:
-- **Legacy naming**: `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`
+- **Legacy naming**: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`
 - **New naming**: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`
 
 Обе версии работают одинаково. Выбирайте удобный вариант.
@@ -351,25 +351,25 @@ sed -i '145s/.*/echo "(5 уникальных ролей + 2 алиаса + 2 б
 **Проблема**:
 В таблице команд (строка 663) написано:
 ```
-| 3 | /aidd-plan или /aidd-feature-plan → /aidd-plan-feature | architect → planner | PLAN_APPROVED |
+| 3 | /aidd-plan или /aidd-plan-feature → /aidd-plan-feature | architect → planner | PLAN_APPROVED |
 ```
 
 **Неточность**:
 - `/aidd-plan` используется в CREATE режиме
-- `/aidd-feature-plan` (или `/aidd-plan-feature`) используется в FEATURE режиме
+- `/aidd-plan-feature` (или `/aidd-plan-feature`) используется в FEATURE режиме
 - Это разные команды, не просто алиасы
 
 **Как это описано в CLAUDE.md** (строки 236-238):
 ```
 | 3 | Архитектура (CREATE) | `/aidd-plan` | Архитектор → Планировщик | `PLAN_APPROVED` | ...
-| 3 | Архитектура (FEATURE) | `/aidd-feature-plan` → `/aidd-plan-feature` | Архитектор → Планировщик | `PLAN_APPROVED` | ...
+| 3 | Архитектура (FEATURE) | `/aidd-plan-feature` → `/aidd-plan-feature` | Архитектор → Планировщик | `PLAN_APPROVED` | ...
 ```
 
 **Рекомендация**:
 Разделить строку 663 на две (как в CLAUDE.md):
 ```markdown
 | 3a | /aidd-plan (CREATE) | planner | PLAN_APPROVED |
-| 3b | /aidd-feature-plan → /aidd-plan-feature (FEATURE) | planner | PLAN_APPROVED |
+| 3b | /aidd-plan-feature → /aidd-plan-feature (FEATURE) | planner | PLAN_APPROVED |
 ```
 
 **Команда исправления**:
@@ -383,13 +383,13 @@ sed -i '145s/.*/echo "(5 уникальных ролей + 2 алиаса + 2 б
 
 ✅ **Успешно завершена консолидация этапа 5**:
 - Удалены команды: `/aidd-review`, `/aidd-test`, `/aidd-deploy`
-- Остались: `/aidd-finalize` (legacy) и `/aidd-validate` (new naming)
+- Остались: `/aidd-validate` (legacy) и `/aidd-validate` (new naming)
 - Удалены устаревшие шаблоны: `review-report-template.md`, `qa-report-template.md`, `validation-report-template.md`
 - Остался единый: `completion-report-template.md`
 
 **Подтверждение из git истории**:
 ```
-7b4907d refactor: remove obsolete commands, consolidate to /aidd-finalize
+7b4907d refactor: remove obsolete commands, consolidate to /aidd-validate
 ```
 
 ---
@@ -461,11 +461,11 @@ LOW проблемы (2):           2 × 0.1 = -0.2 балла
 ### Немедленные (на этой неделе)
 
 1. **Добавить поддержку naming_version в старые команды** (HIGH):
-   - `/aidd-idea.md`
-   - `/aidd-feature-plan.md`
-   - `/aidd-generate.md`
+   - `/aidd-analyze.md`
+   - `/aidd-plan-feature.md`
    - `/aidd-code.md`
-   - `/aidd-finalize.md`
+   - `/aidd-code.md`
+   - `/aidd-validate.md`
 
    **Зачем**: Обеспечить консистентное поведение алиасов
 
@@ -495,11 +495,11 @@ LOW проблемы (2):           2 × 0.1 = -0.2 балла
 
 ## Spot Checks (Верификация)
 
-### Spot Check 1: Проверка naming_version в /aidd-idea
+### Spot Check 1: Проверка naming_version в /aidd-analyze
 
 **Выполненная команда**:
 ```bash
-grep -n "naming_version" .claude/commands/aidd-idea.md
+grep -n "naming_version" .claude/commands/aidd-analyze.md
 ```
 
 **Вывод**:
@@ -520,7 +520,7 @@ grep -n "устаревшие команды" CLAUDE.md
 
 **Вывод**:
 ```
-3:**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+3:**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 ```
 
 ✅ **Верификация**: Проблема подтверждена — используется термин "устаревшие"

@@ -1,17 +1,17 @@
 ---
 name: testing-library
-description: Библиотека инструкций для Testing (используется в /aidd-finalize)
+description: Библиотека инструкций для Testing (используется в /aidd-validate)
 tools: Read, Glob, Grep, Bash, Edit, Write
 model: inherit
 ---
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 # Библиотека: Testing
 
 > **ВАЖНО**: Это БИБЛИОТЕКА ИНСТРУКЦИЙ, а не самостоятельная роль.
-> Используется внутри команды `/aidd-finalize` → Шаг 2: Testing.
+> Используется внутри команды `/aidd-validate` → Шаг 2: Testing.
 > Нет отдельной команды `/aidd-test`.
 
 > **Назначение**: Детальные инструкции для тестирования и QA.
@@ -34,7 +34,7 @@ QA отвечает за:
 
 | Источник | Описание |
 |----------|----------|
-| PRD документ | `ai-docs/docs/prd/{name}-prd.md` (в целевом проекте) |
+| PRD документ | `ai-docs/docs/_analysis/{name}-prd.md` (в целевом проекте) |
 | Код после ревью | `services/` (в целевом проекте) |
 | Существующие тесты | `services/*/tests/` (в целевом проекте) |
 | `knowledge/quality/testing/` | Документация по тестированию (в генераторе) |
@@ -45,7 +45,7 @@ QA отвечает за:
 
 | Артефакт | Путь |
 |----------|------|
-| QA отчёт | `ai-docs/docs/reports/qa-report.md` |
+| QA отчёт | `ai-docs/docs/_validation/qa-report.md` |
 
 ---
 
@@ -103,7 +103,7 @@ make test
 
 ### 5. Формирование QA отчёта
 
-Создать `ai-docs/docs/reports/qa-report.md`:
+Создать `ai-docs/docs/_validation/qa-report.md`:
 
 ```markdown
 # QA Отчёт

@@ -1,8 +1,5 @@
 # CLAUDE.md — Главная точка входа для AI-агентов
 
-**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
-
-
 > **Философия**: VERIFY BEFORE ACT — Проверяй перед действием.
 > **Принцип**: Артефакты = Память. Не полагаемся на контекст чата.
 >
@@ -16,9 +13,8 @@
 |--------|-------|
 | **Что это?** | Фреймворк для генерации production-ready MVP за ~10 минут |
 | **Как работает?** | 6-этапный пайплайн с качественными воротами |
-| **Как начать?** | `/aidd-idea` или `/aidd-analyze "описание проекта"` |
+| **Как начать?** | `/aidd-analyze "описание проекта"` |
 | **Результат** | Работающий MVP: FastAPI + PostgreSQL + Docker |
-| **Naming** | Обе команды (`/aidd-idea` и `/aidd-analyze`) работают — migration mode v2.4+ |
 
 ---
 
@@ -58,9 +54,9 @@
 │  │   └── knowledge/             ← База знаний                      │
 │  │                                                                 │
 │  ├── ai-docs/docs/              ← AI-ГЕНЕРИРУЕМЫЕ АРТЕФАКТЫ        │
-│  │   ├── prd/{name}-prd.md                                         │
-│  │   ├── architecture/{name}-plan.md                               │
-│  │   └── reports/                                                  │
+│  │   ├── _analysis/{name}.md                                       │
+│  │   ├── _plans/mvp/{name}.md                                      │
+│  │   └── _validation/                                              │
 │  │                                                                 │
 │  ├── services/                  ← AI-ГЕНЕРИРУЕМЫЙ КОД              │
 │  │   ├── {context}_{domain}_api/                                   │
@@ -100,7 +96,7 @@ cp .aidd/.claude/commands/*.md .claude/commands/
 
 После `/aidd-init` команды доступны в автодополнении CLI:
 ```
-/aidd-idea, /aidd-research, /aidd-plan, /aidd-feature-plan, /aidd-generate, /aidd-finalize
+/aidd-analyze, /aidd-research, /aidd-plan, /aidd-plan-feature, /aidd-code, /aidd-validate
 ```
 
 **Обновление команд**: При обновлении submodule (`.aidd/`) повторно запустите `/aidd-init` —
@@ -108,9 +104,9 @@ cp .aidd/.claude/commands/*.md .claude/commands/
 
 **Как AI выполняет команду**:
 ```
-Пользователь: /aidd-idea "описание"
+Пользователь: /aidd-analyze "описание"
      ↓
-Claude Code загружает: ./.claude/commands/aidd-idea.md (копия из .aidd/)
+Claude Code загружает: ./.claude/commands/aidd-analyze.md (копия из .aidd/)
      ↓
 AI читает: ./.aidd/.claude/agents/analyst.md (роль)
      ↓
@@ -124,7 +120,7 @@ AI выполняет команду по инструкциям
 | Режим | Когда использовать | Отличия |
 |-------|-------------------|---------|
 | **CREATE** | Новый MVP с нуля | `/aidd-plan` → полная архитектура |
-| **FEATURE** | Добавление фичи в существующий проект | `/aidd-feature-plan` → план интеграции |
+| **FEATURE** | Добавление фичи в существующий проект | `/aidd-plan-feature` → план интеграции |
 
 ### Автоопределение режима
 
@@ -133,7 +129,7 @@ AI выполняет команду по инструкциям
 | Есть `services/` или `docker-compose.yml` | **FEATURE** |
 | Пустая директория | **CREATE** |
 
-Явное переопределение: `/aidd-idea --mode=FEATURE "описание"`
+Явное переопределение: `/aidd-analyze --mode=FEATURE "описание"`
 
 ### Параллельные пайплайны (Pipeline State v2)
 
@@ -147,13 +143,13 @@ AI выполняет команду по инструкциям
 │  main                                                                   │
 │    │                                                                    │
 │    ├──┬── feature/F042-oauth ─────────────────────────▶ merge           │
-│    │  │     ├── /aidd-idea → PRD_READY                                 │
+│    │  │     ├── /aidd-analyze → PRD_READY                                 │
 │    │  │     ├── /aidd-research → RESEARCH_DONE                         │
 │    │  │     ├── /aidd-plan → PLAN_APPROVED                             │
 │    │  │     └── ... → DEPLOYED                                          │
 │    │  │                                                                 │
 │    │  └── feature/F043-payments ──────────────────────▶ merge           │
-│    │        ├── /aidd-idea (параллельно!)                              │
+│    │        ├── /aidd-analyze (параллельно!)                              │
 │    │        └── ...                                                     │
 │    ▼                                                                    │
 │  main (с обеими фичами)                                                 │
@@ -165,7 +161,7 @@ AI выполняет команду по инструкциям
 - Каждая фича разрабатывается в отдельной git ветке `feature/{FID}-{slug}`
 - Ворота изолированы: `active_pipelines[FID].gates` вместо общих `gates`
 - Контекст фичи определяется автоматически по текущей git ветке
-- При `/aidd-finalize` (DEPLOYED) фича переносится в `features_registry`
+- При `/aidd-validate` (DEPLOYED) фича переносится в `features_registry`
 
 **Правила параллельной разработки**:
 - ✅ **Можно** начинать новую фичу даже если предыдущая не завершена (DEPLOYED)
@@ -252,7 +248,7 @@ AI выполняет команду по инструкциям
 │                                                                              │
 │                                     ▼                                        │
 │  ┌───────────────────────────────────────────────────────────────┐          │
-│  │            QUALITY & DEPLOY (/aidd-finalize)                  │          │
+│  │            QUALITY & DEPLOY (/aidd-validate)                  │          │
 │  │  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────────────┐      │          │
 │  │  │ Review │─▶│  Test  │─▶│Validate│─▶│Deploy + Report │      │          │
 │  │  └────┬───┘  └────┬───┘  └────┬───┘  └────┬───────────┘      │          │
@@ -268,19 +264,17 @@ AI выполняет команду по инструкциям
 
 ### Таблица команд и ворот
 
-| # | Этап | Команда (старая → новая) | Агент | Ворота | Артефакт (v2 → v3) |
-|---|------|--------------------------|-------|--------|-------------------|
+| # | Этап | Команда | Агент | Ворота | Артефакт |
+|---|------|---------|-------|--------|----------|
 | 0 | Bootstrap | `/aidd-init` | — | `BOOTSTRAP_READY` | Структура ЦП |
-| 1 | Идея | `/aidd-idea` → `/aidd-analyze` | Аналитик | `PRD_READY` | `prd/{name}-prd.md` → `_analysis/{name}.md` |
-| 2 | Исследование | `/aidd-research` | Исследователь | `RESEARCH_DONE` | `research/{name}-research.md` → `_research/{name}.md` |
-| 3 | Архитектура (CREATE) | `/aidd-plan` | Архитектор → Планировщик | `PLAN_APPROVED` | `architecture/{name}-plan.md` → `_plans/mvp/{name}.md` |
-| 3 | Архитектура (FEATURE) | `/aidd-feature-plan` → `/aidd-plan-feature` | Архитектор → Планировщик | `PLAN_APPROVED` | `plans/{feature}-plan.md` → `_plans/features/{name}.md` |
-| 4 | Реализация | `/aidd-generate` → `/aidd-code` | Реализатор → Программист | `IMPLEMENT_OK` | `services/`, тесты |
-| 5 | Quality & Deploy | `/aidd-finalize` → `/aidd-validate` | Валидатор | **Full**: `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED` <br> **Quick**: `DOCUMENTED` | `reports/{name}-completion.md` → `_validation/{name}.md` |
+| 1 | Идея | `/aidd-analyze` | Аналитик | `PRD_READY` | `_analysis/{name}.md` |
+| 2 | Исследование | `/aidd-research` | Исследователь | `RESEARCH_DONE` | `_research/{name}.md` |
+| 3 | Архитектура (CREATE) | `/aidd-plan` | Планировщик | `PLAN_APPROVED` | `_plans/mvp/{name}.md` |
+| 3 | Архитектура (FEATURE) | `/aidd-plan-feature` | Планировщик | `PLAN_APPROVED` | `_plans/features/{name}.md` |
+| 4 | Реализация | `/aidd-code` | Программист | `IMPLEMENT_OK` | `services/`, тесты |
+| 5 | Quality & Deploy | `/aidd-validate` | Валидатор | **Full**: `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED` <br> **Quick**: `DOCUMENTED` | `_validation/{name}.md` |
 
-> **Migration Mode (v2.4+)**: Все команды доступны в двух вариантах — обе работают одинаково. Артефакты создаются в разных папках в зависимости от `naming_version` в `.pipeline-state.json`.
->
-> **Примечание**: `/aidd-finalize` (или `/aidd-validate`) поддерживает два режима:
+> **Примечание**: `/aidd-validate` поддерживает два режима:
 > - **Полный (рекомендуется)**: Review → Test → Validate → Deploy → Production-ready MVP
 > - **Быстрый**: Только DRAFT Completion Report + Static Analysis → для документации или незавершённых фич
 >
@@ -293,7 +287,7 @@ AI выполняет команду по инструкциям
 ✅ Ворота пройдены → Можно продолжать
 ```
 
-**Пример**: Нельзя выполнить `/aidd-generate` без `PLAN_APPROVED`.
+**Пример**: Нельзя выполнить `/aidd-code` без `PLAN_APPROVED`.
 
 ### Completion Report (Итоговый отчёт)
 
@@ -337,98 +331,24 @@ AI выполняет команду по инструкциям
 #### Путь к файлу
 
 ```
-ai-docs/docs/reports/{YYYY-MM-DD}_{FID}_{slug}-completion.md
+ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}-completion.md
 ```
 
 ---
 
-## 5 базовых ролей AI-агентов (9 файлов)
+## 5 базовых ролей AI-агентов (7 файлов)
 
-| Роль (старая → новая) | Файлы | Этапы | Ответственность |
-|----------------------|-------|-------|-----------------|
+| Роль | Файл | Этапы | Ответственность |
+|------|------|-------|-----------------|
 | **Аналитик** | `analyst.md` | 1 | PRD, требования |
 | **Исследователь** | `researcher.md` | 2 | Анализ кода/требований |
-| **Архитектор → Планировщик** | `architect.md` / `planner.md` | 3 | Проектирование |
-| **Реализатор → Программист** | `implementer.md` / `coder.md` | 4 | Генерация кода |
+| **Планировщик** | `planner.md` | 3 | Проектирование |
+| **Программист** | `coder.md` | 4 | Генерация кода |
 | **Валидатор** | `validator.md` | 5 | Quality & Deploy (4 шага) |
-
-> **Migration Mode**: Роли с двумя названиями доступны в обоих файлах (идентичное содержимое)
 
 **Вспомогательные библиотеки инструкций** (используются внутри Валидатора):
 - `code-review-library.md` — детальные инструкции для Code Review (Шаг 1)
 - `testing-library.md` — детальные инструкции для Testing (Шаг 2)
-
----
-
-## Naming Convention Migration (v2.4+)
-
-> **Статус**: ✅ Phase 2 Complete (Migration mode) — оба варианта работают одновременно
-> **Дата завершения Phase 2**: 2026-01-19
-
-Фреймворк унифицирует naming conventions на основе 5 базовых слов:
-**analyst**, **researcher**, **planner**, **coder**, **validator**
-
-### Что изменилось
-
-| Сущность | Старое название | Новое название | Статус |
-|----------|----------------|----------------|--------|
-| **Роли** | `architect.md` | `planner.md` | ✅ Оба доступны |
-| | `implementer.md` | `coder.md` | ✅ Оба доступны |
-| **Команды** | `/aidd-idea` | `/aidd-analyze` | ✅ Обе работают |
-| | `/aidd-feature-plan` | `/aidd-plan-feature` | ✅ Обе работают |
-| | `/aidd-generate` | `/aidd-code` | ✅ Обе работают |
-| | `/aidd-finalize` | `/aidd-validate` | ✅ Обе работают |
-| **Артефакты (v2)** | `prd/`, `architecture/`, `plans/`, `reports/` | — | ✅ По умолчанию |
-| **Артефакты (v3)** | — | `_analysis/`, `_plans/`, `_validation/` | ✅ После миграции |
-
-### Как это работает (naming_version)
-
-Все команды теперь проверяют поле `naming_version` в `.pipeline-state.json`:
-
-```json
-{
-  "naming_version": "v2",  // или "v3"
-  "active_pipelines": { ... }
-}
-```
-
-**v2 (по умолчанию)** — старая структура:
-- `ai-docs/docs/prd/{date}_{FID}_{slug}-prd.md`
-- `ai-docs/docs/architecture/{date}_{FID}_{slug}-plan.md`
-- `ai-docs/docs/reports/{date}_{FID}_{slug}-completion.md`
-
-**v3 (после миграции)** — новая структура:
-- `ai-docs/docs/_analysis/{date}_{FID}_{slug}.md` (без дублирования `-prd`)
-- `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}.md` (без дублирования `-plan`)
-- `ai-docs/docs/_validation/{date}_{FID}_{slug}.md` (без дублирования `-completion`)
-
-### Миграция существующих проектов
-
-Для переноса проекта с v2 на v3:
-
-```bash
-cd your-project/
-python3 .aidd/scripts/migrate-naming-v3.py
-```
-
-Скрипт автоматически:
-- Переименует папки артефактов
-- Уберёт дублирование в именах файлов
-- Обновит `.pipeline-state.json` (установит `naming_version: "v3"`)
-- Обновит ссылки в документах
-
-### Рекомендации
-
-- **Новые проекты**: Можете выбрать v2 (по умолчанию) или v3 при `/aidd-init`
-- **Существующие проекты**: Продолжайте использовать v2 или мигрируйте на v3
-- **Команды**: Используйте любые названия — все работают одинаково
-
-**Документация**:
-- Полный план: `/home/bgs/.claude/plans/idempotent-drifting-wirth.md`
-- Completion summary: `contributors/2026-01-19-phase2-completion-summary.md`
-- Implementation guide: `docs/naming-v3-implementation.md`
-
-**Phase 3 (Deprecation)**: Запланирована через 3 месяца (апрель 2026) — удаление старых названий
 
 ---
 
@@ -442,7 +362,7 @@ python3 .aidd/scripts/migrate-naming-v3.py
 │  1. Подключает .aidd/ как submodule                                 │
 │  2. Запускает Claude Code                                           │
 │                                                                     │
-│  3. /aidd-idea "описание"       ───▶    Создаёт PRD                 │
+│  3. /aidd-analyze "описание"       ───▶    Создаёт PRD                 │
 │                                         Задаёт уточняющие вопросы   │
 │                                                                     │
 │  4. Отвечает на вопросы         ◀───    PRD_READY ✓                 │
@@ -455,10 +375,10 @@ python3 .aidd/scripts/migrate-naming-v3.py
 │  7. ⚠️ УТВЕРЖДАЕТ ПЛАН          ◀───    Ждёт подтверждения          │
 │     "Да, план утверждаю"                PLAN_APPROVED ✓             │
 │                                                                     │
-│  8. /aidd-generate              ───▶    Генерирует код              │
+│  8. /aidd-code              ───▶    Генерирует код              │
 │                                         IMPLEMENT_OK ✓              │
 │                                                                     │
-│  9. /aidd-finalize              ───▶    Quality & Deploy:           │
+│  9. /aidd-validate              ───▶    Quality & Deploy:           │
 │                                         • Review → REVIEW_OK ✓      │
 │                                         • Test → QA_PASSED ✓        │
 │                                         • Validate → ALL_GATES ✓    │
@@ -546,7 +466,7 @@ python3 .aidd/scripts/migrate-naming-v3.py
 
 ## Выполнение команд /aidd-*
 
-> **Lesson Learned**: F007 (2026-01-14) — пропущен Completion Report при `/aidd-finalize`
+> **Lesson Learned**: F007 (2026-01-14) — пропущен Completion Report при `/aidd-validate`
 
 ### Обязательный алгоритм
 
@@ -640,17 +560,11 @@ git submodule add https://github.com/your-org/aidd-mvp-generator.git .aidd
 # 2. Запустить Claude Code
 claude
 
-# 3. Начать работу (используйте любой вариант команды)
-/aidd-idea "Создать сервис бронирования столиков в ресторанах"
-# или
+# 3. Начать работу
 /aidd-analyze "Создать сервис бронирования столиков в ресторанах"
 
 # 4. Следовать пайплайну (этапы 0-5)
-# Старые команды:
-# /aidd-init → /aidd-idea → /aidd-research → /aidd-plan → /aidd-generate → /aidd-finalize
-
-# Новые команды (эквивалентны):
-# /aidd-init → /aidd-analyze → /aidd-research → /aidd-plan → /aidd-code → /aidd-validate
+/aidd-init → /aidd-analyze → /aidd-research → /aidd-plan → /aidd-code → /aidd-validate
 ```
 
 ### Добавление фичи (FEATURE)
@@ -659,16 +573,11 @@ claude
 cd existing-project
 claude
 
-# Используйте любой вариант команды
-/aidd-idea "Добавить систему email уведомлений"
-# или
+# Начать работу
 /aidd-analyze "Добавить систему email уведомлений"
 
-# Пайплайн (старые команды):
-# /aidd-idea → /aidd-research → /aidd-feature-plan → /aidd-generate → /aidd-finalize
-
-# Пайплайн (новые команды):
-# /aidd-analyze → /aidd-research → /aidd-plan-feature → /aidd-code → /aidd-validate
+# Пайплайн
+/aidd-analyze → /aidd-research → /aidd-plan-feature → /aidd-code → /aidd-validate
 ```
 
 ---

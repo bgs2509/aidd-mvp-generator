@@ -1,6 +1,6 @@
 # Комплексный аудит AIDD-MVP Generator — Codex (2025-01-13)
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-idea`, `/aidd-generate`, `/aidd-finalize`, `/aidd-feature-plan`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
 ## 1. Executive Summary
@@ -152,20 +152,20 @@ LOW (1):       1 × 0.1 = -0.1
   ```
 
 #### Проблема 6 (HIGH): Примеры артефактов ведут на файлы, которые создаются только в целевых проектах
-- **Расположение**: `docs/artifact-naming.md:222`, `.claude/commands/aidd-idea.md:383`
+- **Расположение**: `docs/artifact-naming.md:222`, `.claude/commands/aidd-analyze.md:383`
 - **Влияние**: Кликабельные ссылки `[PRD](prd/...)` открывают 404 внутри генератора. AI-агенту приходится гадать где искать пример, а линк-валидаторы считают это ошибкой.
 - **Как обнаружено**
   ```bash
   sed -n '218,224p' docs/artifact-naming.md
-  sed -n '380,384p' .claude/commands/aidd-idea.md
+  sed -n '380,384p' .claude/commands/aidd-analyze.md
   ```
 - **Команда исправления**
   ```bash
-  perl -0pi -e 's|\[PRD\]\((prd/[A-Za-z0-9_-]+-prd\.md)\)|`PRD`: \1|g' docs/artifact-naming.md .claude/commands/aidd-idea.md
+  perl -0pi -e 's|\[PRD\]\((prd/[A-Za-z0-9_-]+-prd\.md)\)|`PRD`: \1|g' docs/artifact-naming.md .claude/commands/aidd-analyze.md
   ```
 - **Верификация**
   ```bash
-  rg -n '\[PRD\]' docs/artifact-naming.md .claude/commands/aidd-idea.md
+  rg -n '\[PRD\]' docs/artifact-naming.md .claude/commands/aidd-analyze.md
   ```
 
 ### Проблемы качества и структуры

@@ -15,7 +15,7 @@
 
 | Артефакт | Путь | Описание |
 |----------|------|----------|
-| PRD | `ai-docs/docs/prd/{name}-prd.md` | Требования |
+| PRD | `ai-docs/docs/_analysis/{name}-prd.md` | Требования |
 | RTM | `ai-docs/docs/rtm.md` | Матрица трассировки |
 | Код | `services/` | Реализованные сервисы |
 | Ворота | REVIEW_OK | Должны быть пройдены |

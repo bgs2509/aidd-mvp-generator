@@ -262,9 +262,9 @@ enables: []              # Потенциальные фичи, которые �
 
 | Артефакт | Путь | Статус | Описание |
 |----------|------|--------|----------|
-| PRD | `ai-docs/docs/prd/{date}_{FID}_{slug}-prd.md` | ✅ | Требования |
+| PRD | `ai-docs/docs/_analysis/{date}_{FID}_{slug}-prd.md` | ✅ | Требования |
 | Research | `ai-docs/docs/research/{date}_{FID}_{slug}-research.md` | ✅ | Анализ |
-| Architecture Plan | `ai-docs/docs/architecture/{date}_{FID}_{slug}-plan.md` | ✅ | Архитектура |
+| Architecture Plan | `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}-plan.md` | ✅ | Архитектура |
 
 ---
 

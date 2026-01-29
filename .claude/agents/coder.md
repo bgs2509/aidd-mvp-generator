@@ -26,7 +26,7 @@ model: inherit
 
 | Источник | Описание |
 |----------|----------|
-| Архитектурный план | `ai-docs/docs/architecture/{name}-plan.md` (в целевом проекте) |
+| Архитектурный план | `ai-docs/docs/_plans/mvp/{name}-plan.md` (в целевом проекте) |
 | `templates/services/` | Шаблоны сервисов (в генераторе) |
 | `templates/shared/` | Общие компоненты (в генераторе) |
 | `templates/infrastructure/` | Шаблоны инфраструктуры (в генераторе) |
@@ -161,8 +161,8 @@ def test_{что}_{сценарий}_{результат}():
 
 ```markdown
 - [ ] Открыть файл плана:
-      • CREATE: `ai-docs/docs/architecture/{name}-plan.md`
-      • FEATURE: `ai-docs/docs/plans/{name}-plan.md`
+      • CREATE: `ai-docs/docs/_plans/mvp/{name}-plan.md`
+      • FEATURE: `ai-docs/docs/_plans/features/{name}-plan.md`
 - [ ] Прочитать ВЕСЬ план от начала до конца
 - [ ] Понять общую архитектуру и цели
 ```
@@ -348,7 +348,7 @@ def test_{что}_{сценарий}_{результат}():
 ```markdown
 ## Отчёт о реализации плана
 
-**План**: `ai-docs/docs/architecture/booking-plan.md`
+**План**: `ai-docs/docs/_plans/mvp/booking-plan.md`
 **Дата реализации**: 2024-12-25
 
 ### Реализовано
