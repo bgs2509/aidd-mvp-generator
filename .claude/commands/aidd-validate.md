@@ -3,9 +3,6 @@ allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md), Bash(gi
 description: Quality & Deploy — полный цикл проверки качества и деплоя
 ---
 
-**Примечание (Migration Mode v2.4):** Фреймворк поддерживает обе версии команд — legacy naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) и new naming (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`) работают идентично.
-
-
 > ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
 > 1. Найти секцию "Чеклист ворот" в конце этого файла
 > 2. Создать TodoWrite со ВСЕМИ пунктами (особенно 🔴)
