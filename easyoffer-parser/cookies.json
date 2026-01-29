@@ -1,0 +1,122 @@
+[
+  {
+    "name": "tmr_lvid",
+    "value": "239aa04202abcd7f44bcf5bd4d69d6a9",
+    "domain": ".easyoffer.ru",
+    "path": "/",
+    "expires": 1797772352,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "tmr_lvidTS",
+    "value": "1769000215119",
+    "domain": ".easyoffer.ru",
+    "path": "/",
+    "expires": 1797772352,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "_ym_uid",
+    "value": "1769000215215703790",
+    "domain": ".easyoffer.ru",
+    "path": "/",
+    "expires": 1800536215,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "_ym_d",
+    "value": "1769000215",
+    "domain": ".easyoffer.ru",
+    "path": "/",
+    "expires": 1800536215,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "_ga",
+    "value": "GA1.1.677836964.1769000215",
+    "domain": ".easyoffer.ru",
+    "path": "/",
+    "expires": 1803561152.37716,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "_ym_isad",
+    "value": "2",
+    "domain": ".easyoffer.ru",
+    "path": "/",
+    "expires": 1769072215,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "_ym_visorc",
+    "value": "w",
+    "domain": ".easyoffer.ru",
+    "path": "/",
+    "expires": 1769002952,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "None"
+  },
+  {
+    "name": "domain_sid",
+    "value": "20oqTQLyQ-51vj3cFubNB%3A1769000216406",
+    "domain": "easyoffer.ru",
+    "path": "/",
+    "expires": 1769605016.406381,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "easy-session",
+    "value": "Fe26.2*1*07f3ce92cd9f5458a22615f99c72ef3ed0623150e8c03d99c6ac7dca9aca6080*l36l4QZ4XhAKfB91_yrE-A*2IYtasQZtFnRuqIrsT62kT-I0YS0YDTDQPtwckQmTvzGOrLiZwgf-eRbzdo2X4Ft315O-zXk4B-1iKOjEdYKvjs-lSgvlUg56jrjJeSvmsSbnwgbGx0ZrY8XvnfH7SBsl7zuNnckc5l4H1ev7DUNG9tOHoRQi_i2Jtp5MeqjMhz9TtyBB5VpO4JlatUFZokd-NyPoC97AjT7WsIsYBVVXm9x_ruLsQjmoBMfJkgoIBPFWAsIf0p10Wg0uMnHHOzW9C_RMhhE75Vg0qQ5tO5VqEaO1_M1duuGgHUVe07DC83toaG7gTWCasf7EeMFKXGXk9aqfFSgmiWuaYi8zean8648IIae4yPFhQCNaoRQ7_gQPe7zU3mAyVEg0fGRmHxKBKT6MO6G77S8_wJfzQABupo1oFHAMjpS3k38hafojCEpTc6ZMKOtmxF_sAjyW2PFsNUA4jNs4EMNIjGSB6CyKAOLw1JWPuT3YPApD6hTy_W2kLh80Ji4vsWh5OIC_iPJUBq4m5e-kzEICpUTnLODUZksPnbxB-EF6szhv7P_xXIlzfIQ4MOI8Xvoxcax5HMRbyKyO2Ih1cV0u3joMtIBreV9U4DlvGZohx0SvtZ9rhIrF8QzcVEul1jvxUxCplmgSu_LXY8bj-NKtu1H7dGnVJhcVtxewOciZtj8oyve2mlYgXPOc8O7XLjAJRzhwTqm*1770210699818*952bb390b4d7f48ae0367f2529274bd40ea9582c06a75b341a969061b7c0efcb*_03Hha7d62Q4KwQFLFDY8ts8LP4E_jQrf02L6bK4mkM~2",
+    "domain": "easyoffer.ru",
+    "path": "/",
+    "expires": 1771593100.017306,
+    "httpOnly": true,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "ph_phc_L4spAZQAt6uoXHw4PCzdw6AsScn8G0No0LhT317iSDt_posthog",
+    "value": "%7B%22%24device_id%22%3A%22019be0a1-27a3-78d8-9177-b15191054b47%22%2C%22distinct_id%22%3A%22019be0a1-27a3-78d8-9177-b15191054b47%22%2C%22%24sesid%22%3A%5B1769001152144%2C%22019be0a1-27b3-7fae-8e0b-479a406dca7f%22%2C1769000216497%5D%2C%22%24initial_person_info%22%3A%7B%22r%22%3A%22%24direct%22%2C%22u%22%3A%22https%3A%2F%2Feasyoffer.ru%2Fpython-developer%2Fquestions%3FinterviewType%3Dtehnicheskoe%26page%3D1%22%7D%7D",
+    "domain": ".easyoffer.ru",
+    "path": "/",
+    "expires": 1800537152,
+    "httpOnly": false,
+    "secure": true,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "tmr_detect",
+    "value": "0%7C1769001154402",
+    "domain": "easyoffer.ru",
+    "path": "/",
+    "expires": 1769087554,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  },
+  {
+    "name": "_ga_GFPNYHN0RQ",
+    "value": "GS2.1.s1769000215$o1$g1$t1769001155$j5$l0$h0",
+    "domain": ".easyoffer.ru",
+    "path": "/",
+    "expires": 1803561155.911606,
+    "httpOnly": false,
+    "secure": false,
+    "sameSite": "Lax"
+  }
+]
