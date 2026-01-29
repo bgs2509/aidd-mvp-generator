@@ -78,13 +78,13 @@ tasks_count: 0
 | 4.1.1 | Создать структуру проекта | Все директории | — |
 | 4.1.2 | Настроить docker-compose.yml | docker-compose.yml | — |
 | 4.1.3 | Создать .env.example | .env.example | — |
-| 4.1.4 | Настроить CI pipeline | .github/workflows/ci.yml | — |
+| 4.1.4 | Настроить CI pipeline (опционально) | {указать путь} | — |
 | 4.1.5 | Создать Makefile | Makefile | — |
 
 **Критерии завершения**:
 - [ ] `docker compose up` запускается без ошибок
 - [ ] Все сервисы проходят health check
-- [ ] CI pipeline проходит
+- [ ] CI pipeline проходит (если настроен)
 
 ---
 

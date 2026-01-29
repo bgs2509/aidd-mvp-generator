@@ -281,38 +281,12 @@ class OrderService:
 
 ### Минимальный набор проверок
 
-```yaml
-# .github/workflows/ci.yml
-
-name: CI
-
-on: [push, pull_request]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: pip install -r requirements.txt -r requirements-dev.txt
-
-      - name: Lint
-        run: ruff check src tests
-
-      - name: Format check
-        run: ruff format --check src tests
-
-      - name: Type check
-        run: mypy src
-
-      - name: Test
-        run: pytest --cov=src --cov-fail-under=75
+```bash
+pip install -r requirements.txt -r requirements-dev.txt
+ruff check src tests
+ruff format --check src tests
+mypy src
+pytest --cov=src --cov-fail-under=75
 ```
 
 ---

@@ -81,12 +81,9 @@ templates/documents/                  →    ai-docs/docs/
 | `.env.example` | `.env.example` | Переменные окружения |
 | `Makefile` | `Makefile` | Команды сборки |
 
-### github-actions/
+### CI/CD (опционально)
 
-| Шаблон | Результат | Описание |
-|--------|-----------|----------|
-| `ci.yml` | `.github/workflows/ci.yml` | CI pipeline |
-| `cd.yml` | `.github/workflows/cd.yml` | CD pipeline |
+CI/CD конфигурация не генерируется автоматически. Добавляйте вручную под свой инструмент.
 
 ### nginx/
 
@@ -165,7 +162,6 @@ templates/
 ├── infrastructure/
 │   ├── docker-compose.yml     ─────→  docker-compose.yml
 │   ├── Makefile               ─────→  Makefile
-│   └── github-actions/        ─────→  .github/workflows/
 │
 └── templates/documents/
     ├── prd-template.md        ─────→  ai-docs/docs/_analysis/*.md

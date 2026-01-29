@@ -14,11 +14,6 @@ infrastructure/
 ├── nginx/
 │   ├── nginx.conf                # Конфигурация Nginx
 │   └── Dockerfile                # Dockerfile для Nginx
-├── github-actions/
-│   └── .github/
-│       └── workflows/
-│           ├── ci.yml            # CI pipeline
-│           └── cd.yml            # CD pipeline
 ├── Makefile                      # Команды управления
 └── README.md                     # Этот файл
 ```
@@ -131,34 +126,34 @@ make clean-docker   # Docker ресурсы
 
 ## CI/CD
 
-### CI Pipeline (ci.yml)
+CI/CD в шаблонах не создаётся автоматически. Настройте под свой инструмент при необходимости.
 
-Запускается при push/PR:
+### CI (рекомендуемый набор)
 
-1. **Lint** — Ruff, MyPy
+1. **Lint** — ruff, mypy
 2. **Unit Tests** — pytest с coverage
 3. **Integration Tests** — с PostgreSQL, Redis
-4. **Security Scan** — Bandit, Safety
+4. **Security Scan** — bandit, safety
 5. **Build** — Docker images
 
-### CD Pipeline (cd.yml)
+### CD (опционально)
 
-Запускается при создании тега `v*.*.*`:
-
-1. **Build & Push** — GitHub Container Registry
-2. **Deploy Staging** — автоматически
+1. **Build & Push** — registry
+2. **Deploy Staging** — автоматически (если есть)
 3. **Deploy Production** — после approval
+4. **Smoke Tests** — проверка здоровья
+5. **Rollback** — сценарий отката
 
-### Secrets для GitHub Actions
+### Секреты для CI/CD (пример)
 
 ```
-STAGING_HOST          # IP staging сервера
-STAGING_USER          # SSH пользователь
-STAGING_SSH_KEY       # SSH приватный ключ
+STAGING_HOST
+STAGING_USER
+STAGING_SSH_KEY
 
-PRODUCTION_HOST       # IP production сервера
-PRODUCTION_USER       # SSH пользователь
-PRODUCTION_SSH_KEY    # SSH приватный ключ
+PRODUCTION_HOST
+PRODUCTION_USER
+PRODUCTION_SSH_KEY
 
 CODECOV_TOKEN         # Токен Codecov (опционально)
 ```

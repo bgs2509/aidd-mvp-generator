@@ -169,26 +169,17 @@ done
 
 ## 6. Проверка CI/CD
 
-### Команды проверки
+### Рекомендации
 
-```bash
-# Проверить что секреты используются через secrets
-if [ -d ".github/workflows" ]; then
-  # Хорошо: ${{ secrets.* }}
-  grep -rn '\${{ secrets\.' .github/workflows/ && echo "OK: Используются GitHub secrets"
-
-  # Плохо: hardcoded значения
-  grep -rn "PASSWORD=\|TOKEN=" .github/workflows/ | \
-    grep -v "secrets\." && echo "WARN: Возможно hardcoded секреты в CI" || echo "OK"
-fi
-```
+- Убедитесь, что в конфигурациях CI/CD нет хардкода секретов.
+- Используйте механизм секретов вашей CI-системы и переменные окружения.
 
 ### Критерии
 
 | Проверка | Критичность |
 |----------|-------------|
-| Secrets через ${{ secrets.* }} | Warning |
-| Нет hardcoded в workflows | Critical |
+| Нет хардкода секретов в CI/CD конфигурациях | Critical |
+| Секреты передаются через механизм CI/CD | Warning |
 
 ---
 

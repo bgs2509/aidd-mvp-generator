@@ -101,7 +101,6 @@ templates/services/*             →    services/{name}_{type}/
 | Docker Dev | `templates/infrastructure/docker-compose.dev.yml` | `docker-compose.dev.yml` |
 | Makefile | `templates/infrastructure/Makefile` | `Makefile` |
 | .env | `templates/infrastructure/.env.example` | `.env.example` |
-| CI/CD | `templates/infrastructure/github-actions/` | `.github/workflows/` |
 
 ### Сервисы
 

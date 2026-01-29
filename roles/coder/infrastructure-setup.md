@@ -7,7 +7,7 @@
 ## Цель
 
 Подготовить инфраструктуру проекта: структуру директорий,
-Docker конфигурацию, CI pipeline и вспомогательные файлы.
+Docker конфигурацию и вспомогательные файлы. CI/CD настраивается вручную при необходимости.
 
 ---
 
@@ -38,9 +38,6 @@ Docker конфигурацию, CI pipeline и вспомогательные �
 │       ├── prd/
 │       ├── architecture/
 │       └── plans/
-├── .github/
-│   └── workflows/
-│       └── ci.yml
 ├── docker-compose.yml
 ├── docker-compose.dev.yml
 ├── .env.example
@@ -253,93 +250,9 @@ clean: ## Очистить всё
 	docker system prune -f
 ```
 
-### 6. CI Pipeline (.github/workflows/ci.yml)
+### 6. CI/CD (опционально)
 
-```yaml
-# .github/workflows/ci.yml
-# CI pipeline для проверки кода
-
-name: CI
-
-on:
-  push:
-    branches: [main, master, develop]
-  pull_request:
-    branches: [main, master, develop]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-
-    services:
-      postgres:
-        image: postgres:15-alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    strategy:
-      matrix:
-        service: [{context}_api, {context}_data]
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        working-directory: services/${{ matrix.service }}
-        run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install -r requirements-dev.txt
-
-      - name: Run linter
-        working-directory: services/${{ matrix.service }}
-        run: |
-          ruff check src tests
-
-      - name: Run tests
-        working-directory: services/${{ matrix.service }}
-        env:
-          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test
-        run: |
-          pytest -v --cov=src --cov-report=xml
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v4
-        with:
-          file: services/${{ matrix.service }}/coverage.xml
-          flags: ${{ matrix.service }}
-
-  lint:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install ruff
-        run: pip install ruff
-
-      - name: Run ruff
-        run: ruff check .
-```
+Шаблоны CI/CD не создаются автоматически. Настройте CI/CD под свой инструмент при необходимости. Рекомендации: `knowledge/infrastructure/ci-cd.md`.
 
 ### 7. .gitignore
 
@@ -422,7 +335,16 @@ credentials.json
 4. Создать docker-compose.dev.yml
 5. Создать .env.example
 6. Создать Makefile
-7. Создать .github/workflows/ci.yml
+7. Создать .gitignore
+8. Инициализировать git репозиторий
+```
+
+1. Создать корневую директорию проекта
+2. Создать структуру директорий services/
+3. Создать docker-compose.yml из шаблона
+4. Создать docker-compose.dev.yml
+5. Создать .env.example
+6. Создать Makefile
 8. Создать .gitignore
 9. Инициализировать git репозиторий
 ```
@@ -436,7 +358,6 @@ credentials.json
 | docker-compose.yml | `templates/infrastructure/docker-compose/docker-compose.yml` |
 | docker-compose.dev.yml | `templates/infrastructure/docker-compose/docker-compose.dev.yml` |
 | .env.example | `templates/infrastructure/docker-compose/.env.example` |
-| ci.yml | `templates/infrastructure/github-actions/.github/workflows/ci.yml` |
 
 ---
 
@@ -448,7 +369,7 @@ credentials.json
 - [ ] docker-compose.yml создан и валиден
 - [ ] .env.example содержит все переменные
 - [ ] Makefile содержит основные команды
-- [ ] CI pipeline настроен
+- [ ] CI pipeline настроен (опционально)
 - [ ] .gitignore настроен
 - [ ] `docker-compose config` выполняется без ошибок
 

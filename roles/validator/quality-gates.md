@@ -103,7 +103,7 @@
 - [ ] Coverage ≥75%
 - [ ] 100% Must требований покрыто тестами
 - [ ] Нет критических дефектов
-- [ ] CI pipeline проходит
+- [ ] CI pipeline проходит (если настроен)
 
 Артефакт: ai-docs/docs/_validation/qa-report.md
 ```

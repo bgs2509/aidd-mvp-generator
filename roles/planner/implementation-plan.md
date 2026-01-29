@@ -46,7 +46,7 @@
 | 4.1.2 | Создать docker-compose.yml | docker-compose.yml | 4.1.1 |
 | 4.1.3 | Создать .env.example | .env.example | 4.1.1 |
 | 4.1.4 | Создать Makefile | Makefile | 4.1.2 |
-| 4.1.5 | Создать CI pipeline | .github/workflows/ci.yml | 4.1.1 |
+| 4.1.5 | Настроить CI pipeline (опционально) | {указать путь} | 4.1.1 |
 
 ### Stage 4.2: Data Service
 

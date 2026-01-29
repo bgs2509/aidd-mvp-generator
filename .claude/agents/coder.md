@@ -41,7 +41,7 @@ model: inherit
 | Код сервисов | `services/{name}/` |
 | Инфраструктура | `docker-compose.yml`, `Makefile` |
 | Тесты | `services/{name}/tests/` |
-| CI/CD | `.github/workflows/` |
+| CI/CD | (опционально, вручную) |
 
 ---
 
@@ -76,7 +76,6 @@ Stage 4.1: Инфраструктура
 ├── docker-compose.dev.yml
 ├── .env.example
 ├── Makefile
-└── .github/workflows/
 
 Stage 4.2: Data Service
 ├── Структура DDD
@@ -219,7 +218,7 @@ def test_{что}_{сценарий}_{результат}():
 ### Инфраструктура
 - [ ] docker-compose.yml (обновить/создать)
 - [ ] Makefile
-- [ ] .github/workflows/
+- [ ] CI/CD (опционально)
 - [ ] .env.example
 ```
 

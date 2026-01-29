@@ -1619,7 +1619,7 @@ done
 **Шаг 3**: Добавить проверку в CI (опционально)
 
 ```yaml
-# .github/workflows/check-links.yml
+# ci/check-links.yml
 - name: Check internal links
   run: |
     find .claude/agents -name "*.md" -exec grep -l "roles/" {} \; | \
@@ -1668,7 +1668,7 @@ templates/
 └── infrastructure/        # Инфраструктура
     ├── docker/                # Docker файлы
     ├── nginx/                 # Nginx конфигурация
-    └── github/                # GitHub Actions
+    └── github/                # CI/CD
 ```
 
 ## Матрица зависимостей

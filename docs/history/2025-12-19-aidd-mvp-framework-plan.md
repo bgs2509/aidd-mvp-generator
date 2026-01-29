@@ -339,7 +339,7 @@ Dockerfile                  # Образ Nginx
 
 ### ci-cd/
 ```
-.github/workflows/
+ci/
 ├── ci.yml                  # Непрерывная интеграция
 └── cd.yml                  # Непрерывное развёртывание
 ```
@@ -353,7 +353,7 @@ Dockerfile                  # Образ Nginx
 | **Инфраструктура** | Docker 24+, Nginx 1.27+, Docker Compose 2.20+ |
 | **Наблюдаемость** | Prometheus, Grafana, Jaeger, ELK Stack, Sentry |
 | **Качество** | pytest 8.3+, mypy 1.11+, Ruff 0.6+, Testcontainers |
-| **CI/CD** | GitHub Actions |
+| **CI/CD** | CI/CD |
 
 ## 2.7 7-этапный AI рабочий процесс
 
@@ -798,7 +798,7 @@ Dockerfile                  # Образ Nginx
 | Обновление docker-compose.dev | `docker-compose.dev.yml` | 📝 `docker-compose.dev.yml` |
 | Обновление docker-compose.prod | `docker-compose.prod.yml` | 📝 `docker-compose.prod.yml` |
 | Настройка Nginx | `nginx/nginx.conf` | 📝 `nginx/nginx.conf` — добавление роута |
-| Создание CI/CD | `templates/infrastructure/github-actions/` | 📝 `.github/workflows/ci.yml`, `.github/workflows/cd.yml` |
+| Создание CI/CD | `templates/infrastructure/ci-cd/` | 📝 `ci/ci.yml`, `ci/cd.yml` |
 
 #### 5. Документирование
 
@@ -1005,7 +1005,7 @@ Dockerfile                  # Образ Nginx
 |----------|---------------------|---------------------|
 | Сборка Docker образов | `services/*/Dockerfile` → `docker build` | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
 | Проверка переменных окружения | `.env.example` — все переменные документированы | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
-| Проверка CI/CD | `.github/workflows/ci.yml`, `.github/workflows/cd.yml` | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
+| Проверка CI/CD | `ci/ci.yml`, `ci/cd.yml` | 📝 `ai-docs/docs/_validation/{name}-validation.md` |
 
 #### 4. Развёртывание (команда /deploy)
 
@@ -1339,7 +1339,7 @@ aidd-mvp-generator/
 | **MongoDB Data API** | `templates/services/template_data_mongo_api/` | `templates/services/mongo_data_api/` | Motor + репозитории |
 | **Docker Compose** | `templates/infrastructure/` | `templates/infrastructure/docker-compose/` | Dev + Prod конфиги |
 | **Nginx** | `templates/nginx/` | `templates/infrastructure/nginx/` | API Gateway |
-| **CI/CD** | `.github/workflows/` | `templates/infrastructure/github-actions/` | GitHub Actions |
+| **CI/CD** | `ci/` | `templates/infrastructure/ci-cd/` | CI/CD |
 | **Принципы архитектуры** | `ARCHITECTURE.md` | `knowledge/architecture/` | HTTP-only, DDD |
 | **Правила CLAUDE.md** | `CLAUDE.md` | Интегрировать в `CLAUDE.md` | Верификация перед действием |
 
@@ -1404,7 +1404,7 @@ templates/services/template_data_mongo_api/ →  /templates/services/mongo_data_
 templates/infrastructure/docker-compose.yml → /templates/infrastructure/docker-compose/
 templates/infrastructure/.env.example      →  /templates/infrastructure/docker-compose/
 templates/nginx/nginx.conf                 →  /templates/infrastructure/nginx/
-.github/workflows/                         →  /templates/infrastructure/github-actions/
+ci/                         →  /templates/infrastructure/ci-cd/
 CLAUDE.md (правила верификации)            →  /CLAUDE.md (часть)
 ARCHITECTURE.md                            →  /knowledge/architecture/improved-hybrid.md
 docs/guides/dry-kiss-yagni-principles.md   →  /knowledge/quality/dry-kiss-yagni.md
@@ -1444,7 +1444,7 @@ docs/atomic/testing/*                      →  /knowledge/quality/testing/
 > Подробное описание см. [раздел 2.5](#25-шаблоны-в-ai-frameworktemplates), секция `services/`
 
 ### Фаза 4: Инфраструктура (templates/infrastructure/)
-**Адаптируем из .ai-framework**: Docker, Nginx, GitHub Actions
+**Адаптируем из .ai-framework**: Docker, Nginx, CI/CD
 
 > Подробное описание см. [раздел 2.5](#25-шаблоны-в-ai-frameworktemplates), секция `infrastructure/`
 

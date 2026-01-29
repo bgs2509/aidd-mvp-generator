@@ -123,7 +123,6 @@
 |-----------|------|
 | Docker | [templates/infrastructure/docker/](../templates/infrastructure/docker/) |
 | Nginx | [templates/infrastructure/nginx/](../templates/infrastructure/nginx/) |
-| GitHub Actions | [templates/infrastructure/github-actions/](../templates/infrastructure/github-actions/) |
 
 ---
 

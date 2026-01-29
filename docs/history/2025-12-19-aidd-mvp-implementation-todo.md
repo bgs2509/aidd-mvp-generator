@@ -345,12 +345,12 @@
 4. docker-compose.prod.yml
 5. .env.example
 6. Makefile
-7. .github/workflows/ci.yml
-8. .github/workflows/cd.yml
+7. ci/ci.yml
+8. ci/cd.yml
 
 ## Шаблоны для использования
 - templates/infrastructure/docker-compose/
-- templates/infrastructure/github-actions/
+- templates/infrastructure/ci-cd/
 
 ## Источники
 - .ai-framework/docs/reference/project-structure.md
@@ -602,12 +602,12 @@ templates/services/fastapi_business_api/
 
 ---
 
-## 6.3 GitHub Actions
+## 6.3 CI/CD
 
 | # | Статус | Файл | Описание | Источник .ai-framework |
 |---|--------|------|----------|----------------------|
-| 6.3.1 | [x] | `templates/infrastructure/github-actions/.github/workflows/ci.yml` | CI pipeline | templates/ci-cd/.github/workflows/ci.yml |
-| 6.3.2 | [x] | `templates/infrastructure/github-actions/.github/workflows/cd.yml` | CD pipeline | templates/ci-cd/.github/workflows/cd.yml |
+| 6.3.1 | [x] | `templates/infrastructure/ci-cd/ci/ci.yml` | CI pipeline | templates/ci-cd/ci/ci.yml |
+| 6.3.2 | [x] | `templates/infrastructure/ci-cd/ci/cd.yml` | CD pipeline | templates/ci-cd/ci/cd.yml |
 
 ---
 

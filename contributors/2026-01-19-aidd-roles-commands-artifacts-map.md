@@ -225,7 +225,7 @@
 - `services/{name}/tests/` — тесты
 - `docker-compose.yml` — инфраструктура
 - `Makefile` — команды управления
-- `.github/workflows/` — CI/CD
+- CI/CD — опционально, вручную
 
 **Качественные ворота**:
 - `IMPLEMENT_OK` ✓

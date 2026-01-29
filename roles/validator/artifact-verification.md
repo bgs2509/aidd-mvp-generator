@@ -42,7 +42,7 @@
 | Docker Compose Dev | `docker-compose.dev.yml` | Dev overrides |
 | Environment | `.env.example` | Пример переменных |
 | Makefile | `Makefile` | Команды |
-| CI Pipeline | `.github/workflows/ci.yml` | CI конфигурация |
+| CI конфигурация (опционально) | — | CI/CD (если используется) |
 
 ### Тесты
 
@@ -126,7 +126,6 @@ done
 [ -f "docker-compose.dev.yml" ] && echo "✓ docker-compose.dev.yml" || echo "✗ docker-compose.dev.yml"
 [ -f ".env.example" ] && echo "✓ .env.example" || echo "✗ .env.example"
 [ -f "Makefile" ] && echo "✓ Makefile" || echo "✗ Makefile"
-[ -f ".github/workflows/ci.yml" ] && echo "✓ CI Pipeline" || echo "✗ CI Pipeline"
 ```
 
 ### Шаг 4: Валидация содержимого

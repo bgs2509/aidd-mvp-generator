@@ -357,7 +357,7 @@ pipelines:
 - **Database**: PostgreSQL 15+
 - **Cache**: Redis 7+
 - **Container**: Docker, Docker Compose
-- **CI/CD**: GitHub Actions
+- **CI/CD**: {инструмент или "нет"}
 
 ### 7.2 Интеграции
 

@@ -137,7 +137,7 @@
 | docker-compose.dev.yml | ✓ |
 | .env.example | ✓ |
 | Makefile | ✓ |
-| CI Pipeline | ✓ |
+| CI Pipeline (если есть) | {Статус} |
 
 ---
 

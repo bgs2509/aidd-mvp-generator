@@ -1,332 +1,95 @@
 # Паттерны CI/CD
 
-> **Назначение**: Настройка GitHub Actions для CI/CD.
+> **Назначение**: Рекомендации по построению CI/CD без привязки к платформе.
 
 ---
 
 ## CI Pipeline
 
-```yaml
-# .github/workflows/ci.yml
+### Когда запускать
+- push в основные ветки
+- pull/merge request
+- по расписанию (опционально)
 
-name: CI
+### Что проверять
+1. Lint и форматирование (ruff)
+2. Type check (mypy)
+3. Unit/Integration tests (pytest)
+4. Coverage ≥75%
+5. Security scan (bandit/safety)
+6. Build Docker images
 
-on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main, develop]
+### Пример команд
 
-jobs:
-  lint:
-    name: Lint
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+```bash
+pip install ruff mypy pytest pytest-cov bandit safety
+ruff check .
+ruff format --check .
+mypy .
+pytest services/{context}_api/tests     --cov=services/{context}_api/src     --cov-report=xml     --cov-fail-under=75
+bandit -r . -c pyproject.toml || true
+safety check --full-report || true
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          pip install ruff mypy
-
-      - name: Ruff check
-        run: ruff check services/
-
-      - name: Ruff format check
-        run: ruff format --check services/
-
-  test:
-    name: Test
-    runs-on: ubuntu-latest
-    needs: lint
-
-    services:
-      postgres:
-        image: postgres:15-alpine
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: test_db
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-      redis:
-        image: redis:7-alpine
-        ports:
-          - 6379:6379
-        options: >-
-          --health-cmd "redis-cli ping"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-
-      - name: Install dependencies
-        run: |
-          pip install -r services/{context}_api/requirements.txt
-          pip install -r services/{context}_api/requirements-dev.txt
-
-      - name: Run tests
-        env:
-          DATABASE_URL: postgresql+asyncpg://postgres:postgres@localhost:5432/test_db
-          REDIS_URL: redis://localhost:6379/0
-        run: |
-          pytest services/{context}_api/tests \
-            --cov=services/{context}_api/src \
-            --cov-report=xml \
-            --cov-fail-under=75
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v3
-        with:
-          file: ./coverage.xml
-          fail_ci_if_error: true
-
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-    needs: test
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-
-      - name: Build API image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./services/{context}_api
-          push: false
-          tags: {context}-api:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Build Data image
-        uses: docker/build-push-action@v5
-        with:
-          context: ./services/{context}_data
-          push: false
-          tags: {context}-data:${{ github.sha }}
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
+docker build -t {context}-api:local services/{context}_api
+docker build -t {context}-data:local services/{context}_data
 ```
+
+### Зависимости в CI
+- PostgreSQL, Redis (если нужны интеграционные тесты)
+- переменные окружения (DATABASE_URL, REDIS_URL)
 
 ---
 
 ## CD Pipeline
 
-```yaml
-# .github/workflows/cd.yml
+### Когда запускать
+- тег релиза (например, v1.2.3)
+- вручную (manual)
+- по расписанию (опционально)
 
-name: CD
-
-on:
-  push:
-    branches: [main]
-    tags: ['v*']
-
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
-
-jobs:
-  build-and-push:
-    name: Build and Push
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Log in to Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ${{ env.REGISTRY }}
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Extract metadata
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
-          tags: |
-            type=ref,event=branch
-            type=ref,event=pr
-            type=semver,pattern={{version}}
-            type=sha
-
-      - name: Build and push API
-        uses: docker/build-push-action@v5
-        with:
-          context: ./services/{context}_api
-          push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-api:${{ steps.meta.outputs.version }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-      - name: Build and push Data
-        uses: docker/build-push-action@v5
-        with:
-          context: ./services/{context}_data
-          push: true
-          tags: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-data:${{ steps.meta.outputs.version }}
-          labels: ${{ steps.meta.outputs.labels }}
-
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    needs: build-and-push
-    if: github.ref == 'refs/heads/main'
-    environment: production
-
-    steps:
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            cd /opt/{context}
-            docker compose pull
-            docker compose up -d
-            docker system prune -f
-```
+### Шаги
+1. Build & Push images в registry
+2. Deploy на staging (если есть)
+3. Smoke tests
+4. Approval и deploy на production
+5. Rollback сценарий (на случай ошибки)
 
 ---
 
-## PR Preview
+## PR Preview (опционально)
 
-```yaml
-# .github/workflows/preview.yml
-
-name: PR Preview
-
-on:
-  pull_request:
-    types: [opened, synchronize, reopened]
-
-jobs:
-  preview:
-    name: Deploy Preview
-    runs-on: ubuntu-latest
-    environment:
-      name: preview
-      url: ${{ steps.deploy.outputs.url }}
-
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Build and deploy preview
-        id: deploy
-        run: |
-          # Логика деплоя preview окружения
-          echo "url=https://pr-${{ github.event.pull_request.number }}.preview.example.com" >> $GITHUB_OUTPUT
-
-      - name: Comment PR
-        uses: actions/github-script@v7
-        with:
-          script: |
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: '🚀 Preview deployed: ${{ steps.deploy.outputs.url }}'
-            })
-```
+- Поднять временное окружение для MR/PR
+- Вернуть URL превью в комментарии/статусе проверки
 
 ---
 
 ## Секреты и переменные
 
-```yaml
-# Требуемые секреты в GitHub:
-
-# Для CI:
-# - CODECOV_TOKEN (для отчётов о покрытии)
-
-# Для CD:
-# - DEPLOY_HOST (IP или домен сервера)
-# - DEPLOY_USER (SSH пользователь)
-# - DEPLOY_KEY (SSH приватный ключ)
-
-# Для Docker Registry:
-# - GITHUB_TOKEN (автоматически)
-# или
-# - DOCKER_USERNAME
-# - DOCKER_PASSWORD
-```
+Пример необходимых секретов:
+- REGISTRY_USER / REGISTRY_PASSWORD (если нужен приватный реестр)
+- DEPLOY_HOST / DEPLOY_USER / DEPLOY_KEY
+- CODECOV_TOKEN (опционально)
 
 ---
 
 ## Миграции в CI/CD
 
-```yaml
-# В deploy job
-
-- name: Run migrations
-  uses: appleboy/ssh-action@v1.0.0
-  with:
-    host: ${{ secrets.DEPLOY_HOST }}
-    username: ${{ secrets.DEPLOY_USER }}
-    key: ${{ secrets.DEPLOY_KEY }}
-    script: |
-      cd /opt/{context}
-      docker compose exec -T {context}-data alembic upgrade head
+```bash
+# Пример в деплой-скрипте
+cd /opt/{context}
+docker compose exec -T {context}-data alembic upgrade head
 ```
 
 ---
 
 ## Rollback
 
-```yaml
-# .github/workflows/rollback.yml
-
-name: Rollback
-
-on:
-  workflow_dispatch:
-    inputs:
-      version:
-        description: 'Version to rollback to'
-        required: true
-
-jobs:
-  rollback:
-    runs-on: ubuntu-latest
-    environment: production
-
-    steps:
-      - name: Rollback deployment
-        uses: appleboy/ssh-action@v1.0.0
-        with:
-          host: ${{ secrets.DEPLOY_HOST }}
-          username: ${{ secrets.DEPLOY_USER }}
-          key: ${{ secrets.DEPLOY_KEY }}
-          script: |
-            cd /opt/{context}
-            docker compose pull {context}-api:${{ github.event.inputs.version }}
-            docker compose pull {context}-data:${{ github.event.inputs.version }}
-            docker compose up -d
+```bash
+# Пример ручного отката
+cd /opt/{context}
+docker compose pull {context}-api:{version}
+docker compose pull {context}-data:{version}
+docker compose up -d
 ```
 
 ---
@@ -334,8 +97,7 @@ jobs:
 ## Чек-лист
 
 - [ ] CI: lint, test, build
-- [ ] CD: push images, deploy
 - [ ] Coverage ≥75%
+- [ ] CD: push images, deploy (если нужно)
 - [ ] Секреты настроены
-- [ ] Миграции в деплое
-- [ ] Rollback workflow
+- [ ] Миграции и rollback описаны

@@ -190,7 +190,7 @@ def check_generate_preconditions() -> tuple[str, dict] | None:
 |----------|------|
 | Сервисы | `services/{name}_api/`, `services/{name}_data/` |
 | Инфраструктура | `docker-compose.yml`, `Makefile` |
-| CI/CD | `.github/workflows/` |
+| CI/CD | (опционально, вручную) |
 | Тесты | `services/*/tests/` |
 | Состояние | `.pipeline-state.json` (обновляется) |
 

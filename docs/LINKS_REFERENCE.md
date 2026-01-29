@@ -121,7 +121,6 @@
 | [templates/infrastructure/docker-compose.yml](../templates/infrastructure/docker-compose.yml) | Docker Compose |
 | [templates/infrastructure/Makefile](../templates/infrastructure/Makefile) | Makefile |
 | [templates/infrastructure/nginx/](../templates/infrastructure/nginx/) | Nginx конфигурация |
-| [templates/infrastructure/github-actions/](../templates/infrastructure/github-actions/) | CI/CD |
 
 ---
 

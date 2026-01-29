@@ -231,7 +231,7 @@ CREATE INDEX idx_{entities}_created_at ON {entities}(created_at);
 | Reverse Proxy | Nginx | SSL, Rate Limiting |
 | Containerization | Docker | Изоляция сервисов |
 | Orchestration | Docker Compose | Локальная разработка |
-| CI/CD | GitHub Actions | Автоматизация |
+| CI/CD | {инструмент} | Автоматизация |
 | Registry | GHCR | Docker images |
 
 ---

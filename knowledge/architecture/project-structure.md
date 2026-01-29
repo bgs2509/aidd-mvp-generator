@@ -25,11 +25,6 @@
 ├── docs/                        # Документация проекта
 │   └── api/                    # API документация
 │
-├── .github/
-│   └── workflows/
-│       ├── ci.yml              # CI pipeline
-│       └── cd.yml              # CD pipeline (Level 3+)
-│
 ├── docker-compose.yml           # Основная конфигурация
 ├── docker-compose.dev.yml       # Dev overrides
 ├── docker-compose.prod.yml      # Production конфигурация (Level 3+)
@@ -291,14 +286,12 @@ from {context}_api.api.v1.router import api_router
 from {context}_api.core.config import settings
 from {context}_api.core.logging import setup_logging
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     setup_logging()
     # startup
     yield
     # shutdown
-
 
 def create_app() -> FastAPI:
     app = FastAPI(
@@ -308,7 +301,6 @@ def create_app() -> FastAPI:
     )
     app.include_router(api_router, prefix="/api/v1")
     return app
-
 
 app = create_app()
 ```
@@ -320,7 +312,6 @@ app = create_app()
 
 from pydantic_settings import BaseSettings
 
-
 class Settings(BaseSettings):
     service_name: str = "{Context} API"
     debug: bool = False
@@ -331,7 +322,6 @@ class Settings(BaseSettings):
 
     class Config:
         env_file = ".env"
-
 
 settings = Settings()
 ```

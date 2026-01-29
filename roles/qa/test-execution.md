@@ -237,25 +237,17 @@ tests/unit/test_service.py:42: AssertionError
 
 ## Автоматизация в CI
 
-### GitHub Actions
+### CI (пример команд)
 
-```yaml
-# .github/workflows/ci.yml
+```bash
+# Unit тесты
+pytest tests/unit -v --junitxml=junit-unit.xml
 
-jobs:
-  test:
-    steps:
-      - name: Run unit tests
-        run: pytest tests/unit -v --junitxml=junit-unit.xml
+# Integration тесты
+pytest tests/integration -v --junitxml=junit-integration.xml
 
-      - name: Run integration tests
-        run: pytest tests/integration -v --junitxml=junit-integration.xml
-
-      - name: Check coverage
-        run: pytest --cov=src --cov-fail-under=75 --cov-report=xml
-
-      - name: Upload coverage
-        uses: codecov/codecov-action@v4
+# Покрытие
+pytest --cov=src --cov-fail-under=75 --cov-report=xml
 ```
 
 ---

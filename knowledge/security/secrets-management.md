@@ -130,10 +130,10 @@ environment:
 ### 2.5 Защита в CI/CD
 
 ```yaml
-# GitHub Actions
+# Пример для любой CI/CD системы
 env:
-  # Используйте секреты репозитория
-  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+  # Используйте механизм секретов вашей CI
+  DATABASE_URL: ${CI_DATABASE_URL}
 
   # НЕ логируйте секреты
   # Плохо: echo $DATABASE_URL

@@ -41,7 +41,7 @@
 | Python | 3.11.x |
 | pytest | 7.x.x |
 | Docker | 24.x |
-| CI | GitHub Actions |
+| CI | {инструмент или "нет"} |
 
 ---
 

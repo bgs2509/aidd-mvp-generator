@@ -271,7 +271,7 @@ done
 
 1. **Добавить автоматическую проверку ссылок** в CI/CD:
 ```yaml
-# .github/workflows/docs.yml
+# ci/docs.yml
 - name: Check markdown links
   uses: gaurav-nelson/github-action-markdown-link-check@v1
 ```
