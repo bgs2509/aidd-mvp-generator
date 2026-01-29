@@ -161,18 +161,18 @@
 ### Планировщик
 | Файл | Функция |
 |------|---------|
-| [roles/architect/architecture-design.md](../roles/architect/architecture-design.md) | Проектирование |
-| [roles/architect/maturity-level-selection.md](../roles/architect/maturity-level-selection.md) | Выбор уровня |
-| [roles/architect/service-naming.md](../roles/architect/service-naming.md) | Именование |
-| [roles/architect/api-contracts.md](../roles/architect/api-contracts.md) | API контракты |
+| [roles/planner/architecture-design.md](../roles/planner/architecture-design.md) | Проектирование |
+| [roles/planner/maturity-level-selection.md](../roles/planner/maturity-level-selection.md) | Выбор уровня |
+| [roles/planner/service-naming.md](../roles/planner/service-naming.md) | Именование |
+| [roles/planner/api-contracts.md](../roles/planner/api-contracts.md) | API контракты |
 
 ### Программист
 | Файл | Функция |
 |------|---------|
-| [roles/implementer/infrastructure-setup.md](../roles/implementer/infrastructure-setup.md) | Инфраструктура |
-| [roles/implementer/data-service.md](../roles/implementer/data-service.md) | Data Service |
-| [roles/implementer/business-api.md](../roles/implementer/business-api.md) | Business API |
-| [roles/implementer/testing.md](../roles/implementer/testing.md) | Тестирование |
+| [roles/coder/infrastructure-setup.md](../roles/coder/infrastructure-setup.md) | Инфраструктура |
+| [roles/coder/data-service.md](../roles/coder/data-service.md) | Data Service |
+| [roles/coder/business-api.md](../roles/coder/business-api.md) | Business API |
+| [roles/coder/testing.md](../roles/coder/testing.md) | Тестирование |
 
 ### Ревьюер
 | Файл | Функция |

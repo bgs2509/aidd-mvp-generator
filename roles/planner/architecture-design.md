@@ -138,7 +138,7 @@ User ──▶ Business API ──▶ Data API ──▶ PostgreSQL
 
 **Версия**: 1.0
 **Дата**: {YYYY-MM-DD}
-**Автор**: AI Agent (Архитектор)
+**Автор**: AI Agent (Планировщик)
 
 ---
 

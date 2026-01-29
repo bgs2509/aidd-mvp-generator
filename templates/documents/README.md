@@ -8,9 +8,9 @@
 |--------|------------|------|-------|
 | `prd-template.md` | Product Requirements Document | Stage 1 | Аналитик |
 | `research-report-template.md` | Research Report | Stage 2 | Исследователь |
-| `architecture-template.md` | Архитектурный план (CREATE mode) | Stage 3 | Архитектор / Планировщик |
-| `feature-plan-template.md` | План фичи (FEATURE mode) | Stage 3 | Архитектор / Планировщик |
-| `implementation-plan-template.md` | План реализации | Stage 3 | Архитектор / Планировщик |
+| `architecture-template.md` | Архитектурный план (CREATE mode) | Stage 3 | Планировщик |
+| `feature-plan-template.md` | План фичи (FEATURE mode) | Stage 3 | Планировщик |
+| `implementation-plan-template.md` | План реализации | Stage 3 | Планировщик |
 | `completion-report-template.md` | Completion Report (Review + Test + Validation) | Stage 5 | Валидатор |
 
 > **Примечание**: Consolidation Stage 5 — роли Ревьюер, QA, и старый Валидатор объединены в одну роль **Валидатор**, выполняющую 4 шага: Review → Test → Validate → Deploy. Три отдельных отчета (`review-report`, `qa-report`, `validation-report`) заменены на единый **Completion Report**.
@@ -45,7 +45,7 @@
 
 ### 3. Architecture Template
 
-Используется Архитектором/Планировщиком для проектирования (CREATE mode):
+Используется Планировщиком для проектирования (CREATE mode):
 
 ```bash
 /aidd-plan
@@ -57,7 +57,7 @@
 
 ### 4. Feature Plan Template
 
-Используется Архитектором/Планировщиком для планирования фичи (FEATURE mode):
+Используется Планировщиком для планирования фичи (FEATURE mode):
 
 ```bash
 /aidd-plan-feature
@@ -71,7 +71,7 @@
 
 ### 5. Implementation Plan Template
 
-Используется Архитектором/Планировщиком для детального планирования реализации:
+Используется Планировщиком для детального планирования реализации:
 
 ```bash
 /aidd-plan

@@ -40,8 +40,8 @@
 |------|--------|-----------|
 | Аналитик | ✓ | PRD |
 | Исследователь | ✓/— | Research Report |
-| Архитектор | ✓ | Architecture, Plan |
-| Реализатор | ✓ | Services |
+| Планировщик | ✓ | Architecture, Plan |
+| Программист | ✓ | Services |
 | Ревьюер | ✓ | Review Report |
 | QA | ✓ | QA Report |
 

@@ -32,7 +32,7 @@ tasks_count: 0
 **Feature ID**: {FID}
 **Версия**: 1.0
 **Дата**: {YYYY-MM-DD}
-**Автор**: AI Agent (Архитектор)
+**Автор**: AI Agent (Планировщик)
 **Статус**: Draft | Review | Approved
 **Связанный PRD**: {prd-name}-prd.md
 **Архитектура**: {architecture-name}.md
