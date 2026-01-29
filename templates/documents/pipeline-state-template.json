@@ -58,7 +58,7 @@
   },
 
   "features_registry": {
-    "$comment": "Завершённые (deployed) фичи. Перемещаются сюда после /aidd-finalize."
+    "$comment": "Завершённые (deployed) фичи. Перемещаются сюда после /aidd-validate."
   },
 
   "next_feature_id": 1,
