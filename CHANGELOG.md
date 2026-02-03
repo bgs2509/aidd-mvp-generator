@@ -9,6 +9,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### 💥 Breaking Changes
+
+#### Обновление команд v2 → v3
+
+Все slash-команды теперь используют префикс `/aidd-*` для лучшей совместимости и идентификации.
+
+**Миграция команд**:
+- `/init` → `/aidd-init`
+- `/idea` → `/aidd-analyze`
+- `/research` → `/aidd-research`
+- `/plan` → `/aidd-plan`
+- `/feature-plan` → `/aidd-plan-feature`
+- `/generate` → `/aidd-code`
+- `/review`, `/test`, `/deploy`, `/finalize` → `/aidd-validate` (объединено)
+
+**Обновлённые файлы**:
+- 8 файлов команд (`.claude/commands/aidd-*.md`) — заголовки и примеры
+- `templates/project/CLAUDE.md.template` — таблица команд (9 → 6)
+- `docs/PIPELINE-TREE.md`, `docs/initialization.md` — документация
+- `knowledge/quality/quality-cascade.md` — диаграммы
+- `.claude/agents/analyst.md` — примеры
+
+**Commit**: 072ce34
+
 ### ✨ Added
 
 #### CHANGELOG.md для целевых проектов
