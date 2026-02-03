@@ -185,11 +185,11 @@ if context.mode == "FEATURE" or len(state.get("features_registry", {})) > 0:
 | Команда | Требуемые ворота | Если не пройдены |
 |---------|-----------------|------------------|
 | `/aidd-analyze` | — | — (первый этап) |
-| `/aidd-research` | `PRD_READY` | "Сначала выполните /idea" |
-| `/aidd-plan` | `PRD_READY`, `RESEARCH_DONE` | "Сначала выполните /research" |
-| `/aidd-plan-feature` | `PRD_READY`, `RESEARCH_DONE` | "Сначала выполните /research" |
+| `/aidd-research` | `PRD_READY` | "Сначала выполните /aidd-analyze" |
+| `/aidd-plan` | `PRD_READY`, `RESEARCH_DONE` | "Сначала выполните /aidd-research" |
+| `/aidd-plan-feature` | `PRD_READY`, `RESEARCH_DONE` | "Сначала выполните /aidd-research" |
 | `/aidd-code` | `PLAN_APPROVED` | "Сначала утвердите план" |
-| `/aidd-validate` | `IMPLEMENT_OK` | "Сначала выполните /generate" |
+| `/aidd-validate` | `IMPLEMENT_OK` | "Сначала выполните /aidd-code" |
 
 ### Алгоритм проверки
 
@@ -202,20 +202,17 @@ def check_preconditions(command: str) -> bool:
         True если все ворота пройдены, False иначе
     """
     preconditions = {
-        "/idea": [],
-        "/research": ["PRD_READY"],
-        "/plan": ["PRD_READY", "RESEARCH_DONE"],
-        "/feature-plan": ["PRD_READY", "RESEARCH_DONE"],
-        "/generate": ["PLAN_APPROVED"],
-        "/review": ["IMPLEMENT_OK"],
-        "/test": ["REVIEW_OK"],
-        "/validate": ["QA_PASSED"],
-        "/deploy": ["ALL_GATES_PASSED"],
+        "/aidd-analyze": [],
+        "/aidd-research": ["PRD_READY"],
+        "/aidd-plan": ["PRD_READY", "RESEARCH_DONE"],
+        "/aidd-plan-feature": ["PRD_READY", "RESEARCH_DONE"],
+        "/aidd-code": ["PLAN_APPROVED"],
+        "/aidd-validate": ["IMPLEMENT_OK"],
     }
 
     state = read_json("./.pipeline-state.json")
     if not state:
-        return command == "/idea"  # Только /aidd-analyze можно без state
+        return command == "/aidd-analyze"  # Только /aidd-analyze можно без state
 
     for gate in preconditions.get(command, []):
         if not state.get("gates", {}).get(gate, {}).get("passed"):
@@ -272,10 +269,10 @@ read(role_file)
 
 ```python
 # Читать шаблон ТОЛЬКО если артефакт не существует
-if command == "/idea" and not existing_artifacts["prd"]:
+if command == "/aidd-analyze" and not existing_artifacts["prd"]:
     read(".aidd/templates/documents/prd-template.md")
 
-if command == "/plan" and not existing_artifacts["plan"]:
+if command == "/aidd-plan" and not existing_artifacts["plan"]:
     read(".aidd/templates/documents/architecture-template.md")
 ```
 
@@ -313,7 +310,7 @@ def initialize_context(command: str) -> Context:
     Принцип: Сначала ГДЕ мы, потом КАК действовать.
 
     Args:
-        command: Slash-команда (/idea, /research, etc.)
+        command: Slash-команда (/aidd-analyze, /aidd-research, etc.)
 
     Returns:
         Context: Полный контекст для выполнения команды

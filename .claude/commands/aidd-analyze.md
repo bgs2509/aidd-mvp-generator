@@ -12,7 +12,7 @@ description: Создать PRD документ из идеи пользова�
 >
 > Правила: `.aidd/CLAUDE.md` → "Выполнение команд /aidd-*"
 
-# Команда: /idea
+# Команда: /aidd-analyze
 
 > Запускает Аналитика для создания PRD документа из идеи.
 > **Pipeline State v2**: Поддержка параллельных пайплайнов.
@@ -22,7 +22,7 @@ description: Создать PRD документ из идеи пользова�
 ## Синтаксис
 
 ```bash
-/idea "Описание идеи проекта или фичи"
+/aidd-analyze "Описание идеи проекта или фичи"
 ```
 
 ---
@@ -148,7 +148,7 @@ def auto_bootstrap() -> bool:
     Автоматическая проверка и инициализация перед /aidd-analyze.
 
     Returns:
-        True если BOOTSTRAP_READY, False если нужен /init
+        True если BOOTSTRAP_READY, False если нужен /aidd-init
     """
     # 1. Проверить, пройден ли уже BOOTSTRAP_READY
     if Path(".pipeline-state.json").exists():
@@ -179,7 +179,7 @@ def auto_bootstrap() -> bool:
         create_project_claude_md()
         return True
 
-    # 4. Если есть ошибки — сообщить и предложить /init
+    # 4. Если есть ошибки — сообщить и предложить /aidd-init
     failed = [k for k, v in checks.items() if not v]
     print(f"❌ Проверки не пройдены: {failed}")
     print("→ Выполните /aidd-init для диагностики и исправления")
@@ -568,7 +568,7 @@ def pass_prd_ready_gate(state: dict, fid: str, artifact_path: str):
 ### Создание нового MVP
 
 ```bash
-/idea "Создать сервис бронирования столиков в ресторанах.
+/aidd-analyze "Создать сервис бронирования столиков в ресторанах.
 Пользователи могут искать рестораны по кухне и локации,
 смотреть свободные столики и бронировать на нужное время.
 Рестораны получают уведомления о бронях в Telegram."
@@ -577,14 +577,14 @@ def pass_prd_ready_gate(state: dict, fid: str, artifact_path: str):
 ### Добавление фичи
 
 ```bash
-/idea "Добавить систему email-уведомлений для подтверждения бронирования
+/aidd-analyze "Добавить систему email-уведомлений для подтверждения бронирования
 и напоминания за 2 часа до визита."
 ```
 
 ### Краткое описание
 
 ```bash
-/idea "Сервис учёта личных финансов с категоризацией расходов"
+/aidd-analyze "Сервис учёта личных финансов с категоризацией расходов"
 ```
 
 ---
@@ -612,5 +612,5 @@ def pass_prd_ready_gate(state: dict, fid: str, artifact_path: str):
 После прохождения ворот `PRD_READY`:
 
 ```bash
-/research
+/aidd-research
 ```

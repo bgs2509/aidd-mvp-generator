@@ -11,7 +11,7 @@ description: Создать архитектурный план для ново�
 >
 > Правила: `.aidd/CLAUDE.md` → "Выполнение команд /aidd-*"
 
-# Команда: /plan
+# Команда: /aidd-plan
 
 > Запускает Планировщика для проектирования системы (режим CREATE).
 > **Pipeline State v2**: Поддержка параллельных пайплайнов.
@@ -21,7 +21,7 @@ description: Создать архитектурный план для ново�
 ## Синтаксис
 
 ```bash
-/plan
+/aidd-plan
 ```
 
 ---
@@ -248,8 +248,8 @@ artifact_path = f"{folder}/{filename}"
 ## Примеры использования
 
 ```bash
-# После /research
-/plan
+# После /aidd-research
+/aidd-plan
 ```
 
 ---
@@ -275,5 +275,5 @@ artifact_path = f"{folder}/{filename}"
 После прохождения ворот `PLAN_APPROVED`:
 
 ```bash
-/generate
+/aidd-code
 ```

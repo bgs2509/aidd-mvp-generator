@@ -11,7 +11,7 @@ description: Инициализация целевого проекта (Bootstr
 >
 > Правила: `.aidd/CLAUDE.md` → "Выполнение команд /aidd-*"
 
-# Команда: /init
+# Команда: /aidd-init
 
 > Запускает Bootstrap Pipeline для инициализации целевого проекта.
 
@@ -20,7 +20,7 @@ description: Инициализация целевого проекта (Bootstr
 ## Синтаксис
 
 ```bash
-/init
+/aidd-init
 ```
 
 ---
@@ -674,7 +674,7 @@ def copy_project_templates(project_name: str, project_slug: str) -> None:
     placeholders = {
         "{{PROJECT_NAME}}": project_name,
         "{{PROJECT_SLUG}}": project_slug,
-        "{{PROJECT_DESCRIPTION}}": "",  # Заполняется позже в /idea
+        "{{PROJECT_DESCRIPTION}}": "",  # Заполняется позже в /aidd-analyze
         "{{CREATED_DATE}}": datetime.now().strftime("%Y-%m-%d"),
         "{{MODE}}": "CREATE",
         "{{DATABASE}}": "PostgreSQL",
@@ -1083,20 +1083,20 @@ git submodule add https://github.com/your-org/aidd-mvp-generator.git .aidd
 claude
 
 # 5. Инициализировать проект
-/init
+/aidd-init
 
 # 6. Начать работу
-/idea "Описание проекта"
+/aidd-analyze "Описание проекта"
 ```
 
 ### Проверка окружения
 
 ```bash
 # Проверить готовность без изменений
-/init
+/aidd-init
 
 # Если есть ошибки — исправить и повторить
-/init
+/aidd-init
 ```
 
 ---
@@ -1121,7 +1121,7 @@ claude
 После прохождения ворот `BOOTSTRAP_READY`:
 
 ```bash
-/idea "Описание вашего проекта или фичи"
+/aidd-analyze "Описание вашего проекта или фичи"
 ```
 
 ---

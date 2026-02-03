@@ -11,7 +11,7 @@ description: Создать план реализации новой фичи в
 >
 > Правила: `.aidd/CLAUDE.md` → "Выполнение команд /aidd-*"
 
-# Команда: /feature-plan
+# Команда: /aidd-plan-feature
 
 > Запускает Планировщика для планирования фичи (режим FEATURE).
 > **Pipeline State v2**: Поддержка параллельных пайплайнов.
@@ -21,7 +21,7 @@ description: Создать план реализации новой фичи в
 ## Синтаксис
 
 ```bash
-/feature-plan
+/aidd-plan-feature
 ```
 
 ---
@@ -260,7 +260,7 @@ artifact_path = f"{folder}/{filename}"
 
 ---
 
-## Отличия от /plan
+## Отличия от /aidd-plan
 
 | Аспект | /aidd-plan (CREATE) | /aidd-plan-feature (FEATURE) |
 |--------|----------------|-------------------------|
@@ -361,5 +361,5 @@ artifact_path = f"{folder}/{filename}"
 После прохождения ворот `PLAN_APPROVED`:
 
 ```bash
-/generate
+/aidd-code
 ```

@@ -11,7 +11,7 @@ description: Анализ кодовой базы и технологий
 >
 > Правила: `.aidd/CLAUDE.md` → "Выполнение команд /aidd-*"
 
-# Команда: /research
+# Команда: /aidd-research
 
 > Запускает Исследователя для анализа кодовой базы и технологий.
 > **Pipeline State v2**: Поддержка параллельных пайплайнов.
@@ -21,7 +21,7 @@ description: Анализ кодовой базы и технологий
 ## Синтаксис
 
 ```bash
-/research
+/aidd-research
 ```
 
 ---
@@ -243,8 +243,8 @@ artifact_path = f"{folder}/{filename}"
 ## Примеры использования
 
 ```bash
-# После /idea
-/research
+# После /aidd-analyze
+/aidd-research
 ```
 
 ---
@@ -270,6 +270,6 @@ artifact_path = f"{folder}/{filename}"
 После прохождения ворот `RESEARCH_DONE`:
 
 ```bash
-/plan          # для CREATE
-/feature-plan  # для FEATURE
+/aidd-plan          # для CREATE
+/aidd-plan-feature  # для FEATURE
 ```

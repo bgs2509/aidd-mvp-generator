@@ -11,7 +11,7 @@ description: Quality & Deploy — полный цикл проверки кач�
 >
 > Правила: `.aidd/CLAUDE.md` → "Выполнение команд /aidd-*"
 
-# Команда: /finalize
+# Команда: /aidd-validate
 
 > Запускает Валидатора для полного цикла: Review → Test → Validate → Deploy.
 > **Pipeline State v2**: Поддержка параллельных пайплайнов.
@@ -21,7 +21,7 @@ description: Quality & Deploy — полный цикл проверки кач�
 ## Синтаксис
 
 ```bash
-/finalize
+/aidd-validate
 ```
 
 ---

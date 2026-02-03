@@ -22,10 +22,10 @@
 
 ```bash
 # Описать идею (CREATE) или фичу (FEATURE)
-/idea "{{PROJECT_DESCRIPTION}}"
+/aidd-analyze "{{PROJECT_DESCRIPTION}}"
 
-# Следовать пайплайну (этапы 0-8)
-/init → /idea → /research → /plan → /generate → /review → /test → /validate → /deploy
+# Следовать пайплайну (этапы 0-5)
+/aidd-init → /aidd-analyze → /aidd-research → /aidd-plan → /aidd-code → /aidd-validate
 ```
 
 ---
@@ -39,20 +39,17 @@
 
 | # | Команда | Описание | Агент | Ворота IN | Ворота OUT |
 |---|---------|----------|-------|-----------|------------|
-| 0 | `/init` | Инициализация проекта | — | — | BOOTSTRAP_READY |
-| 1 | `/idea` | Создание PRD документа | Аналитик | BOOTSTRAP_READY | PRD_READY |
-| 2 | `/research` | Анализ кодовой базы | Исследователь | PRD_READY | RESEARCH_DONE |
-| 3 | `/plan` | Архитектурный план (CREATE) | Планировщик | RESEARCH_DONE | PLAN_APPROVED |
-| 3 | `/feature-plan` | План фичи (FEATURE) | Планировщик | RESEARCH_DONE | PLAN_APPROVED |
-| 4 | `/generate` | Генерация кода | Программист | PLAN_APPROVED | IMPLEMENT_OK |
-| 5 | `/review` | Код-ревью | Ревьюер | IMPLEMENT_OK | REVIEW_OK |
-| 6 | `/test` | Тестирование и QA | QA | REVIEW_OK | QA_PASSED |
-| 7 | `/validate` | Финальная проверка | Валидатор | QA_PASSED | ALL_GATES_PASSED |
-| 8 | `/deploy` | Сборка и запуск | Валидатор | ALL_GATES_PASSED | DEPLOYED |
+| 0 | `/aidd-init` | Инициализация проекта | — | — | BOOTSTRAP_READY |
+| 1 | `/aidd-analyze` | Создание PRD документа | Аналитик | BOOTSTRAP_READY | PRD_READY |
+| 2 | `/aidd-research` | Анализ кодовой базы | Исследователь | PRD_READY | RESEARCH_DONE |
+| 3 | `/aidd-plan` | Архитектурный план (CREATE) | Планировщик | RESEARCH_DONE | PLAN_APPROVED |
+| 3 | `/aidd-plan-feature` | План фичи (FEATURE) | Планировщик | RESEARCH_DONE | PLAN_APPROVED |
+| 4 | `/aidd-code` | Генерация кода | Программист | PLAN_APPROVED | IMPLEMENT_OK |
+| 5 | `/aidd-validate` | Quality & Deploy | Валидатор | IMPLEMENT_OK | DEPLOYED |
 
 ### Алгоритм выполнения команды для AI
 
-Когда пользователь вводит команду (например, `/idea "описание"`):
+Когда пользователь вводит команду (например, `/aidd-analyze "описание"`):
 
 1. **Проверить ворота**: Прочитать `.pipeline-state.json`, убедиться что Ворота IN пройдены
 2. **Загрузить инструкции**: Прочитать `.aidd/.claude/commands/{command}.md`
@@ -70,9 +67,7 @@
 | Исследователь | `.aidd/.claude/agents/researcher.md` | 2 | Анализ кода/требований |
 | Планировщик | `.aidd/.claude/agents/planner.md` | 3 | Проектирование |
 | Программист | `.aidd/.claude/agents/coder.md` | 4 | Генерация кода |
-| Ревьюер | `.aidd/.claude/agents/reviewer.md` | 5 | Качество кода |
-| QA | `.aidd/.claude/agents/qa.md` | 6 | Тестирование |
-| Валидатор | `.aidd/.claude/agents/validator.md` | 7-8 | Финальная проверка, деплой |
+| Валидатор | `.aidd/.claude/agents/validator.md` | 5 | Quality & Deploy (4 шага) |
 
 ---
 
