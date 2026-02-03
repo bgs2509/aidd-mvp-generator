@@ -651,6 +651,7 @@ done
 | Шаблон | Создаёт в ЦП | Назначение |
 |--------|--------------|------------|
 | `CLAUDE.md.template` | `./CLAUDE.md` | Точка входа для AI (включает таблицы команд и агентов) |
+| `changelog-template.md` | `./CHANGELOG.md` | Журнал изменений проекта |
 | `README.md.template` | `./README.md` | Документация проекта |
 | `.gitignore.template` | `./.gitignore` | Игнорируемые файлы |
 | `.env.example.template` | `./.env.example` | Пример переменных окружения |
@@ -723,6 +724,45 @@ def copy_project_templates(project_name: str, project_slug: str) -> None:
 Файлы НЕ перезаписываются, если уже существуют. Это позволяет:
 - Безопасно запускать `/aidd-init` повторно
 - Сохранять пользовательские изменения в файлах ЦП
+
+#### Генерация CHANGELOG.md
+
+**Для нового проекта**:
+- Копируется шаблон `changelog-template.md` → `CHANGELOG.md`
+- Содержит только секцию `[Unreleased]` с заглушками
+
+**Для существующего проекта** (если есть `features_registry`):
+- Автоматически генерируется из истории фич
+- Для каждой DEPLOYED фичи создаётся секция на основе Completion Report
+- Секции добавляются в обратной хронологии (новые сверху)
+
+```python
+def generate_changelog_if_needed(state: dict) -> None:
+    """
+    Генерирует CHANGELOG.md на основе features_registry.
+
+    Вызывается при /aidd-init если:
+    - CHANGELOG.md не существует
+    - features_registry не пуст (есть DEPLOYED фичи)
+    """
+    changelog_path = Path("CHANGELOG.md")
+
+    # Если CHANGELOG уже существует — не трогать
+    if changelog_path.exists():
+        print("⏭️ CHANGELOG.md уже существует, пропускаем")
+        return
+
+    # Если нет фич — использовать шаблон
+    if not state.get("features_registry"):
+        copy_template("changelog-template.md", "CHANGELOG.md")
+        print("✓ Создан CHANGELOG.md (пустой шаблон)")
+        return
+
+    # Есть фичи — генерировать из истории
+    changelog_content = build_changelog_from_registry(state["features_registry"])
+    changelog_path.write_text(changelog_content)
+    print(f"✓ Создан CHANGELOG.md ({len(state['features_registry'])} фич)")
+```
 
 ### 4. Копирование slash-команд
 
@@ -1070,6 +1110,7 @@ claude
 - [ ] 🔴 Структура `ai-docs/docs/` создана
 - [ ] 🟡 `.claude/commands/` скопированы из `.aidd/`
 - [ ] 🟡 `CLAUDE.md` целевого проекта существует
+- [ ] 🟡 `CHANGELOG.md` создан (шаблон или из истории)
 - [ ] 🔴 `.pipeline-state.json` обновлён (gate: BOOTSTRAP_READY)
 - [ ] ⚪ `README.md` обновлён (если существует)
 

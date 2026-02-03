@@ -81,11 +81,30 @@
 ### При первом запуске (новая сессия)
 
 ```
-1. ./CLAUDE.md                  ← Этот файл (контекст ЦП)
-2. ./.pipeline-state.json       ← Состояние, режим, ворота
-3. ./ai-docs/docs/              ← Существующие артефакты
-4. ./.aidd/CLAUDE.md            ← Правила фреймворка
+┌─────────────────────────────────────────────────────────────────┐
+│  ОБЯЗАТЕЛЬНЫЙ ПОРЯДОК ЧТЕНИЯ (КРИТИЧНО!)                        │
+├─────────────────────────────────────────────────────────────────┤
+│  1. ./CLAUDE.md                  ← Этот файл (точка входа ЦП)   │
+│  2. ./CHANGELOG.md               ← ⚠️ ИСТОРИЯ ПРОЕКТА (ОБЯЗАН!) │
+│  3. ./.pipeline-state.json       ← Состояние пайплайна          │
+│  4. ./ai-docs/docs/              ← Артефакты (при необходимости)│
+│  5. ./.aidd/CLAUDE.md            ← Правила фреймворка           │
+└─────────────────────────────────────────────────────────────────┘
 ```
+
+⚠️ **КРИТИЧЕСКОЕ ПРАВИЛО**: AI ОБЯЗАН прочитать `CHANGELOG.md` ПЕРЕД:
+- Планированием любых изменений
+- Добавлением новой функциональности
+- Исправлением багов
+- Рефакторингом кода
+- Работой с существующими сервисами
+
+**Зачем**: `CHANGELOG.md` содержит контекст всех изменений проекта.
+Без него AI может:
+- Дублировать уже реализованную функциональность
+- Не учесть известные ограничения (Known Limitations)
+- Нарушить архитектурные решения (ADR)
+- Не понять зависимости между фичами
 
 ### При выполнении команды
 
@@ -113,6 +132,7 @@
 {{PROJECT_NAME}}/
 ├── .aidd/                    ← Фреймворк (Git Submodule, НЕ МОДИФИЦИРОВАТЬ)
 ├── CLAUDE.md                 ← Этот файл
+├── CHANGELOG.md              ← Журнал изменений проекта
 ├── README.md                 ← Документация проекта
 ├── .pipeline-state.json      ← Состояние пайплайна
 │
@@ -175,16 +195,18 @@ REDIS_URL=
 
 ## Артефакты
 
-| Этап | Артефакт | Путь |
-|------|----------|------|
-| 1. Идея | PRD | `ai-docs/docs/prd/{{PROJECT_SLUG}}-prd.md` |
-| 2. Исследование | Research Report | `ai-docs/docs/research/{{PROJECT_SLUG}}-research.md` |
-| 3. Архитектура | Architecture Plan | `ai-docs/docs/architecture/{{PROJECT_SLUG}}-plan.md` |
-| 4. Реализация | Код сервисов | `services/` |
-| 5. Ревью | Review Report | `ai-docs/docs/reports/review-report.md` |
-| 6. QA | QA Report | `ai-docs/docs/reports/qa-report.md` |
-| 7. Валидация | Validation Report | `ai-docs/docs/reports/validation-report.md` |
-| 8. Деплой | Deployment | Docker Compose |
+| Артефакт | Путь | Назначение |
+|----------|------|------------|
+| **Журнал изменений** | `CHANGELOG.md` | **История проекта** (фичи + критические изменения) |
+| Pipeline State | `.pipeline-state.json` | Техническое состояние пайплайна |
+| PRD | `ai-docs/docs/prd/{{PROJECT_SLUG}}-prd.md` | Документ требований |
+| Research Report | `ai-docs/docs/research/{{PROJECT_SLUG}}-research.md` | Анализ кодовой базы |
+| Architecture Plan | `ai-docs/docs/architecture/{{PROJECT_SLUG}}-plan.md` | Архитектурный план |
+| Код сервисов | `services/` | Реализация |
+| Review Report | `ai-docs/docs/reports/review-report.md` | Отчёт код-ревью |
+| QA Report | `ai-docs/docs/reports/qa-report.md` | Отчёт тестирования |
+| Validation Report | `ai-docs/docs/reports/validation-report.md` | Финальная проверка |
+| Deployment | Docker Compose | Развёрнутые сервисы |
 
 ---
 
@@ -208,13 +230,186 @@ make lint        # Проверка кода
 
 ## Правила для AI
 
-1. **Читать сначала контекст ЦП** (этот файл, .pipeline-state.json, ai-docs/)
+1. **Читать сначала контекст ЦП** (этот файл, CHANGELOG.md, .pipeline-state.json, ai-docs/)
 2. **Затем инструкции фреймворка** (.aidd/)
 3. **Не модифицировать .aidd/** — это read-only submodule
 4. **Проверять ворота** перед переходом к следующему этапу
 5. **Генерировать код** только в `services/` и корне проекта
 6. **⛔ Запрещено читать .env файлы** — используйте только .env.example (см. [.aidd/CLAUDE.md](.aidd/CLAUDE.md))
+7. **Обновлять CHANGELOG.md** после критических изменений (см. секцию ниже)
 
 ---
 
-**Версия шаблона**: 1.1
+## Правила ведения CHANGELOG.md для AI
+
+### Обязательное обновление (MUST)
+
+AI ОБЯЗАН обновить `CHANGELOG.md` в секции `[Unreleased]` после:
+
+#### 1. Breaking Changes
+Любые изменения, ломающие обратную совместимость.
+
+**Формат**:
+```markdown
+### YYYY-MM-DD - Breaking Change: Краткое описание
+
+**Changed**
+- Конкретное изменение 1
+- Конкретное изменение 2
+
+**Impact**: HIGH
+**Migration Guide**: [docs/migrations/название.md]
+**Affected**: Описание кто затронут
+**Commit**: <commit-hash>
+```
+
+#### 2. Security Fixes
+Исправления уязвимостей.
+
+**Формат**:
+```markdown
+### YYYY-MM-DD - Security Fix: Краткое описание
+
+**Security**
+- Конкретное исправление 1
+
+**Impact**: CRITICAL
+**Severity**: HIGH (CVSSv3: X.X)
+**Affected Services**: `service_name`
+**Rollback**: `git revert <hash>`
+```
+
+#### 3. Hotfix
+Критические исправления в продакшене.
+
+**Формат**:
+```markdown
+### YYYY-MM-DD - Hotfix: Краткое описание
+
+**Fixed**
+- Конкретное исправление
+
+**Impact**: CRITICAL
+**Affected Services**: `service_name`
+**Rollback**: `git revert <hash>`
+**Root Cause**: Краткое описание
+```
+
+#### 4. Database Migrations
+Изменения схемы БД.
+
+**Формат**:
+```markdown
+### YYYY-MM-DD - Database Migration: Краткое описание
+
+**Changed**
+- База данных: изменение
+
+**Migration Script**: `migrations/название.sql`
+**Rollback Script**: `migrations/название_rollback.sql`
+**Downtime Required**: Yes/No
+```
+
+#### 5. Dependency Updates
+Обновление зависимостей (major/minor версии).
+
+**Формат**:
+```markdown
+### YYYY-MM-DD - Dependency Update: package X.Y → A.B
+
+**Changed**
+- Обновлена зависимость `package`
+
+**Impact**: MEDIUM
+**Breaking Changes**: Yes/No
+**Changelog Link**: https://...
+```
+
+#### 6. Configuration Changes
+Новые/изменённые env-переменные.
+
+**Формат**:
+```markdown
+### YYYY-MM-DD - Configuration: Описание
+
+**Changed**
+- Добавлена env-переменная `VAR_NAME`
+
+**Required Env Vars**: `VAR_NAME=value`
+**Migration**: Обновить .env
+```
+
+#### 7. Значительный Refactoring
+Переименование модулей, изменение структуры.
+
+**Формат**:
+```markdown
+### YYYY-MM-DD - Refactoring: Описание
+
+**Changed**
+- Переименован модуль old → new
+
+**Affected Files**: Список
+**Migration**: [docs/refactoring/название.md]
+```
+
+### НЕ записывать (MUST NOT)
+
+❌ **Запрещено** записывать:
+- Опечатки в комментариях
+- Форматирование кода (black, isort)
+- Обновление docstrings (без изменения API)
+- Добавление type hints (без изменения логики)
+- Мелкие рефакторинги внутри функций
+
+### Автоматическое обновление (при DEPLOYED)
+
+При выполнении `/deploy` фреймворк **автоматически**:
+1. Извлекает данные из Deployment Report
+2. Добавляет секцию фичи в CHANGELOG (вверху, после `[Unreleased]`)
+3. Перемещает записи из `[Unreleased]` в секцию фичи
+
+**AI не должен вмешиваться** в этот процесс.
+
+### Проверка перед завершением работы
+
+Перед завершением сессии AI ОБЯЗАН:
+
+- ✅ Проверить: все критические изменения записаны в CHANGELOG?
+- ✅ Проверить: формат записей соответствует шаблону?
+- ✅ Проверить: добавлены ссылки (commits, issues, docs)?
+
+### Пример правильного CHANGELOG
+
+```markdown
+# Changelog
+
+## [Unreleased]
+
+### Active Features (в разработке)
+- **F004** — Система уведомлений (stage: IMPLEMENT)
+
+### Recent Changes
+
+#### 2025-12-26 - Hotfix: SQL injection в User API
+**Security**
+- `user_api/repository.py`: параметризованы SQL запросы
+
+**Impact**: CRITICAL
+**Rollback**: `git revert abc123`
+
+---
+
+## [F003] - 2025-12-23 — Платёжная система
+> **Status**: DEPLOYED
+> **Services**: `payment_stripe_api`
+
+### Added
+- Интеграция со Stripe API
+```
+
+**Подробнее**: См. [.aidd/templates/documents/changelog-entry-template.md](.aidd/templates/documents/changelog-entry-template.md)
+
+---
+
+**Версия шаблона**: 1.2

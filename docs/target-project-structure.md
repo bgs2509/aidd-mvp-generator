@@ -38,6 +38,7 @@
 {project-name}/
 │
 ├── .pipeline-state.json       ← Состояние пайплайна AIDD
+├── CHANGELOG.md               ← Журнал изменений проекта
 │
 ├── ai-docs/                   ← Артефакты AI-агентов
 │   └── docs/
@@ -210,6 +211,83 @@
 4. Запись удаляется из active_pipelines
 5. Готово для следующей фичи (или параллельной разработки)
 ```
+
+---
+
+## Журнал изменений (CHANGELOG.md)
+
+Файл `CHANGELOG.md` в корне целевого проекта:
+
+### Назначение
+
+**Единая точка входа** для понимания истории проекта. Содержит:
+- Завершённые фичи (автоматически из Completion Reports)
+- Критические изменения между фичами (вручную от AI)
+- Хронология в обратном порядке (новые сверху)
+
+### Структура
+
+```markdown
+# Changelog
+
+> Автогенерируется AIDD-MVP Generator при `/aidd-validate` (DEPLOYED)
+> Ручные записи добавляются AI при критических изменениях
+
+---
+
+## [Unreleased]
+
+### Active Features (в разработке)
+- **F002** — Email-уведомления (stage: IMPLEMENT)
+
+### Recent Changes
+
+#### 2025-12-22 - Hotfix: SQL injection в User API
+**Security**
+- `user_api/repository.py`: параметризованы SQL запросы
+
+**Impact**: CRITICAL
+**Rollback**: `git revert abc123`
+
+---
+
+## [F001] - 2025-12-21 — Бронирование столиков
+
+> **Status**: DEPLOYED
+> **Services**: `booking_api`, `booking_data`
+> **Completion Report**: [ai-docs/docs/reports/2025-12-21_F001_table-booking-completion.md]
+
+### Added
+- Базовая функциональность бронирования
+- Endpoints: POST /api/v1/bookings, GET /api/v1/bookings
+
+### Architecture Decisions
+- ADR-001: HTTP-only Data Access (DDD/Hexagonal)
+
+---
+
+**Версия**: 1.0
+**Последнее обновление**: 2025-12-22
+```
+
+### Автоматическое обновление
+
+| Событие | Действие |
+|---------|----------|
+| `/aidd-init` | Создаётся из шаблона (если нет истории) или генерируется из `features_registry` |
+| `/aidd-validate` → DEPLOYED | Автоматически добавляется секция фичи из Completion Report |
+| Критические изменения | AI вручную добавляет записи в `[Unreleased]` (см. CLAUDE.md ЦП) |
+
+### Зачем AI читает CHANGELOG.md
+
+**КРИТИЧНО**: AI ОБЯЗАН читать `CHANGELOG.md` ПЕРЕД началом работы (см. CLAUDE.md ЦП).
+
+Это позволяет:
+- Понять контекст проекта за 30 секунд
+- Не дублировать функциональность
+- Учесть известные ограничения (Known Limitations)
+- Понять зависимости между фичами
+- Следовать архитектурным решениям (ADR)
 
 ---
 

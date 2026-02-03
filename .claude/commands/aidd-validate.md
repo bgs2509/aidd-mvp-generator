@@ -946,9 +946,130 @@ gates["DEPLOYED"] = {
 pipeline["stage"] = "DEPLOYED"
 ```
 
-#### 4.3 Перенести в features_registry
+#### 4.3 Обновить CHANGELOG.md
 
-После успешного деплоя перенести фичу из `active_pipelines` в `features_registry`:
+**КРИТИЧЕСКИ ВАЖНО**: После создания Completion Report обновить `CHANGELOG.md`.
+
+##### 4.3.1. Извлечь данные из Completion Report
+
+```python
+def extract_changelog_data(completion_report_path: str) -> dict:
+    """
+    Извлекает данные для CHANGELOG из Completion Report.
+
+    Returns:
+        {
+            "added": [...],      # из секции 2 "Реализованные компоненты"
+            "changed": [...],    # из секции 4 "Отклонения от плана"
+            "adr": [...],        # из секции 3 "ADR"
+            "limitations": [...],# из секции 5.1 "Known Limitations"
+            "tech_debt": [...],  # из секции 5.2 "Technical Debt"
+        }
+    """
+    report = read_file(completion_report_path)
+
+    # Added: из секции 2.1 "Сервисы" + 2.3 "API Endpoints"
+    added = extract_services_and_endpoints(report)
+
+    # Changed: из секции 4.1 "Scope Changes"
+    changed = extract_scope_changes(report)
+
+    # ADR: из секции 3 "Architecture Decision Records"
+    adr = extract_adr_titles(report)
+
+    # Known Limitations: из секции 5.1
+    limitations = extract_known_limitations(report)
+
+    # Technical Debt: из секции 5.2
+    tech_debt = extract_technical_debt(report)
+
+    return {
+        "added": added,
+        "changed": changed,
+        "adr": adr,
+        "limitations": limitations,
+        "tech_debt": tech_debt,
+    }
+```
+
+##### 4.3.2. Обновить CHANGELOG.md
+
+```python
+def update_changelog_on_deploy(fid: str, pipeline: dict, completion_path: str):
+    """
+    Обновляет CHANGELOG.md при завершении фичи.
+
+    Вызывается после создания Completion Report.
+    """
+    # 1. Прочитать текущий CHANGELOG.md
+    changelog = read_file("CHANGELOG.md")
+
+    # 2. Извлечь данные из Completion Report
+    report_data = extract_changelog_data(completion_path)
+
+    # 3. Сгенерировать новую секцию
+    deployed_date = datetime.now().strftime("%Y-%m-%d")
+    feature_data = {
+        "fid": fid,
+        "title": pipeline["title"],
+        "services": pipeline.get("services", []),
+        "completion_path": completion_path,
+        "deployed_date": deployed_date,
+        "status": "DEPLOYED"
+    }
+    new_section = generate_feature_section(feature_data, report_data)
+
+    # 4. Вставить после [Unreleased]
+    updated = insert_after_unreleased(changelog, new_section)
+
+    # 5. Обновить [Unreleased] (убрать завершённую фичу из Active Features)
+    updated = update_unreleased_section(updated, fid)
+
+    # 6. Обновить footer (дату)
+    updated = update_footer_date(updated)
+
+    # 7. Записать файл
+    write_file("CHANGELOG.md", updated)
+
+    print(f"✓ CHANGELOG.md обновлён (добавлена секция {fid})")
+```
+
+**Шаблон секции**:
+
+Используйте `.aidd/templates/documents/changelog-entry-template.md`.
+
+Пример результата:
+
+```markdown
+## [F002] - 2025-12-25 — OAuth авторизация
+
+> **Status**: DEPLOYED
+> **Services**: `auth_oauth_api`, `auth_oauth_data`
+> **Completion Report**: [ai-docs/docs/_validation/2025-12-25_F002_oauth-completion.md]
+
+### Added
+- OAuth 2.0 авторизация (Google, GitHub)
+- Endpoint `POST /api/v1/auth/oauth/login`
+- JWT token generation
+
+### Changed
+- User model: добавлено поле `oauth_provider`
+
+### Architecture Decisions
+- ADR-003: OAuth 2.0 вместо кастомной аутентификации
+
+### Known Limitations
+- KL-001: Нет refresh token rotation (MVP)
+
+### Technical Debt
+- TD-001: Добавить rate limiting
+
+---
+```
+
+#### 4.4 Перенести в features_registry
+
+После успешного деплоя и обновления CHANGELOG перенести фичу из `active_pipelines` в `features_registry`:
 
 ```python
 def complete_feature_deploy(state: dict, fid: str):
@@ -1133,6 +1254,11 @@ docker-compose logs -f
   - [ ] Known Limitations перечислены
   - [ ] Метрики записаны (coverage, tests, security)
   - [ ] Timeline заполнен
+- [ ] 🔴 **CHANGELOG.md обновлён**
+  - [ ] Секция фичи добавлена (после [Unreleased])
+  - [ ] Данные извлечены из Completion Report
+  - [ ] Секция [Unreleased] обновлена (фича удалена из Active Features)
+  - [ ] Дата обновления изменена
 - [ ] 🔴 `.pipeline-state.json` обновлён
   - [ ] Gate `DEPLOYED` отмечен как passed
   - [ ] Completion Report добавлен в `artifacts.completion`
@@ -1153,6 +1279,7 @@ docker-compose logs -f
 │  □ Health-check проходит                                         │
 │  □ Базовые сценарии работают (API запросы успешны)              │
 │  □ **Completion Report создан** в reports/{date}_{FID}_{slug}   │
+│  □ **CHANGELOG.md обновлён** (добавлена секция фичи)            │
 │  □ Фича перенесена из active_pipelines в features_registry      │
 │  □ .pipeline-state.json обновлён                                 │
 └─────────────────────────────────────────────────────────────────┘
