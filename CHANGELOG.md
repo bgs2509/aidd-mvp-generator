@@ -9,6 +9,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### ✨ Added
+
+#### CHANGELOG.md для целевых проектов
+
+Реализован автоматический механизм ведения журнала изменений в целевых проектах.
+
+**Ключевые возможности**:
+- **Автоматическая генерация** при `/aidd-init`:
+  - Создание из шаблона для новых проектов
+  - Генерация из `features_registry` для существующих проектов
+- **Автоматическое обновление** при `/aidd-validate` → DEPLOYED:
+  - Извлечение данных из Completion Report
+  - Добавление секции фичи в обратной хронологии
+  - Обновление секции `[Unreleased]`
+- **Ручные записи** для критических изменений:
+  - Breaking Changes
+  - Security Fixes
+  - Hotfix
+  - Database Migrations
+  - Dependency Updates
+  - Configuration Changes
+  - Значительный Refactoring
+- **Обязательное чтение** AI перед любой работой (правило в CLAUDE.md ЦП)
+
+**Новые файлы**:
+- `templates/documents/changelog-template.md` — базовый шаблон
+- `templates/documents/changelog-entry-template.md` — 7 шаблонов записей
+
+**Обновлённые файлы**:
+- `templates/project/CLAUDE.md.template` — добавлены правила ведения CHANGELOG
+- `.claude/commands/aidd-init.md` — создание CHANGELOG.md
+- `.claude/commands/aidd-validate.md` — автоматическое обновление
+- `docs/target-project-structure.md` — документация структуры
+- `CLAUDE.md` — описание концепции
+
+**Формат**: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
+
+**Commit**: e82a8c6
+
 ---
 
 ## [4.0.0] - 2026-01-29
