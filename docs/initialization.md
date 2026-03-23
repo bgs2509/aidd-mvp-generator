@@ -1,135 +1,135 @@
-# Алгоритм инициализации AI-агента
+# AI Agent Initialization Algorithm
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Note:** This document may contain outdated commands `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Current commands: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
-> **Назначение**: Единый источник истины для порядка чтения файлов при запуске любой команды.
+> **Purpose**: Single source of truth for the file reading order when launching any command.
 >
-> **Принцип**: Сначала понять ГДЕ мы (контекст ЦП), потом КАК действовать (фреймворк).
+> **Principle**: First understand WHERE we are (TP context), then HOW to act (framework).
 
 ---
 
-## Обзор
+## Overview
 
-При запуске любой slash-команды (`/aidd-analyze`, `/aidd-research`, `/aidd-plan` и т.д.) AI-агент
-ОБЯЗАН следовать 4-фазному алгоритму инициализации.
+When launching any slash command (`/aidd-analyze`, `/aidd-research`, `/aidd-plan`, etc.) the AI agent
+MUST follow the 4-phase initialization algorithm.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│              АЛГОРИТМ ИНИЦИАЛИЗАЦИИ AI-АГЕНТА                        │
+│              AI AGENT INITIALIZATION ALGORITHM                       │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│  ФАЗА 1: Контекст целевого проекта (ЦП)                            │
-│  ───────────────────────────────────────                            │
-│  1. ./CLAUDE.md              ← Точка входа ЦП                       │
-│  2. ./.pipeline-state.json   ← Состояние пайплайна                  │
-│  3. ./ai-docs/docs/          ← Существующие артефакты               │
+│  PHASE 1: Target Project (TP) context                               │
+│  ────────────────────────────────────                               │
+│  1. ./CLAUDE.md              ← TP Entry Point                       │
+│  2. ./.pipeline-state.json   ← Pipeline state                       │
+│  3. ./ai-docs/docs/          ← Existing artifacts                   │
 │                                                                     │
-│  ФАЗА 2: Проверка предусловий                                       │
-│  ─────────────────────────────                                      │
-│  4. Проверить требуемые ворота                                      │
-│  5. Если не пройдены → сообщить пользователю                        │
+│  PHASE 2: Precondition check                                        │
+│  ────────────────────────────                                       │
+│  4. Check required gates                                            │
+│  5. If not passed → notify user                                     │
 │                                                                     │
-│  ФАЗА 3: Инструкции фреймворка                                      │
-│  ─────────────────────────────                                      │
-│  6. .aidd/CLAUDE.md          ← Правила фреймворка                   │
-│  7. .aidd/workflow.md        ← Процесс и ворота                     │
-│  8. .aidd/.claude/commands/  ← Инструкции команды                   │
-│  9. .aidd/.claude/agents/    ← Инструкции роли                      │
+│  PHASE 3: Framework instructions                                    │
+│  ────────────────────────────                                       │
+│  6. .aidd/CLAUDE.md          ← Framework rules                      │
+│  7. .aidd/workflow.md        ← Process and gates                    │
+│  8. .aidd/.claude/commands/  ← Command instructions                 │
+│  9. .aidd/.claude/agents/    ← Role instructions                    │
 │                                                                     │
-│  ФАЗА 4: Шаблоны и база знаний (по необходимости)                  │
-│  ────────────────────────────────────────────────                   │
-│  10. .aidd/templates/documents/  ← Если артефакт не существует       │
-│  11. .aidd/knowledge/        ← По теме команды                      │
+│  PHASE 4: Templates and Knowledge Base (as needed)                  │
+│  ─────────────────────────────────────────────────                  │
+│  10. .aidd/templates/documents/  ← If artifact doesn't exist        │
+│  11. .aidd/knowledge/        ← By command topic                     │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Критерии определения источника файла
+## Source Determination Criteria
 
-При выборе откуда читать файл — из ЦП или из Фреймворка — используй эти критерии:
+When choosing where to read a file from — TP or Framework — use these criteria:
 
-### Таблица критериев
+### Criteria Table
 
-| Критерий | ЦП (`./`) | Фреймворк (`.aidd/`) |
-|----------|-----------|---------------------|
-| **Содержимое** | Данные ЭТОГО проекта | Универсальные инструкции |
-| **Изменяемость** | Меняется AI и пользователем | НЕ меняется (read-only) |
-| **Уникальность** | Уникально для проекта | Одинаково для всех проектов |
-| **Источник** | Создано в процессе разработки | Шаблон/правило/паттерн |
-| **Вопрос** | "ЧТО делаем?" | "КАК делаем?" |
+| Criterion | TP (`./`) | Framework (`.aidd/`) |
+|-----------|-----------|---------------------|
+| **Content** | THIS project's data | Universal instructions |
+| **Mutability** | Changed by AI and user | NOT changed (read-only) |
+| **Uniqueness** | Unique to the project | Same for all projects |
+| **Source** | Created during development | Template/rule/pattern |
+| **Question** | "WHAT are we doing?" | "HOW are we doing it?" |
 
-### Алгоритм выбора
+### Selection Algorithm
 
 ```
-ЕСЛИ файл отвечает на вопрос:
-├── "Какие требования У ЭТОГО проекта?" → ЦП
-├── "Какая архитектура У ЭТОГО проекта?" → ЦП
-├── "Какой код УЖЕ НАПИСАН?" → ЦП
-├── "На каком этапе МЫ сейчас?" → ЦП
+IF the file answers the question:
+├── "What are THIS project's requirements?" → TP
+├── "What is THIS project's architecture?" → TP
+├── "What code is ALREADY WRITTEN?" → TP
+├── "What stage are WE at now?" → TP
 │
-├── "КАК писать код правильно?" → Фреймворк
-├── "КАК структурировать проект?" → Фреймворк
-├── "КАКОЙ шаблон использовать?" → Фреймворк
-└── "КАКИЕ паттерны применять?" → Фреймворк
+├── "HOW to write code correctly?" → Framework
+├── "HOW to structure a project?" → Framework
+├── "WHICH template to use?" → Framework
+└── "WHICH patterns to apply?" → Framework
 ```
 
-### Примеры
+### Examples
 
-| Нужно узнать | Источник | Файл |
-|--------------|----------|------|
-| Требования к фиче X | ЦП | `./ai-docs/docs/_analysis/X-prd.md` |
-| Как писать FastAPI | Фреймворк | `.aidd/knowledge/services/fastapi.md` |
-| Какие сервисы уже есть | ЦП | `./services/` |
-| Шаблон нового сервиса | Фреймворк | `.aidd/templates/services/` |
-| Пройдены ли ворота | ЦП | `./.pipeline-state.json` |
-| Какие ворота проверять | Фреймворк | `.aidd/workflow.md` |
+| Need to know | Source | File |
+|--------------|--------|------|
+| Requirements for feature X | TP | `./ai-docs/docs/_analysis/X-prd.md` |
+| How to write FastAPI | Framework | `.aidd/knowledge/services/fastapi.md` |
+| What services already exist | TP | `./services/` |
+| Template for a new service | Framework | `.aidd/templates/services/` |
+| Are gates passed | TP | `./.pipeline-state.json` |
+| What gates to check | Framework | `.aidd/workflow.md` |
 
-### Простое правило
+### Simple Rule
 
-> **ЦП** = Состояние и артефакты проекта (уникальные, изменяемые)
-> **Фреймворк** = Инструкции и шаблоны (универсальные, read-only)
+> **TP** = Project state and artifacts (unique, mutable)
+> **Framework** = Instructions and templates (universal, read-only)
 
 ---
 
-## Фаза 1: Контекст целевого проекта
+## Phase 1: Target Project Context
 
-AI **СНАЧАЛА** читает файлы целевого проекта, чтобы понять:
-- Какой это проект
-- На каком этапе находится разработка
-- Какие артефакты уже существуют
-- Какой режим работы (CREATE или FEATURE)
+AI reads TP files **FIRST** to understand:
+- What project this is
+- What development stage it's at
+- What artifacts already exist
+- What mode is active (CREATE or FEATURE)
 
-### 1.1 Чтение ./CLAUDE.md
+### 1.1 Reading ./CLAUDE.md
 
 ```python
 if exists("./CLAUDE.md"):
     read("./CLAUDE.md")
-    # Понять: название проекта, специфические правила, контекст
+    # Understand: project name, specific rules, context
 ```
 
-### 1.2 Чтение ./.pipeline-state.json
+### 1.2 Reading ./.pipeline-state.json
 
 ```python
 if exists("./.pipeline-state.json"):
     state = read_json("./.pipeline-state.json")
 
-    mode = state.get("mode")                         # CREATE или FEATURE
-    active_pipelines = state.get("active_pipelines", {})  # Активные фичи
-    global_gates = state.get("global_gates", {})     # Глобальные ворота
-    features_registry = state.get("features_registry", {})  # Завершённые фичи
+    mode = state.get("mode")                         # CREATE or FEATURE
+    active_pipelines = state.get("active_pipelines", {})  # Active features
+    global_gates = state.get("global_gates", {})     # Global gates
+    features_registry = state.get("features_registry", {})  # Completed features
 
-    # Для текущей фичи (по git-ветке):
+    # For current feature (by git branch):
     # fid = get_current_feature_context()
     # feature_gates = active_pipelines.get(fid, {}).get("gates", {})
 else:
-    # Новый проект — нужна инициализация
+    # New project — initialization needed
     mode = None
 ```
 
-### 1.3 Проверка существующих артефактов
+### 1.3 Checking Existing Artifacts
 
 ```python
 existing_artifacts = {
@@ -141,65 +141,65 @@ existing_artifacts = {
 }
 ```
 
-### 1.4 Чтение Completion Reports (для FEATURE режима)
+### 1.4 Reading Completion Reports (for FEATURE mode)
 
-> **Критически важно**: Completion Report — единственный документ, содержащий
-> полный контекст deployed фичи: ADR, scope changes, known limitations.
+> **Critically important**: Completion Report is the only document containing
+> the full context of a deployed feature: ADR, scope changes, known limitations.
 
 ```python
-# ФАЗА 1.4: Чтение Completion Reports
+# PHASE 1.4: Reading Completion Reports
 if context.mode == "FEATURE" or len(state.get("features_registry", {})) > 0:
     for fid, feature in state.get("features_registry", {}).items():
         completion_path = feature.get("artifacts", {}).get("completion")
         if completion_path and exists(f"./ai-docs/docs/{completion_path}"):
             context.completion_reports[fid] = read(f"./ai-docs/docs/{completion_path}")
-            # AI теперь знает ВСЁ о deployed фичах за 1 файл на фичу
+            # AI now knows EVERYTHING about deployed features in 1 file per feature
 ```
 
-**Когда читать Completion Reports**:
+**When to read Completion Reports**:
 
-| Ситуация | Действие |
-|----------|----------|
-| FEATURE режим (добавление фичи) | Прочитать ВСЕ completion reports |
-| CREATE режим, есть deployed фичи | Прочитать для понимания контекста |
-| Новая сессия с тем же проектом | Прочитать для восстановления контекста |
-| Интеграция с deployed фичей | Прочитать depends_on, enables |
+| Situation | Action |
+|-----------|--------|
+| FEATURE mode (adding a feature) | Read ALL completion reports |
+| CREATE mode, has deployed features | Read for context understanding |
+| New session with the same project | Read for context restoration |
+| Integration with a deployed feature | Read depends_on, enables |
 
-**Что AI узнаёт из Completion Report**:
+**What AI learns from Completion Report**:
 
-- **Executive Summary** — что было сделано
-- **ADR** — почему приняты архитектурные решения
-- **Scope Changes** — что отложено, что изменилось
-- **Known Limitations** — ограничения и workarounds
-- **Services** — какие сервисы и endpoints доступны
-- **Dependencies** — что можно использовать (enables)
+- **Executive Summary** — what was done
+- **ADR** — why architectural decisions were made
+- **Scope Changes** — what was deferred, what changed
+- **Known Limitations** — limitations and workarounds
+- **Services** — what services and endpoints are available
+- **Dependencies** — what can be used (enables)
 
 ---
 
-## Фаза 2: Проверка предусловий
+## Phase 2: Precondition Check
 
-Каждая команда имеет предусловия — ворота, которые должны быть пройдены.
+Each command has preconditions — gates that must be passed.
 
-### Матрица предусловий
+### Precondition Matrix
 
-| Команда | Требуемые ворота | Если не пройдены |
-|---------|-----------------|------------------|
-| `/aidd-analyze` | — | — (первый этап) |
-| `/aidd-research` | `PRD_READY` | "Сначала выполните /aidd-analyze" |
-| `/aidd-plan` | `PRD_READY`, `RESEARCH_DONE` | "Сначала выполните /aidd-research" |
-| `/aidd-plan-feature` | `PRD_READY`, `RESEARCH_DONE` | "Сначала выполните /aidd-research" |
-| `/aidd-code` | `PLAN_APPROVED` | "Сначала утвердите план" |
-| `/aidd-validate` | `IMPLEMENT_OK` | "Сначала выполните /aidd-code" |
+| Command | Required Gates | If not passed |
+|---------|---------------|---------------|
+| `/aidd-analyze` | — | — (first stage) |
+| `/aidd-research` | `PRD_READY` | "First run /aidd-analyze" |
+| `/aidd-plan` | `PRD_READY`, `RESEARCH_DONE` | "First run /aidd-research" |
+| `/aidd-plan-feature` | `PRD_READY`, `RESEARCH_DONE` | "First run /aidd-research" |
+| `/aidd-code` | `PLAN_APPROVED` | "First approve the plan" |
+| `/aidd-validate` | `IMPLEMENT_OK` | "First run /aidd-code" |
 
-### Алгоритм проверки
+### Check Algorithm
 
 ```python
 def check_preconditions(command: str) -> bool:
     """
-    Проверка предусловий перед выполнением команды.
+    Check preconditions before executing a command.
 
     Returns:
-        True если все ворота пройдены, False иначе
+        True if all gates passed, False otherwise
     """
     preconditions = {
         "/aidd-analyze": [],
@@ -212,11 +212,11 @@ def check_preconditions(command: str) -> bool:
 
     state = read_json("./.pipeline-state.json")
     if not state:
-        return command == "/aidd-analyze"  # Только /aidd-analyze можно без state
+        return command == "/aidd-analyze"  # Only /aidd-analyze can work without state
 
     for gate in preconditions.get(command, []):
         if not state.get("gates", {}).get(gate, {}).get("passed"):
-            print(f"❌ Ворота {gate} не пройдены")
+            print(f"Gate {gate} not passed")
             print(f"→ {recovery_hint(gate)}")
             return False
 
@@ -225,32 +225,32 @@ def check_preconditions(command: str) -> bool:
 
 ---
 
-## Фаза 3: Инструкции фреймворка
+## Phase 3: Framework Instructions
 
-**ПОСЛЕ** понимания контекста ЦП, AI читает инструкции фреймворка.
+**AFTER** understanding the TP context, AI reads framework instructions.
 
-### 3.1 Базовые документы (всегда)
+### 3.1 Base Documents (always)
 
 ```python
-read(".aidd/CLAUDE.md")      # Общие правила фреймворка
-read(".aidd/workflow.md")    # Процесс и качественные ворота
+read(".aidd/CLAUDE.md")      # General framework rules
+read(".aidd/workflow.md")    # Process and Quality Gates
 ```
 
-### 3.2 Инструкции команды и роли (по запросу)
+### 3.2 Command and Role Instructions (on demand)
 
 ```python
 command_file = f".aidd/.claude/commands/{command}.md"
 read(command_file)
 
-# Определить роль из команды
+# Determine role from command
 role = COMMAND_TO_ROLE[command]
 role_file = f".aidd/.claude/agents/{role}.md"
 read(role_file)
 ```
 
-### Сопоставление команд и ролей
+### Command-to-Role Mapping
 
-| Команда | Роль |
+| Command | Role |
 |---------|------|
 | `/aidd-analyze` | analyst |
 | `/aidd-research` | researcher |
@@ -261,14 +261,14 @@ read(role_file)
 
 ---
 
-## Фаза 4: Шаблоны и база знаний
+## Phase 4: Templates and Knowledge Base
 
-Шаблоны и knowledge base читаются **ТОЛЬКО ЕСЛИ НУЖНЫ**.
+Templates and knowledge base are read **ONLY IF NEEDED**.
 
-### 4.1 Шаблоны документов
+### 4.1 Document Templates
 
 ```python
-# Читать шаблон ТОЛЬКО если артефакт не существует
+# Read template ONLY if artifact doesn't exist
 if command == "/aidd-analyze" and not existing_artifacts["prd"]:
     read(".aidd/templates/documents/prd-template.md")
 
@@ -276,10 +276,10 @@ if command == "/aidd-plan" and not existing_artifacts["plan"]:
     read(".aidd/templates/documents/architecture-template.md")
 ```
 
-### 4.2 База знаний
+### 4.2 Knowledge Base
 
 ```python
-# Читать по необходимости для конкретной команды
+# Read as needed for the specific command
 knowledge_map = {
     "/plan": [
         ".aidd/knowledge/architecture/ddd-hexagonal.md",
@@ -300,41 +300,41 @@ for knowledge_file in knowledge_map.get(command, []):
 
 ---
 
-## Полный алгоритм (псевдокод)
+## Full Algorithm (pseudocode)
 
 ```python
 def initialize_context(command: str) -> Context:
     """
-    Полный алгоритм инициализации AI-агента.
+    Full AI agent initialization algorithm.
 
-    Принцип: Сначала ГДЕ мы, потом КАК действовать.
+    Principle: First WHERE we are, then HOW to act.
 
     Args:
-        command: Slash-команда (/aidd-analyze, /aidd-research, etc.)
+        command: Slash command (/aidd-analyze, /aidd-research, etc.)
 
     Returns:
-        Context: Полный контекст для выполнения команды
+        Context: Full context for command execution
     """
     context = Context()
 
     # ═══════════════════════════════════════════════════════════════
-    # ФАЗА 1: Контекст целевого проекта
+    # PHASE 1: Target Project context
     # ═══════════════════════════════════════════════════════════════
 
-    # 1.1 Точка входа ЦП
+    # 1.1 TP Entry Point
     if exists("./CLAUDE.md"):
         context.project_info = read("./CLAUDE.md")
 
-    # 1.2 Состояние пайплайна (v2 формат)
+    # 1.2 Pipeline state (v2 format)
     if exists("./.pipeline-state.json"):
         context.state = read_json("./.pipeline-state.json")
         context.mode = context.state.get("mode")
         context.active_pipelines = context.state.get("active_pipelines", {})
         context.global_gates = context.state.get("global_gates", {})
     else:
-        context.mode = None  # Требуется инициализация
+        context.mode = None  # Initialization required
 
-    # 1.3 Существующие артефакты
+    # 1.3 Existing artifacts
     context.existing_artifacts = {
         "prd": glob("./ai-docs/docs/_analysis/*-prd.md"),
         "plan": glob("./ai-docs/docs/_plans/mvp/*-plan.md"),
@@ -343,47 +343,47 @@ def initialize_context(command: str) -> Context:
         "reports": glob("./ai-docs/docs/_validation/*.md"),
     }
 
-    # 1.4 Completion Reports (память о deployed фичах)
+    # 1.4 Completion Reports (memory of deployed features)
     context.completion_reports = {}
     features_registry = context.state.get("features_registry", {}) if context.state else {}
     for fid, feature in features_registry.items():
         completion_path = feature.get("artifacts", {}).get("completion")
         if completion_path and exists(f"./ai-docs/docs/{completion_path}"):
             context.completion_reports[fid] = read(f"./ai-docs/docs/{completion_path}")
-            # AI теперь знает: ADR, scope changes, known limitations
+            # AI now knows: ADR, scope changes, known limitations
 
     # ═══════════════════════════════════════════════════════════════
-    # ФАЗА 2: Проверка предусловий
+    # PHASE 2: Precondition check
     # ═══════════════════════════════════════════════════════════════
 
     if not check_preconditions(command):
-        raise GateNotPassedError(f"Предусловия для {command} не выполнены")
+        raise GateNotPassedError(f"Preconditions for {command} not met")
 
     # ═══════════════════════════════════════════════════════════════
-    # ФАЗА 3: Инструкции фреймворка
+    # PHASE 3: Framework instructions
     # ═══════════════════════════════════════════════════════════════
 
-    # Базовые документы
+    # Base documents
     context.framework_rules = read(".aidd/CLAUDE.md")
     context.workflow = read(".aidd/workflow.md")
 
-    # Инструкции команды
+    # Command instructions
     context.command_instructions = read(f".aidd/.claude/commands/{command}.md")
 
-    # Инструкции роли
+    # Role instructions
     role = COMMAND_TO_ROLE[command]
     context.role_instructions = read(f".aidd/.claude/agents/{role}.md")
 
     # ═══════════════════════════════════════════════════════════════
-    # ФАЗА 4: Шаблоны и база знаний (по необходимости)
+    # PHASE 4: Templates and Knowledge Base (as needed)
     # ═══════════════════════════════════════════════════════════════
 
-    # Шаблоны — только если артефакт не существует
+    # Templates — only if artifact doesn't exist
     template_needed = should_load_template(command, context.existing_artifacts)
     if template_needed:
         context.template = read(template_needed)
 
-    # База знаний — по теме команды
+    # Knowledge Base — by command topic
     for knowledge_file in KNOWLEDGE_MAP.get(command, []):
         context.knowledge.append(read(knowledge_file))
 
@@ -392,33 +392,33 @@ def initialize_context(command: str) -> Context:
 
 ---
 
-## Определение режима работы
+## Operating Mode Detection
 
 ```python
 def detect_mode(state: dict, existing_artifacts: dict) -> str:
     """
-    Определение режима работы: CREATE или FEATURE.
+    Detect operating mode: CREATE or FEATURE.
 
     Returns:
-        'CREATE' — новый проект с нуля
-        'FEATURE' — добавление функционала в существующий проект
+        'CREATE' — new project from scratch
+        'FEATURE' — adding functionality to an existing project
     """
-    # 1. Приоритет: явное указание в state
+    # 1. Priority: explicit specification in state
     if state and state.get("mode"):
         return state["mode"]
 
-    # 2. Признаки существующего проекта
+    # 2. Existing project indicators
     project_markers = [
         existing_artifacts.get("services"),     # services/
-        exists("./docker-compose.yml"),         # Инфраструктура
+        exists("./docker-compose.yml"),         # Infrastructure
         exists("./docker-compose.yaml"),
-        bool(existing_artifacts.get("plan")),   # Архитектурный план
+        bool(existing_artifacts.get("plan")),   # Architecture plan
     ]
 
     if any(project_markers):
         return "FEATURE"
 
-    # 3. Дополнительно: много Python файлов
+    # 3. Additional: many Python files
     python_files = list(glob("./**/*.py"))
     if len(python_files) > 5:
         return "FEATURE"
@@ -428,107 +428,107 @@ def detect_mode(state: dict, existing_artifacts: dict) -> str:
 
 ---
 
-## Таблица порядка чтения для всех команд
+## Reading Order Table for All Commands
 
-| Команда | Фаза 1 (ЦП) | Фаза 2 | Фаза 3 (Фреймворк) | Фаза 4 |
-|---------|-------------|--------|--------------------|---------
-| `/aidd-analyze` | CLAUDE.md, state, ai-docs | — | CLAUDE, workflow, idea.md, analyst.md | prd-template (если PRD нет) |
+| Command | Phase 1 (TP) | Phase 2 | Phase 3 (Framework) | Phase 4 |
+|---------|-------------|---------|--------------------|---------
+| `/aidd-analyze` | CLAUDE.md, state, ai-docs | — | CLAUDE, workflow, idea.md, analyst.md | prd-template (if no PRD) |
 | `/aidd-research` | CLAUDE.md, state, PRD | PRD_READY | CLAUDE, workflow, research.md, researcher.md | knowledge/architecture |
 | `/aidd-plan` | CLAUDE.md, state, PRD | PRD_READY, RESEARCH_DONE | CLAUDE, workflow, plan.md, planner.md | architecture-template, knowledge/architecture |
-| `/aidd-plan-feature` | CLAUDE.md, state, PRD, существующая архитектура | PRD_READY, RESEARCH_DONE | CLAUDE, workflow, feature-plan.md, planner.md | — |
-| `/aidd-code` | CLAUDE.md, state, план | PLAN_APPROVED | CLAUDE, workflow, generate.md, coder.md | templates/services, knowledge/services |
-| `/aidd-validate` | CLAUDE.md, state, код, все артефакты | IMPLEMENT_OK | CLAUDE, workflow, finalize.md, validator.md, code-review-library.md, testing-library.md | conventions.md, knowledge/quality, knowledge/infrastructure |
+| `/aidd-plan-feature` | CLAUDE.md, state, PRD, existing architecture | PRD_READY, RESEARCH_DONE | CLAUDE, workflow, feature-plan.md, planner.md | — |
+| `/aidd-code` | CLAUDE.md, state, plan | PLAN_APPROVED | CLAUDE, workflow, generate.md, coder.md | templates/services, knowledge/services |
+| `/aidd-validate` | CLAUDE.md, state, code, all artifacts | IMPLEMENT_OK | CLAUDE, workflow, finalize.md, validator.md, code-review-library.md, testing-library.md | conventions.md, knowledge/quality, knowledge/infrastructure |
 
 ---
 
-## Пример: Инициализация для /aidd-analyze
+## Example: Initialization for /aidd-analyze
 
 ```python
-# Пользователь запускает: /aidd-analyze "Создать сервис бронирования"
+# User runs: /aidd-analyze "Create a booking service"
 
-# ФАЗА 1: Контекст ЦП
+# PHASE 1: TP Context
 if exists("./CLAUDE.md"):
-    read("./CLAUDE.md")  # → Понять специфику проекта
+    read("./CLAUDE.md")  # → Understand project specifics
 
 if exists("./.pipeline-state.json"):
     state = read_json("./.pipeline-state.json")  # → mode, gates
 else:
-    state = None  # → Новый проект
+    state = None  # → New project
 
 artifacts = glob("./ai-docs/docs/_analysis/*-prd.md")  # → []
 
-# ФАЗА 2: Предусловия
-# /aidd-analyze не требует предусловий — пропуск
+# PHASE 2: Preconditions
+# /aidd-analyze requires no preconditions — skip
 
-# ФАЗА 3: Фреймворк
+# PHASE 3: Framework
 read(".aidd/CLAUDE.md")
 read(".aidd/workflow.md")
 read(".aidd/.claude/commands/aidd-analyze.md")
 read(".aidd/.claude/agents/analyst.md")
 
-# ФАЗА 4: Шаблоны
-if not artifacts:  # PRD не существует
+# PHASE 4: Templates
+if not artifacts:  # PRD doesn't exist
     read(".aidd/templates/documents/prd-template.md")
 
-# Определение режима
+# Mode detection
 mode = detect_mode(state, {"prd": artifacts, "services": False})
 # → mode = "CREATE"
 
-# Bootstrap (только для /aidd-analyze при mode == None)
+# Bootstrap (only for /aidd-analyze when mode == None)
 mkdir("./ai-docs/docs/{prd,architecture,plans,reports,research}")
 write("./.pipeline-state.json", {"mode": "CREATE", ...})
 
-# Выполнение: создание PRD
+# Execution: create PRD
 create_prd("./ai-docs/docs/_analysis/booking-prd.md")
 ```
 
 ---
 
-## Пример: Инициализация для /aidd-code (середина пайплайна)
+## Example: Initialization for /aidd-code (mid-pipeline)
 
 ```python
-# Пользователь запускает: /generate
+# User runs: /generate
 
-# ФАЗА 1: Контекст ЦП
+# PHASE 1: TP Context
 read("./CLAUDE.md")  # → "Booking Service"
 state = read_json("./.pipeline-state.json")
 # → mode: "CREATE", stage: 4, gates: {PRD_READY: ✓, RESEARCH_DONE: ✓, PLAN_APPROVED: ✓}
 
-plan = read(state["artifacts"]["plan"])  # → Архитектурный план
+plan = read(state["artifacts"]["plan"])  # → Architecture plan
 
-# ФАЗА 2: Предусловия
+# PHASE 2: Preconditions
 assert state["gates"]["PLAN_APPROVED"]["passed"]  # ✓
 
-# ФАЗА 3: Фреймворк
+# PHASE 3: Framework
 read(".aidd/CLAUDE.md")
 read(".aidd/workflow.md")
 read(".aidd/.claude/commands/aidd-code.md")
 read(".aidd/.claude/agents/coder.md")
 read(".aidd/conventions.md")
 
-# ФАЗА 4: Шаблоны и знания
+# PHASE 4: Templates and knowledge
 read(".aidd/templates/services/fastapi_business_api/")
 read(".aidd/templates/services/postgres_data_api/")
 read(".aidd/templates/infrastructure/docker/")
 read(".aidd/knowledge/services/fastapi.md")
 
-# Выполнение: генерация кода
+# Execution: code generation
 generate_services(plan)
 ```
 
 ---
 
-## Связанные документы
+## Related Documents
 
-| Документ | Описание |
-|----------|----------|
-| [CLAUDE.md](../CLAUDE.md) | Главная точка входа фреймворка |
-| [workflow.md](../workflow.md) | Пайплайн и ворота |
-| [NAVIGATION.md](NAVIGATION.md) | Навигационная матрица по этапам |
-| [target-project-structure.md](target-project-structure.md) | Структура целевого проекта |
+| Document | Description |
+|----------|-------------|
+| [CLAUDE.md](../CLAUDE.md) | Framework main Entry Point |
+| [workflow.md](../workflow.md) | Pipeline and gates |
+| [NAVIGATION.md](NAVIGATION.md) | Navigation matrix by stages |
+| [target-project-structure.md](target-project-structure.md) | Target Project structure |
 
 ---
 
-**Версия**: 2.0
-**Создан**: 2025-12-21
-**Назначение**: Единый источник истины для алгоритма инициализации AI-агента
+**Version**: 2.0
+**Created**: 2025-12-21
+**Purpose**: Single source of truth for the AI agent initialization algorithm

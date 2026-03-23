@@ -1,82 +1,82 @@
-# Функция: Создание тестовых сценариев
+# Function: Test Scenario Creation
 
-> **Назначение**: Формирование тестовых сценариев на основе требований.
-
----
-
-## Цель
-
-Создать тестовые сценарии, которые покрывают все функциональные
-и нефункциональные требования из PRD.
+> **Purpose**: Creating test scenarios based on requirements.
 
 ---
 
-## Входные данные
+## Goal
 
-| Артефакт | Путь | Описание |
-|----------|------|----------|
-| PRD | `ai-docs/docs/_analysis/{name}-prd.md` | Требования |
-| RTM | `ai-docs/docs/rtm.md` | Матрица трассировки |
-| Код | `services/` | Реализованные сервисы |
-| Ворота | REVIEW_OK | Должны быть пройдены |
+Create test scenarios that cover all functional
+and non-functional requirements from the PRD.
 
 ---
 
-## Типы тестовых сценариев
+## Input Data
 
-### 1. Функциональные тесты (FR)
+| Artifact | Path | Description |
+|----------|------|-------------|
+| PRD | `ai-docs/docs/_analysis/{name}-prd.md` | Requirements |
+| RTM | `ai-docs/docs/rtm.md` | Traceability matrix |
+| Code | `services/` | Implemented services |
+| Gate | REVIEW_OK | Must be passed |
 
-```
-Покрывают функциональные требования:
-- CRUD операции
-- Бизнес-логика
-- Валидация данных
-- Обработка ошибок
-```
+---
 
-### 2. UI/UX тесты (UI) — для ботов
+## Types of Test Scenarios
 
-```
-Покрывают UI требования:
-- Команды бота
-- Клавиатуры
-- Сообщения
-- Навигация
-```
-
-### 3. Нефункциональные тесты (NF)
+### 1. Functional Tests (FR)
 
 ```
-Покрывают NFR:
-- Производительность (время отклика)
-- Доступность
-- Безопасность
-- Покрытие тестами
+Cover functional requirements:
+- CRUD operations
+- Business logic
+- Data validation
+- Error handling
+```
+
+### 2. UI/UX Tests (UI) — for bots
+
+```
+Cover UI requirements:
+- Bot commands
+- Keyboards
+- Messages
+- Navigation
+```
+
+### 3. Non-Functional Tests (NF)
+
+```
+Cover NFR:
+- Performance (response time)
+- Availability
+- Security
+- Test coverage
 ```
 
 ---
 
-## Шаблон тестового сценария
+## Test Scenario Template
 
 ```markdown
-## TS-{NNN}: {Название сценария}
+## TS-{NNN}: {Scenario Name}
 
-**Требование**: {FR-XXX / UI-XXX / NF-XXX}
-**Приоритет**: High / Medium / Low
-**Тип**: Unit / Integration / E2E
+**Requirement**: {FR-XXX / UI-XXX / NF-XXX}
+**Priority**: High / Medium / Low
+**Type**: Unit / Integration / E2E
 
-### Предусловия
-- {Предусловие 1}
-- {Предусловие 2}
+### Preconditions
+- {Precondition 1}
+- {Precondition 2}
 
-### Шаги
+### Steps
 
-| # | Действие | Ожидаемый результат |
-|---|----------|---------------------|
-| 1 | {Действие} | {Результат} |
-| 2 | {Действие} | {Результат} |
+| # | Action | Expected Result |
+|---|--------|-----------------|
+| 1 | {Action} | {Result} |
+| 2 | {Action} | {Result} |
 
-### Тестовые данные
+### Test Data
 ```json
 {
   "input": {...},
@@ -84,37 +84,37 @@
 }
 ```
 
-### Критерий успеха
-{Как определить, что тест прошёл}
+### Success Criteria
+{How to determine the test passed}
 ```
 
 ---
 
-## Примеры сценариев
+## Scenario Examples
 
-### Функциональный тест
+### Functional Test
 
 ```markdown
-## TS-001: Создание ресторана
+## TS-001: Create Restaurant
 
-**Требование**: FR-001 (Создание ресторана)
-**Приоритет**: High
-**Тип**: Integration
+**Requirement**: FR-001 (Restaurant creation)
+**Priority**: High
+**Type**: Integration
 
-### Предусловия
-- Business API запущен
-- Data API запущен
-- База данных доступна
+### Preconditions
+- Business API is running
+- Data API is running
+- Database is available
 
-### Шаги
+### Steps
 
-| # | Действие | Ожидаемый результат |
-|---|----------|---------------------|
-| 1 | POST /api/v1/restaurants с валидными данными | HTTP 201 Created |
-| 2 | Проверить тело ответа | Содержит id, name, address |
-| 3 | GET /api/v1/restaurants/{id} | HTTP 200, данные совпадают |
+| # | Action | Expected Result |
+|---|--------|-----------------|
+| 1 | POST /api/v1/restaurants with valid data | HTTP 201 Created |
+| 2 | Verify response body | Contains id, name, address |
+| 3 | GET /api/v1/restaurants/{id} | HTTP 200, data matches |
 
-### Тестовые данные
+### Test Data
 ```json
 {
   "input": {
@@ -132,30 +132,30 @@
 }
 ```
 
-### Критерий успеха
-Ресторан создан и может быть получен по ID
+### Success Criteria
+Restaurant is created and can be retrieved by ID
 ```
 
-### Негативный тест
+### Negative Test
 
 ```markdown
-## TS-002: Создание ресторана с невалидными данными
+## TS-002: Create Restaurant with Invalid Data
 
-**Требование**: FR-001 (Создание ресторана)
-**Приоритет**: High
-**Тип**: Integration
+**Requirement**: FR-001 (Restaurant creation)
+**Priority**: High
+**Type**: Integration
 
-### Предусловия
-- Business API запущен
+### Preconditions
+- Business API is running
 
-### Шаги
+### Steps
 
-| # | Действие | Ожидаемый результат |
-|---|----------|---------------------|
-| 1 | POST /api/v1/restaurants без name | HTTP 422 Validation Error |
-| 2 | Проверить тело ошибки | Содержит поле "name" |
+| # | Action | Expected Result |
+|---|--------|-----------------|
+| 1 | POST /api/v1/restaurants without name | HTTP 422 Validation Error |
+| 2 | Verify error body | Contains "name" field |
 
-### Тестовые данные
+### Test Data
 ```json
 {
   "input": {
@@ -170,155 +170,155 @@
 }
 ```
 
-### Критерий успеха
-Возвращается ошибка валидации с описанием проблемы
+### Success Criteria
+Validation error is returned with problem description
 ```
 
-### Тест производительности
+### Performance Test
 
 ```markdown
-## TS-010: Время отклика API
+## TS-010: API Response Time
 
-**Требование**: NF-001 (Время отклика <500ms)
-**Приоритет**: High
-**Тип**: Performance
+**Requirement**: NF-001 (Response time <500ms)
+**Priority**: High
+**Type**: Performance
 
-### Предусловия
-- Все сервисы запущены
-- База данных содержит 1000 записей
+### Preconditions
+- All services are running
+- Database contains 1000 records
 
-### Шаги
+### Steps
 
-| # | Действие | Ожидаемый результат |
-|---|----------|---------------------|
-| 1 | GET /api/v1/restaurants (100 запросов) | Среднее время <500ms |
-| 2 | POST /api/v1/restaurants (50 запросов) | Среднее время <500ms |
+| # | Action | Expected Result |
+|---|--------|-----------------|
+| 1 | GET /api/v1/restaurants (100 requests) | Average time <500ms |
+| 2 | POST /api/v1/restaurants (50 requests) | Average time <500ms |
 
-### Метрики
+### Metrics
 - p50: <200ms
 - p95: <500ms
 - p99: <1000ms
 
-### Критерий успеха
-95% запросов выполняются менее чем за 500ms
+### Success Criteria
+95% of requests complete in less than 500ms
 ```
 
 ---
 
-## Матрица покрытия
+## Coverage Matrix
 
 ```markdown
-## Матрица покрытия требований тестами
+## Requirements-to-Tests Coverage Matrix
 
-| Req ID | Описание | Тестовые сценарии | Статус |
-|--------|----------|-------------------|--------|
-| FR-001 | Создание ресторана | TS-001, TS-002 | Покрыто |
-| FR-002 | Список ресторанов | TS-003 | Покрыто |
-| FR-003 | Поиск ресторана | TS-004, TS-005 | Покрыто |
-| NF-001 | Время отклика | TS-010 | Покрыто |
-| NF-003 | Coverage ≥75% | TS-020 | Покрыто |
+| Req ID | Description | Test Scenarios | Status |
+|--------|-------------|----------------|--------|
+| FR-001 | Restaurant creation | TS-001, TS-002 | Covered |
+| FR-002 | Restaurant list | TS-003 | Covered |
+| FR-003 | Restaurant search | TS-004, TS-005 | Covered |
+| NF-001 | Response time | TS-010 | Covered |
+| NF-003 | Coverage ≥75% | TS-020 | Covered |
 
-### Статистика
+### Statistics
 
-- Всего требований: {N}
-- Покрыто тестами: {N}
-- Покрытие: {N}%
+- Total requirements: {N}
+- Covered by tests: {N}
+- Coverage: {N}%
 ```
 
 ---
 
-## Процесс создания сценариев
+## Scenario Creation Process
 
-### Шаг 1: Анализ PRD
+### Step 1: PRD Analysis
 
 ```
-1. Прочитать все FR, UI, NF требования
-2. Для каждого требования определить:
-   - Позитивные сценарии (happy path)
-   - Негативные сценарии (error cases)
-   - Граничные случаи (edge cases)
+1. Read all FR, UI, NF requirements
+2. For each requirement determine:
+   - Positive scenarios (happy path)
+   - Negative scenarios (error cases)
+   - Edge cases
 ```
 
-### Шаг 2: Определение приоритетов
+### Step 2: Determining Priorities
 
 ```
 High:
-- Must требования
-- Критическая бизнес-логика
-- Безопасность
+- Must requirements
+- Critical business logic
+- Security
 
 Medium:
-- Should требования
-- Вторичная функциональность
+- Should requirements
+- Secondary functionality
 
 Low:
-- Could требования
-- UI/UX детали
+- Could requirements
+- UI/UX details
 ```
 
-### Шаг 3: Определение типа теста
+### Step 3: Determining Test Type
 
 ```
 Unit:
-- Отдельные функции
-- Бизнес-логика в isolation
-- Моки для зависимостей
+- Individual functions
+- Business logic in isolation
+- Mocks for dependencies
 
 Integration:
-- API эндпоинты
-- Взаимодействие сервисов
-- База данных
+- API endpoints
+- Service interactions
+- Database
 
-E2E (для Level 3+):
-- Полный user flow
-- Все сервисы вместе
+E2E (for Level 3+):
+- Full user flow
+- All services together
 ```
 
 ---
 
-## Результат
+## Result
 
 ```markdown
-# Тестовые сценарии: {Название проекта}
+# Test Scenarios: {Project Name}
 
-**Версия**: 1.0
-**Дата**: {YYYY-MM-DD}
-**Автор**: AI Agent (QA)
-
----
-
-## Обзор
-
-| Метрика | Значение |
-|---------|----------|
-| Всего требований | {N} |
-| Тестовых сценариев | {N} |
-| Покрытие требований | {N}% |
+**Version**: 1.0
+**Date**: {YYYY-MM-DD}
+**Author**: AI Agent (QA)
 
 ---
 
-## Сценарии по категориям
+## Overview
 
-### Функциональные (FR)
+| Metric | Value |
+|--------|-------|
+| Total requirements | {N} |
+| Test scenarios | {N} |
+| Requirements coverage | {N}% |
+
+---
+
+## Scenarios by Category
+
+### Functional (FR)
 - TS-001: ...
 - TS-002: ...
 
 ### UI/UX (UI)
 - TS-050: ...
 
-### Нефункциональные (NF)
+### Non-Functional (NF)
 - TS-100: ...
 
 ---
 
-## Матрица покрытия
+## Coverage Matrix
 
-{Таблица покрытия}
+{Coverage table}
 ```
 
 ---
 
-## Путь сохранения
+## Save Path
 
 ```
 ai-docs/docs/test-scenarios.md
@@ -326,9 +326,9 @@ ai-docs/docs/test-scenarios.md
 
 ---
 
-## Источники
+## Sources
 
-| Документ | Описание |
-|----------|----------|
-| `templates/documents/prd-template.md` | Шаблон PRD |
-| `templates/documents/rtm-template.md` | Шаблон RTM |
+| Document | Description |
+|----------|-------------|
+| `templates/documents/prd-template.md` | PRD Template |
+| `templates/documents/rtm-template.md` | RTM Template |

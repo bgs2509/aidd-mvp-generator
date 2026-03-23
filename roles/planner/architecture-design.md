@@ -1,29 +1,29 @@
-# Функция: Проектирование архитектуры
+# Function: Architecture Design
 
-> **Назначение**: Создание архитектурного решения на основе PRD.
-
----
-
-## Цель
-
-Спроектировать архитектуру системы, которая удовлетворяет
-функциональным и нефункциональным требованиям из PRD.
+> **Purpose**: Creating an architectural solution based on the PRD.
 
 ---
 
-## Входные данные
+## Goal
 
-| Артефакт | Путь | Описание |
-|----------|------|----------|
-| PRD | `ai-docs/docs/_analysis/{name}-prd.md` | Требования |
-| Анализ кода | `ai-docs/docs/research/{name}-research.md` | Для FEATURE режима |
-| Ворота | PRD_READY | Должны быть пройдены |
+Design a system architecture that satisfies
+the functional and non-functional requirements from the PRD.
 
 ---
 
-## Архитектурные принципы AIDD-MVP
+## Input Data
 
-### 1. HTTP-only доступ к данным
+| Artifact | Path | Description |
+|----------|------|-------------|
+| PRD | `ai-docs/docs/_analysis/{name}-prd.md` | Requirements |
+| Code Analysis | `ai-docs/docs/research/{name}-research.md` | For FEATURE mode |
+| Gates | PRD_READY | Must be passed |
+
+---
+
+## AIDD-MVP Architectural Principles
+
+### 1. HTTP-only Data Access
 
 ```
 ┌─────────────────┐     HTTP      ┌─────────────────┐
@@ -31,8 +31,8 @@
 │  (FastAPI)      │               │  (PostgreSQL)   │
 └─────────────────┘               └─────────────────┘
 
-ПРАВИЛО: Бизнес-сервисы НИКОГДА не обращаются к БД напрямую.
-         Только через HTTP вызовы к Data API.
+RULE: Business services NEVER access the database directly.
+      Only through HTTP calls to the Data API.
 ```
 
 ### 2. DDD + Hexagonal Architecture
@@ -41,88 +41,88 @@
 ┌────────────────────────────────────────────────────┐
 │                     SERVICE                         │
 ├────────────────────────────────────────────────────┤
-│  api/              ← Входящие адаптеры (REST)      │
+│  api/              ← Incoming adapters (REST)       │
 │  ├── v1/                                           │
 │  │   └── routes.py                                 │
 │  └── dependencies.py                               │
 ├────────────────────────────────────────────────────┤
-│  application/      ← Сервисы приложения            │
+│  application/      ← Application services           │
 │  ├── services/                                     │
 │  └── dtos/                                         │
 ├────────────────────────────────────────────────────┤
-│  domain/           ← Бизнес-логика (ядро)          │
+│  domain/           ← Business logic (core)          │
 │  ├── entities/                                     │
 │  ├── value_objects/                                │
 │  └── services/                                     │
 ├────────────────────────────────────────────────────┤
-│  infrastructure/   ← Исходящие адаптеры            │
-│  ├── http/         (HTTP клиенты)                  │
-│  └── messaging/    (очереди)                       │
+│  infrastructure/   ← Outgoing adapters              │
+│  ├── http/         (HTTP clients)                  │
+│  └── messaging/    (queues)                        │
 └────────────────────────────────────────────────────┘
 ```
 
-### 3. Один Event Loop на сервис
+### 3. One Event Loop per Service
 
 ```
-ПРАВИЛО: Каждый сервис владеет ОДНИМ event loop.
-         Нельзя создавать дополнительные event loops.
+RULE: Each service owns ONE event loop.
+      Creating additional event loops is not allowed.
 
-FastAPI/Aiogram/Worker → asyncio.run() → один loop
+FastAPI/Aiogram/Worker → asyncio.run() → one loop
 ```
 
 ---
 
-## Процесс проектирования
+## Design Process
 
-### Шаг 1: Определить компоненты
+### Step 1: Identify Components
 
-На основе PRD определить необходимые сервисы:
+Based on the PRD, identify the required services:
 
 ```markdown
-| Компонент | Нужен? | Обоснование |
-|-----------|--------|-------------|
-| Business API | ? | Есть ли REST эндпоинты в FR? |
-| Data API (PG) | ? | Есть ли реляционные данные? |
-| Data API (Mongo) | ? | Есть ли документы/логи? |
-| Telegram Bot | ? | Есть ли FR для бота? |
-| Background Worker | ? | Есть ли фоновые задачи? |
-| Redis | ? | Нужен ли кэш/сессии? |
+| Component | Needed? | Justification |
+|-----------|---------|---------------|
+| Business API | ? | Are there REST endpoints in FR? |
+| Data API (PG) | ? | Is there relational data? |
+| Data API (Mongo) | ? | Are there documents/logs? |
+| Telegram Bot | ? | Are there FR for the bot? |
+| Background Worker | ? | Are there background tasks? |
+| Redis | ? | Is cache/sessions needed? |
 ```
 
-### Шаг 2: Спроектировать Data Model
+### Step 2: Design the Data Model
 
 ```markdown
-## Модели данных
+## Data Models
 
-### Entity: {Название}
+### Entity: {Name}
 
-| Поле | Тип | Описание | Ограничения |
-|------|-----|----------|-------------|
-| id | UUID | Идентификатор | PK |
+| Field | Type | Description | Constraints |
+|-------|------|-------------|-------------|
+| id | UUID | Identifier | PK |
 | ... | ... | ... | ... |
 
-### Связи
+### Relationships
 
 {Entity1} 1──N {Entity2}
 ```
 
-### Шаг 3: Определить API контракты
+### Step 3: Define API Contracts
 
 ```markdown
-## API контракты
+## API Contracts
 
-### {Сервис} API
+### {Service} API
 
-| Метод | Путь | Описание | Req ID |
-|-------|------|----------|--------|
-| POST | /api/v1/{resource} | Создание | FR-001 |
-| GET | /api/v1/{resource}/{id} | Получение | FR-002 |
+| Method | Path | Description | Req ID |
+|--------|------|-------------|--------|
+| POST | /api/v1/{resource} | Create | FR-001 |
+| GET | /api/v1/{resource}/{id} | Retrieve | FR-002 |
 ```
 
-### Шаг 4: Определить взаимодействия
+### Step 4: Define Interactions
 
 ```markdown
-## Диаграмма взаимодействий
+## Interaction Diagram
 
 User ──▶ Business API ──▶ Data API ──▶ PostgreSQL
               │
@@ -131,111 +131,111 @@ User ──▶ Business API ──▶ Data API ──▶ PostgreSQL
 
 ---
 
-## Шаблон архитектурного документа
+## Architecture Document Template
 
 ```markdown
-# Архитектура: {Название проекта}
+# Architecture: {Project Name}
 
-**Версия**: 1.0
-**Дата**: {YYYY-MM-DD}
-**Автор**: AI Agent (Планировщик)
-
----
-
-## 1. Обзор
-
-### 1.1 Контекст
-{Краткое описание системы}
-
-### 1.2 Цели архитектуры
-- {Цель 1}
-- {Цель 2}
+**Version**: 1.0
+**Date**: {YYYY-MM-DD}
+**Author**: AI Agent (Planner)
 
 ---
 
-## 2. Компоненты системы
+## 1. Overview
 
-| Компонент | Тип | Порт | Описание |
-|-----------|-----|------|----------|
+### 1.1 Context
+{Brief system description}
+
+### 1.2 Architecture Goals
+- {Goal 1}
+- {Goal 2}
+
+---
+
+## 2. System Components
+
+| Component | Type | Port | Description |
+|-----------|------|------|-------------|
 | {name}_api | Business API | 8000 | REST API |
-| {name}_data | Data API | 8001 | Доступ к PostgreSQL |
-| {name}_bot | Telegram Bot | — | Уведомления |
+| {name}_data | Data API | 8001 | PostgreSQL access |
+| {name}_bot | Telegram Bot | — | Notifications |
 
 ---
 
-## 3. Модели данных
+## 3. Data Models
 
-### 3.1 ER диаграмма
+### 3.1 ER Diagram
 
-{Текстовая диаграмма}
+{Text diagram}
 
-### 3.2 Описание моделей
+### 3.2 Model Descriptions
 
-{Таблицы с описанием полей}
+{Tables with field descriptions}
 
 ---
 
-## 4. API контракты
+## 4. API Contracts
 
 ### 4.1 Business API
 
-{Таблица эндпоинтов}
+{Endpoints table}
 
 ### 4.2 Data API
 
-{Таблица эндпоинтов}
+{Endpoints table}
 
 ---
 
-## 5. Взаимодействия
+## 5. Interactions
 
-### 5.1 Основные потоки
+### 5.1 Main Flows
 
-{Диаграммы последовательности}
-
----
-
-## 6. Инфраструктура
-
-### 6.1 Docker сервисы
-
-| Сервис | Образ | Порт | Зависимости |
-|--------|-------|------|-------------|
-
-### 6.2 Переменные окружения
-
-| Переменная | Описание | Обязательна |
-|------------|----------|-------------|
+{Sequence diagrams}
 
 ---
 
-## 7. Решения и обоснования
+## 6. Infrastructure
 
-| # | Решение | Альтернативы | Обоснование |
-|---|---------|--------------|-------------|
-| 1 | {Решение} | {Альтернативы} | {Почему выбрано} |
+### 6.1 Docker Services
+
+| Service | Image | Port | Dependencies |
+|---------|-------|------|--------------|
+
+### 6.2 Environment Variables
+
+| Variable | Description | Required |
+|----------|-------------|----------|
+
+---
+
+## 7. Decisions and Justifications
+
+| # | Decision | Alternatives | Justification |
+|---|----------|--------------|---------------|
+| 1 | {Decision} | {Alternatives} | {Why chosen} |
 ```
 
 ---
 
-## Качественные ворота: ARCHITECTURE_READY
+## Quality Gates: ARCHITECTURE_READY
 
-### Чек-лист
+### Checklist
 
-- [ ] Определены все необходимые компоненты
-- [ ] Соблюдён принцип HTTP-only доступа к данным
-- [ ] Определены модели данных
-- [ ] Определены API контракты
-- [ ] Контракты покрывают все FR
-- [ ] Определены взаимодействия между компонентами
-- [ ] Документ сохранён в `ai-docs/docs/_plans/mvp/`
+- [ ] All required components are identified
+- [ ] HTTP-only data access principle is followed
+- [ ] Data models are defined
+- [ ] API contracts are defined
+- [ ] Contracts cover all FRs
+- [ ] Interactions between components are defined
+- [ ] Document is saved to `ai-docs/docs/_plans/mvp/`
 
 ---
 
-## Источники
+## References
 
-| Документ | Описание |
-|----------|----------|
-| `knowledge/architecture/improved-hybrid.md` | Гибридная архитектура |
-| `knowledge/architecture/ddd-hexagonal.md` | DDD принципы |
-| `knowledge/architecture/data-access.md` | HTTP-only доступ |
+| Document | Description |
+|----------|-------------|
+| `knowledge/architecture/improved-hybrid.md` | Hybrid architecture |
+| `knowledge/architecture/ddd-hexagonal.md` | DDD principles |
+| `knowledge/architecture/data-access.md` | HTTP-only access |

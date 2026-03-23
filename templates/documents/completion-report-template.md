@@ -1,8 +1,8 @@
 ---
-# === YAML Frontmatter (машиночитаемые метаданные) ===
+# === YAML Frontmatter (machine-readable metadata) ===
 feature_id: "{FID}"
 feature_name: "{slug}"
-title: "Completion Report: {Название проекта/фичи}"
+title: "Completion Report: {Project/Feature Name}"
 created: "{YYYY-MM-DD}"
 deployed: "{YYYY-MM-DD}"
 author: "AI (Validator)"
@@ -10,97 +10,97 @@ type: "completion"
 status: "DEPLOYED"
 version: 1
 
-# Метрики качества (финальные)
+# Quality metrics (final)
 metrics:
   coverage_percent: 0
   tests_passed: 0
   tests_total: 0
   security_issues: 0
 
-# Реализованные сервисы
+# Implemented services
 services: []
 
-# Количество ADR
+# Number of ADRs
 adr_count: 0
 
-# Ссылки на ВСЕ артефакты фичи
+# Links to ALL feature artifacts
 artifacts:
   prd: "prd/{YYYY-MM-DD}_{FID}_{slug}-prd.md"
   research: "research/{YYYY-MM-DD}_{FID}_{slug}-research.md"
   plan: "architecture/{YYYY-MM-DD}_{FID}_{slug}-plan.md"
-  # completion report — единственный артефакт этапа Quality & Deploy
+  # completion report — the only artifact of the Quality & Deploy stage
 
-# Зависимости
-depends_on: []           # FID фич, от которых зависит эта
-enables: []              # Потенциальные фичи, которые могут использовать эту
+# Dependencies
+depends_on: []           # FIDs of features this one depends on
+enables: []              # Potential features that may use this one
 ---
 
-# Completion Report: {Название проекта/фичи}
+# Completion Report: {Project/Feature Name}
 
 > **Feature ID**: {FID}
-> **Статус**: DEPLOYED
-> **Дата создания**: {YYYY-MM-DD}
-> **Дата деплоя**: {YYYY-MM-DD}
-> **Автор**: AI Agent (Валидатор)
+> **Status**: DEPLOYED
+> **Created**: {YYYY-MM-DD}
+> **Deployed**: {YYYY-MM-DD}
+> **Author**: AI Agent (Validator)
 
 ---
 
 ## 1. Executive Summary
 
-{2-3 предложения о том, что было создано, какую проблему решает и для кого предназначено}
+{2-3 sentences about what was created, what problem it solves, and who it is intended for}
 
-### 1.1 Ключевые результаты
+### 1.1 Key Results
 
-| Метрика | Значение |
-|---------|----------|
-| Сервисов создано | {N} |
+| Metric | Value |
+|--------|-------|
+| Services created | {N} |
 | Test coverage | {XX}% |
-| Требований реализовано | {N}/{M} |
-| ADR задокументировано | {N} |
-| Все ворота пройдены | ✅ |
+| Requirements implemented | {N}/{M} |
+| ADRs documented | {N} |
+| All gates passed | ✅ |
 
-### 1.2 Созданные сервисы
+### 1.2 Created Services
 
-- **{context}_{domain}_api** — {краткое описание}
-- **{context}_{domain}_data** — {краткое описание}
+- **{context}_{domain}_api** — {brief description}
+- **{context}_{domain}_data** — {brief description}
 
 ---
 
-## 2. Реализованные компоненты
+## 2. Implemented Components
 
-### 2.1 Сервисы
+### 2.1 Services
 
-| Сервис | Тип | Назначение | Порт | Ключевые endpoints |
-|--------|-----|------------|------|-------------------|
-| {context}_{domain}_api | Business API | {описание} | 8000 | `GET/POST /api/v1/{resource}` |
-| {context}_{domain}_data | Data API | {описание} | 8001 | `CRUD /api/v1/{entity}` |
+| Service | Type | Purpose | Port | Key endpoints |
+|---------|------|---------|------|---------------|
+| {context}_{domain}_api | Business API | {description} | 8000 | `GET/POST /api/v1/{resource}` |
+| {context}_{domain}_data | Data API | {description} | 8001 | `CRUD /api/v1/{entity}` |
 
-### 2.2 Модели данных
+### 2.2 Data Models
 
-| Entity | Таблица БД | Ключевые поля | Связи |
-|--------|------------|---------------|-------|
-| {EntityName} | {table_name} | id, name, created_at, ... | FK → {другая_таблица} |
+| Entity | DB Table | Key Fields | Relations |
+|--------|----------|------------|-----------|
+| {EntityName} | {table_name} | id, name, created_at, ... | FK → {other_table} |
 
 ### 2.3 API Endpoints
 
 #### Business API ({context}_{domain}_api)
 
-| Method | Endpoint | Описание | Auth |
-|--------|----------|----------|------|
-| GET | `/api/v1/{resource}` | {описание} | {JWT/API Key/None} |
-| POST | `/api/v1/{resource}` | {описание} | {JWT/API Key/None} |
+| Method | Endpoint | Description | Auth |
+|--------|----------|-------------|------|
+| GET | `/api/v1/{resource}` | {description} | {JWT/API Key/None} |
+| POST | `/api/v1/{resource}` | {description} | {JWT/API Key/None} |
 
 #### Data API ({context}_{domain}_data)
 
-| Method | Endpoint | Описание |
-|--------|----------|----------|
-| GET | `/api/v1/{entity}` | Получить список |
-| GET | `/api/v1/{entity}/{id}` | Получить по ID |
-| POST | `/api/v1/{entity}` | Создать |
-| PUT | `/api/v1/{entity}/{id}` | Обновить |
-| DELETE | `/api/v1/{entity}/{id}` | Удалить |
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/v1/{entity}` | Get list |
+| GET | `/api/v1/{entity}/{id}` | Get by ID |
+| POST | `/api/v1/{entity}` | Create |
+| PUT | `/api/v1/{entity}/{id}` | Update |
+| DELETE | `/api/v1/{entity}/{id}` | Delete |
 
-### 2.4 Интеграции
+### 2.4 Integrations
 
 ```
 ┌─────────────────┐      HTTP/JSON      ┌─────────────────┐      SQL      ┌──────────┐
@@ -111,118 +111,118 @@ enables: []              # Потенциальные фичи, которые �
 
 - **Business API → Data API**: HTTP REST (JSON)
 - **Data API → PostgreSQL**: SQLAlchemy async
-- **External integrations**: {если есть, перечислить}
+- **External integrations**: {list if any}
 
 ---
 
 ## 3. Architecture Decision Records (ADR)
 
-> **Назначение**: Документирование ключевых архитектурных решений и их обоснований.
-> Эта секция критически важна для понимания **ПОЧЕМУ** система построена именно так.
+> **Purpose**: Documenting key architectural decisions and their rationale.
+> This section is critically important for understanding **WHY** the system is built this way.
 
-### ADR-001: {Название решения}
+### ADR-001: {Decision Name}
 
-| Аспект | Описание |
-|--------|----------|
-| **Решение** | {Что выбрали — конкретное техническое решение} |
-| **Контекст** | {Почему это было нужно — бизнес/технический контекст} |
-| **Альтернативы** | {Что рассматривали и почему отклонили} |
-| **Последствия** | **Плюсы**: ... / **Минусы**: ... |
-| **Статус** | Принято |
-| **Дата** | {YYYY-MM-DD} |
+| Aspect | Description |
+|--------|-------------|
+| **Decision** | {What was chosen — specific technical decision} |
+| **Context** | {Why it was needed — business/technical context} |
+| **Alternatives** | {What was considered and why it was rejected} |
+| **Consequences** | **Pros**: ... / **Cons**: ... |
+| **Status** | Accepted |
+| **Date** | {YYYY-MM-DD} |
 
 ### ADR-002: HTTP-only Data Access
 
-| Аспект | Описание |
-|--------|----------|
-| **Решение** | Business API обращается к данным только через Data API (HTTP), не напрямую к БД |
-| **Контекст** | Требование DDD/Hexagonal архитектуры, изоляция слоёв |
-| **Альтернативы** | Прямой доступ к БД (отклонено: нарушает boundaries), Shared DB (отклонено: coupling) |
-| **Последствия** | **Плюсы**: чистая архитектура, масштабируемость / **Минусы**: +1 network hop |
-| **Статус** | Принято |
-| **Дата** | {YYYY-MM-DD} |
+| Aspect | Description |
+|--------|-------------|
+| **Decision** | Business API accesses data only through Data API (HTTP), not directly to the DB |
+| **Context** | DDD/Hexagonal architecture requirement, layer isolation |
+| **Alternatives** | Direct DB access (rejected: violates boundaries), Shared DB (rejected: coupling) |
+| **Consequences** | **Pros**: clean architecture, scalability / **Cons**: +1 network hop |
+| **Status** | Accepted |
+| **Date** | {YYYY-MM-DD} |
 
-### ADR-003: {Следующее решение}
+### ADR-003: {Next Decision}
 
-{Продолжить по шаблону ADR-001}
-
----
-
-## 4. Отклонения от плана (Scope Changes)
-
-### 4.1 Что планировали vs что сделали
-
-| Требование | План | Факт | Причина изменения |
-|------------|------|------|-------------------|
-| {FR-XXX} | {Что планировали} | {Что реально сделали} | {Почему изменилось} |
-| {FR-YYY} | {Описание} | Реализовано как запланировано | — |
-
-### 4.2 Deferred Items (отложено на будущее)
-
-> Эти требования были осознанно отложены и НЕ являются багами или недоработками.
-
-| ID | Описание | Причина отложения | Приоритет для следующей итерации |
-|----|----------|-------------------|----------------------------------|
-| {FR-XXX} | {что отложено} | {почему} | High / Medium / Low |
-
-### 4.3 Добавленные требования (не было в PRD)
-
-| ID | Описание | Причина добавления |
-|----|----------|-------------------|
-| {FR-NEW-XXX} | {что добавили} | {почему потребовалось} |
+{Continue using ADR-001 template}
 
 ---
 
-## 5. Известные ограничения и Technical Debt
+## 4. Deviations from Plan (Scope Changes)
+
+### 4.1 What Was Planned vs What Was Done
+
+| Requirement | Plan | Actual | Reason for Change |
+|-------------|------|--------|-------------------|
+| {FR-XXX} | {What was planned} | {What was actually done} | {Why it changed} |
+| {FR-YYY} | {Description} | Implemented as planned | — |
+
+### 4.2 Deferred Items (postponed for the future)
+
+> These requirements were consciously deferred and are NOT bugs or deficiencies.
+
+| ID | Description | Reason for Deferral | Priority for Next Iteration |
+|----|-------------|---------------------|----------------------------|
+| {FR-XXX} | {what was deferred} | {why} | High / Medium / Low |
+
+### 4.3 Added Requirements (not in PRD)
+
+| ID | Description | Reason for Addition |
+|----|-------------|---------------------|
+| {FR-NEW-XXX} | {what was added} | {why it was needed} |
+
+---
+
+## 5. Known Limitations and Technical Debt
 
 ### 5.1 Known Limitations
 
-> Ограничения, которые **осознанно приняты** для MVP. Это НЕ баги.
+> Limitations that were **consciously accepted** for the MVP. These are NOT bugs.
 
-| ID | Описание | Влияние | Workaround |
-|----|----------|---------|------------|
-| KL-001 | {описание ограничения} | {на что влияет} | {как обойти, если нужно} |
-| KL-002 | {описание} | {влияние} | {workaround} |
+| ID | Description | Impact | Workaround |
+|----|-------------|--------|------------|
+| KL-001 | {limitation description} | {what it affects} | {how to work around it if needed} |
+| KL-002 | {description} | {impact} | {workaround} |
 
 ### 5.2 Technical Debt
 
-> Технический долг, который нужно будет закрыть в будущих итерациях.
+> Technical debt that needs to be addressed in future iterations.
 
-| ID | Описание | Приоритет | Рекомендация |
-|----|----------|-----------|--------------|
-| TD-001 | {что нужно улучшить} | High / Medium / Low | {как исправить} |
-| TD-002 | {описание} | {приоритет} | {рекомендация} |
+| ID | Description | Priority | Recommendation |
+|----|-------------|----------|----------------|
+| TD-001 | {what needs improvement} | High / Medium / Low | {how to fix} |
+| TD-002 | {description} | {priority} | {recommendation} |
 
 ### 5.3 Security Considerations
 
-| Аспект | Статус | Комментарий |
-|--------|--------|-------------|
-| Secrets в .env | ✅ | Не в git, .gitignore настроен |
-| Hardcoded credentials | ✅ | Отсутствуют |
+| Aspect | Status | Comment |
+|--------|--------|---------|
+| Secrets in .env | ✅ | Not in git, .gitignore configured |
+| Hardcoded credentials | ✅ | None present |
 | Input validation | ✅ | Pydantic schemas |
 | SQL Injection | ✅ | SQLAlchemy ORM |
-| Auth/AuthZ | {✅/⚠️} | {комментарий} |
+| Auth/AuthZ | {✅/⚠️} | {comment} |
 
 ---
 
-## 6. Метрики качества
+## 6. Quality Metrics
 
 ### 6.1 Test Coverage
 
-| Сервис | Unit Tests | Integration Tests | Coverage |
-|--------|------------|-------------------|----------|
+| Service | Unit Tests | Integration Tests | Coverage |
+|---------|------------|-------------------|----------|
 | {context}_{domain}_api | {N} passed | {N} passed | {XX}% |
 | {context}_{domain}_data | {N} passed | {N} passed | {XX}% |
-| **ИТОГО** | **{N}** | **{N}** | **{XX}%** |
+| **TOTAL** | **{N}** | **{N}** | **{XX}%** |
 
 ### 6.2 Code Quality
 
-| Метрика | Значение | Порог | Статус |
-|---------|----------|-------|--------|
-| Test Coverage | {XX}% | ≥ 75% | ✅/❌ |
-| Cyclomatic Complexity (avg) | {X} | ≤ 10 | ✅/❌ |
-| Code Duplication | {X}% | ≤ 5% | ✅/❌ |
-| Type Hints Coverage | {XX}% | ≥ 90% | ✅/❌ |
+| Metric | Value | Threshold | Status |
+|--------|-------|-----------|--------|
+| Test Coverage | {XX}% | >= 75% | ✅/❌ |
+| Cyclomatic Complexity (avg) | {X} | <= 10 | ✅/❌ |
+| Code Duplication | {X}% | <= 5% | ✅/❌ |
+| Type Hints Coverage | {XX}% | >= 90% | ✅/❌ |
 
 ### 6.3 Security Scan Results
 
@@ -233,98 +233,98 @@ enables: []              # Потенциальные фичи, которые �
 
 ---
 
-## 7. Зависимости
+## 7. Dependencies
 
-### 7.1 Зависит от (depends_on)
+### 7.1 Depends On (depends_on)
 
-| FID | Название фичи | Как используется |
-|-----|---------------|------------------|
-| — | — | Независимая фича (первая в проекте) |
+| FID | Feature Name | How It Is Used |
+|-----|--------------|----------------|
+| — | — | Independent feature (first in the project) |
 
-*Или если есть зависимости:*
+*Or if there are dependencies:*
 
-| FID | Название фичи | Как используется |
-|-----|---------------|------------------|
-| F001 | {название} | {описание интеграции} |
+| FID | Feature Name | How It Is Used |
+|-----|--------------|----------------|
+| F001 | {name} | {integration description} |
 
-### 7.2 Включает возможность для (enables)
+### 7.2 Enables (enables)
 
-> Какие потенциальные фичи могут быть построены на основе этой.
+> What potential features can be built on top of this one.
 
-| Потенциальная фича | Как может использовать |
-|-------------------|----------------------|
-| {описание фичи} | Через API endpoint `/api/v1/{resource}` |
-| {описание} | Использует модель данных {Entity} |
-
----
-
-## 8. Ссылки на артефакты
-
-| Артефакт | Путь | Статус | Описание |
-|----------|------|--------|----------|
-| PRD | `ai-docs/docs/_analysis/{date}_{FID}_{slug}-prd.md` | ✅ | Требования |
-| Research | `ai-docs/docs/research/{date}_{FID}_{slug}-research.md` | ✅ | Анализ |
-| Architecture Plan | `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}-plan.md` | ✅ | Архитектура |
+| Potential Feature | How It Can Use This |
+|-------------------|---------------------|
+| {feature description} | Through API endpoint `/api/v1/{resource}` |
+| {description} | Uses data model {Entity} |
 
 ---
 
-## 9. Timeline (История разработки)
+## 8. Artifact Links
 
-| Дата | Этап | Ворота | Комментарий |
-|------|------|--------|-------------|
-| {YYYY-MM-DD} | Идея | PRD_READY | PRD создан и утверждён |
-| {YYYY-MM-DD} | Исследование | RESEARCH_DONE | Анализ завершён |
-| {YYYY-MM-DD} | Архитектура | PLAN_APPROVED | План утверждён пользователем |
-| {YYYY-MM-DD} | Реализация | IMPLEMENT_OK | Код написан |
-| {YYYY-MM-DD} | Ревью | REVIEW_OK | Код проверен |
-| {YYYY-MM-DD} | QA | QA_PASSED | Тесты пройдены (coverage ≥75%) |
-| {YYYY-MM-DD} | Валидация | ALL_GATES_PASSED | Все проверки пройдены |
-| {YYYY-MM-DD} | Деплой | DEPLOYED | Приложение запущено |
-
-**Общее время разработки**: {N} дней
+| Artifact | Path | Status | Description |
+|----------|------|--------|-------------|
+| PRD | `ai-docs/docs/_analysis/{date}_{FID}_{slug}-prd.md` | ✅ | Requirements |
+| Research | `ai-docs/docs/research/{date}_{FID}_{slug}-research.md` | ✅ | Analysis |
+| Architecture Plan | `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}-plan.md` | ✅ | Architecture |
 
 ---
 
-## 10. Рекомендации для следующих итераций
+## 9. Timeline (Development History)
 
-### 10.1 Высокий приоритет
+| Date | Stage | Gate | Comment |
+|------|-------|------|---------|
+| {YYYY-MM-DD} | Idea | PRD_READY | PRD created and approved |
+| {YYYY-MM-DD} | Research | RESEARCH_DONE | Analysis completed |
+| {YYYY-MM-DD} | Architecture | PLAN_APPROVED | Plan approved by user |
+| {YYYY-MM-DD} | Implementation | IMPLEMENT_OK | Code written |
+| {YYYY-MM-DD} | Review | REVIEW_OK | Code reviewed |
+| {YYYY-MM-DD} | QA | QA_PASSED | Tests passed (coverage >=75%) |
+| {YYYY-MM-DD} | Validation | ALL_GATES_PASSED | All checks passed |
+| {YYYY-MM-DD} | Deploy | DEPLOYED | Application launched |
 
-1. {Рекомендация 1 — что нужно сделать в первую очередь}
-2. {Рекомендация 2}
-
-### 10.2 Средний приоритет
-
-1. {Рекомендация — улучшения}
-2. {Рекомендация}
-
-### 10.3 Низкий приоритет (nice-to-have)
-
-1. {Рекомендация — опциональные улучшения}
-
----
-
-## Заключение
-
-**Статус фичи**: DEPLOYED
-
-**Резюме**:
-{1-2 абзаца с общим описанием что было сделано, какие ключевые решения приняты,
-какие ограничения существуют и что рекомендуется для следующих итераций}
+**Total development time**: {N} days
 
 ---
 
-**Документ создан**: {YYYY-MM-DD}
-**Автор**: AI Agent (Валидатор)
-**Версия**: 1.0
+## 10. Recommendations for Next Iterations
+
+### 10.1 High Priority
+
+1. {Recommendation 1 — what needs to be done first}
+2. {Recommendation 2}
+
+### 10.2 Medium Priority
+
+1. {Recommendation — improvements}
+2. {Recommendation}
+
+### 10.3 Low Priority (nice-to-have)
+
+1. {Recommendation — optional improvements}
 
 ---
 
-## Для AI-агентов: Quick Reference
+## Conclusion
 
-> Эта секция предназначена для быстрого понимания контекста AI-агентом в новой сессии.
+**Feature status**: DEPLOYED
+
+**Summary**:
+{1-2 paragraphs with a general description of what was done, what key decisions were made,
+what limitations exist, and what is recommended for next iterations}
+
+---
+
+**Document created**: {YYYY-MM-DD}
+**Author**: AI Agent (Validator)
+**Version**: 1.0
+
+---
+
+## For AI Agents: Quick Reference
+
+> This section is intended for quick context understanding by an AI agent in a new session.
 
 ```yaml
-# Копировать в контекст при работе с этой фичей:
+# Copy into context when working with this feature:
 feature_id: {FID}
 feature_name: {slug}
 status: DEPLOYED
@@ -338,7 +338,7 @@ key_entities:
   - {EntityName}
 depends_on: []
 known_limitations:
-  - KL-001: {краткое описание}
+  - KL-001: {brief description}
 technical_debt:
-  - TD-001: {краткое описание}
+  - TD-001: {brief description}
 ```

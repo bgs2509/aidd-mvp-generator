@@ -1,13 +1,13 @@
-# Базовая настройка Aiogram
+# Aiogram Basic Setup
 
-> **Назначение**: Настройка Telegram бота на Aiogram 3.x.
+> **Purpose**: Setting up a Telegram bot on Aiogram 3.x.
 
 ---
 
-## Точка входа
+## Entry Point
 
 ```python
-"""Точка входа Telegram бота."""
+"""Telegram bot entry point."""
 
 import asyncio
 import logging
@@ -21,14 +21,14 @@ from {context}_bot.handlers import start, menu, orders
 
 
 async def main() -> None:
-    """Запустить бота."""
-    # Настройка логирования
+    """Start the bot."""
+    # Set up logging
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
-    # Создание бота
+    # Create bot
     bot = Bot(
         token=settings.bot_token,
         default=DefaultBotProperties(
@@ -36,15 +36,15 @@ async def main() -> None:
         ),
     )
 
-    # Создание диспетчера
+    # Create dispatcher
     dp = Dispatcher()
 
-    # Регистрация роутеров
+    # Register routers
     dp.include_router(start.router)
     dp.include_router(menu.router)
     dp.include_router(orders.router)
 
-    # Запуск поллинга
+    # Start polling
     try:
         await dp.start_polling(bot)
     finally:
@@ -57,16 +57,16 @@ if __name__ == "__main__":
 
 ---
 
-## Конфигурация
+## Configuration
 
 ```python
-"""Конфигурация бота."""
+"""Bot configuration."""
 
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    """Настройки Telegram бота."""
+    """Telegram bot settings."""
 
     # Telegram
     bot_token: str
@@ -74,7 +74,7 @@ class Settings(BaseSettings):
     # API URLs
     business_api_url: str = "http://localhost:8000"
 
-    # Настройки
+    # Settings
     debug: bool = False
     log_level: str = "INFO"
 
@@ -87,39 +87,39 @@ settings = Settings()
 
 ---
 
-## Структура проекта
+## Project Structure
 
 ```
 {context}_bot/
 ├── __init__.py
-├── main.py                  # Точка входа
+├── main.py                  # Entry point
 │
-├── handlers/                # Обработчики
+├── handlers/                # Handlers
 │   ├── __init__.py
 │   ├── start.py            # /start, /help
-│   ├── menu.py             # Главное меню
-│   └── {feature}.py        # Обработчики фичи
+│   ├── menu.py             # Main menu
+│   └── {feature}.py        # Feature handlers
 │
-├── keyboards/               # Клавиатуры
+├── keyboards/               # Keyboards
 │   ├── __init__.py
-│   ├── base.py             # Базовые клавиатуры
-│   └── {feature}.py        # Клавиатуры фичи
+│   ├── base.py             # Base keyboards
+│   └── {feature}.py        # Feature keyboards
 │
-├── states/                  # FSM состояния
+├── states/                  # FSM states
 │   ├── __init__.py
-│   └── {feature}.py        # Состояния фичи
+│   └── {feature}.py        # Feature states
 │
 ├── middlewares/            # Middleware
 │   ├── __init__.py
-│   └── logging.py          # Логирование
+│   └── logging.py          # Logging
 │
-├── infrastructure/         # Внешние сервисы
+├── infrastructure/         # External services
 │   ├── __init__.py
 │   └── http/
 │       ├── __init__.py
 │       └── business_api_client.py
 │
-└── core/                   # Конфигурация
+└── core/                   # Configuration
     ├── __init__.py
     ├── config.py
     └── logging.py
@@ -127,10 +127,10 @@ settings = Settings()
 
 ---
 
-## Базовый обработчик
+## Basic Handler
 
 ```python
-"""Обработчик команды /start."""
+"""/start command handler."""
 
 from aiogram import Router
 from aiogram.filters import CommandStart
@@ -144,23 +144,23 @@ router = Router()
 @router.message(CommandStart())
 async def start_handler(message: Message) -> None:
     """
-    Обработать команду /start.
+    Handle /start command.
 
     Args:
-        message: Входящее сообщение.
+        message: Incoming message.
     """
     await message.answer(
-        "Добро пожаловать! Выберите действие:",
+        "Welcome! Choose an action:",
         reply_markup=get_main_keyboard(),
     )
 ```
 
 ---
 
-## С HTTP клиентом
+## With HTTP Client
 
 ```python
-"""Точка входа с HTTP клиентом."""
+"""Entry point with HTTP client."""
 
 import asyncio
 import httpx
@@ -173,27 +173,27 @@ from {context}_bot.infrastructure.http.business_api_client import BusinessApiCli
 
 
 async def main() -> None:
-    """Запустить бота с HTTP клиентом."""
-    # Создание HTTP клиента
+    """Start bot with HTTP client."""
+    # Create HTTP client
     async with httpx.AsyncClient(
         base_url=settings.business_api_url,
         timeout=httpx.Timeout(30.0),
     ) as http_client:
-        # Обёртка над HTTP клиентом
+        # HTTP client wrapper
         api_client = BusinessApiClient(http_client)
 
-        # Создание бота и диспетчера
+        # Create bot and dispatcher
         bot = Bot(token=settings.bot_token)
         dp = Dispatcher()
 
-        # Передача зависимостей через workflow_data
+        # Pass dependencies via workflow_data
         dp.workflow_data["api_client"] = api_client
 
-        # Регистрация роутеров
+        # Register routers
         dp.include_router(start.router)
         dp.include_router(menu.router)
 
-        # Запуск
+        # Start
         try:
             await dp.start_polling(bot)
         finally:
@@ -223,11 +223,11 @@ CMD ["python", "-m", "src.{context}_bot.main"]
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Bot создан с DefaultBotProperties
-- [ ] ParseMode установлен (HTML/Markdown)
-- [ ] Диспетчер создан
-- [ ] Роутеры зарегистрированы
-- [ ] HTTP клиент закрывается при завершении
-- [ ] Логирование настроено
+- [ ] Bot created with DefaultBotProperties
+- [ ] ParseMode set (HTML/Markdown)
+- [ ] Dispatcher created
+- [ ] Routers registered
+- [ ] HTTP client closed on shutdown
+- [ ] Logging configured

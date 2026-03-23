@@ -1,123 +1,123 @@
-# Шаблоны документов AIDD-MVP
+# AIDD-MVP Document Templates
 
-Шаблоны для генерации документации на каждом этапе пайплайна разработки.
+Templates for generating documentation at each stage of the development pipeline.
 
-## Содержимое
+## Contents
 
-| Шаблон | Назначение | Этап | Агент |
-|--------|------------|------|-------|
-| `prd-template.md` | Product Requirements Document | Stage 1 | Аналитик |
-| `research-report-template.md` | Research Report | Stage 2 | Исследователь |
-| `architecture-template.md` | Архитектурный план (CREATE mode) | Stage 3 | Планировщик |
-| `feature-plan-template.md` | План фичи (FEATURE mode) | Stage 3 | Планировщик |
-| `implementation-plan-template.md` | План реализации | Stage 3 | Планировщик |
-| `completion-report-template.md` | Completion Report (Review + Test + Validation) | Stage 5 | Валидатор |
+| Template | Purpose | Stage | Agent |
+|----------|---------|-------|-------|
+| `prd-template.md` | Product Requirements Document | Stage 1 | Analyst |
+| `research-report-template.md` | Research Report | Stage 2 | Researcher |
+| `architecture-template.md` | Architecture plan (CREATE mode) | Stage 3 | Planner |
+| `feature-plan-template.md` | Feature plan (FEATURE mode) | Stage 3 | Planner |
+| `implementation-plan-template.md` | Implementation plan | Stage 3 | Planner |
+| `completion-report-template.md` | Completion Report (Review + Test + Validation) | Stage 5 | Validator |
 
-> **Примечание**: Consolidation Stage 5 — роли Ревьюер, QA, и старый Валидатор объединены в одну роль **Валидатор**, выполняющую 4 шага: Review → Test → Validate → Deploy. Три отдельных отчета (`review-report`, `qa-report`, `validation-report`) заменены на единый **Completion Report**.
+> **Note**: Consolidation Stage 5 — the Reviewer, QA, and legacy Validator roles are merged into a single **Validator** role that performs 4 steps: Review → Test → Validate → Deploy. Three separate reports (`review-report`, `qa-report`, `validation-report`) are replaced by a single **Completion Report**.
 
-## Использование
+## Usage
 
 ### 1. PRD Template
 
-Используется Аналитиком для формирования требований:
+Used by the Analyst to formulate requirements:
 
 ```bash
-/aidd-analyze "Описание проекта или фичи"
-# или (migration mode v2.4+)
-/aidd-analyze "Описание проекта или фичи"
+/aidd-analyze "Project or feature description"
+# or (migration mode v2.4+)
+/aidd-analyze "Project or feature description"
 ```
 
-**Выходной файл** (целевой проект):
-- **naming v2** (по умолчанию): `ai-docs/docs/_analysis/{date}_{FID}_{slug}-prd.md`
+**Output file** (Target Project):
+- **naming v2** (default): `ai-docs/docs/_analysis/{date}_{FID}_{slug}-prd.md`
 - **naming v3**: `ai-docs/docs/_analysis/{date}_{FID}_{slug}.md`
 
 ### 2. Research Report Template
 
-Используется Исследователем после анализа требований/кода:
+Used by the Researcher after analyzing requirements/code:
 
 ```bash
 /aidd-research
 ```
 
-**Выходной файл** (целевой проект):
+**Output file** (Target Project):
 - **naming v2**: `ai-docs/docs/research/{date}_{FID}_{slug}-research.md`
 - **naming v3**: `ai-docs/docs/_research/{date}_{FID}_{slug}.md`
 
 ### 3. Architecture Template
 
-Используется Планировщиком для проектирования (CREATE mode):
+Used by the Planner for design (CREATE mode):
 
 ```bash
 /aidd-plan
 ```
 
-**Выходной файл** (целевой проект):
+**Output file** (Target Project):
 - **naming v2**: `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}-plan.md`
 - **naming v3**: `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}.md`
 
 ### 4. Feature Plan Template
 
-Используется Планировщиком для планирования фичи (FEATURE mode):
+Used by the Planner for feature planning (FEATURE mode):
 
 ```bash
 /aidd-plan-feature
-# или (migration mode v2.4+)
+# or (migration mode v2.4+)
 /aidd-plan-feature
 ```
 
-**Выходной файл** (целевой проект):
+**Output file** (Target Project):
 - **naming v2**: `ai-docs/docs/_plans/features/{date}_{FID}_{slug}-plan.md`
 - **naming v3**: `ai-docs/docs/_plans/features/{date}_{FID}_{slug}.md`
 
 ### 5. Implementation Plan Template
 
-Используется Планировщиком для детального планирования реализации:
+Used by the Planner for detailed implementation planning:
 
 ```bash
 /aidd-plan
-# или
-/aidd-plan-feature  # для FEATURE mode
+# or
+/aidd-plan-feature  # for FEATURE mode
 ```
 
-**Выходной файл** (целевой проект):
+**Output file** (Target Project):
 - **naming v2**: `ai-docs/docs/_plans/features/{date}_{FID}_{slug}-implementation.md`
-- **naming v3**: `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}-implementation.md` или `_plans/features/{date}_{FID}_{slug}-implementation.md`
+- **naming v3**: `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}-implementation.md` or `_plans/features/{date}_{FID}_{slug}-implementation.md`
 
 ### 6. Completion Report Template
 
-Используется Валидатором для комплексного Quality & Deploy (Stage 5):
+Used by the Validator for comprehensive Quality & Deploy (Stage 5):
 
 ```bash
 /aidd-validate
-# или (migration mode v2.4+)
+# or (migration mode v2.4+)
 /aidd-validate
 ```
 
-**Режимы**:
-- **Full** (по умолчанию): Review → Test → Validate → Deploy → Production-ready MVP
-- **Quick**: Draft Completion Report + Static Analysis (для документации/незавершенных фич)
+**Modes**:
+- **Full** (default): Review → Test → Validate → Deploy → Production-ready MVP
+- **Quick**: Draft Completion Report + Static Analysis (for documentation/incomplete features)
 
-**Выходной файл** (целевой проект):
+**Output file** (Target Project):
 - **naming v2**: `ai-docs/docs/_validation/{date}_{FID}_{slug}-completion.md`
 - **naming v3**: `ai-docs/docs/_validation/{date}_{FID}_{slug}.md`
 
-**Содержание Completion Report**:
-1. Executive Summary — что сделано (2-3 предложения)
-2. Code Review Summary — результаты проверки качества
-3. Testing Summary — результаты тестирования
-4. Requirements Traceability — соответствие требованиям
-5. ADR — архитектурные решения
-6. Scope Changes — отклонения от плана
-7. Known Limitations — ограничения и workarounds
-8. Метрики — coverage, tests, security
-9. Ссылки — на все артефакты
+**Completion Report contents**:
+1. Executive Summary — what was done (2-3 sentences)
+2. Code Review Summary — quality review results
+3. Testing Summary — testing results
+4. Requirements Traceability — requirements compliance
+5. ADR — architectural decisions
+6. Scope Changes — deviations from plan
+7. Known Limitations — limitations and workarounds
+8. Metrics — coverage, tests, security
+9. Links — to all artifacts
 
-## Структура директории ai-docs (в целевом проекте)
+## ai-docs Directory Structure (in Target Project)
 
-### naming v2 (по умолчанию)
+### naming v2 (default)
 
 ```
-{целевой-проект}/
+{target-project}/
 └── ai-docs/
     └── docs/
         ├── prd/
@@ -134,14 +134,14 @@
             └── {date}_{FID}_{slug}-completion.md
 ```
 
-### naming v3 (после миграции)
+### naming v3 (after migration)
 
 ```
-{целевой-проект}/
+{target-project}/
 └── ai-docs/
     └── docs/
         ├── _analysis/
-        │   ├── {date}_{FID}_{slug}.md  # PRD (без дублирования -prd)
+        │   ├── {date}_{FID}_{slug}.md  # PRD (no -prd duplication)
         │   └── ...
         ├── _research/
         │   └── {date}_{FID}_{slug}.md  # Research Report
@@ -153,85 +153,85 @@
         │       ├── {date}_{FID}_{slug}.md  # Feature Plan
         │       └── {date}_{FID}_{slug}-implementation.md
         └── _validation/
-            └── {date}_{FID}_{slug}.md  # Completion Report (без дублирования -completion)
+            └── {date}_{FID}_{slug}.md  # Completion Report (no -completion duplication)
 ```
 
-> **Migration Mode v2.4+**: Фреймворк поддерживает обе структуры. Выбор определяется полем `naming_version` в `.pipeline-state.json`.
+> **Migration Mode v2.4+**: The framework supports both structures. The choice is determined by the `naming_version` field in `.pipeline-state.json`.
 
 ## Placeholders
 
-Шаблоны содержат placeholder'ы для автозамены:
+Templates contain placeholders for auto-replacement:
 
-| Placeholder | Описание |
-|-------------|----------|
-| `{Название проекта/фичи}` | Название из PRD |
-| `{YYYY-MM-DD}` | Текущая дата |
-| `{FID}` | Feature ID (например, F042) |
-| `{slug}` | URL-friendly slug (например, oauth-integration) |
-| `{context}` | Контекст проекта (snake_case) |
-| `{entities}` | Название сущностей (plural) |
-| `{entity}` | Название сущности (singular) |
-| `{domain}` | Доменная область |
-| `{N}` | Числовые значения |
-| `{XX}%` | Процентные значения |
+| Placeholder | Description |
+|-------------|-------------|
+| `{Project/Feature Name}` | Name from PRD |
+| `{YYYY-MM-DD}` | Current date |
+| `{FID}` | Feature ID (e.g., F042) |
+| `{slug}` | URL-friendly slug (e.g., oauth-integration) |
+| `{context}` | Project context (snake_case) |
+| `{entities}` | Entity name (plural) |
+| `{entity}` | Entity name (singular) |
+| `{domain}` | Domain area |
+| `{N}` | Numeric values |
+| `{XX}%` | Percentage values |
 
-## Качественные ворота
+## Quality Gates
 
-Каждый шаблон содержит секцию "Качественные ворота" с чеклистом критериев прохождения этапа:
+Each template contains a "Quality Gates" section with a checklist of criteria for passing the stage:
 
-| Этап | Ворота | Описание |
-|------|--------|----------|
-| 0 | `BOOTSTRAP_READY` | Целевой проект инициализирован |
-| 1 | `PRD_READY` | PRD полный и согласованный |
-| 2 | `RESEARCH_DONE` | Исследование завершено |
-| 3 | `PLAN_APPROVED` | План утверждён (требует подтверждения пользователя!) |
-| 4 | `IMPLEMENT_OK` | Реализация завершена |
+| Stage | Gate | Description |
+|-------|------|-------------|
+| 0 | `BOOTSTRAP_READY` | Target Project initialized |
+| 1 | `PRD_READY` | PRD is complete and agreed upon |
+| 2 | `RESEARCH_DONE` | Research completed |
+| 3 | `PLAN_APPROVED` | Plan approved (requires user confirmation!) |
+| 4 | `IMPLEMENT_OK` | Implementation completed |
 | 5 (Full) | `REVIEW_OK` → `QA_PASSED` → `ALL_GATES_PASSED` → `DEPLOYED` | Production-ready MVP |
-| 5 (Quick) | `DOCUMENTED` | Draft Completion Report (минует sub-gates) |
+| 5 (Quick) | `DOCUMENTED` | Draft Completion Report (bypasses sub-gates) |
 
-> **Примечание**: Stage 5 поддерживает два режима — **Full** (полный цикл Quality & Deploy) и **Quick** (только документация).
+> **Note**: Stage 5 supports two modes — **Full** (complete Quality & Deploy cycle) and **Quick** (documentation only).
 
-## Кастомизация
+## Customization
 
-Шаблоны можно кастомизировать под специфику проекта:
+Templates can be customized for project specifics:
 
-1. Скопируйте шаблон в целевой проект: `ai-docs/templates/`
-2. Модифицируйте секции под свои требования
-3. Обновите ссылки в инструкциях агентов (опционально)
+1. Copy the template to the Target Project: `ai-docs/templates/`
+2. Modify sections to match your requirements
+3. Update agent instruction references (optional)
 
 ## Best Practices
 
-1. **Всегда заполняйте ID требований** — FR-XXX, NF-XXX, UI-XXX
-2. **Связывайте артефакты** — указывайте ссылки на связанные документы (PRD → Research → Plan → Completion)
-3. **Обновляйте Completion Report** — фиксируйте все изменения scope, ADR, limitations
-4. **Сохраняйте историю** — не удаляйте старые версии артефактов
-5. **Документируйте решения** — используйте ADR секцию для фиксации причин выбора
+1. **Always fill in requirement IDs** — FR-XXX, NF-XXX, UI-XXX
+2. **Link artifacts** — provide links to related documents (PRD → Research → Plan → Completion)
+3. **Update the Completion Report** — record all scope changes, ADRs, limitations
+4. **Preserve history** — do not delete old versions of artifacts
+5. **Document decisions** — use the ADR section to record reasoning
 
-## Миграция на naming v3
+## Migration to naming v3
 
-Для переноса проекта с naming v2 на v3:
+To migrate a project from naming v2 to v3:
 
 ```bash
 cd your-project/
 python3 .aidd/scripts/migrate-naming-v3.py
 ```
 
-Скрипт автоматически:
-- Переименует папки артефактов
-- Уберёт дублирование в именах файлов (`-prd.md` → `.md`, `-completion.md` → `.md`)
-- Обновит `.pipeline-state.json` (установит `naming_version: "v3"`)
-- Обновит ссылки в документах
+The script automatically:
+- Renames artifact folders
+- Removes name duplication (`-prd.md` → `.md`, `-completion.md` → `.md`)
+- Updates `.pipeline-state.json` (sets `naming_version: "v3"`)
+- Updates links in documents
 
-## Связанные документы
+## Related Documents
 
-- **Главная точка входа**: [../../CLAUDE.md](../../CLAUDE.md)
-- **Процесс пайплайна**: [../../workflow.md](../../workflow.md)
-- **Соглашения**: [../../conventions.md](../../conventions.md)
+- **Main entry point**: [../../CLAUDE.md](../../CLAUDE.md)
+- **Pipeline process**: [../../workflow.md](../../workflow.md)
+- **Conventions**: [../../conventions.md](../../conventions.md)
 - **Migration Mode v2.4**: [../../contributors/2026-01-19-phase2-completion-summary.md](../../contributors/2026-01-19-phase2-completion-summary.md)
 - **Consolidation Stage 5**: [../../contributors/2026-01-19-aidd-finalize-implementation.md](../../contributors/2026-01-19-aidd-finalize-implementation.md)
 
 ---
 
-**Версия документа**: 2.0
-**Обновлён**: 2026-01-20
-**Изменения**: Синхронизация с Migration Mode v2.4 и Consolidation Stage 5
+**Document version**: 2.0
+**Updated**: 2026-01-20
+**Changes**: Synchronized with Migration Mode v2.4 and Consolidation Stage 5

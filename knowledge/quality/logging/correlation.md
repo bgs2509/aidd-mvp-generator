@@ -1,13 +1,13 @@
-# Корреляция логов
+# Log Correlation
 
-> **Назначение**: Отслеживание запросов через сервисы.
+> **Purpose**: Tracking requests across services.
 
 ---
 
 ## Request ID
 
 ```python
-"""Генерация и передача Request ID."""
+"""Request ID generation and propagation."""
 
 import uuid
 from fastapi import FastAPI, Request
@@ -15,27 +15,27 @@ from structlog.contextvars import bind_contextvars, clear_contextvars
 
 
 def setup_request_id_middleware(app: FastAPI) -> None:
-    """Настроить middleware для Request ID."""
+    """Set up Request ID middleware."""
 
     @app.middleware("http")
     async def request_id_middleware(request: Request, call_next):
-        """Добавить Request ID к запросу."""
-        # Получить или сгенерировать
+        """Add Request ID to request."""
+        # Get or generate
         request_id = request.headers.get(
             "X-Request-ID",
             str(uuid.uuid4()),
         )
 
-        # Сохранить в state
+        # Save in state
         request.state.request_id = request_id
 
-        # Привязать к логам
+        # Bind to logs
         bind_contextvars(request_id=request_id)
 
         try:
             response = await call_next(request)
 
-            # Добавить в ответ
+            # Add to response
             response.headers["X-Request-ID"] = request_id
 
             return response
@@ -45,52 +45,52 @@ def setup_request_id_middleware(app: FastAPI) -> None:
 
 ---
 
-## Передача между сервисами
+## Propagation Between Services
 
 ```python
-"""Передача Request ID через HTTP."""
+"""Request ID propagation via HTTP."""
 
 import httpx
 from fastapi import Request
 
 
 class DataApiClient:
-    """Клиент с передачей Request ID."""
+    """Client with Request ID propagation."""
 
     def __init__(self, client: httpx.AsyncClient, request_id: str | None = None):
         """
-        Инициализация клиента.
+        Initialize client.
 
         Args:
-            client: HTTP клиент.
-            request_id: ID запроса для корреляции.
+            client: HTTP client.
+            request_id: Request ID for correlation.
         """
         self.client = client
         self.request_id = request_id
 
     def _get_headers(self) -> dict:
-        """Получить заголовки с Request ID."""
+        """Get headers with Request ID."""
         headers = {}
         if self.request_id:
             headers["X-Request-ID"] = self.request_id
         return headers
 
     async def get(self, path: str, **kwargs) -> dict:
-        """GET запрос с Request ID."""
+        """GET request with Request ID."""
         headers = {**self._get_headers(), **kwargs.pop("headers", {})}
         response = await self.client.get(path, headers=headers, **kwargs)
         return response.json()
 
     async def post(self, path: str, **kwargs) -> dict:
-        """POST запрос с Request ID."""
+        """POST request with Request ID."""
         headers = {**self._get_headers(), **kwargs.pop("headers", {})}
         response = await self.client.post(path, headers=headers, **kwargs)
         return response.json()
 
 
-# В dependencies.py
+# In dependencies.py
 def get_data_client(request: Request) -> DataApiClient:
-    """Создать клиент с Request ID."""
+    """Create client with Request ID."""
     request_id = getattr(request.state, "request_id", None)
     return DataApiClient(
         client=request.app.state.http_client,
@@ -100,10 +100,10 @@ def get_data_client(request: Request) -> DataApiClient:
 
 ---
 
-## Логирование с корреляцией
+## Logging with Correlation
 
 ```python
-"""Логирование с корреляцией."""
+"""Logging with correlation."""
 
 import structlog
 from structlog.contextvars import bind_contextvars
@@ -112,13 +112,13 @@ logger = structlog.get_logger()
 
 
 class UserService:
-    """Сервис с корреляцией логов."""
+    """Service with log correlation."""
 
     async def create_user(self, data: CreateUserDTO) -> UserDTO:
-        """Создать пользователя."""
+        """Create a user."""
         logger.info("Creating user", email=data.email)
 
-        # Вызов Data API (request_id передастся автоматически)
+        # Data API call (request_id propagated automatically)
         result = await self.data_client.post(
             "/api/v1/users",
             json=data.model_dump(),
@@ -131,10 +131,10 @@ class UserService:
 
 ---
 
-## Data API: приём Request ID
+## Data API: Receiving Request ID
 
 ```python
-"""Приём Request ID в Data API."""
+"""Receiving Request ID in Data API."""
 
 from fastapi import FastAPI, Request
 from structlog.contextvars import bind_contextvars, clear_contextvars
@@ -144,15 +144,15 @@ logger = structlog.get_logger()
 
 
 def setup_correlation_middleware(app: FastAPI) -> None:
-    """Настроить корреляцию в Data API."""
+    """Set up correlation in Data API."""
 
     @app.middleware("http")
     async def correlation_middleware(request: Request, call_next):
-        """Принять и использовать Request ID."""
-        # Получить от вызывающего сервиса
+        """Receive and use Request ID."""
+        # Get from calling service
         request_id = request.headers.get("X-Request-ID", "no-correlation")
 
-        # Привязать к логам
+        # Bind to logs
         bind_contextvars(
             request_id=request_id,
             service="data-api",
@@ -175,35 +175,35 @@ def setup_correlation_middleware(app: FastAPI) -> None:
 
 ---
 
-## Трассировка в логах
+## Tracing in Logs
 
 ```
 # Business API (request_id: abc-123)
 {"timestamp": "...", "level": "info", "event": "Request started", "request_id": "abc-123", "service": "business-api", "path": "/api/v1/users"}
 {"timestamp": "...", "level": "info", "event": "Creating user", "request_id": "abc-123", "service": "business-api", "email": "test@example.com"}
 
-# Data API (тот же request_id: abc-123)
+# Data API (same request_id: abc-123)
 {"timestamp": "...", "level": "info", "event": "Request received", "request_id": "abc-123", "service": "data-api", "path": "/api/v1/users"}
 {"timestamp": "...", "level": "info", "event": "User saved to database", "request_id": "abc-123", "service": "data-api", "user_id": "456"}
 {"timestamp": "...", "level": "info", "event": "Request completed", "request_id": "abc-123", "service": "data-api", "status_code": 201}
 
-# Business API (продолжение)
+# Business API (continued)
 {"timestamp": "...", "level": "info", "event": "User created", "request_id": "abc-123", "service": "business-api", "user_id": "456"}
 {"timestamp": "...", "level": "info", "event": "Request completed", "request_id": "abc-123", "service": "business-api", "status_code": 201}
 ```
 
 ---
 
-## Дополнительные поля
+## Additional Fields
 
 ```python
-"""Дополнительные поля для корреляции."""
+"""Additional fields for correlation."""
 
 from structlog.contextvars import bind_contextvars
 
 
 async def process_with_context(request: Request):
-    """Обработка с полным контекстом."""
+    """Processing with full context."""
     bind_contextvars(
         request_id=request.state.request_id,
         service="business-api",
@@ -216,10 +216,10 @@ async def process_with_context(request: Request):
 
 ---
 
-## Telegram Bot: корреляция
+## Telegram Bot: Correlation
 
 ```python
-"""Корреляция в Telegram боте."""
+"""Correlation in Telegram bot."""
 
 import uuid
 import structlog
@@ -231,10 +231,10 @@ logger = structlog.get_logger()
 
 
 class CorrelationMiddleware(BaseMiddleware):
-    """Middleware для корреляции в боте."""
+    """Bot correlation middleware."""
 
     async def __call__(self, handler, event: Message, data: dict):
-        """Добавить корреляцию."""
+        """Add correlation."""
         request_id = str(uuid.uuid4())
 
         bind_contextvars(
@@ -244,7 +244,7 @@ class CorrelationMiddleware(BaseMiddleware):
             chat_id=event.chat.id,
         )
 
-        # Передать request_id в API клиент
+        # Pass request_id to API client
         data["request_id"] = request_id
 
         try:
@@ -256,10 +256,10 @@ class CorrelationMiddleware(BaseMiddleware):
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Request ID генерируется на входе
-- [ ] Request ID передаётся между сервисами
-- [ ] Все сервисы логируют request_id
-- [ ] Логи можно фильтровать по request_id
-- [ ] Дополнительный контекст добавлен
+- [ ] Request ID generated on entry
+- [ ] Request ID propagated between services
+- [ ] All services log request_id
+- [ ] Logs can be filtered by request_id
+- [ ] Additional context added

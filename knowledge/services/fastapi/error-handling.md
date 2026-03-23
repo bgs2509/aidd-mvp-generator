@@ -1,25 +1,25 @@
-# Обработка ошибок FastAPI
+# FastAPI Error Handling
 
-> **Назначение**: Паттерны обработки и возврата ошибок.
+> **Purpose**: Error handling and response patterns.
 
 ---
 
-## Кастомные исключения
+## Custom Exceptions
 
 ```python
-"""Кастомные исключения."""
+"""Custom exceptions."""
 
 
 class AppError(Exception):
-    """Базовое исключение приложения."""
+    """Base application exception."""
 
     def __init__(self, message: str, code: str | None = None):
         """
-        Инициализация исключения.
+        Initialize exception.
 
         Args:
-            message: Сообщение об ошибке.
-            code: Код ошибки.
+            message: Error message.
+            code: Error code.
         """
         self.message = message
         self.code = code or "APP_ERROR"
@@ -27,15 +27,15 @@ class AppError(Exception):
 
 
 class NotFoundError(AppError):
-    """Ресурс не найден."""
+    """Resource not found."""
 
     def __init__(self, resource: str, resource_id: str):
         """
-        Инициализация исключения.
+        Initialize exception.
 
         Args:
-            resource: Тип ресурса.
-            resource_id: ID ресурса.
+            resource: Resource type.
+            resource_id: Resource ID.
         """
         super().__init__(
             message=f"{resource} with id {resource_id} not found",
@@ -46,43 +46,43 @@ class NotFoundError(AppError):
 
 
 class ValidationError(AppError):
-    """Ошибка валидации."""
+    """Validation error."""
 
     def __init__(self, message: str, field: str | None = None):
         """
-        Инициализация исключения.
+        Initialize exception.
 
         Args:
-            message: Сообщение об ошибке.
-            field: Поле с ошибкой.
+            message: Error message.
+            field: Field with error.
         """
         super().__init__(message=message, code="VALIDATION_ERROR")
         self.field = field
 
 
 class ConflictError(AppError):
-    """Конфликт данных."""
+    """Data conflict."""
 
     def __init__(self, message: str):
         """
-        Инициализация исключения.
+        Initialize exception.
 
         Args:
-            message: Сообщение об ошибке.
+            message: Error message.
         """
         super().__init__(message=message, code="CONFLICT")
 
 
 class DataApiError(AppError):
-    """Ошибка Data API."""
+    """Data API error."""
 
     def __init__(self, message: str, status_code: int):
         """
-        Инициализация исключения.
+        Initialize exception.
 
         Args:
-            message: Сообщение об ошибке.
-            status_code: HTTP код от Data API.
+            message: Error message.
+            status_code: HTTP code from Data API.
         """
         super().__init__(message=message, code="DATA_API_ERROR")
         self.status_code = status_code
@@ -90,10 +90,10 @@ class DataApiError(AppError):
 
 ---
 
-## Обработчики исключений
+## Exception Handlers
 
 ```python
-"""Обработчики исключений для FastAPI."""
+"""Exception handlers for FastAPI."""
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -111,10 +111,10 @@ from {context}_api.core.exceptions import (
 
 def setup_exception_handlers(app: FastAPI) -> None:
     """
-    Настроить обработчики исключений.
+    Set up exception handlers.
 
     Args:
-        app: FastAPI приложение.
+        app: FastAPI application.
     """
 
     @app.exception_handler(NotFoundError)
@@ -122,7 +122,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
         request: Request,
         exc: NotFoundError,
     ) -> JSONResponse:
-        """Обработчик NotFoundError."""
+        """Handle NotFoundError."""
         return JSONResponse(
             status_code=404,
             content={
@@ -136,7 +136,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
         request: Request,
         exc: ValidationError,
     ) -> JSONResponse:
-        """Обработчик ValidationError."""
+        """Handle ValidationError."""
         return JSONResponse(
             status_code=400,
             content={
@@ -151,7 +151,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
         request: Request,
         exc: ConflictError,
     ) -> JSONResponse:
-        """Обработчик ConflictError."""
+        """Handle ConflictError."""
         return JSONResponse(
             status_code=409,
             content={
@@ -165,7 +165,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
         request: Request,
         exc: DataApiError,
     ) -> JSONResponse:
-        """Обработчик DataApiError."""
+        """Handle DataApiError."""
         return JSONResponse(
             status_code=502,
             content={
@@ -179,7 +179,7 @@ def setup_exception_handlers(app: FastAPI) -> None:
         request: Request,
         exc: RequestValidationError,
     ) -> JSONResponse:
-        """Обработчик ошибок валидации запроса."""
+        """Handle request validation errors."""
         errors = []
         for error in exc.errors():
             errors.append({
@@ -202,8 +202,8 @@ def setup_exception_handlers(app: FastAPI) -> None:
         request: Request,
         exc: Exception,
     ) -> JSONResponse:
-        """Обработчик непредвиденных ошибок."""
-        # Логирование ошибки
+        """Handle unexpected errors."""
+        # Log the error
         import logging
         logging.exception("Unhandled exception")
 
@@ -218,10 +218,10 @@ def setup_exception_handlers(app: FastAPI) -> None:
 
 ---
 
-## Использование в сервисе
+## Usage in Service
 
 ```python
-"""Пример использования исключений в сервисе."""
+"""Example of using exceptions in a service."""
 
 from uuid import UUID
 
@@ -229,20 +229,20 @@ from {context}_api.core.exceptions import NotFoundError, ValidationError
 
 
 class UserService:
-    """Сервис пользователей."""
+    """User service."""
 
     async def get_user(self, user_id: UUID) -> UserDTO:
         """
-        Получить пользователя.
+        Get a user.
 
         Args:
-            user_id: ID пользователя.
+            user_id: User ID.
 
         Returns:
-            Данные пользователя.
+            User data.
 
         Raises:
-            NotFoundError: Если пользователь не найден.
+            NotFoundError: If user not found.
         """
         user = await self.data_client.get_user(user_id)
 
@@ -253,16 +253,16 @@ class UserService:
 
     async def create_user(self, data: CreateUserDTO) -> UserDTO:
         """
-        Создать пользователя.
+        Create a user.
 
         Args:
-            data: Данные для создания.
+            data: Creation data.
 
         Returns:
-            Созданный пользователь.
+            Created user.
 
         Raises:
-            ValidationError: Если email уже существует.
+            ValidationError: If email already exists.
         """
         existing = await self.data_client.get_user_by_email(data.email)
 
@@ -277,7 +277,7 @@ class UserService:
 
 ---
 
-## Формат ответов об ошибках
+## Error Response Format
 
 ```json
 // 404 Not Found
@@ -315,7 +315,7 @@ class UserService:
 
 ---
 
-## Иерархия исключений
+## Exception Hierarchy
 
 ```
 Exception
@@ -329,10 +329,10 @@ Exception
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Все кастомные исключения наследуют AppError
-- [ ] Обработчики зарегистрированы в setup_exception_handlers
-- [ ] Исключения содержат понятные сообщения
-- [ ] Непредвиденные ошибки логируются
-- [ ] Формат ответов унифицирован
+- [ ] All custom exceptions inherit AppError
+- [ ] Handlers registered in setup_exception_handlers
+- [ ] Exceptions contain clear messages
+- [ ] Unexpected errors are logged
+- [ ] Response format is unified

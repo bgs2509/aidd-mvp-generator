@@ -1,50 +1,50 @@
-# Соглашения об именовании
+# Naming Conventions
 
-> **Назначение**: Единые правила именования в проекте.
-
----
-
-## Общие принципы
-
-```
-1. Консистентность — одинаковые правила везде
-2. Читаемость — понятные имена
-3. Контекст — имя отражает назначение
-```
+> **Purpose**: Unified naming rules across the project.
 
 ---
 
-## Сводная таблица
+## General Principles
 
-| Элемент | Стиль | Пример |
+```
+1. Consistency — same rules everywhere
+2. Readability — clear names
+3. Context — name reflects purpose
+```
+
+---
+
+## Summary Table
+
+| Element | Style | Example |
 |---------|-------|--------|
-| Python пакет | snake_case | `booking_api` |
-| Python модуль | snake_case | `user_service.py` |
-| Python класс | PascalCase | `UserService` |
-| Python функция | snake_case | `create_user` |
-| Python переменная | snake_case | `user_id` |
-| Python константа | UPPER_SNAKE | `MAX_RETRIES` |
-| Docker сервис | kebab-case | `booking-api` |
-| API путь | kebab-case | `/api/v1/user-profiles` |
-| Query параметр | snake_case | `?user_id=123` |
-| JSON поле | snake_case | `{"user_name": "..."}` |
-| Таблица БД | snake_case, мн.ч. | `users` |
-| Колонка БД | snake_case | `created_at` |
-| Переменная окружения | UPPER_SNAKE | `DATABASE_URL` |
+| Python package | snake_case | `booking_api` |
+| Python module | snake_case | `user_service.py` |
+| Python class | PascalCase | `UserService` |
+| Python function | snake_case | `create_user` |
+| Python variable | snake_case | `user_id` |
+| Python constant | UPPER_SNAKE | `MAX_RETRIES` |
+| Docker service | kebab-case | `booking-api` |
+| API path | kebab-case | `/api/v1/user-profiles` |
+| Query parameter | snake_case | `?user_id=123` |
+| JSON field | snake_case | `{"user_name": "..."}` |
+| DB table | snake_case, plural | `users` |
+| DB column | snake_case | `created_at` |
+| Environment variable | UPPER_SNAKE | `DATABASE_URL` |
 
 ---
 
-## Контекст проекта
+## Project Context
 
 ```
-{context} — короткое имя проекта
+{context} — short project name
 
-Требования:
-- 2-15 символов
+Requirements:
+- 2-15 characters
 - snake_case
-- Описательное
+- Descriptive
 
-Примеры:
+Examples:
 - booking
 - finance
 - inventory
@@ -53,17 +53,17 @@
 
 ---
 
-## Домен
+## Domain
 
 ```
-{domain} — основная сущность
+{domain} — primary entity
 
-Требования:
-- Существительное
-- Единственное число
+Requirements:
+- Noun
+- Singular
 - snake_case
 
-Примеры:
+Examples:
 - restaurant
 - transaction
 - product
@@ -72,42 +72,42 @@
 
 ---
 
-## Детальные правила
+## Detailed Rules
 
-- `services.md` — именование сервисов
-- `python.md` — именование в Python
+- `services.md` — service naming
+- `python.md` — Python naming
 
 ---
 
 ## Quick Reference
 
-### Сервисы
+### Services
 
 ```
-Python пакет:  {context}_{type}     → booking_api
-Docker:        {context}-{type}     → booking-api
-Директория:    services/{context}_{type}/
+Python package:  {context}_{type}     -> booking_api
+Docker:          {context}-{type}     -> booking-api
+Directory:       services/{context}_{type}/
 ```
 
-### Модели
+### Models
 
 ```
-Класс:         {Entity}             → Restaurant
-Таблица:       {entities}           → restaurants
-Файл:          {entity}.py          → restaurant.py
+Class:           {Entity}             -> Restaurant
+Table:           {entities}           -> restaurants
+File:            {entity}.py          -> restaurant.py
 ```
 
 ### API
 
 ```
-Путь:          /api/v1/{resources}  → /api/v1/restaurants
-Эндпоинт:      POST /api/v1/{resources}/{id}
+Path:            /api/v1/{resources}  -> /api/v1/restaurants
+Endpoint:        POST /api/v1/{resources}/{id}
 ```
 
-### Тесты
+### Tests
 
 ```
-Файл:          test_{module}.py     → test_user_service.py
-Класс:         Test{Feature}        → TestUserCreation
-Функция:       test_{scenario}      → test_create_user_success
+File:            test_{module}.py     -> test_user_service.py
+Class:           Test{Feature}        -> TestUserCreation
+Function:        test_{scenario}      -> test_create_user_success
 ```

@@ -1,35 +1,35 @@
-# Управление состоянием Aiogram
+# Aiogram State Management
 
-> **Назначение**: FSM (Finite State Machine) для диалогов.
+> **Purpose**: FSM (Finite State Machine) for dialogs.
 
 ---
 
-## Определение состояний
+## Defining States
 
 ```python
-"""Состояния для оформления заказа."""
+"""States for order placement."""
 
 from aiogram.fsm.state import State, StatesGroup
 
 
 class OrderStates(StatesGroup):
-    """Состояния процесса заказа."""
+    """Order process states."""
 
-    # Выбор ресторана
+    # Restaurant selection
     waiting_for_restaurant = State()
 
-    # Выбор блюд
+    # Dish selection
     waiting_for_dishes = State()
 
-    # Ввод комментария
+    # Comment input
     waiting_for_comment = State()
 
-    # Подтверждение
+    # Confirmation
     waiting_for_confirmation = State()
 
 
 class RegistrationStates(StatesGroup):
-    """Состояния регистрации."""
+    """Registration states."""
 
     waiting_for_name = State()
     waiting_for_phone = State()
@@ -38,10 +38,10 @@ class RegistrationStates(StatesGroup):
 
 ---
 
-## Обработчики с состояниями
+## Handlers with States
 
 ```python
-"""Обработчики с FSM."""
+"""Handlers with FSM."""
 
 from aiogram import Router, F
 from aiogram.fsm.context import FSMContext
@@ -60,20 +60,20 @@ router = Router()
 @router.message(Command("order"))
 async def start_order(message: Message, state: FSMContext) -> None:
     """
-    Начать оформление заказа.
+    Start order placement.
 
     Args:
-        message: Входящее сообщение.
-        state: Контекст FSM.
+        message: Incoming message.
+        state: FSM context.
     """
-    # Установить состояние
+    # Set state
     await state.set_state(OrderStates.waiting_for_restaurant)
 
-    # Очистить предыдущие данные
+    # Clear previous data
     await state.clear()
 
     await message.answer(
-        "Выберите ресторан:",
+        "Select a restaurant:",
         reply_markup=get_restaurants_keyboard(),
     )
 
@@ -87,23 +87,23 @@ async def select_restaurant(
     state: FSMContext,
 ) -> None:
     """
-    Выбрать ресторан.
+    Select a restaurant.
 
     Args:
         callback: Callback query.
-        state: Контекст FSM.
+        state: FSM context.
     """
     restaurant_id = callback.data.split(":")[1]
 
-    # Сохранить данные
+    # Save data
     await state.update_data(restaurant_id=restaurant_id)
 
-    # Перейти к следующему состоянию
+    # Transition to next state
     await state.set_state(OrderStates.waiting_for_dishes)
 
     await callback.answer()
     await callback.message.edit_text(
-        "Выберите блюда:",
+        "Select dishes:",
         reply_markup=get_dishes_keyboard(restaurant_id),
     )
 
@@ -117,23 +117,23 @@ async def select_dish(
     state: FSMContext,
 ) -> None:
     """
-    Выбрать блюдо.
+    Select a dish.
 
     Args:
         callback: Callback query.
-        state: Контекст FSM.
+        state: FSM context.
     """
     dish_id = callback.data.split(":")[1]
 
-    # Получить текущие данные
+    # Get current data
     data = await state.get_data()
     dishes = data.get("dishes", [])
     dishes.append(dish_id)
 
-    # Обновить данные
+    # Update data
     await state.update_data(dishes=dishes)
 
-    await callback.answer(f"Блюдо добавлено! Всего: {len(dishes)}")
+    await callback.answer(f"Dish added! Total: {len(dishes)}")
 
 
 @router.callback_query(
@@ -145,42 +145,42 @@ async def finish_dishes(
     state: FSMContext,
 ) -> None:
     """
-    Завершить выбор блюд.
+    Finish dish selection.
 
     Args:
         callback: Callback query.
-        state: Контекст FSM.
+        state: FSM context.
     """
     await state.set_state(OrderStates.waiting_for_comment)
 
     await callback.answer()
     await callback.message.edit_text(
-        "Введите комментарий к заказу (или отправьте /skip):"
+        "Enter a comment for the order (or send /skip):"
     )
 
 
 @router.message(OrderStates.waiting_for_comment)
 async def receive_comment(message: Message, state: FSMContext) -> None:
     """
-    Получить комментарий.
+    Receive comment.
 
     Args:
-        message: Входящее сообщение.
-        state: Контекст FSM.
+        message: Incoming message.
+        state: FSM context.
     """
     comment = message.text if message.text != "/skip" else None
 
     await state.update_data(comment=comment)
     await state.set_state(OrderStates.waiting_for_confirmation)
 
-    # Получить все данные
+    # Get all data
     data = await state.get_data()
 
     await message.answer(
-        f"Подтвердите заказ:\n"
-        f"Ресторан: {data['restaurant_id']}\n"
-        f"Блюда: {len(data['dishes'])} шт.\n"
-        f"Комментарий: {comment or 'нет'}",
+        f"Confirm your order:\n"
+        f"Restaurant: {data['restaurant_id']}\n"
+        f"Dishes: {len(data['dishes'])} items\n"
+        f"Comment: {comment or 'none'}",
         reply_markup=get_confirmation_keyboard(),
     )
 
@@ -195,17 +195,17 @@ async def confirm_order(
     api_client: BusinessApiClient,
 ) -> None:
     """
-    Подтвердить заказ.
+    Confirm the order.
 
     Args:
         callback: Callback query.
-        state: Контекст FSM.
-        api_client: HTTP клиент.
+        state: FSM context.
+        api_client: HTTP client.
     """
-    # Получить данные
+    # Get data
     data = await state.get_data()
 
-    # Создать заказ через API
+    # Create order via API
     order = await api_client.create_order(
         user_id=callback.from_user.id,
         restaurant_id=data["restaurant_id"],
@@ -213,12 +213,12 @@ async def confirm_order(
         comment=data.get("comment"),
     )
 
-    # Очистить состояние
+    # Clear state
     await state.clear()
 
-    await callback.answer("Заказ создан!")
+    await callback.answer("Order created!")
     await callback.message.edit_text(
-        f"✅ Заказ #{order['id']} успешно создан!"
+        f"Order #{order['id']} successfully created!"
     )
 
 
@@ -231,34 +231,34 @@ async def cancel_order(
     state: FSMContext,
 ) -> None:
     """
-    Отменить заказ.
+    Cancel the order.
 
     Args:
         callback: Callback query.
-        state: Контекст FSM.
+        state: FSM context.
     """
     await state.clear()
 
-    await callback.answer("Заказ отменён")
-    await callback.message.edit_text("❌ Заказ отменён.")
+    await callback.answer("Order cancelled")
+    await callback.message.edit_text("Order cancelled.")
 ```
 
 ---
 
-## Хранилище состояний
+## State Storage
 
 ```python
-"""Настройка хранилища состояний."""
+"""State storage configuration."""
 
 from aiogram import Dispatcher
 from aiogram.fsm.storage.memory import MemoryStorage
 from aiogram.fsm.storage.redis import RedisStorage
 
 
-# Для разработки — в памяти
+# For development — in-memory
 storage = MemoryStorage()
 
-# Для production — Redis
+# For production — Redis
 # storage = RedisStorage.from_url("redis://localhost:6379/0")
 
 dp = Dispatcher(storage=storage)
@@ -266,10 +266,10 @@ dp = Dispatcher(storage=storage)
 
 ---
 
-## Отмена в любой момент
+## Cancel at Any Time
 
 ```python
-"""Глобальная отмена."""
+"""Global cancellation."""
 
 from aiogram import Router, F
 from aiogram.filters import Command, StateFilter
@@ -280,31 +280,31 @@ router = Router()
 
 
 @router.message(Command("cancel"), StateFilter("*"))
-@router.message(F.text.casefold() == "отмена", StateFilter("*"))
+@router.message(F.text.casefold() == "cancel", StateFilter("*"))
 async def cancel_handler(message: Message, state: FSMContext) -> None:
     """
-    Отменить текущее действие.
+    Cancel current action.
 
     Args:
-        message: Входящее сообщение.
-        state: Контекст FSM.
+        message: Incoming message.
+        state: FSM context.
     """
     current_state = await state.get_state()
 
     if current_state is None:
-        await message.answer("Нечего отменять.")
+        await message.answer("Nothing to cancel.")
         return
 
     await state.clear()
     await message.answer(
-        "Действие отменено. Выберите команду из меню.",
+        "Action cancelled. Choose a command from the menu.",
         reply_markup=get_main_keyboard(),
     )
 ```
 
 ---
 
-## Диаграмма состояний
+## State Diagram
 
 ```
 [*] --> waiting_for_restaurant: /order
@@ -324,10 +324,10 @@ waiting_for_confirmation --> [*]: order:cancel
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Состояния определены в StatesGroup
-- [ ] Данные сохраняются через state.update_data()
-- [ ] Переходы через state.set_state()
-- [ ] Глобальная отмена настроена
-- [ ] Хранилище выбрано (Memory/Redis)
+- [ ] States defined in StatesGroup
+- [ ] Data saved via state.update_data()
+- [ ] Transitions via state.set_state()
+- [ ] Global cancellation configured
+- [ ] Storage selected (Memory/Redis)

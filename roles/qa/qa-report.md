@@ -1,308 +1,308 @@
-# Функция: Создание QA Report
+# Function: QA Report Creation
 
-> **Назначение**: Формирование финального отчёта тестирования.
-
----
-
-## Цель
-
-Создать структурированный отчёт о результатах тестирования,
-готовый для передачи на этап валидации.
+> **Purpose**: Creating the final testing report.
 
 ---
 
-## Структура отчёта
+## Goal
+
+Create a structured testing results report,
+ready for handoff to the validation stage.
+
+---
+
+## Report Structure
 
 ```markdown
-# QA Report: {Название проекта}
+# QA Report: {Project Name}
 
-**Версия**: 1.0
-**Дата**: {YYYY-MM-DD}
+**Version**: 1.0
+**Date**: {YYYY-MM-DD}
 **QA**: AI Agent (QA)
-**Статус**: PASSED / FAILED / PASSED_WITH_ISSUES
+**Status**: PASSED / FAILED / PASSED_WITH_ISSUES
 
 ---
 
-## 1. Обзор тестирования
+## 1. Testing Overview
 
 ### 1.1 Scope
 
-| Параметр | Значение |
-|----------|----------|
-| Тестируемые сервисы | {список} |
-| Тестовых сценариев | {N} |
-| Выполнено тестов | {N} |
-| Период тестирования | {дата} |
+| Parameter | Value |
+|-----------|-------|
+| Services tested | {list} |
+| Test scenarios | {N} |
+| Tests executed | {N} |
+| Testing period | {date} |
 
-### 1.2 Окружение
+### 1.2 Environment
 
-| Параметр | Значение |
-|----------|----------|
+| Parameter | Value |
+|-----------|-------|
 | Python | 3.11.x |
 | pytest | 7.x.x |
 | Docker | 24.x |
-| CI | {инструмент или "нет"} |
+| CI | {tool or "none"} |
 
 ---
 
-## 2. Результаты тестов
+## 2. Test Results
 
-### 2.1 Сводка
+### 2.1 Summary
 
-| Тип теста | Всего | Passed | Failed | Skipped | % Passed |
+| Test Type | Total | Passed | Failed | Skipped | % Passed |
 |-----------|-------|--------|--------|---------|----------|
 | Unit | {N} | {N} | {N} | {N} | {N}% |
 | Integration | {N} | {N} | {N} | {N} | {N}% |
-| **Итого** | **{N}** | **{N}** | **{N}** | **{N}** | **{N}%** |
+| **Total** | **{N}** | **{N}** | **{N}** | **{N}** | **{N}%** |
 
-### 2.2 Результаты по сервисам
+### 2.2 Results by Service
 
 #### {context}_api
 
-| Метрика | Значение |
-|---------|----------|
-| Unit тесты | {N}/{N} passed |
-| Integration тесты | {N}/{N} passed |
-| Покрытие кода | {N}% |
-| Время выполнения | {N}s |
+| Metric | Value |
+|--------|-------|
+| Unit tests | {N}/{N} passed |
+| Integration tests | {N}/{N} passed |
+| Code coverage | {N}% |
+| Execution time | {N}s |
 
 #### {context}_data
 
-| Метрика | Значение |
-|---------|----------|
-| Unit тесты | {N}/{N} passed |
-| Integration тесты | {N}/{N} passed |
-| Покрытие кода | {N}% |
-| Время выполнения | {N}s |
+| Metric | Value |
+|--------|-------|
+| Unit tests | {N}/{N} passed |
+| Integration tests | {N}/{N} passed |
+| Code coverage | {N}% |
+| Execution time | {N}s |
 
 ---
 
-## 3. Покрытие кода
+## 3. Code Coverage
 
-### 3.1 Сводка по покрытию
+### 3.1 Coverage Summary
 
-| Сервис | Statements | Missing | Coverage | Статус |
-|--------|------------|---------|----------|--------|
+| Service | Statements | Missing | Coverage | Status |
+|---------|------------|---------|----------|--------|
 | {context}_api | {N} | {N} | {N}% | ✓/✗ |
 | {context}_data | {N} | {N} | {N}% | ✓/✗ |
-| **Общее** | **{N}** | **{N}** | **{N}%** | **✓/✗** |
+| **Overall** | **{N}** | **{N}** | **{N}%** | **✓/✗** |
 
-### 3.2 Модули с низким покрытием
+### 3.2 Modules with Low Coverage
 
-| Модуль | Покрытие | Причина | Действие |
-|--------|----------|---------|----------|
-| {модуль} | {N}% | {причина} | {действие} |
+| Module | Coverage | Reason | Action |
+|--------|----------|--------|--------|
+| {module} | {N}% | {reason} | {action} |
 
 ---
 
-## 4. Покрытие требований
+## 4. Requirements Coverage
 
-### 4.1 Сводка
+### 4.1 Summary
 
-| Приоритет | Всего | Покрыто | % | Статус |
-|-----------|-------|---------|---|--------|
+| Priority | Total | Covered | % | Status |
+|----------|-------|---------|---|--------|
 | Must | {N} | {N} | {N}% | ✓/✗ |
 | Should | {N} | {N} | {N}% | ✓/✗ |
 | Could | {N} | {N} | {N}% | — |
 
-### 4.2 RTM статус
+### 4.2 RTM Status
 
-| Req ID | Описание | Тесты | Результат |
-|--------|----------|-------|-----------|
-| FR-001 | {описание} | TS-001, TS-002 | ✓ PASSED |
-| FR-002 | {описание} | TS-003 | ✓ PASSED |
-| NF-001 | {описание} | TS-010 | ✓ PASSED |
-
----
-
-## 5. Найденные дефекты
-
-### 5.1 Критические (Blocker)
-
-| # | Описание | Тест | Сервис | Статус |
-|---|----------|------|--------|--------|
-| — | Нет критических дефектов | — | — | — |
-
-### 5.2 Важные (Major)
-
-| # | Описание | Тест | Сервис | Статус |
-|---|----------|------|--------|--------|
-| 1 | {описание} | {тест} | {сервис} | Open/Fixed |
-
-### 5.3 Незначительные (Minor)
-
-| # | Описание | Тест | Сервис | Статус |
-|---|----------|------|--------|--------|
-| 1 | {описание} | {тест} | {сервис} | Open/Fixed |
+| Req ID | Description | Tests | Result |
+|--------|-------------|-------|--------|
+| FR-001 | {description} | TS-001, TS-002 | ✓ PASSED |
+| FR-002 | {description} | TS-003 | ✓ PASSED |
+| NF-001 | {description} | TS-010 | ✓ PASSED |
 
 ---
 
-## 6. Автоматические проверки
+## 5. Defects Found
+
+### 5.1 Critical (Blocker)
+
+| # | Description | Test | Service | Status |
+|---|-------------|------|---------|--------|
+| — | No critical defects | — | — | — |
+
+### 5.2 Major
+
+| # | Description | Test | Service | Status |
+|---|-------------|------|---------|--------|
+| 1 | {description} | {test} | {service} | Open/Fixed |
+
+### 5.3 Minor
+
+| # | Description | Test | Service | Status |
+|---|-------------|------|---------|--------|
+| 1 | {description} | {test} | {service} | Open/Fixed |
+
+---
+
+## 6. Automated Checks
 
 ### 6.1 CI Pipeline
 
-| Шаг | Статус | Время | Комментарий |
-|-----|--------|-------|-------------|
+| Step | Status | Time | Comment |
+|------|--------|------|---------|
 | Build | ✓ PASSED | 45s | — |
 | Unit Tests | ✓ PASSED | 30s | — |
 | Integration Tests | ✓ PASSED | 60s | — |
 | Coverage Check | ✓ PASSED | 5s | 84% ≥ 75% |
 | Lint | ✓ PASSED | 10s | — |
 
-### 6.2 Качество кода
+### 6.2 Code Quality
 
-| Проверка | Результат | Ошибок |
-|----------|-----------|--------|
+| Check | Result | Errors |
+|-------|--------|--------|
 | ruff check | PASSED | 0 |
 | ruff format | PASSED | 0 |
 | mypy | PASSED | 0 |
 
 ---
 
-## 7. Метрики качества
+## 7. Quality Metrics
 
-### 7.1 Сводка метрик
+### 7.1 Metrics Summary
 
-| Метрика | Значение | Порог | Статус |
-|---------|----------|-------|--------|
+| Metric | Value | Threshold | Status |
+|--------|-------|-----------|--------|
 | Code Coverage | {N}% | ≥75% | ✓/✗ |
 | Test Pass Rate | {N}% | 100% | ✓/✗ |
 | Must Coverage | {N}% | 100% | ✓/✗ |
 | Critical Defects | {N} | 0 | ✓/✗ |
 
-### 7.2 Тренды (если применимо)
+### 7.2 Trends (if applicable)
 
-| Метрика | Предыдущий | Текущий | Изменение |
-|---------|------------|---------|-----------|
+| Metric | Previous | Current | Change |
+|--------|----------|---------|--------|
 | Coverage | {N}% | {N}% | +{N}% |
 | Test Count | {N} | {N} | +{N} |
 
 ---
 
-## 8. Рекомендации
+## 8. Recommendations
 
-### 8.1 Обязательные действия
+### 8.1 Required Actions
 
-1. {Действие 1 — если есть failed тесты}
-2. {Действие 2 — если coverage ниже порога}
+1. {Action 1 — if there are failed tests}
+2. {Action 2 — if coverage is below threshold}
 
-### 8.2 Рекомендуемые улучшения
+### 8.2 Recommended Improvements
 
-1. {Улучшение 1}
-2. {Улучшение 2}
+1. {Improvement 1}
+2. {Improvement 2}
 
 ---
 
-## 9. Заключение
+## 9. Conclusion
 
-### Общий статус: {PASSED / FAILED / PASSED_WITH_ISSUES}
+### Overall Status: {PASSED / FAILED / PASSED_WITH_ISSUES}
 
-### Резюме
+### Summary
 
-{Краткое резюме результатов тестирования}
+{Brief summary of testing results}
 
-### Качественные ворота
+### Quality Gates
 
-- [ ] Все тесты проходят (100% pass rate)
+- [ ] All tests pass (100% pass rate)
 - [ ] Code coverage ≥75%
-- [ ] Must требования покрыты на 100%
-- [ ] Нет критических дефектов
-- [ ] CI pipeline проходит
+- [ ] Must requirements covered at 100%
+- [ ] No critical defects
+- [ ] CI pipeline passes
 
 ---
 
-## 10. Приложения
+## 10. Appendices
 
-### A. Полный список тестов
+### A. Full Test List
 
-{Ссылка на файл или развёрнутый список}
+{Link to file or expanded list}
 
-### B. HTML отчёт о покрытии
+### B. HTML Coverage Report
 
-{Путь к htmlcov/}
+{Path to htmlcov/}
 
-### C. CI логи
+### C. CI Logs
 
-{Ссылка на CI run}
+{Link to CI run}
 ```
 
 ---
 
-## Правила формирования отчёта
+## Report Formation Rules
 
-### 1. Статус QA
+### 1. QA Status
 
 ```
 PASSED:
-- 100% тестов проходят
+- 100% of tests pass
 - Coverage ≥75%
-- Все Must требования покрыты
-- Нет критических дефектов
+- All Must requirements covered
+- No critical defects
 
 PASSED_WITH_ISSUES:
-- Все тесты проходят
+- All tests pass
 - Coverage ≥75%
-- Есть незначительные дефекты
-- Документированные проблемы
+- There are minor defects
+- Documented issues
 
 FAILED:
-- Есть падающие тесты
+- There are failing tests
 - Coverage <75%
-- Есть критические дефекты
-- Must требования не покрыты
+- There are critical defects
+- Must requirements not covered
 ```
 
-### 2. Классификация дефектов
+### 2. Defect Classification
 
 ```
 Blocker:
-- Приложение не запускается
-- Критическая функциональность не работает
+- Application doesn't start
+- Critical functionality doesn't work
 - Data loss
 
 Major:
-- Важная функция работает некорректно
-- Ошибки в бизнес-логике
-- Performance проблемы
+- Important function works incorrectly
+- Business logic errors
+- Performance issues
 
 Minor:
-- Косметические проблемы
-- UX неудобства
+- Cosmetic issues
+- UX inconveniences
 - Edge cases
 ```
 
 ---
 
-## Путь сохранения
+## Save Path
 
 ```
 ai-docs/docs/_validation/qa-report.md
 
-Или с датой:
+Or with date:
 ai-docs/docs/_validation/{YYYY-MM-DD}-qa-report.md
 ```
 
 ---
 
-## Качественные ворота: QA_PASSED
+## Quality Gates: QA_PASSED
 
-### Критерии прохождения
+### Passing Criteria
 
-- [ ] Статус QA: PASSED или PASSED_WITH_ISSUES
-- [ ] 100% тестов проходят
+- [ ] QA status: PASSED or PASSED_WITH_ISSUES
+- [ ] 100% of tests pass
 - [ ] Coverage ≥75%
-- [ ] 100% Must требований покрыто
-- [ ] Нет критических дефектов
-- [ ] CI pipeline проходит
-- [ ] RTM обновлена
+- [ ] 100% of Must requirements covered
+- [ ] No critical defects
+- [ ] CI pipeline passes
+- [ ] RTM updated
 
 ---
 
-## Источники
+## Sources
 
-| Документ | Описание |
-|----------|----------|
-| `roles/qa/test-scenarios.md` | Тестовые сценарии |
-| `roles/qa/test-execution.md` | Выполнение тестов |
-| `roles/qa/coverage-verification.md` | Верификация покрытия |
-| `docs/reports/qa-template.md` | Шаблон отчёта |
+| Document | Description |
+|----------|-------------|
+| `roles/qa/test-scenarios.md` | Test scenarios |
+| `roles/qa/test-execution.md` | Test execution |
+| `roles/qa/coverage-verification.md` | Coverage verification |
+| `docs/reports/qa-template.md` | Report template |

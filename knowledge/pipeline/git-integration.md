@@ -1,71 +1,72 @@
-# Git интеграция для параллельных пайплайнов
+# Git Integration for Parallel Pipelines
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Note:** This document may contain outdated command references `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Current commands: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
-> **Версия**: Pipeline State v2
-> **Связанные файлы**:
-> - `scripts/git_helpers.py` — утилиты командной строки
-> - `knowledge/pipeline/state-v2.md` — спецификация v2
-> - `knowledge/pipeline/automigration.md` — автомиграция
+> **Version**: Pipeline State v2
+> **Related files**:
+> - `scripts/git_helpers.py` -- command line utilities
+> - `knowledge/pipeline/state-v2.md` -- v2 specification
+> - `knowledge/pipeline/automigration.md` -- automigration
 
 ---
 
-## Концепция
+## Concept
 
-Каждая фича разрабатывается в отдельной git ветке. Это обеспечивает:
+Each feature is developed in a separate git branch. This ensures:
 
-- **Изоляцию**: Изменения одной фичи не влияют на другие
-- **Параллельность**: Несколько фич могут разрабатываться одновременно
-- **Трассируемость**: История изменений привязана к конкретной фиче
-- **Безопасность**: Merge через Pull Request с ревью
+- **Isolation**: Changes in one feature do not affect others
+- **Parallelism**: Multiple features can be developed simultaneously
+- **Traceability**: Change history is tied to a specific feature
+- **Safety**: Merge through Pull Request with review
 
-### Правила параллельной разработки
+### Parallel Development Rules
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  ✅ МОЖНО начинать новую фичу если предыдущая не завершена       │
+│  ✅ You CAN start a new feature even if the previous one         │
+│     is not completed                                             │
 ├─────────────────────────────────────────────────────────────────┤
-│  • Фичи изолированы в отдельных git ветках                       │
-│  • Ворота изолированы в active_pipelines[FID].gates             │
-│  • Нет ограничений на количество активных фич                    │
+│  • Features are isolated in separate git branches                │
+│  • Gates are isolated in active_pipelines[FID].gates             │
+│  • No limit on the number of active features                     │
 │                                                                 │
-│  ⚠️  РЕКОМЕНДУЕТСЯ отслеживать конфликты:                        │
-│  • Используйте: python3 scripts/git_helpers.py conflicts F042 F043│
-│  • Избегайте изменений одних файлов в разных фичах              │
-│  • При конфликтах — завершите одну фичу перед merge другой      │
+│  ⚠️  RECOMMENDED to track conflicts:                             │
+│  • Use: python3 scripts/git_helpers.py conflicts F042 F043       │
+│  • Avoid changing the same files in different features           │
+│  • On conflicts -- complete one feature before merging another   │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-**Примеры легитимных сценариев**:
-- Разработка F042 (OAuth) застопорилась → начать F043 (Payments)
-- F042 в стадии review → параллельно разрабатывать F043
-- Несколько независимых фич в разных модулях
+**Legitimate scenario examples**:
+- F042 (OAuth) development stalled -> start F043 (Payments)
+- F042 in review stage -> develop F043 in parallel
+- Multiple independent features in different modules
 
 ---
 
-## Именование веток
+## Branch Naming
 
-### Формат
+### Format
 
 ```
 feature/{FID}-{slug}
 ```
 
-### Примеры
+### Examples
 
-| FID | Slug | Ветка |
+| FID | Slug | Branch |
 |-----|------|-------|
 | F001 | table-booking | `feature/F001-table-booking` |
 | F042 | oauth-auth | `feature/F042-oauth-auth` |
 | F043 | payments | `feature/F043-payments` |
 
-### Правила для slug
+### Slug Rules
 
-- Только латинские буквы, цифры и дефисы
-- Без пробелов и специальных символов
-- Максимум 30 символов
-- kebab-case (слова через дефис)
+- Latin letters, digits, and hyphens only
+- No spaces or special characters
+- Maximum 30 characters
+- kebab-case (words separated by hyphens)
 
 ---
 
@@ -73,186 +74,186 @@ feature/{FID}-{slug}
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                         ПАРАЛЛЕЛЬНЫЙ WORKFLOW                           │
+│                         PARALLEL WORKFLOW                                │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
 │  main                                                                   │
 │    │                                                                    │
 │    ├──┬── feature/F042-oauth ─────────────────────────▶ merge           │
-│    │  │     ├── /aidd-analyze      ← Создаёт ветку автоматически          │
+│    │  │     ├── /aidd-analyze      <- Creates branch automatically      │
 │    │  │     ├── /aidd-research                                          │
 │    │  │     ├── /aidd-plan                                              │
-│    │  │     ├── /aidd-code                                          │
-│    │  │     └── /aidd-validate ─────────────▶ DEPLOYED                   │
+│    │  │     ├── /aidd-code                                              │
+│    │  │     └── /aidd-validate ─────────────▶ DEPLOYED                  │
 │    │  │                                                                 │
 │    │  └── feature/F043-payments ──────────────────────▶ merge           │
-│    │        ├── /aidd-analyze      (параллельно с F042!)                  │
+│    │        ├── /aidd-analyze      (in parallel with F042!)             │
 │    │        ├── /aidd-research                                          │
 │    │        ├── ...                                                     │
-│    │        └── /aidd-validate ─────────────▶ DEPLOYED                   │
+│    │        └── /aidd-validate ─────────────▶ DEPLOYED                  │
 │    │                                                                    │
 │    ▼                                                                    │
-│  main (с обеими фичами)                                                 │
+│  main (with both features)                                              │
 │                                                                         │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Автосоздание веток
+## Auto-creating Branches
 
-### При выполнении `/aidd-analyze`
+### When running `/aidd-analyze`
 
-Команда `/aidd-analyze` автоматически создаёт ветку:
+The `/aidd-analyze` command automatically creates a branch:
 
 ```python
-# Из aidd-idea.md, функция create_feature():
+# From aidd-idea.md, function create_feature():
 
-# 5. Создать git ветку для фичи
+# 5. Create git branch for the feature
 branch = f"feature/{fid}-{slug}"
 subprocess.run(["git", "checkout", "-b", branch], check=True)
-print(f"✓ Создана ветка: {branch}")
+print(f"✓ Branch created: {branch}")
 ```
 
-### Результат
+### Result
 
 ```bash
-$ /aidd-analyze "Добавить OAuth авторизацию"
+$ /aidd-analyze "Add OAuth authorization"
 
-✓ Создана ветка: feature/F042-oauth-auth
-✓ Фича F042 добавлена в active_pipelines
-✓ PRD создан: ai-docs/docs/_analysis/2025-12-25_F042_oauth-auth-prd.md
+✓ Branch created: feature/F042-oauth-auth
+✓ Feature F042 added to active_pipelines
+✓ PRD created: ai-docs/docs/_analysis/2025-12-25_F042_oauth-auth-prd.md
 ```
 
 ---
 
-## Определение контекста фичи
+## Feature Context Detection
 
-### Алгоритм
+### Algorithm
 
 ```python
 def get_current_feature_context(state: dict) -> tuple[str, dict] | None:
     """
-    1. Получить текущую git ветку
-    2. Найти FID в active_pipelines по branch
-    3. Если не найдено — извлечь FID из имени ветки
-    4. Если одна активная фича — использовать её
-    5. Иначе — вернуть None (требуется явное указание)
+    1. Get current git branch
+    2. Find FID in active_pipelines by branch
+    3. If not found -- extract FID from branch name
+    4. If one active feature -- use it
+    5. Otherwise -- return None (explicit specification required)
     """
 ```
 
-### Примеры
+### Examples
 
 ```bash
-# Ветка feature/F042-oauth → автоматически F042
+# Branch feature/F042-oauth -> automatically F042
 $ git checkout feature/F042-oauth
 $ /aidd-code
-# → Генерирует код для F042
+# -> Generates code for F042
 
-# Ветка main, одна активная фича → используется она
+# Branch main, one active feature -> it is used
 $ git checkout main
 $ /aidd-research
-# → ⚠️ Используется единственная активная фича: F042
+# -> ⚠️ Using the only active feature: F042
 
-# Ветка main, несколько фич → ошибка
+# Branch main, multiple features -> error
 $ git checkout main
 $ /aidd-code
-# → ❌ Несколько активных фич. Переключитесь на ветку фичи:
+# -> ❌ Multiple active features. Switch to a feature branch:
 #   git checkout feature/F042-oauth
 #   git checkout feature/F043-payments
 ```
 
 ---
 
-## Git-хелперы
+## Git Helpers
 
-### Скрипт `scripts/git_helpers.py`
+### Script `scripts/git_helpers.py`
 
 ```bash
-# Показать текущий контекст
+# Show current context
 python3 scripts/git_helpers.py context
 
-# Создать ветку
+# Create branch
 python3 scripts/git_helpers.py branch F042 oauth-auth
 
-# Проверить конфликты между фичами
+# Check conflicts between features
 python3 scripts/git_helpers.py conflicts F042 F043
 
-# Завершить фичу и подготовить к merge
+# Complete feature and prepare for merge
 python3 scripts/git_helpers.py merge F042
 ```
 
-### Команда `context`
+### Command `context`
 
 ```
 $ python3 scripts/git_helpers.py context
 
-✓ Текущая фича: F042
-  Название: OAuth авторизация
-  Ветка: feature/F042-oauth-auth
-  Этап: IMPLEMENT
-  Ворота пройдены: PRD_READY, RESEARCH_DONE, PLAN_APPROVED
+✓ Current feature: F042
+  Title: OAuth authorization
+  Branch: feature/F042-oauth-auth
+  Stage: IMPLEMENT
+  Gates passed: PRD_READY, RESEARCH_DONE, PLAN_APPROVED
 ```
 
-### Команда `conflicts`
+### Command `conflicts`
 
 ```
 $ python3 scripts/git_helpers.py conflicts F042 F043
 
 ┌─────────────────────────────────────────────────────────────────┐
-│  ⚠️ ПРЕДУПРЕЖДЕНИЕ: Обнаружены потенциальные конфликты          │
+│  ⚠️ WARNING: Potential conflicts detected                        │
 ├─────────────────────────────────────────────────────────────────┤
-│  Фичи F042 и F043 редактируют одни файлы:                       │
+│  Features F042 and F043 edit the same files:                     │
 │  • services/auth_api/domain/models.py                           │
 │  • docker-compose.yml                                           │
 │                                                                 │
-│  Рекомендации:                                                  │
-│  1. Завершить и смержить одну фичу перед продолжением другой    │
-│  2. Разделить изменения на разные модули                        │
-│  3. Координировать merge с командой                             │
+│  Recommendations:                                                │
+│  1. Complete and merge one feature before continuing the other  │
+│  2. Separate changes into different modules                     │
+│  3. Coordinate merge with the team                              │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Merge стратегия
+## Merge Strategy
 
-### Завершение фичи
+### Completing a Feature
 
-После прохождения всех ворот и `/aidd-validate`:
+After passing all gates and `/aidd-validate`:
 
 ```bash
-# 1. Завершить фичу (перемещает в features_registry)
+# 1. Complete the feature (moves to features_registry)
 python3 scripts/git_helpers.py merge F042
 
-# 2. Переключиться на main
+# 2. Switch to main
 git checkout main
 
-# 3. Выполнить merge
+# 3. Perform merge
 git merge feature/F042-oauth-auth
 
-# 4. Разрешить конфликты в .pipeline-state.json (если есть)
-# AI автоматически объединяет состояния
+# 4. Resolve conflicts in .pipeline-state.json (if any)
+# AI automatically merges states
 
 # 5. Push
 git push origin main
 ```
 
-### Объединение `.pipeline-state.json`
+### Merging `.pipeline-state.json`
 
-При merge веток конфликты в `.pipeline-state.json` разрешаются автоматически:
+Branch merge conflicts in `.pipeline-state.json` are resolved automatically:
 
 ```python
 def merge_pipeline_states(main_state, feature_state, fid):
     """
-    1. Перенести завершённую фичу в features_registry
-    2. Удалить из active_pipelines
-    3. Взять максимум next_feature_id
-    4. Обновить timestamp
+    1. Move completed feature to features_registry
+    2. Remove from active_pipelines
+    3. Take maximum of next_feature_id
+    4. Update timestamp
     """
 ```
 
-### Пример объединения
+### Merge Example
 
 **main/.pipeline-state.json:**
 ```json
@@ -276,7 +277,7 @@ def merge_pipeline_states(main_state, feature_state, fid):
 }
 ```
 
-**После merge:**
+**After merge:**
 ```json
 {
   "active_pipelines": {
@@ -294,123 +295,123 @@ def merge_pipeline_states(main_state, feature_state, fid):
 
 ---
 
-## Детекция конфликтов
+## Conflict Detection
 
-### Автоматическая проверка
+### Automatic Check
 
-AI автоматически проверяет конфликты при:
-- Запуске `/aidd-code` (если есть другие активные фичи)
-- Запуске `/aidd-validate` (перед завершением)
+AI automatically checks for conflicts when:
+- Running `/aidd-code` (if there are other active features)
+- Running `/aidd-validate` (before completion)
 
-### Ручная проверка
+### Manual Check
 
 ```bash
-# Получить список изменённых файлов в ветке
+# Get list of changed files in branch
 git diff --name-only main...feature/F042-oauth
 
-# Сравнить с другой фичей
+# Compare with another feature
 python3 scripts/git_helpers.py conflicts F042 F043
 ```
 
-### Рекомендации при конфликтах
+### Recommendations for Conflicts
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  Фичи F042 и F043 редактируют одни файлы → Действия:            │
+│  Features F042 and F043 edit the same files -> Actions:          │
 ├─────────────────────────────────────────────────────────────────┤
-│  1. Оценить критичность конфликтов                               │
-│  2. Если конфликты критические:                                  │
-│     → Завершить и смержить одну фичу перед продолжением другой  │
-│  3. Если конфликты минорные:                                     │
-│     → Продолжить разработку, разрешить конфликты при merge      │
-│  4. Альтернатива:                                                │
-│     → Вынести общий код в отдельный модуль                      │
+│  1. Assess conflict severity                                     │
+│  2. If conflicts are critical:                                   │
+│     -> Complete and merge one feature before continuing another  │
+│  3. If conflicts are minor:                                      │
+│     -> Continue development, resolve conflicts at merge          │
+│  4. Alternative:                                                 │
+│     -> Extract shared code into a separate module               │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-**Стратегии разрешения**:
-1. **Приоритизировать фичи**: Завершить более критичную фичу первой
-2. **Разделить изменения**: Вынести общий код в отдельный модуль
-3. **Координация**: При командной работе согласовать порядок merge
-4. **Частые sync**: Регулярно синхронизировать feature-ветку с main
-5. **Продолжать работу**: Если конфликты незначительные, продолжить обе фичи
+**Resolution strategies**:
+1. **Prioritize features**: Complete the more critical feature first
+2. **Separate changes**: Extract shared code into a separate module
+3. **Coordination**: In team work, agree on merge order
+4. **Frequent sync**: Regularly synchronize feature branch with main
+5. **Continue work**: If conflicts are minor, continue both features
 
 ---
 
-## Интеграция с командами
+## Integration with Commands
 
-### Проверка контекста в каждой команде
+### Context Check in Every Command
 
-Все команды `/aidd-*` проверяют контекст фичи:
+All `/aidd-*` commands check the feature context:
 
 ```python
 def check_preconditions():
     state = ensure_v2_state()
 
-    # Определить FID по текущей git ветке
+    # Determine FID by current git branch
     fid, pipeline = get_current_feature_context(state)
     if not fid:
-        print("❌ Не удалось определить контекст фичи")
-        print("   → Переключитесь на ветку фичи: git checkout feature/FXXX-...")
+        print("❌ Could not determine feature context")
+        print("   -> Switch to a feature branch: git checkout feature/FXXX-...")
         return None
 
-    print(f"✓ Фича {fid}: {pipeline.get('title')}")
+    print(f"✓ Feature {fid}: {pipeline.get('title')}")
     return (fid, pipeline)
 ```
 
-### Ворота изолированы по фичам
+### Gates Are Isolated Per Feature
 
 ```python
-# v2: Каждая фича имеет свои ворота
+# v2: Each feature has its own gates
 gates = state["active_pipelines"][fid]["gates"]
 
 if not gates.get("PLAN_APPROVED", {}).get("passed"):
-    print(f"❌ PLAN_APPROVED не пройдены для {fid}")
+    print(f"❌ PLAN_APPROVED not passed for {fid}")
 ```
 
 ---
 
 ## Troubleshooting
 
-### Ветка не определяется
+### Branch Not Detected
 
 ```
-❌ Не удалось определить контекст фичи
+❌ Could not determine feature context
 ```
 
-**Решение**: Переключитесь на ветку фичи:
+**Solution**: Switch to the feature branch:
 ```bash
 git checkout feature/F042-oauth-auth
 ```
 
-### Несколько активных фич
+### Multiple Active Features
 
 ```
-❌ Несколько активных фич. Укажите контекст.
+❌ Multiple active features. Specify context.
 ```
 
-**Решение**: Либо переключитесь на ветку, либо используйте явное указание:
+**Solution**: Either switch to the branch or use explicit specification:
 ```bash
 git checkout feature/F042-oauth-auth
-# или
-/aidd-code --feature=F042  # если поддерживается
+# or
+/aidd-code --feature=F042  # if supported
 ```
 
-### Ветка не существует
+### Branch Already Exists
 
 ```
-❌ Ветка feature/F042-oauth-auth уже существует
+❌ Branch feature/F042-oauth-auth already exists
 ```
 
-**Решение**: Используйте существующую ветку:
+**Solution**: Use the existing branch:
 ```bash
 git checkout feature/F042-oauth-auth
 ```
 
 ---
 
-## См. также
+## See Also
 
-- `knowledge/pipeline/state-v2.md` — Спецификация Pipeline State v2
-- `knowledge/pipeline/automigration.md` — Автомиграция v1 → v2
-- `contributors/2025-12-25-aidd-enhancement-parallel-pipelines.md` — Проектный документ
+- `knowledge/pipeline/state-v2.md` -- Pipeline State v2 Specification
+- `knowledge/pipeline/automigration.md` -- Automigration v1 -> v2
+- `contributors/2025-12-25-aidd-enhancement-parallel-pipelines.md` -- Design document

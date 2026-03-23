@@ -1,47 +1,47 @@
-# conventions.md — Соглашения о коде и стиле
+# conventions.md — Code Conventions
 
-> **Назначение**: Единые стандарты кода для всех генерируемых проектов.
-> AI-агент ОБЯЗАН следовать этим соглашениям при генерации кода.
+> **Purpose**: Unified code standards for all generated projects.
+> AI agent MUST follow these conventions when generating code.
 >
-> **Язык документации**: Русский
+> **Documentation language**: Russian
 
 ---
 
-## 1. Именование
+## 1. Naming
 
-### 1.1 Python код
+### 1.1 Python Code
 
-| Элемент | Стиль | Пример |
-|---------|-------|--------|
-| Модули | `snake_case` | `user_service.py` |
-| Классы | `PascalCase` | `UserService` |
-| Функции | `snake_case` | `get_user_by_id()` |
-| Переменные | `snake_case` | `user_name` |
-| Константы | `UPPER_SNAKE_CASE` | `MAX_RETRY_COUNT` |
-| Приватные | `_prefix` | `_internal_method()` |
+| Element | Style | Example |
+|---------|-------|---------|
+| Modules | `snake_case` | `user_service.py` |
+| Classes | `PascalCase` | `UserService` |
+| Functions | `snake_case` | `get_user_by_id()` |
+| Variables | `snake_case` | `user_name` |
+| Constants | `UPPER_SNAKE_CASE` | `MAX_RETRY_COUNT` |
+| Private | `_prefix` | `_internal_method()` |
 | Protected | `_prefix` | `_calculate_total()` |
 
-### 1.2 Файлы и директории
+### 1.2 Files and Directories
 
-| Элемент | Стиль | Пример |
-|---------|-------|--------|
-| Python файлы | `snake_case.py` | `user_repository.py` |
+| Element | Style | Example |
+|---------|-------|---------|
+| Python files | `snake_case.py` | `user_repository.py` |
 | Markdown | `kebab-case.md` | `api-contracts.md` |
-| Конфиги | `kebab-case` | `docker-compose.yml` |
-| Директории | `snake_case` | `data_services/` |
+| Configs | `kebab-case` | `docker-compose.yml` |
+| Directories | `snake_case` | `data_services/` |
 
-### 1.3 Именование сервисов
+### 1.3 Service Naming
 
 ```
-{контекст}_{домен}_{тип}
+{context}_{domain}_{type}
 
-Где:
-- контекст: бизнес-область (finance, booking, ecommerce)
-- домен: подсистема (lending, payments, orders)
-- тип: api, bot, worker, data
+Where:
+- context: business area (finance, booking, ecommerce)
+- domain: subsystem (lending, payments, orders)
+- type: api, bot, worker, data
 ```
 
-**Примеры**:
+**Examples**:
 ```
 booking_restaurant_api       # Business API
 booking_restaurant_bot       # Telegram Bot
@@ -51,9 +51,9 @@ booking_restaurant_data      # Data API PostgreSQL
 
 ---
 
-## 2. Docstrings (Google-стиль, на русском)
+## 2. Docstrings (Google style, in Russian)
 
-### 2.1 Функции
+### 2.1 Functions
 
 ```python
 def get_user_by_id(user_id: int, include_deleted: bool = False) -> User | None:
@@ -83,7 +83,7 @@ def get_user_by_id(user_id: int, include_deleted: bool = False) -> User | None:
     pass
 ```
 
-### 2.2 Классы
+### 2.2 Classes
 
 ```python
 class UserService:
@@ -114,7 +114,7 @@ class UserService:
         self.cache = cache
 ```
 
-### 2.3 Модули
+### 2.3 Modules
 
 ```python
 """
@@ -141,35 +141,35 @@ class UserService:
 
 ## 3. Type Hints
 
-### 3.1 Обязательность
+### 3.1 Mandatory Usage
 
-Type hints **ОБЯЗАТЕЛЬНЫ** для:
-- Всех параметров функций
-- Возвращаемых значений функций
-- Атрибутов классов
-- Переменных модульного уровня
+Type hints are **MANDATORY** for:
+- All function parameters
+- Function return values
+- Class attributes
+- Module-level variables
 
 ```python
-# ✅ Правильно
+# ✅ Correct
 def process_order(order_id: int, items: list[OrderItem]) -> ProcessedOrder:
     pass
 
-# ❌ Неправильно
+# ❌ Incorrect
 def process_order(order_id, items):
     pass
 ```
 
-### 3.2 Стандартные паттерны
+### 3.2 Standard Patterns
 
 ```python
 from typing import Optional, Any
 from collections.abc import Sequence, Mapping
 
-# Optional (может быть None)
+# Optional (can be None)
 def get_user(user_id: int) -> User | None:
     pass
 
-# Коллекции
+# Collections
 def process_items(items: list[Item]) -> dict[str, Any]:
     pass
 
@@ -183,7 +183,7 @@ def first_or_default(items: Sequence[T], default: T) -> T:
     pass
 ```
 
-### 3.3 Pydantic модели
+### 3.3 Pydantic Models
 
 ```python
 from pydantic import BaseModel, Field
@@ -206,52 +206,52 @@ class CreateUserRequest(BaseModel):
 
 ---
 
-## 4. Импорты
+## 4. Imports
 
-### 4.1 Группировка
+### 4.1 Grouping
 
 ```python
-# 1. Стандартная библиотека
+# 1. Standard library
 import asyncio
 import logging
 from datetime import datetime
 from typing import Any
 
-# 2. Сторонние библиотеки
+# 2. Third-party libraries
 import httpx
 from fastapi import FastAPI, Depends
 from pydantic import BaseModel
 
-# 3. Локальные модули (absolute imports)
+# 3. Local modules (absolute imports)
 from src.core.config import settings
 from src.application.services import UserService
 from src.domain.entities import User
 ```
 
-### 4.2 Правила
+### 4.2 Rules
 
-- **Только absolute imports** (никаких relative imports)
-- Группы разделяются пустой строкой
-- Внутри группы — алфавитный порядок
-- `from x import y` предпочтительнее `import x`
+- **Only absolute imports** (no relative imports)
+- Groups separated by blank lines
+- Within a group — alphabetical order
+- `from x import y` is preferred over `import x`
 
 ```python
-# ✅ Правильно
+# ✅ Correct
 from src.domain.entities import User
 
-# ❌ Неправильно
+# ❌ Incorrect
 from ..domain.entities import User
 ```
 
 ---
 
-## 5. Структура сервиса (DDD/Hexagonal)
+## 5. Service Structure (DDD/Hexagonal)
 
-### 5.1 Слои
+### 5.1 Layers
 
 ```
 src/
-├── api/                # Входящие адаптеры (HTTP)
+├── api/                # Incoming adapters (HTTP)
 │   ├── v1/
 │   │   ├── __init__.py
 │   │   ├── health.py
@@ -264,7 +264,7 @@ src/
 │   └── dtos/
 │       └── user_dto.py
 │
-├── domain/             # Чистая бизнес-логика
+├── domain/             # Pure business logic
 │   ├── entities/
 │   │   └── user.py
 │   ├── value_objects/
@@ -272,26 +272,26 @@ src/
 │   └── services/
 │       └── user_domain_service.py
 │
-├── infrastructure/     # Исходящие адаптеры
+├── infrastructure/     # Outgoing adapters
 │   ├── http/
 │   │   └── data_api_client.py
 │   └── cache/
 │       └── redis_client.py
 │
-├── schemas/            # Pydantic схемы API
+├── schemas/            # Pydantic API schemas
 │   ├── __init__.py
 │   ├── base.py
 │   └── user_schemas.py
 │
-├── core/               # Конфигурация и утилиты
+├── core/               # Configuration and utilities
 │   ├── config.py
 │   ├── logging.py
 │   └── exceptions.py
 │
-└── main.py             # Точка входа
+└── main.py             # Entry point
 ```
 
-### 5.2 Зависимости между слоями
+### 5.2 Dependencies Between Layers
 
 ```
 api → application → domain
@@ -299,16 +299,16 @@ api → application → domain
                    infrastructure
 ```
 
-**Правила**:
-- `domain` НЕ зависит ни от чего
-- `application` зависит только от `domain`
-- `api` и `infrastructure` зависят от `application` и `domain`
+**Rules**:
+- `domain` does NOT depend on anything
+- `application` depends only on `domain`
+- `api` and `infrastructure` depend on `application` and `domain`
 
 ---
 
-## 6. Обработка ошибок
+## 6. Error Handling
 
-### 6.1 Кастомные исключения
+### 6.1 Custom Exceptions
 
 ```python
 # src/core/exceptions.py
@@ -342,7 +342,7 @@ class ValidationError(AppException):
         )
 ```
 
-### 6.2 Обработчики ошибок FastAPI
+### 6.2 FastAPI Error Handlers
 
 ```python
 # src/api/error_handlers.py
@@ -366,9 +366,9 @@ async def app_exception_handler(request: Request, exc: AppException) -> JSONResp
 
 ---
 
-## 7. Логирование
+## 7. Logging
 
-### 7.1 Структурированное логирование (structlog)
+### 7.1 Structured Logging (structlog)
 
 ```python
 import structlog
@@ -402,41 +402,41 @@ async def process_order(order_id: int) -> Order:
         raise
 ```
 
-### 7.2 Уровни логирования
+### 7.2 Logging Levels
 
-| Уровень | Использование |
-|---------|---------------|
-| `DEBUG` | Детали для отладки |
-| `INFO` | Нормальный ход выполнения |
-| `WARNING` | Потенциальные проблемы |
-| `ERROR` | Ошибки, требующие внимания |
-| `CRITICAL` | Критические сбои |
+| Level | Usage |
+|-------|-------|
+| `DEBUG` | Details for debugging |
+| `INFO` | Normal execution flow |
+| `WARNING` | Potential issues |
+| `ERROR` | Errors requiring attention |
+| `CRITICAL` | Critical failures |
 
 ---
 
-## 8. Тестирование
+## 8. Testing
 
-### 8.1 Структура тестов
+### 8.1 Test Structure
 
 ```
 tests/
-├── unit/                   # Изолированные тесты
+├── unit/                   # Isolated tests
 │   ├── domain/
 │   │   └── test_user_entity.py
 │   └── application/
 │       └── test_user_service.py
 │
-├── integration/            # Тесты интеграции
+├── integration/            # Integration tests
 │   └── test_user_api.py
 │
-├── conftest.py             # Общие фикстуры
-└── factories.py            # Фабрики тестовых данных
+├── conftest.py             # Shared fixtures
+└── factories.py            # Test data factories
 ```
 
-### 8.2 Именование тестов
+### 8.2 Test Naming
 
 ```python
-# Формат: test_{что_тестируем}_{сценарий}_{ожидаемый_результат}
+# Format: test_{what_we_test}_{scenario}_{expected_result}
 
 def test_create_user_with_valid_data_returns_user():
     """Тест создания пользователя с валидными данными."""
@@ -447,7 +447,7 @@ def test_create_user_with_invalid_email_raises_validation_error():
     pass
 ```
 
-### 8.3 Фикстуры pytest
+### 8.3 Pytest Fixtures
 
 ```python
 # tests/conftest.py
@@ -472,18 +472,18 @@ def sample_user() -> dict:
     }
 ```
 
-### 8.4 Покрытие тестами
+### 8.4 Test Coverage
 
-**Минимальное покрытие для MVP: ≥75%**
+**Minimum coverage for MVP: ≥75%**
 
 ```bash
-# Запуск с покрытием
+# Run with coverage
 pytest --cov=src --cov-report=html --cov-fail-under=75
 ```
 
 ---
 
-## 9. Конфигурация
+## 9. Configuration
 
 ### 9.1 Pydantic Settings
 
@@ -495,7 +495,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 class Settings(BaseSettings):
     """Настройки приложения."""
 
-    # Приложение
+    # Application
     app_name: str = "booking_restaurant_api"
     debug: bool = False
     log_level: str = "INFO"
@@ -516,12 +516,12 @@ class Settings(BaseSettings):
 settings = Settings()
 ```
 
-### 9.2 Переменные окружения
+### 9.2 Environment Variables
 
 ```bash
 # .env.example
 
-# Приложение
+# Application
 APP_NAME=booking_restaurant_api
 DEBUG=false
 LOG_LEVEL=INFO
@@ -536,14 +536,14 @@ REDIS_URL=redis://redis:6379
 
 ### 9.3 Reverse Proxy (root_path)
 
-При работе за nginx с путевым префиксом (multi-service deployment):
+When running behind nginx with a path prefix (multi-service deployment):
 
 ```python
 # src/core/config.py
 
 class Settings(BaseSettings):
-    # ... другие настройки
-    root_path: str = ""  # Путевой префикс (например, "/my-service")
+    # ... other settings
+    root_path: str = ""  # Path prefix (e.g., "/my-service")
 
 # src/main.py
 
@@ -558,42 +558,42 @@ app = FastAPI(
 ROOT_PATH=/my-service
 ```
 
-**Правила:**
-- nginx НЕ делает rewrite — передаёт полный путь
-- FastAPI использует root_path из env
-- Routes объявляются БЕЗ префикса (`@app.get("/health")`, не `/my-service/health`)
-- StaticFiles mounts работают автоматически
+**Rules:**
+- nginx does NOT rewrite — passes full path
+- FastAPI uses root_path from env
+- Routes are declared WITHOUT prefix (`@app.get("/health")`, not `/my-service/health`)
+- StaticFiles mounts work automatically
 
-**Подробнее:** `knowledge/infrastructure/nginx.md` (секция "Работа с путевыми префиксами")
+**More details:** `knowledge/infrastructure/nginx.md` (section "Working with path prefixes")
 
 ---
 
-## 10. Чек-лист для код-ревью
+## 10. Code Review Checklist
 
-### Соответствие соглашениям
+### Convention Compliance
 
-- [ ] Именование соответствует стандартам
-- [ ] Type hints для всех функций
-- [ ] Docstrings на русском в Google-стиле
+- [ ] Naming follows standards
+- [ ] Type hints for all functions
+- [ ] Docstrings in Russian, Google style
 - [ ] Absolute imports
-- [ ] Структура DDD/Hexagonal соблюдена
+- [ ] DDD/Hexagonal structure followed
 
-### Качество кода
+### Code Quality
 
-- [ ] Нет дублирования (DRY)
-- [ ] Простые решения (KISS)
-- [ ] Нет избыточного функционала (YAGNI)
-- [ ] Обработка ошибок через кастомные исключения
-- [ ] Структурированное логирование
+- [ ] No duplication (DRY)
+- [ ] Simple solutions (KISS)
+- [ ] No excessive functionality (YAGNI)
+- [ ] Error handling via custom exceptions
+- [ ] Structured logging
 
-### Тестирование
+### Testing
 
-- [ ] Unit-тесты для бизнес-логики
-- [ ] Integration-тесты для API
-- [ ] Покрытие ≥75%
+- [ ] Unit tests for business logic
+- [ ] Integration tests for API
+- [ ] Coverage ≥75%
 
 ---
 
-**Версия документа**: 1.0
-**Создан**: 2025-12-19
-**Назначение**: Соглашения о коде для AIDD-MVP Generator
+**Document version**: 1.0
+**Created**: 2025-12-19
+**Purpose**: Code Conventions for AIDD-MVP Generator

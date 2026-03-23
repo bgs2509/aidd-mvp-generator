@@ -1,30 +1,30 @@
-# Функция: Stage 4.2 — Data Service
+# Function: Stage 4.2 — Data Service
 
-> **Назначение**: Создание сервиса доступа к данным (Data API).
-
----
-
-## Цель
-
-Создать Data API сервис, который предоставляет HTTP интерфейс
-к базе данных PostgreSQL для других сервисов.
+> **Purpose**: Creating a data access service (Data API).
 
 ---
 
-## Архитектурный принцип
+## Goal
+
+Create a Data API service that provides an HTTP interface
+to the PostgreSQL database for other services.
+
+---
+
+## Architectural Principle
 
 ```
-ПРАВИЛО: Data API — единственная точка доступа к базе данных.
+RULE: Data API is the only access point to the database.
 
 Business API ──HTTP──▶ Data API ──SQL──▶ PostgreSQL
 
-Бизнес-сервисы НИКОГДА не подключаются к БД напрямую.
-Они всегда работают через HTTP вызовы к Data API.
+Business services NEVER connect to the database directly.
+They always work through HTTP calls to the Data API.
 ```
 
 ---
 
-## Структура Data Service
+## Data Service Structure
 
 ```
 services/{context}_data/
@@ -81,12 +81,12 @@ services/{context}_data/
 
 ---
 
-## Компоненты
+## Components
 
 ### 1. main.py
 
 ```python
-"""Точка входа Data API сервиса."""
+"""Data API service entry point."""
 
 from contextlib import asynccontextmanager
 
@@ -103,20 +103,20 @@ from {context}_data.infrastructure.database.connection import (
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Управление жизненным циклом приложения."""
-    # Инициализация
+    """Application lifecycle management."""
+    # Initialization
     setup_logging()
     engine = create_db_engine()
     app.state.engine = engine
 
     yield
 
-    # Очистка
+    # Cleanup
     await dispose_engine(engine)
 
 
 def create_app() -> FastAPI:
-    """Фабрика приложения."""
+    """Application factory."""
     app = FastAPI(
         title=f"{settings.service_name} API",
         version="1.0.0",
@@ -134,7 +134,7 @@ app = create_app()
 ### 2. Entity (domain/entities/)
 
 ```python
-"""Сущность {Entity}."""
+"""{Entity} entity."""
 
 from datetime import datetime
 from uuid import UUID, uuid4
@@ -147,7 +147,7 @@ from {context}_data.domain.entities.base import Base
 
 
 class {Entity}(Base):
-    """Модель {Entity} в базе данных."""
+    """{Entity} model in the database."""
 
     __tablename__ = "{entities}"
 
@@ -157,7 +157,7 @@ class {Entity}(Base):
         default=uuid4,
     )
     name: Mapped[str] = mapped_column(String(255), nullable=False)
-    # ... другие поля ...
+    # ... other fields ...
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         server_default=func.now(),
@@ -172,7 +172,7 @@ class {Entity}(Base):
 ### 3. Repository (infrastructure/repositories/)
 
 ```python
-"""Репозиторий для {Entity}."""
+"""Repository for {Entity}."""
 
 from uuid import UUID
 
@@ -184,14 +184,14 @@ from {context}_data.infrastructure.repositories.base import BaseRepository
 
 
 class {Entity}Repository(BaseRepository[{Entity}]):
-    """Репозиторий для работы с {Entity}."""
+    """Repository for working with {Entity}."""
 
     def __init__(self, session: AsyncSession):
-        """Инициализация репозитория."""
+        """Initialize the repository."""
         super().__init__({Entity}, session)
 
     async def get_by_name(self, name: str) -> {Entity} | None:
-        """Получить {entity} по имени."""
+        """Get {entity} by name."""
         query = select({Entity}).where({Entity}.name == name)
         result = await self.session.execute(query)
         return result.scalar_one_or_none()
@@ -200,7 +200,7 @@ class {Entity}Repository(BaseRepository[{Entity}]):
 ### 4. Base Repository
 
 ```python
-"""Базовый репозиторий."""
+"""Base repository."""
 
 from typing import Generic, TypeVar
 from uuid import UUID
@@ -214,15 +214,15 @@ ModelType = TypeVar("ModelType", bound=Base)
 
 
 class BaseRepository(Generic[ModelType]):
-    """Базовый репозиторий с CRUD операциями."""
+    """Base repository with CRUD operations."""
 
     def __init__(self, model: type[ModelType], session: AsyncSession):
-        """Инициализация репозитория."""
+        """Initialize the repository."""
         self.model = model
         self.session = session
 
     async def get_by_id(self, id: UUID) -> ModelType | None:
-        """Получить запись по ID."""
+        """Get a record by ID."""
         return await self.session.get(self.model, id)
 
     async def get_all(
@@ -231,19 +231,19 @@ class BaseRepository(Generic[ModelType]):
         offset: int = 0,
         limit: int = 100,
     ) -> list[ModelType]:
-        """Получить все записи с пагинацией."""
+        """Get all records with pagination."""
         query = select(self.model).offset(offset).limit(limit)
         result = await self.session.execute(query)
         return list(result.scalars().all())
 
     async def count(self) -> int:
-        """Получить количество записей."""
+        """Get the number of records."""
         query = select(func.count()).select_from(self.model)
         result = await self.session.execute(query)
         return result.scalar_one()
 
     async def create(self, **kwargs) -> ModelType:
-        """Создать новую запись."""
+        """Create a new record."""
         instance = self.model(**kwargs)
         self.session.add(instance)
         await self.session.commit()
@@ -251,7 +251,7 @@ class BaseRepository(Generic[ModelType]):
         return instance
 
     async def update(self, id: UUID, **kwargs) -> ModelType | None:
-        """Обновить запись."""
+        """Update a record."""
         instance = await self.get_by_id(id)
         if instance is None:
             return None
@@ -265,7 +265,7 @@ class BaseRepository(Generic[ModelType]):
         return instance
 
     async def delete(self, id: UUID) -> bool:
-        """Удалить запись."""
+        """Delete a record."""
         instance = await self.get_by_id(id)
         if instance is None:
             return False
@@ -278,7 +278,7 @@ class BaseRepository(Generic[ModelType]):
 ### 5. API Routes (api/v1/)
 
 ```python
-"""API роуты для {Entity}."""
+"""API routes for {Entity}."""
 
 from uuid import UUID
 
@@ -303,7 +303,7 @@ async def create_{entity}(
     data: {Entity}Create,
     session=Depends(get_session),
 ):
-    """Создать {entity}."""
+    """Create {entity}."""
     repo = {Entity}Repository(session)
     {entity} = await repo.create(**data.model_dump())
     return {entity}
@@ -315,7 +315,7 @@ async def list_{entities}(
     page_size: int = 20,
     session=Depends(get_session),
 ):
-    """Получить список {entities}."""
+    """Get list of {entities}."""
     repo = {Entity}Repository(session)
     offset = (page - 1) * page_size
 
@@ -337,7 +337,7 @@ async def get_{entity}(
     {entity}_id: UUID,
     session=Depends(get_session),
 ):
-    """Получить {entity} по ID."""
+    """Get {entity} by ID."""
     repo = {Entity}Repository(session)
     {entity} = await repo.get_by_id({entity}_id)
 
@@ -356,7 +356,7 @@ async def update_{entity}(
     data: {Entity}Update,
     session=Depends(get_session),
 ):
-    """Обновить {entity}."""
+    """Update {entity}."""
     repo = {Entity}Repository(session)
     {entity} = await repo.update({entity}_id, **data.model_dump(exclude_unset=True))
 
@@ -374,7 +374,7 @@ async def delete_{entity}(
     {entity}_id: UUID,
     session=Depends(get_session),
 ):
-    """Удалить {entity}."""
+    """Delete {entity}."""
     repo = {Entity}Repository(session)
     deleted = await repo.delete({entity}_id)
 
@@ -387,7 +387,7 @@ async def delete_{entity}(
 
 ---
 
-## Шаблон для использования
+## Template to Use
 
 ```
 templates/services/postgres_data_api/
@@ -395,46 +395,46 @@ templates/services/postgres_data_api/
 
 ---
 
-## Порядок создания
+## Creation Order
 
 ```
-1. Создать структуру директорий
-2. Создать Dockerfile
-3. Создать requirements.txt
-4. Создать core/config.py
-5. Создать domain/entities/base.py
-6. Создать domain/entities/{entity}.py
-7. Создать infrastructure/database/
-8. Создать infrastructure/repositories/base.py
-9. Создать infrastructure/repositories/{entity}_repository.py
-10. Создать schemas/{entity}_schemas.py
-11. Создать api/v1/{entity}_routes.py
-12. Создать api/v1/router.py
-13. Создать main.py
-14. Настроить Alembic для миграций
+1. Create directory structure
+2. Create Dockerfile
+3. Create requirements.txt
+4. Create core/config.py
+5. Create domain/entities/base.py
+6. Create domain/entities/{entity}.py
+7. Create infrastructure/database/
+8. Create infrastructure/repositories/base.py
+9. Create infrastructure/repositories/{entity}_repository.py
+10. Create schemas/{entity}_schemas.py
+11. Create api/v1/{entity}_routes.py
+12. Create api/v1/router.py
+13. Create main.py
+14. Configure Alembic for migrations
 ```
 
 ---
 
-## Качественные ворота
+## Quality Gates
 
 ### DATA_SERVICE_READY
 
-- [ ] Структура проекта создана по шаблону
-- [ ] Все модели созданы
-- [ ] Все репозитории созданы
-- [ ] API эндпоинты созданы
-- [ ] Миграции настроены
-- [ ] Dockerfile создан
-- [ ] `docker-compose up {context}-data` запускается
-- [ ] Health check проходит: `GET /api/v1/health`
+- [ ] Project structure created from template
+- [ ] All models created
+- [ ] All repositories created
+- [ ] API endpoints created
+- [ ] Migrations configured
+- [ ] Dockerfile created
+- [ ] `docker-compose up {context}-data` starts successfully
+- [ ] Health check passes: `GET /api/v1/health`
 
 ---
 
-## Источники
+## References
 
-| Документ | Описание |
-|----------|----------|
-| `knowledge/services/data-services/postgres-setup.md` | Настройка PostgreSQL |
-| `knowledge/services/data-services/repository-patterns.md` | Паттерны репозиториев |
-| `templates/services/postgres_data_api/` | Шаблон сервиса |
+| Document | Description |
+|----------|-------------|
+| `knowledge/services/data-services/postgres-setup.md` | PostgreSQL setup |
+| `knowledge/services/data-services/repository-patterns.md` | Repository patterns |
+| `templates/services/postgres_data_api/` | Service template |

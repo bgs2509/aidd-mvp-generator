@@ -1,8 +1,8 @@
 ---
-# === YAML Frontmatter (машиночитаемые метаданные) ===
+# === YAML Frontmatter (machine-readable metadata) ===
 feature_id: "{FID}"
 feature_name: "{slug}"
-title: "Implementation Plan: {Название фичи/проекта}"
+title: "Implementation Plan: {Feature/Project Name}"
 created: "{YYYY-MM-DD}"
 author: "AI (Architect)"
 type: "plan"
@@ -10,102 +10,102 @@ status: "PLAN_APPROVED"
 version: 1
 mode: "CREATE"
 
-# Ссылки на связанные артефакты
+# Links to related artifacts
 prd_ref: "prd/{YYYY-MM-DD}_{FID}_{slug}-prd.md"
 research_ref: "research/{YYYY-MM-DD}_{FID}_{slug}-research.md"
 architecture_ref: "architecture/{YYYY-MM-DD}_{FID}_{slug}-architecture.md"
 
-# Сервисы для создания
+# Services to create
 services:
   - "{context}_api"
   - "{context}_data"
 
-# Опционально
+# Optional
 approved_by: null
 approved_at: null
 stages_count: 0
 tasks_count: 0
 ---
 
-# План реализации: {Название фичи/проекта}
+# Implementation Plan: {Feature/Project Name}
 
 **Feature ID**: {FID}
-**Версия**: 1.0
-**Дата**: {YYYY-MM-DD}
-**Автор**: AI Agent (Планировщик)
-**Статус**: Draft | Review | Approved
-**Связанный PRD**: {prd-name}-prd.md
-**Архитектура**: {architecture-name}.md
+**Version**: 1.0
+**Date**: {YYYY-MM-DD}
+**Author**: AI Agent (Planner)
+**Status**: Draft | Review | Approved
+**Related PRD**: {prd-name}-prd.md
+**Architecture**: {architecture-name}.md
 
 ---
 
-## 1. Обзор
+## 1. Overview
 
-### 1.1 Цель
+### 1.1 Goal
 
-{Краткое описание что будет реализовано}
+{Brief description of what will be implemented}
 
 ### 1.2 Scope
 
-**В scope:**
-- {Что включено 1}
-- {Что включено 2}
-- {Что включено 3}
+**In scope:**
+- {Included item 1}
+- {Included item 2}
+- {Included item 3}
 
-**Вне scope:**
-- {Что исключено 1}
-- {Что исключено 2}
+**Out of scope:**
+- {Excluded item 1}
+- {Excluded item 2}
 
-### 1.3 Зависимости
+### 1.3 Dependencies
 
-| Зависимость | Тип | Статус |
-|-------------|-----|--------|
-| {Зависимость 1} | Блокирующая | Ready/Pending |
-| {Зависимость 2} | Желательная | Ready/Pending |
+| Dependency | Type | Status |
+|------------|------|--------|
+| {Dependency 1} | Blocking | Ready/Pending |
+| {Dependency 2} | Desirable | Ready/Pending |
 
 ---
 
-## 2. Этапы реализации
+## 2. Implementation Stages
 
-### Stage 4.1: Инфраструктура
+### Stage 4.1: Infrastructure
 
-**Цель**: Подготовить базовую инфраструктуру проекта
+**Goal**: Prepare the project's base infrastructure
 
-**Задачи**:
+**Tasks**:
 
-| # | Задача | Файлы | Требование |
-|---|--------|-------|------------|
-| 4.1.1 | Создать структуру проекта | Все директории | — |
-| 4.1.2 | Настроить docker-compose.yml | docker-compose.yml | — |
-| 4.1.3 | Создать .env.example | .env.example | — |
-| 4.1.4 | Настроить CI pipeline (опционально) | {указать путь} | — |
-| 4.1.5 | Создать Makefile | Makefile | — |
+| # | Task | Files | Requirement |
+|---|------|-------|-------------|
+| 4.1.1 | Create project structure | All directories | — |
+| 4.1.2 | Set up docker-compose.yml | docker-compose.yml | — |
+| 4.1.3 | Create .env.example | .env.example | — |
+| 4.1.4 | Set up CI pipeline (optional) | {specify path} | — |
+| 4.1.5 | Create Makefile | Makefile | — |
 
-**Критерии завершения**:
-- [ ] `docker compose up` запускается без ошибок
-- [ ] Все сервисы проходят health check
-- [ ] CI pipeline проходит (если настроен)
+**Completion criteria**:
+- [ ] `docker compose up` starts without errors
+- [ ] All services pass health check
+- [ ] CI pipeline passes (if configured)
 
 ---
 
 ### Stage 4.2: Data API
 
-**Цель**: Реализовать доступ к данным через HTTP API
+**Goal**: Implement data access through HTTP API
 
-**Задачи**:
+**Tasks**:
 
-| # | Задача | Файлы | Требование |
-|---|--------|-------|------------|
-| 4.2.1 | Создать SQLAlchemy модели | domain/entities/*.py | FR-001 |
-| 4.2.2 | Настроить Alembic миграции | alembic/versions/*.py | — |
-| 4.2.3 | Реализовать репозитории | repositories/*.py | — |
-| 4.2.4 | Создать CRUD endpoints | api/v1/*.py | FR-001-004 |
-| 4.2.5 | Написать тесты | tests/unit/*.py | — |
+| # | Task | Files | Requirement |
+|---|------|-------|-------------|
+| 4.2.1 | Create SQLAlchemy models | domain/entities/*.py | FR-001 |
+| 4.2.2 | Set up Alembic migrations | alembic/versions/*.py | — |
+| 4.2.3 | Implement repositories | repositories/*.py | — |
+| 4.2.4 | Create CRUD endpoints | api/v1/*.py | FR-001-004 |
+| 4.2.5 | Write tests | tests/unit/*.py | — |
 
-**Модели данных**:
+**Data models**:
 
 ```python
-# {Entity} модель
+# {Entity} model
 class {Entity}(Base):
     __tablename__ = "{entities}"
 
@@ -120,36 +120,36 @@ class {Entity}(Base):
 **Endpoints**:
 
 ```
-GET    /api/v1/{entities}           → List с пагинацией
+GET    /api/v1/{entities}           → List with pagination
 POST   /api/v1/{entities}           → Create
 GET    /api/v1/{entities}/{id}      → Get by ID
 PUT    /api/v1/{entities}/{id}      → Update
 DELETE /api/v1/{entities}/{id}      → Delete
 ```
 
-**Критерии завершения**:
-- [ ] Миграции применяются успешно
-- [ ] Все CRUD операции работают
-- [ ] Тесты проходят с coverage ≥ 75%
+**Completion criteria**:
+- [ ] Migrations apply successfully
+- [ ] All CRUD operations work
+- [ ] Tests pass with coverage >= 75%
 
 ---
 
 ### Stage 4.3: Business API
 
-**Цель**: Реализовать бизнес-логику
+**Goal**: Implement business logic
 
-**Задачи**:
+**Tasks**:
 
-| # | Задача | Файлы | Требование |
-|---|--------|-------|------------|
-| 4.3.1 | Создать HTTP клиент для Data API | infrastructure/http/data_client.py | — |
-| 4.3.2 | Реализовать доменные сервисы | domain/services/*.py | FR-* |
-| 4.3.3 | Реализовать application services | application/services/*.py | FR-* |
-| 4.3.4 | Создать API endpoints | api/v1/*.py | FR-* |
-| 4.3.5 | Добавить валидацию | schemas/*.py | — |
-| 4.3.6 | Написать тесты | tests/*.py | — |
+| # | Task | Files | Requirement |
+|---|------|-------|-------------|
+| 4.3.1 | Create HTTP client for Data API | infrastructure/http/data_client.py | — |
+| 4.3.2 | Implement domain services | domain/services/*.py | FR-* |
+| 4.3.3 | Implement application services | application/services/*.py | FR-* |
+| 4.3.4 | Create API endpoints | api/v1/*.py | FR-* |
+| 4.3.5 | Add validation | schemas/*.py | — |
+| 4.3.6 | Write tests | tests/*.py | — |
 
-**Бизнес-логика**:
+**Business logic**:
 
 ```python
 # {UseCase} use case
@@ -158,81 +158,81 @@ class {UseCase}Service:
         self._data_client = data_client
 
     async def execute(self, request: {UseCase}Request) -> {UseCase}Response:
-        # 1. Валидация бизнес-правил
-        # 2. Выполнение операции
-        # 3. Возврат результата
+        # 1. Validate business rules
+        # 2. Execute operation
+        # 3. Return result
         pass
 ```
 
-**Критерии завершения**:
-- [ ] Business API взаимодействует с Data API
-- [ ] Бизнес-правила реализованы
-- [ ] API документация сгенерирована (OpenAPI)
-- [ ] Тесты проходят
+**Completion criteria**:
+- [ ] Business API communicates with Data API
+- [ ] Business rules implemented
+- [ ] API documentation generated (OpenAPI)
+- [ ] Tests pass
 
 ---
 
-### Stage 4.4: Background Worker (если требуется)
+### Stage 4.4: Background Worker (if required)
 
-**Цель**: Реализовать фоновые задачи
+**Goal**: Implement background tasks
 
-**Задачи**:
+**Tasks**:
 
-| # | Задача | Файлы | Требование |
-|---|--------|-------|------------|
-| 4.4.1 | Создать базовый воркер | main.py, scheduler.py | — |
-| 4.4.2 | Реализовать задачи | tasks/*.py | FR-* |
-| 4.4.3 | Настроить graceful shutdown | — | — |
+| # | Task | Files | Requirement |
+|---|------|-------|-------------|
+| 4.4.1 | Create base worker | main.py, scheduler.py | — |
+| 4.4.2 | Implement tasks | tasks/*.py | FR-* |
+| 4.4.3 | Set up graceful shutdown | — | — |
 
-**Критерии завершения**:
-- [ ] Воркер запускается и останавливается корректно
-- [ ] Задачи выполняются по расписанию
-
----
-
-### Stage 4.5: Telegram Bot (если требуется)
-
-**Цель**: Реализовать Telegram интерфейс
-
-**Задачи**:
-
-| # | Задача | Файлы | Требование |
-|---|--------|-------|------------|
-| 4.5.1 | Настроить бота | main.py, bot/ | — |
-| 4.5.2 | Реализовать handlers | handlers/*.py | UI-* |
-| 4.5.3 | Добавить FSM (если нужно) | states/*.py | — |
-| 4.5.4 | Создать клавиатуры | keyboards/*.py | UI-* |
-
-**Критерии завершения**:
-- [ ] Бот отвечает на /start
-- [ ] Основные сценарии работают
+**Completion criteria**:
+- [ ] Worker starts and stops correctly
+- [ ] Tasks execute on schedule
 
 ---
 
-### Stage 4.6: Тестирование
+### Stage 4.5: Telegram Bot (if required)
 
-**Цель**: Обеспечить качество кода
+**Goal**: Implement Telegram interface
 
-**Задачи**:
+**Tasks**:
 
-| # | Задача | Файлы | Покрытие |
-|---|--------|-------|----------|
-| 4.6.1 | Unit тесты Data API | tests/unit/*.py | ≥ 75% |
-| 4.6.2 | Unit тесты Business API | tests/unit/*.py | ≥ 75% |
-| 4.6.3 | Integration тесты | tests/integration/*.py | Key flows |
-| 4.6.4 | E2E тесты (опционально) | tests/e2e/*.py | Happy path |
+| # | Task | Files | Requirement |
+|---|------|-------|-------------|
+| 4.5.1 | Set up bot | main.py, bot/ | — |
+| 4.5.2 | Implement handlers | handlers/*.py | UI-* |
+| 4.5.3 | Add FSM (if needed) | states/*.py | — |
+| 4.5.4 | Create keyboards | keyboards/*.py | UI-* |
 
-**Критерии завершения**:
-- [ ] Coverage ≥ 75% для каждого сервиса
-- [ ] Все тесты проходят в CI
-- [ ] Критические пути покрыты
+**Completion criteria**:
+- [ ] Bot responds to /start
+- [ ] Main scenarios work
 
 ---
 
-## 3. Порядок выполнения
+### Stage 4.6: Testing
+
+**Goal**: Ensure code quality
+
+**Tasks**:
+
+| # | Task | Files | Coverage |
+|---|------|-------|----------|
+| 4.6.1 | Data API unit tests | tests/unit/*.py | >= 75% |
+| 4.6.2 | Business API unit tests | tests/unit/*.py | >= 75% |
+| 4.6.3 | Integration tests | tests/integration/*.py | Key flows |
+| 4.6.4 | E2E tests (optional) | tests/e2e/*.py | Happy path |
+
+**Completion criteria**:
+- [ ] Coverage >= 75% for each service
+- [ ] All tests pass in CI
+- [ ] Critical paths covered
+
+---
+
+## 3. Execution Order
 
 ```
-Stage 4.1 (Инфраструктура)
+Stage 4.1 (Infrastructure)
     │
     ▼
 Stage 4.2 (Data API)
@@ -244,12 +244,12 @@ Stage 4.3          Stage 4.4/4.5
     │                  │
     └────────┬─────────┘
              ▼
-      Stage 4.6 (Тесты)
+      Stage 4.6 (Tests)
 ```
 
 ---
 
-## 4. Файлы для создания
+## 4. Files to Create
 
 ### 4.1 Data API ({context}_data)
 
@@ -344,32 +344,32 @@ services/{context}_api/
 
 ---
 
-## 5. Трассировка требований
+## 5. Requirements Traceability
 
-| Требование | Stage | Задача | Файл | Тест |
-|------------|-------|--------|------|------|
+| Requirement | Stage | Task | File | Test |
+|-------------|-------|------|------|------|
 | FR-001 | 4.2 | 4.2.1, 4.2.4 | entities.py | test_*.py |
 | FR-002 | 4.3 | 4.3.3, 4.3.4 | service.py | test_*.py |
 | NF-001 | 4.6 | 4.6.3 | — | integration |
 
 ---
 
-## 6. Риски реализации
+## 6. Implementation Risks
 
-| Риск | Вероятность | Влияние | Митигация |
-|------|-------------|---------|-----------|
-| {Риск 1} | Medium | High | {Действие} |
-| {Риск 2} | Low | Medium | {Действие} |
+| Risk | Probability | Impact | Mitigation |
+|------|-------------|--------|------------|
+| {Risk 1} | Medium | High | {Action} |
+| {Risk 2} | Low | Medium | {Action} |
 
 ---
 
-## Качественные ворота
+## Quality Gates
 
 ### IMPLEMENTATION_READY Checklist
 
-- [ ] Все этапы определены
-- [ ] Задачи детализированы
-- [ ] Файлы для создания перечислены
-- [ ] Требования трассируются к задачам
-- [ ] Порядок выполнения определён
-- [ ] Критерии завершения каждого этапа ясны
+- [ ] All stages defined
+- [ ] Tasks detailed
+- [ ] Files to create listed
+- [ ] Requirements traced to tasks
+- [ ] Execution order defined
+- [ ] Completion criteria for each stage are clear

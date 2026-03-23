@@ -1,199 +1,198 @@
-# Чеклист решения проблемы интеграции пайплайнов
+# Pipeline Integration Problem Solution Checklist
 
-**Версия**: 1.0
-**Дата создания**: 2025-12-21
-**Связанный документ**: [2025-12-20-pipeline-integration-problem.md](2025-12-20-pipeline-integration-problem.md)
-**Выбранный вариант**: C — Извлечение полезного (рекомендуемый)
+**Version**: 1.0
+**Created**: 2025-12-21
+**Related document**: [2025-12-20-pipeline-integration-problem.md](2025-12-20-pipeline-integration-problem.md)
+**Chosen option**: C — Extracting the useful (recommended)
 
 ---
 
-## Общий прогресс
+## Overall Progress
 
 ```
-Выполнено: 0/28 задач (0%)
-░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░░
+Completed: 0/28 tasks (0%)
 ```
 
 ---
 
-## ЭТАП 1: Создание недостающих файлов
+## STAGE 1: Creating Missing Files
 
-### 1.1 Создать docs/INDEX.md
+### 1.1 Create docs/INDEX.md
 
-**Цель**: Единый индекс всей документации для быстрой навигации AI-агента
+**Goal**: A unified documentation index for quick AI agent navigation
 
-| # | Задача | Статус | Дата |
-|---|--------|--------|------|
-| 1.1.1 | [ ] Создать файл `docs/INDEX.md` | ⬜ Ожидает | |
-| 1.1.2 | [ ] Добавить раздел "Быстрый старт" (CLAUDE.md, workflow.md, conventions.md) | ⬜ Ожидает | |
-| 1.1.3 | [ ] Добавить раздел "Роли агентов" (ссылки на .claude/agents/*.md) | ⬜ Ожидает | |
-| 1.1.4 | [ ] Добавить раздел "Slash-команды" (ссылки на .claude/commands/*.md) | ⬜ Ожидает | |
-| 1.1.5 | [ ] Добавить раздел "База знаний" (ссылки на knowledge/*) | ⬜ Ожидает | |
-| 1.1.6 | [ ] Добавить раздел "Шаблоны" (ссылки на templates/*) | ⬜ Ожидает | |
-| 1.1.7 | [ ] Добавить раздел "Документы проекта" (prd/, architecture/, reports/) | ⬜ Ожидает | |
-| 1.1.8 | [ ] Валидировать все ссылки в INDEX.md | ⬜ Ожидает | |
+| # | Task | Status | Date |
+|---|------|--------|------|
+| 1.1.1 | [ ] Create file `docs/INDEX.md` | Pending | |
+| 1.1.2 | [ ] Add "Quick Start" section (CLAUDE.md, workflow.md, conventions.md) | Pending | |
+| 1.1.3 | [ ] Add "Agent Roles" section (links to .claude/agents/*.md) | Pending | |
+| 1.1.4 | [ ] Add "Slash Commands" section (links to .claude/commands/*.md) | Pending | |
+| 1.1.5 | [ ] Add "Knowledge Base" section (links to knowledge/*) | Pending | |
+| 1.1.6 | [ ] Add "Templates" section (links to templates/*) | Pending | |
+| 1.1.7 | [ ] Add "Project Documents" section (prd/, architecture/, reports/) | Pending | |
+| 1.1.8 | [ ] Validate all links in INDEX.md | Pending | |
 
-**Критерий завершения**: AI-агент может найти любой документ за 2 шага (CLAUDE.md → INDEX.md → файл)
-
----
-
-### 1.2 Создать docs/LINKS_REFERENCE.md
-
-**Цель**: Таблица всех внутренних ссылок и алиасов
-
-| # | Задача | Статус | Дата |
-|---|--------|--------|------|
-| 1.2.1 | [ ] Создать файл `docs/LINKS_REFERENCE.md` | ⬜ Ожидает | |
-| 1.2.2 | [ ] Добавить таблицу алиасов (короткое имя → полный путь) | ⬜ Ожидает | |
-| 1.2.3 | [ ] Добавить категоризацию ссылок по темам | ⬜ Ожидает | |
-| 1.2.4 | [ ] Добавить инструкцию по использованию для AI-агента | ⬜ Ожидает | |
-
-**Критерий завершения**: Единый справочник всех путей к файлам
+**Completion criterion**: AI agent can find any document in 2 steps (CLAUDE.md → INDEX.md → file)
 
 ---
 
-### 1.3 Создать docs/reference/deliverables-catalog.md
+### 1.2 Create docs/LINKS_REFERENCE.md
 
-**Цель**: Каталог всех артефактов с шаблонами и критериями готовности
+**Goal**: Table of all internal links and aliases
 
-| # | Задача | Статус | Дата |
-|---|--------|--------|------|
-| 1.3.1 | [ ] Создать директорию `docs/reference/` (если не существует) | ⬜ Ожидает | |
-| 1.3.2 | [ ] Создать файл `docs/reference/deliverables-catalog.md` | ⬜ Ожидает | |
-| 1.3.3 | [ ] Добавить артефакты этапа "Идея" (PRD) | ⬜ Ожидает | |
-| 1.3.4 | [ ] Добавить артефакты этапа "Архитектура" (план) | ⬜ Ожидает | |
-| 1.3.5 | [ ] Добавить артефакты этапа "Реализация" (код, тесты) | ⬜ Ожидает | |
-| 1.3.6 | [ ] Добавить артефакты этапа "Ревью" (отчёт) | ⬜ Ожидает | |
-| 1.3.7 | [ ] Добавить артефакты этапа "QA" (qa-report) | ⬜ Ожидает | |
-| 1.3.8 | [ ] Добавить артефакты этапа "Валидация" (RTM, validation-report) | ⬜ Ожидает | |
-| 1.3.9 | [ ] Для каждого артефакта указать: шаблон, критерии готовности, пример | ⬜ Ожидает | |
+| # | Task | Status | Date |
+|---|------|--------|------|
+| 1.2.1 | [ ] Create file `docs/LINKS_REFERENCE.md` | Pending | |
+| 1.2.2 | [ ] Add alias table (short name → full path) | Pending | |
+| 1.2.3 | [ ] Add link categorization by topics | Pending | |
+| 1.2.4 | [ ] Add usage instructions for AI agent | Pending | |
 
-**Критерий завершения**: AI-агент знает какие артефакты создавать на каждом этапе
+**Completion criterion**: Unified reference of all file paths
 
 ---
 
-## ЭТАП 2: Расширение workflow.md
+### 1.3 Create docs/reference/deliverables-catalog.md
 
-### 2.1 Добавить Navigation Matrix
+**Goal**: Catalog of all artifacts with templates and readiness criteria
 
-**Цель**: Явная таблица "роль → какие документы читать → какие создавать"
+| # | Task | Status | Date |
+|---|------|--------|------|
+| 1.3.1 | [ ] Create directory `docs/reference/` (if doesn't exist) | Pending | |
+| 1.3.2 | [ ] Create file `docs/reference/deliverables-catalog.md` | Pending | |
+| 1.3.3 | [ ] Add "Idea" stage artifacts (PRD) | Pending | |
+| 1.3.4 | [ ] Add "Architecture" stage artifacts (plan) | Pending | |
+| 1.3.5 | [ ] Add "Implementation" stage artifacts (code, tests) | Pending | |
+| 1.3.6 | [ ] Add "Review" stage artifacts (report) | Pending | |
+| 1.3.7 | [ ] Add "QA" stage artifacts (qa-report) | Pending | |
+| 1.3.8 | [ ] Add "Validation" stage artifacts (RTM, validation-report) | Pending | |
+| 1.3.9 | [ ] For each artifact specify: template, readiness criteria, example | Pending | |
 
-| # | Задача | Статус | Дата |
-|---|--------|--------|------|
-| 2.1.1 | [ ] Добавить Navigation Matrix для роли Аналитик | ⬜ Ожидает | |
-| 2.1.2 | [ ] Добавить Navigation Matrix для роли Исследователь | ⬜ Ожидает | |
-| 2.1.3 | [ ] Добавить Navigation Matrix для роли Архитектор | ⬜ Ожидает | |
-| 2.1.4 | [ ] Добавить Navigation Matrix для роли Реализатор | ⬜ Ожидает | |
-| 2.1.5 | [ ] Добавить Navigation Matrix для роли Ревьюер | ⬜ Ожидает | |
-| 2.1.6 | [ ] Добавить Navigation Matrix для роли QA | ⬜ Ожидает | |
-| 2.1.7 | [ ] Добавить Navigation Matrix для роли Валидатор | ⬜ Ожидает | |
+**Completion criterion**: AI agent knows what artifacts to create at each stage
 
-**Формат Navigation Matrix**:
+---
+
+## STAGE 2: Extending workflow.md
+
+### 2.1 Add Navigation Matrix
+
+**Goal**: Explicit table "role → which documents to read → which to create"
+
+| # | Task | Status | Date |
+|---|------|--------|------|
+| 2.1.1 | [ ] Add Navigation Matrix for Analyst role | Pending | |
+| 2.1.2 | [ ] Add Navigation Matrix for Researcher role | Pending | |
+| 2.1.3 | [ ] Add Navigation Matrix for Architect role | Pending | |
+| 2.1.4 | [ ] Add Navigation Matrix for Implementer role | Pending | |
+| 2.1.5 | [ ] Add Navigation Matrix for Reviewer role | Pending | |
+| 2.1.6 | [ ] Add Navigation Matrix for QA role | Pending | |
+| 2.1.7 | [ ] Add Navigation Matrix for Validator role | Pending | |
+
+**Navigation Matrix format**:
 ```
-| Команда | Роль | Читает | Создаёт | Ворота |
-|---------|------|--------|---------|--------|
-| /idea   | Аналитик | CLAUDE.md, conventions.md, ... | docs/prd/{name}-prd.md | PRD_READY |
+| Command | Role | Reads | Creates | Gates |
+|---------|------|-------|---------|-------|
+| /idea   | Analyst | CLAUDE.md, conventions.md, ... | docs/prd/{name}-prd.md | PRD_READY |
 ```
 
-**Критерий завершения**: Для каждой slash-команды есть явный список файлов
+**Completion criterion**: Each slash command has an explicit file list
 
 ---
 
-## ЭТАП 3: Обновление CLAUDE.md
+## STAGE 3: Updating CLAUDE.md
 
-### 3.1 Добавить ссылки на INDEX
+### 3.1 Add INDEX Links
 
-| # | Задача | Статус | Дата |
-|---|--------|--------|------|
-| 3.1.1 | [ ] Добавить в "Порядок чтения" ссылку на INDEX.md | ⬜ Ожидает | |
-| 3.1.2 | [ ] Добавить раздел "Как найти нужный документ" | ⬜ Ожидает | |
-| 3.1.3 | [ ] Добавить ссылку на LINKS_REFERENCE.md | ⬜ Ожидает | |
-| 3.1.4 | [ ] Добавить ссылку на deliverables-catalog.md | ⬜ Ожидает | |
+| # | Task | Status | Date |
+|---|------|--------|------|
+| 3.1.1 | [ ] Add INDEX.md link to "Reading Order" | Pending | |
+| 3.1.2 | [ ] Add "How to Find the Right Document" section | Pending | |
+| 3.1.3 | [ ] Add LINKS_REFERENCE.md link | Pending | |
+| 3.1.4 | [ ] Add deliverables-catalog.md link | Pending | |
 
-**Критерий завершения**: CLAUDE.md содержит путь ко всем ключевым справочникам
-
----
-
-## ЭТАП 4: Решение о .ai-framework
-
-### 4.1 Определить судьбу .ai-framework/
-
-| # | Задача | Статус | Дата |
-|---|--------|--------|------|
-| 4.1.1 | [ ] Проверить, что весь полезный контент извлечён | ⬜ Ожидает | |
-| 4.1.2 | [ ] РЕШЕНИЕ: Оставить как справочник ИЛИ удалить | ⬜ Ожидает | |
-| 4.1.3 | [ ] Если оставить: пометить как "advanced reference" в CLAUDE.md | ⬜ Ожидает | |
-| 4.1.4 | [ ] Если удалить: выполнить `rm -rf .ai-framework/` | ⬜ Ожидает | |
-
-**Критерий завершения**: Нет дублирования фреймворков, однозначный источник истины
+**Completion criterion**: CLAUDE.md contains paths to all key references
 
 ---
 
-## ЭТАП 5: Валидация и тестирование
+## STAGE 4: Decision on .ai-framework
 
-### 5.1 Проверка целостности
+### 4.1 Determine fate of .ai-framework/
 
-| # | Задача | Статус | Дата |
-|---|--------|--------|------|
-| 5.1.1 | [ ] Валидировать все внутренние ссылки (нет битых) | ⬜ Ожидает | |
-| 5.1.2 | [ ] Проверить, что AI-агент находит файлы за 2 шага | ⬜ Ожидает | |
-| 5.1.3 | [ ] Обновить docs/history/2025-12-20-documentation-problems.md | ⬜ Ожидает | |
-| 5.1.4 | [ ] Закрыть связанные проблемы | ⬜ Ожидает | |
+| # | Task | Status | Date |
+|---|------|--------|------|
+| 4.1.1 | [ ] Verify all useful content has been extracted | Pending | |
+| 4.1.2 | [ ] DECISION: Keep as reference OR remove | Pending | |
+| 4.1.3 | [ ] If keeping: mark as "advanced reference" in CLAUDE.md | Pending | |
+| 4.1.4 | [ ] If removing: execute `rm -rf .ai-framework/` | Pending | |
 
-**Критерий завершения**: Все проблемы из pipeline-integration-problem.md решены
-
----
-
-## Критерии успешного завершения
-
-После выполнения всех задач должны быть достигнуты следующие результаты:
-
-| # | Критерий | Проверка | Статус |
-|---|----------|----------|--------|
-| 1 | [ ] AI-агент может найти любой файл за 2 шага | CLAUDE.md → INDEX.md → файл | ⬜ |
-| 2 | [ ] Пайплайн однозначен | Navigation Matrix для каждой команды | ⬜ |
-| 3 | [ ] Нет дублирования | Один источник истины | ⬜ |
-| 4 | [ ] Ворота проверяемы | Измеримые критерии в deliverables-catalog | ⬜ |
-| 5 | [ ] Все ссылки валидны | Нет 404 при переходах | ⬜ |
+**Completion criterion**: No framework duplication, unambiguous source of truth
 
 ---
 
-## Приоритеты выполнения
+## STAGE 5: Validation and Testing
+
+### 5.1 Integrity Check
+
+| # | Task | Status | Date |
+|---|------|--------|------|
+| 5.1.1 | [ ] Validate all internal links (no broken ones) | Pending | |
+| 5.1.2 | [ ] Verify AI agent finds files in 2 steps | Pending | |
+| 5.1.3 | [ ] Update docs/history/2025-12-20-documentation-problems.md | Pending | |
+| 5.1.4 | [ ] Close related issues | Pending | |
+
+**Completion criterion**: All problems from pipeline-integration-problem.md resolved
+
+---
+
+## Successful Completion Criteria
+
+After completing all tasks, the following results must be achieved:
+
+| # | Criterion | Check | Status |
+|---|-----------|-------|--------|
+| 1 | [ ] AI agent can find any file in 2 steps | CLAUDE.md → INDEX.md → file | |
+| 2 | [ ] Pipeline is unambiguous | Navigation Matrix for each command | |
+| 3 | [ ] No duplication | Single source of truth | |
+| 4 | [ ] Gates are verifiable | Measurable criteria in deliverables-catalog | |
+| 5 | [ ] All links valid | No 404 on navigation | |
+
+---
+
+## Execution Priorities
 
 ```
-ВЫСОКИЙ ПРИОРИТЕТ (блокирует работу AI):
+HIGH PRIORITY (blocks AI work):
 ├── 1.1 INDEX.md
 ├── 2.1 Navigation Matrix
-└── 3.1 Обновление CLAUDE.md
+└── 3.1 Updating CLAUDE.md
 
-СРЕДНИЙ ПРИОРИТЕТ (улучшает качество):
+MEDIUM PRIORITY (improves quality):
 ├── 1.2 LINKS_REFERENCE.md
 └── 1.3 deliverables-catalog.md
 
-НИЗКИЙ ПРИОРИТЕТ (завершающие действия):
-├── 4.1 Решение о .ai-framework
-└── 5.1 Валидация
+LOW PRIORITY (finishing actions):
+├── 4.1 Decision on .ai-framework
+└── 5.1 Validation
 ```
 
 ---
 
-## История изменений
+## Change History
 
-| Дата | Автор | Изменение |
-|------|-------|-----------|
-| 2025-12-21 | AI Agent | Создан чеклист |
+| Date | Author | Change |
+|------|--------|--------|
+| 2025-12-21 | AI Agent | Checklist created |
 
 ---
 
-## Как отмечать выполненные задачи
+## How to Mark Completed Tasks
 
-1. Измените `[ ]` на `[x]` в соответствующей строке
-2. Измените `⬜ Ожидает` на `✅ Готово`
-3. Добавьте дату выполнения в колонку "Дата"
-4. Обновите прогресс-бар в начале документа
+1. Change `[ ]` to `[x]` in the corresponding line
+2. Change `Pending` to `Done`
+3. Add completion date to the "Date" column
+4. Update the progress bar at the beginning of the document
 
-**Пример**:
+**Example**:
 ```markdown
-До:  | 1.1.1 | [ ] Создать файл docs/INDEX.md | ⬜ Ожидает | |
-После: | 1.1.1 | [x] Создать файл docs/INDEX.md | ✅ Готово | 2025-12-21 |
+Before:  | 1.1.1 | [ ] Create file docs/INDEX.md | Pending | |
+After:   | 1.1.1 | [x] Create file docs/INDEX.md | Done | 2025-12-21 |
 ```

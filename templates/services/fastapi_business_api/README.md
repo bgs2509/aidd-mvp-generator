@@ -1,18 +1,18 @@
-# {context}_api — Business API сервис
+# {context}_api — Business API Service
 
-> **Тип**: Business API (FastAPI)
-> **Назначение**: HTTP API для бизнес-логики
-
----
-
-## Описание
-
-Business API сервис на FastAPI, реализующий бизнес-логику приложения.
-Работает по принципу HTTP-only доступа к данным через Data API.
+> **Type**: Business API (FastAPI)
+> **Purpose**: HTTP API for business logic
 
 ---
 
-## Структура
+## Description
+
+Business API service on FastAPI implementing the application's business logic.
+Operates on the HTTP-only data access principle through the Data API.
+
+---
+
+## Structure
 
 ```
 {context}_api/
@@ -20,42 +20,42 @@ Business API сервис на FastAPI, реализующий бизнес-ло
 ├── requirements.txt
 ├── src/
 │   ├── __init__.py
-│   ├── main.py                 # Точка входа
+│   ├── main.py                 # Entry point
 │   ├── api/
 │   │   ├── __init__.py
 │   │   ├── v1/
 │   │   │   ├── __init__.py
-│   │   │   ├── router.py       # Главный роутер v1
+│   │   │   ├── router.py       # Main v1 router
 │   │   │   ├── health.py       # Health check
-│   │   │   └── {domain}/       # Домен (users, orders, etc.)
+│   │   │   └── {domain}/       # Domain (users, orders, etc.)
 │   │   │       ├── __init__.py
 │   │   │       ├── router.py
 │   │   │       └── schemas.py
-│   │   └── dependencies.py     # DI зависимости
+│   │   └── dependencies.py     # DI dependencies
 │   ├── application/
 │   │   ├── __init__.py
-│   │   ├── services/           # Сервисы приложения
+│   │   ├── services/           # Application services
 │   │   │   └── {domain}_service.py
 │   │   └── dtos/               # Data Transfer Objects
 │   │       └── {domain}_dto.py
 │   ├── domain/
 │   │   ├── __init__.py
-│   │   ├── entities/           # Доменные сущности
+│   │   ├── entities/           # Domain entities
 │   │   ├── value_objects/      # Value Objects
-│   │   └── services/           # Доменные сервисы
+│   │   └── services/           # Domain services
 │   ├── infrastructure/
 │   │   ├── __init__.py
-│   │   ├── http/               # HTTP клиенты
+│   │   ├── http/               # HTTP clients
 │   │   │   ├── __init__.py
 │   │   │   ├── base_client.py
 │   │   │   └── data_api_client.py
-│   │   └── cache/              # Кэширование
+│   │   └── cache/              # Caching
 │   │       └── redis_client.py
 │   └── core/
 │       ├── __init__.py
-│       ├── config.py           # Конфигурация
-│       ├── logging.py          # Настройка логирования
-│       └── exceptions.py       # Кастомные исключения
+│       ├── config.py           # Configuration
+│       ├── logging.py          # Logging setup
+│       └── exceptions.py       # Custom exceptions
 └── tests/
     ├── __init__.py
     ├── conftest.py
@@ -65,38 +65,38 @@ Business API сервис на FastAPI, реализующий бизнес-ло
 
 ---
 
-## Переменные для замены
+## Replacement Variables
 
-| Переменная | Описание | Пример |
-|------------|----------|--------|
-| `{context}` | Контекст проекта (snake_case) | `booking`, `ecommerce` |
-| `{domain}` | Домен сущности | `user`, `order`, `product` |
-| `{Domain}` | Домен сущности (PascalCase) | `User`, `Order`, `Product` |
-| `{CONTEXT}` | Контекст (UPPER_CASE) | `BOOKING`, `ECOMMERCE` |
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{context}` | Project context (snake_case) | `booking`, `ecommerce` |
+| `{domain}` | Entity domain | `user`, `order`, `product` |
+| `{Domain}` | Entity domain (PascalCase) | `User`, `Order`, `Product` |
+| `{CONTEXT}` | Context (UPPER_CASE) | `BOOKING`, `ECOMMERCE` |
 
 ---
 
-## Быстрый старт
+## Quick Start
 
 ```bash
-# Установка зависимостей
+# Install dependencies
 pip install -r requirements.txt
 
-# Запуск в dev режиме
+# Run in dev mode
 uvicorn src.main:app --reload --port 8000
 
-# Запуск тестов
+# Run tests
 pytest tests/ -v
 ```
 
 ---
 
-## Конфигурация
+## Configuration
 
-Переменные окружения (`.env`):
+Environment variables (`.env`):
 
 ```bash
-# Приложение
+# Application
 APP_NAME={context}_api
 APP_ENV=development
 DEBUG=true
@@ -106,7 +106,7 @@ LOG_LEVEL=INFO
 DATA_API_URL=http://data-api:8001
 DATA_API_TIMEOUT=30
 
-# Redis (опционально)
+# Redis (optional)
 REDIS_URL=redis://redis:6379/0
 ```
 
@@ -114,31 +114,31 @@ REDIS_URL=redis://redis:6379/0
 
 ## API Endpoints
 
-| Метод | Путь | Описание |
-|-------|------|----------|
+| Method | Path | Description |
+|--------|------|-------------|
 | GET | `/health` | Health check |
-| GET | `/api/v1/{domain}s` | Список сущностей |
-| POST | `/api/v1/{domain}s` | Создание сущности |
-| GET | `/api/v1/{domain}s/{id}` | Получение по ID |
-| PUT | `/api/v1/{domain}s/{id}` | Обновление |
-| DELETE | `/api/v1/{domain}s/{id}` | Удаление |
+| GET | `/api/v1/{domain}s` | List entities |
+| POST | `/api/v1/{domain}s` | Create entity |
+| GET | `/api/v1/{domain}s/{id}` | Get by ID |
+| PUT | `/api/v1/{domain}s/{id}` | Update |
+| DELETE | `/api/v1/{domain}s/{id}` | Delete |
 
 ---
 
-## Зависимости
+## Dependencies
 
 - FastAPI 0.100+
-- httpx (HTTP клиент)
+- httpx (HTTP client)
 - pydantic-settings
 - structlog
-- redis (опционально)
+- redis (optional)
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Заменить `{context}` на название проекта
-- [ ] Заменить `{domain}` на название домена
-- [ ] Настроить `.env`
-- [ ] Реализовать бизнес-логику в `application/services/`
-- [ ] Добавить тесты
+- [ ] Replace `{context}` with the project name
+- [ ] Replace `{domain}` with the domain name
+- [ ] Configure `.env`
+- [ ] Implement business logic in `application/services/`
+- [ ] Add tests

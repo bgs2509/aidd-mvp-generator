@@ -1,42 +1,42 @@
-# Функция: Stage 4.5 — Telegram Bot
+# Function: Stage 4.5 — Telegram Bot
 
-> **Назначение**: Создание Telegram бота на aiogram 3.x.
-
----
-
-## Цель
-
-Создать Telegram бота, который взаимодействует с Business API
-для предоставления функциональности пользователям через Telegram.
+> **Purpose**: Creating a Telegram bot using aiogram 3.x.
 
 ---
 
-## Когда применяется
+## Goal
+
+Create a Telegram bot that interacts with the Business API
+to provide functionality to users through Telegram.
+
+---
+
+## When to Apply
 
 ```
-if "Telegram" in FR or "бот" in FR:
-    → Создать Telegram Bot сервис
+if "Telegram" in FR or "bot" in FR:
+    → Create Telegram Bot service
 else:
-    → Пропустить этот этап
+    → Skip this stage
 ```
 
 ---
 
-## Архитектурный принцип
+## Architectural Principle
 
 ```
-ПРАВИЛО: Telegram Bot использует Business API,
-         а не обращается к БД напрямую.
+RULE: Telegram Bot uses the Business API,
+      and does not access the database directly.
 
 Telegram User ──▶ Bot ──HTTP──▶ Business API ──HTTP──▶ Data API
 
-Bot содержит UI логику (handlers, keyboards),
-но бизнес-логика находится в Business API.
+Bot contains UI logic (handlers, keyboards),
+but business logic resides in the Business API.
 ```
 
 ---
 
-## Структура Telegram Bot
+## Telegram Bot Structure
 
 ```
 services/{context}_bot/
@@ -81,12 +81,12 @@ services/{context}_bot/
 
 ---
 
-## Компоненты
+## Components
 
 ### 1. main.py
 
 ```python
-"""Точка входа Telegram бота."""
+"""Telegram bot entry point."""
 
 import asyncio
 import logging
@@ -103,11 +103,11 @@ from {context}_bot.infrastructure.http.business_api_client import BusinessApiCli
 
 
 async def main():
-    """Запуск бота."""
+    """Start the bot."""
     setup_logging()
     logger = logging.getLogger(__name__)
 
-    # Инициализация
+    # Initialization
     bot = Bot(
         token=settings.bot_token,
         default={"parse_mode": ParseMode.HTML},
@@ -115,15 +115,15 @@ async def main():
     storage = MemoryStorage()
     dp = Dispatcher(storage=storage)
 
-    # HTTP клиент для Business API
+    # HTTP client for Business API
     api_client = BusinessApiClient(settings.business_api_url)
     dp["api_client"] = api_client
 
-    # Регистрация middleware и handlers
+    # Register middleware and handlers
     register_middlewares(dp)
     register_handlers(dp)
 
-    logger.info("Бот запускается...")
+    logger.info("Bot is starting...")
 
     try:
         await dp.start_polling(bot)
@@ -139,13 +139,13 @@ if __name__ == "__main__":
 ### 2. Config (core/config.py)
 
 ```python
-"""Конфигурация бота."""
+"""Bot configuration."""
 
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    """Настройки бота."""
+    """Bot settings."""
 
     # Telegram
     bot_token: str
@@ -153,7 +153,7 @@ class Settings(BaseSettings):
     # Business API
     business_api_url: str = "http://localhost:8000"
 
-    # Общие
+    # General
     debug: bool = False
     log_level: str = "INFO"
 
@@ -168,7 +168,7 @@ settings = Settings()
 ### 3. HTTP Client (infrastructure/http/)
 
 ```python
-"""HTTP клиент для Business API."""
+"""HTTP client for Business API."""
 
 from typing import Any
 from uuid import UUID
@@ -177,16 +177,16 @@ import httpx
 
 
 class BusinessApiClient:
-    """Клиент для взаимодействия с Business API."""
+    """Client for interacting with the Business API."""
 
     def __init__(self, base_url: str):
-        """Инициализация клиента."""
+        """Initialize the client."""
         self.base_url = base_url.rstrip("/")
         self._client: httpx.AsyncClient | None = None
 
     @property
     def client(self) -> httpx.AsyncClient:
-        """Получить HTTP клиент."""
+        """Get the HTTP client."""
         if self._client is None:
             self._client = httpx.AsyncClient(
                 base_url=self.base_url,
@@ -195,7 +195,7 @@ class BusinessApiClient:
         return self._client
 
     async def close(self):
-        """Закрыть соединение."""
+        """Close the connection."""
         if self._client:
             await self._client.aclose()
             self._client = None
@@ -205,7 +205,7 @@ class BusinessApiClient:
         page: int = 1,
         page_size: int = 10,
     ) -> dict[str, Any]:
-        """Получить список {entities}."""
+        """Get list of {entities}."""
         response = await self.client.get(
             "/api/v1/{entities}",
             params={"page": page, "page_size": page_size},
@@ -214,7 +214,7 @@ class BusinessApiClient:
         return response.json()
 
     async def get_{entity}(self, {entity}_id: UUID) -> dict[str, Any] | None:
-        """Получить {entity} по ID."""
+        """Get {entity} by ID."""
         response = await self.client.get(f"/api/v1/{entities}/{{{entity}_id}}")
         if response.status_code == 404:
             return None
@@ -222,7 +222,7 @@ class BusinessApiClient:
         return response.json()
 
     async def create_{entity}(self, data: dict) -> dict[str, Any]:
-        """Создать {entity}."""
+        """Create {entity}."""
         response = await self.client.post("/api/v1/{entities}", json=data)
         response.raise_for_status()
         return response.json()
@@ -231,7 +231,7 @@ class BusinessApiClient:
 ### 4. Handlers (handlers/)
 
 ```python
-"""Базовый handler."""
+"""Base handler."""
 
 from aiogram import Router
 
@@ -239,7 +239,7 @@ router = Router()
 ```
 
 ```python
-"""Handler для команды /start."""
+"""Handler for the /start command."""
 
 from aiogram import Router
 from aiogram.filters import Command
@@ -252,27 +252,27 @@ router = Router()
 
 @router.message(Command("start"))
 async def cmd_start(message: Message):
-    """Обработчик команды /start."""
+    """/start command handler."""
     await message.answer(
-        "Добро пожаловать! Выберите действие:",
+        "Welcome! Choose an action:",
         reply_markup=get_main_keyboard(),
     )
 
 
 @router.message(Command("help"))
 async def cmd_help(message: Message):
-    """Обработчик команды /help."""
+    """/help command handler."""
     help_text = (
-        "<b>Доступные команды:</b>\n\n"
-        "/start - Начать работу\n"
-        "/help - Показать справку\n"
-        "/list - Список {entities}\n"
+        "<b>Available commands:</b>\n\n"
+        "/start - Start working\n"
+        "/help - Show help\n"
+        "/list - List {entities}\n"
     )
     await message.answer(help_text)
 ```
 
 ```python
-"""Handlers для {Entity}."""
+"""Handlers for {Entity}."""
 
 from uuid import UUID
 
@@ -290,18 +290,18 @@ from {context}_bot.states.{entity}_states import Create{Entity}State
 router = Router()
 
 
-@router.message(F.text == "📋 Список {entities}")
+@router.message(F.text == "📋 List {entities}")
 async def show_{entity}_list(message: Message, api_client: BusinessApiClient):
-    """Показать список {entities}."""
+    """Show list of {entities}."""
     result = await api_client.list_{entities}()
     items = result.get("items", [])
 
     if not items:
-        await message.answer("Список пуст.")
+        await message.answer("The list is empty.")
         return
 
     await message.answer(
-        "Выберите {entity}:",
+        "Select {entity}:",
         reply_markup=get_{entity}_list_keyboard(items),
     )
 
@@ -311,18 +311,18 @@ async def show_{entity}_detail(
     callback: CallbackQuery,
     api_client: BusinessApiClient,
 ):
-    """Показать детали {entity}."""
+    """Show {entity} details."""
     {entity}_id = UUID(callback.data.split(":")[1])
     {entity} = await api_client.get_{entity}({entity}_id)
 
     if {entity} is None:
-        await callback.answer("{Entity} не найден", show_alert=True)
+        await callback.answer("{Entity} not found", show_alert=True)
         return
 
     text = (
         f"<b>{{{entity}['name']}}</b>\n\n"
         f"ID: {{{entity}['id']}}\n"
-        # ... другие поля ...
+        # ... other fields ...
     )
 
     await callback.message.edit_text(
@@ -332,10 +332,10 @@ async def show_{entity}_detail(
     await callback.answer()
 
 
-@router.message(F.text == "➕ Создать {entity}")
+@router.message(F.text == "➕ Create {entity}")
 async def start_create_{entity}(message: Message, state: FSMContext):
-    """Начать создание {entity}."""
-    await message.answer("Введите название {entity}:")
+    """Start creating {entity}."""
+    await message.answer("Enter {entity} name:")
     await state.set_state(Create{Entity}State.waiting_for_name)
 
 
@@ -345,18 +345,18 @@ async def process_{entity}_name(
     state: FSMContext,
     api_client: BusinessApiClient,
 ):
-    """Обработать название {entity}."""
+    """Process {entity} name."""
     name = message.text.strip()
 
     if len(name) < 2:
-        await message.answer("Название слишком короткое. Попробуйте ещё раз:")
+        await message.answer("Name is too short. Try again:")
         return
 
-    # Создание через API
+    # Create via API
     {entity} = await api_client.create_{entity}({"name": name})
 
     await message.answer(
-        f"✅ {Entity} '{{{entity}['name']}}' создан!",
+        f"✅ {Entity} '{{{entity}['name']}}' created!",
     )
     await state.clear()
 ```
@@ -364,21 +364,21 @@ async def process_{entity}_name(
 ### 5. Keyboards (keyboards/)
 
 ```python
-"""Базовые клавиатуры."""
+"""Base keyboards."""
 
 from aiogram.types import ReplyKeyboardMarkup, KeyboardButton
 
 
 def get_main_keyboard() -> ReplyKeyboardMarkup:
-    """Главная клавиатура."""
+    """Main keyboard."""
     return ReplyKeyboardMarkup(
         keyboard=[
             [
-                KeyboardButton(text="📋 Список {entities}"),
-                KeyboardButton(text="➕ Создать {entity}"),
+                KeyboardButton(text="📋 List {entities}"),
+                KeyboardButton(text="➕ Create {entity}"),
             ],
             [
-                KeyboardButton(text="❓ Помощь"),
+                KeyboardButton(text="❓ Help"),
             ],
         ],
         resize_keyboard=True,
@@ -386,7 +386,7 @@ def get_main_keyboard() -> ReplyKeyboardMarkup:
 ```
 
 ```python
-"""Клавиатуры для {Entity}."""
+"""Keyboards for {Entity}."""
 
 from uuid import UUID
 
@@ -394,7 +394,7 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 def get_{entity}_list_keyboard(items: list[dict]) -> InlineKeyboardMarkup:
-    """Клавиатура списка {entities}."""
+    """{Entity} list keyboard."""
     buttons = [
         [InlineKeyboardButton(
             text=item["name"],
@@ -406,21 +406,21 @@ def get_{entity}_list_keyboard(items: list[dict]) -> InlineKeyboardMarkup:
 
 
 def get_{entity}_detail_keyboard({entity}_id: UUID) -> InlineKeyboardMarkup:
-    """Клавиатура деталей {entity}."""
+    """{Entity} detail keyboard."""
     return InlineKeyboardMarkup(inline_keyboard=[
         [
             InlineKeyboardButton(
-                text="✏️ Редактировать",
+                text="✏️ Edit",
                 callback_data=f"edit_{entity}:{{{entity}_id}}",
             ),
             InlineKeyboardButton(
-                text="🗑 Удалить",
+                text="🗑 Delete",
                 callback_data=f"delete_{entity}:{{{entity}_id}}",
             ),
         ],
         [
             InlineKeyboardButton(
-                text="◀️ Назад",
+                text="◀️ Back",
                 callback_data="back_to_list",
             ),
         ],
@@ -430,13 +430,13 @@ def get_{entity}_detail_keyboard({entity}_id: UUID) -> InlineKeyboardMarkup:
 ### 6. States (states/)
 
 ```python
-"""FSM состояния для {Entity}."""
+"""FSM states for {Entity}."""
 
 from aiogram.fsm.state import State, StatesGroup
 
 
 class Create{Entity}State(StatesGroup):
-    """Состояния создания {entity}."""
+    """{Entity} creation states."""
 
     waiting_for_name = State()
     waiting_for_description = State()
@@ -444,16 +444,16 @@ class Create{Entity}State(StatesGroup):
 
 
 class Edit{Entity}State(StatesGroup):
-    """Состояния редактирования {entity}."""
+    """{Entity} editing states."""
 
     selecting_field = State()
     waiting_for_value = State()
 ```
 
-### 7. Регистрация handlers (handlers/__init__.py)
+### 7. Handler Registration (handlers/__init__.py)
 
 ```python
-"""Регистрация handlers."""
+"""Handler registration."""
 
 from aiogram import Dispatcher
 
@@ -461,14 +461,14 @@ from {context}_bot.handlers import start, {entity}_handlers
 
 
 def register_handlers(dp: Dispatcher):
-    """Зарегистрировать все handlers."""
+    """Register all handlers."""
     dp.include_router(start.router)
     dp.include_router({entity}_handlers.router)
 ```
 
 ---
 
-## Шаблон для использования
+## Template to Use
 
 ```
 templates/services/aiogram_bot/
@@ -476,45 +476,45 @@ templates/services/aiogram_bot/
 
 ---
 
-## Порядок создания
+## Creation Order
 
 ```
-1. Создать структуру директорий
-2. Создать Dockerfile
-3. Создать requirements.txt
-4. Создать core/config.py, logging.py
-5. Создать infrastructure/http/business_api_client.py
-6. Создать handlers/base.py, start.py
-7. Создать keyboards/base.py
-8. Создать states/{entity}_states.py
-9. Создать handlers/{entity}_handlers.py
-10. Создать keyboards/{entity}_keyboards.py
-11. Создать handlers/__init__.py (регистрация)
-12. Создать main.py
+1. Create directory structure
+2. Create Dockerfile
+3. Create requirements.txt
+4. Create core/config.py, logging.py
+5. Create infrastructure/http/business_api_client.py
+6. Create handlers/base.py, start.py
+7. Create keyboards/base.py
+8. Create states/{entity}_states.py
+9. Create handlers/{entity}_handlers.py
+10. Create keyboards/{entity}_keyboards.py
+11. Create handlers/__init__.py (registration)
+12. Create main.py
 ```
 
 ---
 
-## Качественные ворота
+## Quality Gates
 
 ### TELEGRAM_BOT_READY
 
-- [ ] Структура проекта создана по шаблону
-- [ ] HTTP клиент для Business API создан
-- [ ] Handlers для всех команд созданы
-- [ ] Keyboards созданы
-- [ ] FSM states настроены
-- [ ] Dockerfile создан
-- [ ] `docker-compose up {context}-bot` запускается
-- [ ] Бот отвечает на /start
+- [ ] Project structure created from template
+- [ ] HTTP client for Business API created
+- [ ] Handlers for all commands created
+- [ ] Keyboards created
+- [ ] FSM states configured
+- [ ] Dockerfile created
+- [ ] `docker-compose up {context}-bot` starts successfully
+- [ ] Bot responds to /start
 
 ---
 
-## Источники
+## References
 
-| Документ | Описание |
-|----------|----------|
-| `knowledge/services/aiogram/basic-setup.md` | Базовая настройка |
-| `knowledge/services/aiogram/handler-patterns.md` | Паттерны handlers |
+| Document | Description |
+|----------|-------------|
+| `knowledge/services/aiogram/basic-setup.md` | Basic setup |
+| `knowledge/services/aiogram/handler-patterns.md` | Handler patterns |
 | `knowledge/services/aiogram/state-management.md` | FSM |
-| `templates/services/aiogram_bot/` | Шаблон сервиса |
+| `templates/services/aiogram_bot/` | Service template |

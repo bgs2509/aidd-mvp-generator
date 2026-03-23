@@ -1,14 +1,14 @@
-# Именование сервисов
+# Service Naming
 
-> **Назначение**: Правила именования сервисов и компонентов.
+> **Purpose**: Naming rules for services and components.
 
 ---
 
-## Паттерны именования
+## Naming Patterns
 
-### Python пакеты (snake_case)
+### Python Packages (snake_case)
 
-| Тип сервиса | Паттерн | Пример |
+| Service Type | Pattern | Example |
 |-------------|---------|--------|
 | Business API | `{context}_api` | `booking_api` |
 | Data API (PG) | `{context}_data` | `booking_data` |
@@ -16,9 +16,9 @@
 | Telegram Bot | `{context}_bot` | `booking_bot` |
 | Background Worker | `{context}_worker` | `booking_worker` |
 
-### Docker сервисы (kebab-case)
+### Docker Services (kebab-case)
 
-| Тип сервиса | Паттерн | Пример |
+| Service Type | Pattern | Example |
 |-------------|---------|--------|
 | Business API | `{context}-api` | `booking-api` |
 | Data API | `{context}-data` | `booking-data` |
@@ -31,7 +31,7 @@
 
 ---
 
-## Структура директорий
+## Directory Structure
 
 ```
 project/
@@ -40,7 +40,7 @@ project/
 │   │   ├── Dockerfile
 │   │   ├── requirements.txt
 │   │   └── src/
-│   │       └── {context}_api/   # Python пакет
+│   │       └── {context}_api/   # Python package
 │   │           ├── __init__.py
 │   │           ├── main.py
 │   │           └── ...
@@ -66,10 +66,10 @@ project/
 # docker-compose.yml
 
 services:
-  # Сервисы используют kebab-case
+  # Services use kebab-case
   booking-api:
     build:
-      context: ./services/booking_api  # Путь к snake_case директории
+      context: ./services/booking_api  # Path to snake_case directory
     container_name: booking-api
     ports:
       - "8000:8000"
@@ -90,19 +90,19 @@ services:
 
 ---
 
-## Переменные окружения
+## Environment Variables
 
 ```bash
-# Общие
+# Common
 ENVIRONMENT=development
 DEBUG=true
 LOG_LEVEL=INFO
 
-# Сервисы (используют _URL суффикс)
+# Services (use _URL suffix)
 DATA_API_URL=http://booking-data:8001
 BUSINESS_API_URL=http://booking-api:8000
 
-# База данных
+# Database
 DATABASE_URL=postgresql://postgres:postgres@booking-postgres:5432/booking
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
@@ -117,9 +117,9 @@ BOT_TOKEN=your_token_here
 
 ---
 
-## Порты
+## Ports
 
-| Сервис | Порт по умолчанию |
+| Service | Default Port |
 |--------|-------------------|
 | Business API | 8000 |
 | Data API (PG) | 8001 |
@@ -131,47 +131,47 @@ BOT_TOKEN=your_token_here
 
 ---
 
-## Примеры
+## Examples
 
-### Проект: Бронирование ресторанов
+### Project: Restaurant Booking
 
 ```
 context = booking
 domain = restaurant
 
-Сервисы:
+Services:
 - booking_api (Python) / booking-api (Docker)
 - booking_data (Python) / booking-data (Docker)
 - booking_bot (Python) / booking-bot (Docker)
 
-Переменные:
+Variables:
 - DATA_API_URL=http://booking-data:8001
 - DATABASE_URL=postgresql://...@booking-postgres:5432/booking
 ```
 
-### Проект: Личные финансы
+### Project: Personal Finance
 
 ```
 context = finance
 domain = transaction
 
-Сервисы:
+Services:
 - finance_api (Python) / finance-api (Docker)
 - finance_data (Python) / finance-data (Docker)
 - finance_worker (Python) / finance-worker (Docker)
 
-Переменные:
+Variables:
 - DATA_API_URL=http://finance-data:8001
 - DATABASE_URL=postgresql://...@finance-postgres:5432/finance
 ```
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Контекст определён (2-15 символов)
-- [ ] Python пакеты в snake_case
-- [ ] Docker сервисы в kebab-case
-- [ ] Переменные окружения в UPPER_SNAKE_CASE
-- [ ] Порты не конфликтуют
-- [ ] Структура директорий соблюдена
+- [ ] Context defined (2-15 characters)
+- [ ] Python packages in snake_case
+- [ ] Docker services in kebab-case
+- [ ] Environment variables in UPPER_SNAKE_CASE
+- [ ] Ports do not conflict
+- [ ] Directory structure is followed

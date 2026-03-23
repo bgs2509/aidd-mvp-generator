@@ -11,64 +11,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 💥 Breaking Changes
 
-#### Обновление команд v2 → v3
+#### Command update v2 → v3
 
-Все slash-команды теперь используют префикс `/aidd-*` для лучшей совместимости и идентификации.
+All slash commands now use the `/aidd-*` prefix for better compatibility and identification.
 
-**Миграция команд**:
+**Command migration**:
 - `/init` → `/aidd-init`
 - `/idea` → `/aidd-analyze`
 - `/research` → `/aidd-research`
 - `/plan` → `/aidd-plan`
 - `/feature-plan` → `/aidd-plan-feature`
 - `/generate` → `/aidd-code`
-- `/review`, `/test`, `/deploy`, `/finalize` → `/aidd-validate` (объединено)
+- `/review`, `/test`, `/deploy`, `/finalize` → `/aidd-validate` (consolidated)
 
-**Обновлённые файлы**:
-- 8 файлов команд (`.claude/commands/aidd-*.md`) — заголовки и примеры
-- `templates/project/CLAUDE.md.template` — таблица команд (9 → 6)
-- `docs/PIPELINE-TREE.md`, `docs/initialization.md` — документация
-- `knowledge/quality/quality-cascade.md` — диаграммы
-- `.claude/agents/analyst.md` — примеры
+**Updated files**:
+- 8 command files (`.claude/commands/aidd-*.md`) — headers and examples
+- `templates/project/CLAUDE.md.template` — command table (9 → 6)
+- `docs/PIPELINE-TREE.md`, `docs/initialization.md` — documentation
+- `knowledge/quality/quality-cascade.md` — diagrams
+- `.claude/agents/analyst.md` — examples
 
 **Commit**: 072ce34
 
 ### ✨ Added
 
-#### CHANGELOG.md для целевых проектов
+#### CHANGELOG.md for target projects
 
-Реализован автоматический механизм ведения журнала изменений в целевых проектах.
+Implemented an automatic change log mechanism for target projects.
 
-**Ключевые возможности**:
-- **Автоматическая генерация** при `/aidd-init`:
-  - Создание из шаблона для новых проектов
-  - Генерация из `features_registry` для существующих проектов
-- **Автоматическое обновление** при `/aidd-validate` → DEPLOYED:
-  - Извлечение данных из Completion Report
-  - Добавление секции фичи в обратной хронологии
-  - Обновление секции `[Unreleased]`
-- **Ручные записи** для критических изменений:
+**Key features**:
+- **Automatic generation** during `/aidd-init`:
+  - Creation from template for new projects
+  - Generation from `features_registry` for existing projects
+- **Automatic update** during `/aidd-validate` → DEPLOYED:
+  - Data extraction from Completion Report
+  - Adding feature section in reverse chronological order
+  - Updating the `[Unreleased]` section
+- **Manual entries** for critical changes:
   - Breaking Changes
   - Security Fixes
   - Hotfix
   - Database Migrations
   - Dependency Updates
   - Configuration Changes
-  - Значительный Refactoring
-- **Обязательное чтение** AI перед любой работой (правило в CLAUDE.md ЦП)
+  - Significant Refactoring
+- **Mandatory reading** by AI before any work (rule in TP CLAUDE.md)
 
-**Новые файлы**:
-- `templates/documents/changelog-template.md` — базовый шаблон
-- `templates/documents/changelog-entry-template.md` — 7 шаблонов записей
+**New files**:
+- `templates/documents/changelog-template.md` — base template
+- `templates/documents/changelog-entry-template.md` — 7 entry templates
 
-**Обновлённые файлы**:
-- `templates/project/CLAUDE.md.template` — добавлены правила ведения CHANGELOG
-- `.claude/commands/aidd-init.md` — создание CHANGELOG.md
-- `.claude/commands/aidd-validate.md` — автоматическое обновление
-- `docs/target-project-structure.md` — документация структуры
-- `CLAUDE.md` — описание концепции
+**Updated files**:
+- `templates/project/CLAUDE.md.template` — added CHANGELOG maintenance rules
+- `.claude/commands/aidd-init.md` — CHANGELOG.md creation
+- `.claude/commands/aidd-validate.md` — automatic update
+- `docs/target-project-structure.md` — structure documentation
+- `CLAUDE.md` — concept description
 
-**Формат**: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
+**Format**: [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 **Commit**: e82a8c6
 
@@ -106,7 +106,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Documentation (82 files updated)
 - Updated all command references to new naming
-- Updated all role names: Архитектор → Планировщик, Реализатор → Программист
+- Updated all role names: Architect → Planner, Implementer → Coder
 - Updated all artifact paths to v3 structure
 - Removed migration mode disclaimers
 - Simplified all tables (no dual naming columns)

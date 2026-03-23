@@ -1,66 +1,66 @@
-# Security Checklist для AI-агентов
+# Security Checklist for AI Agents
 
-> **Назначение**: Чек-лист проверки безопасности секретных данных в целевом проекте.
-> **Когда проверять**: На этапах REVIEW (5), VALIDATE (7), перед DEPLOY (8).
-
----
-
-## Автоматическая проверка AI-агентом
-
-AI-агент ОБЯЗАН выполнить следующие проверки перед прохождением качественных ворот.
+> **Purpose**: Security verification checklist for secret data in the Target Project.
+> **When to check**: At REVIEW (5), VALIDATE (7) stages, before DEPLOY (8).
 
 ---
 
-## 1. Проверка .gitignore
+## Automatic AI Agent Verification
 
-### Команды проверки
+The AI agent MUST perform the following checks before passing Quality Gates.
+
+---
+
+## 1. .gitignore Verification
+
+### Check Commands
 
 ```bash
-# Проверить наличие .gitignore
-test -f .gitignore && echo "OK" || echo "FAIL: .gitignore не найден"
+# Check .gitignore exists
+test -f .gitignore && echo "OK" || echo "FAIL: .gitignore not found"
 
-# Проверить что .env игнорируется
-grep -q "^\.env$" .gitignore && echo "OK" || echo "FAIL: .env не в .gitignore"
+# Check that .env is ignored
+grep -q "^\.env$" .gitignore && echo "OK" || echo "FAIL: .env not in .gitignore"
 
-# Проверить ключевые паттерны
+# Check key patterns
 for pattern in ".env" ".env.local" "*.pem" "*.key" "credentials.json"; do
-  grep -q "$pattern" .gitignore && echo "OK: $pattern" || echo "WARN: $pattern не в .gitignore"
+  grep -q "$pattern" .gitignore && echo "OK: $pattern" || echo "WARN: $pattern not in .gitignore"
 done
 ```
 
-### Критерии
+### Criteria
 
-| Проверка | Обязательно | Критичность |
+| Check | Required | Severity |
 |----------|-------------|-------------|
-| `.gitignore` существует | Да | Blocker |
-| `.env` в .gitignore | Да | Blocker |
-| `*.pem`, `*.key` в .gitignore | Да | Critical |
-| `credentials.json` в .gitignore | Да | Critical |
+| `.gitignore` exists | Yes | Blocker |
+| `.env` in .gitignore | Yes | Blocker |
+| `*.pem`, `*.key` in .gitignore | Yes | Critical |
+| `credentials.json` in .gitignore | Yes | Critical |
 
 ---
 
-## 2. Проверка отсутствия секретов в коде
+## 2. No Secrets in Code Verification
 
-### Команды проверки
+### Check Commands
 
 ```bash
-# Поиск hardcoded паролей
+# Search for hardcoded passwords
 grep -rn "password\s*=\s*['\"][^'\"]*['\"]" services/ --include="*.py" | \
-  grep -v "test_\|_test\.py\|example\|template" || echo "OK: Нет hardcoded паролей"
+  grep -v "test_\|_test\.py\|example\|template" || echo "OK: No hardcoded passwords"
 
-# Поиск hardcoded токенов
+# Search for hardcoded tokens
 grep -rn "token\s*=\s*['\"][^'\"]*['\"]" services/ --include="*.py" | \
-  grep -v "test_\|_test\.py\|example\|template" || echo "OK: Нет hardcoded токенов"
+  grep -v "test_\|_test\.py\|example\|template" || echo "OK: No hardcoded tokens"
 
-# Поиск подозрительных строк
+# Search for suspicious strings
 grep -rn "secret\s*=\s*['\"]" services/ --include="*.py" | \
   grep -v "test_\|_test\.py" || echo "OK"
 ```
 
-### Паттерны для поиска
+### Patterns to Search For
 
 ```
-ЗАПРЕЩЁННЫЕ паттерны в Python коде:
+PROHIBITED patterns in Python code:
 - password = "..."
 - PASSWORD = "..."
 - token = "..."
@@ -69,371 +69,371 @@ grep -rn "secret\s*=\s*['\"]" services/ --include="*.py" | \
 - POSTGRES_PASSWORD = "..."
 ```
 
-### Критерии
+### Criteria
 
-| Проверка | Критичность |
+| Check | Severity |
 |----------|-------------|
-| Нет hardcoded passwords | Blocker |
-| Нет hardcoded tokens | Blocker |
-| Нет hardcoded API keys | Blocker |
+| No hardcoded passwords | Blocker |
+| No hardcoded tokens | Blocker |
+| No hardcoded API keys | Blocker |
 
 ---
 
-## 3. Проверка .env.example
+## 3. .env.example Verification
 
-### Команды проверки
+### Check Commands
 
 ```bash
-# Проверить наличие .env.example
-test -f .env.example && echo "OK" || echo "WARN: .env.example не найден"
+# Check .env.example exists
+test -f .env.example && echo "OK" || echo "WARN: .env.example not found"
 
-# Проверить что нет реальных секретов (placeholder'ы)
+# Check for no real secrets (placeholders)
 if [ -f .env.example ]; then
-  # Должны быть CHANGE_ME или подобные маркеры
-  grep -q "CHANGE_ME" .env.example && echo "OK: Есть placeholder'ы" || \
-    echo "WARN: Нет CHANGE_ME placeholder'ов"
+  # Should have CHANGE_ME or similar markers
+  grep -q "CHANGE_ME" .env.example && echo "OK: Has placeholders" || \
+    echo "WARN: No CHANGE_ME placeholders"
 
-  # Не должно быть реальных паролей
+  # Should not have real passwords
   grep -vE "^#|CHANGE_ME|your_|example|placeholder" .env.example | \
-    grep -E "PASSWORD=.+" && echo "WARN: Возможно реальный пароль" || echo "OK"
+    grep -E "PASSWORD=.+" && echo "WARN: Possible real password" || echo "OK"
 fi
 ```
 
-### Критерии
+### Criteria
 
-| Проверка | Обязательно | Критичность |
+| Check | Required | Severity |
 |----------|-------------|-------------|
-| `.env.example` существует | Рекомендуется | Warning |
-| Содержит CHANGE_ME placeholder'ы | Да | Warning |
-| Нет реальных паролей | Да | Critical |
+| `.env.example` exists | Recommended | Warning |
+| Contains CHANGE_ME placeholders | Yes | Warning |
+| No real passwords | Yes | Critical |
 
 ---
 
-## 4. Проверка docker-compose
+## 4. docker-compose Verification
 
-### Команды проверки
+### Check Commands
 
 ```bash
-# Проверить что нет hardcoded секретов
+# Check for no hardcoded secrets
 grep -n "PASSWORD.*:.*-" docker-compose*.yml | \
-  grep -v ":?" && echo "WARN: Найден default пароль" || echo "OK"
+  grep -v ":?" && echo "WARN: Default password found" || echo "OK"
 
-# Проверить использование обязательных переменных
+# Check for required variable usage
 grep -q ":?.*required\|:?.*Required" docker-compose*.yml && \
-  echo "OK: Есть обязательные переменные" || \
-  echo "WARN: Нет обязательных переменных для секретов"
+  echo "OK: Has required variables" || \
+  echo "WARN: No required variables for secrets"
 
-# Проверить что порт БД закрыт в prod
+# Check that DB port is closed in prod
 grep -A5 "postgres:" docker-compose.prod.yml | grep "ports: \[\]" && \
-  echo "OK: Порт БД закрыт в prod" || echo "WARN: Порт БД может быть открыт"
+  echo "OK: DB port closed in prod" || echo "WARN: DB port may be open"
 ```
 
-### Критерии
+### Criteria
 
-| Проверка | Критичность |
+| Check | Severity |
 |----------|-------------|
-| Нет `:-secret` default значений | Critical |
-| Используется `:?` для обязательных | Warning |
-| Порты БД закрыты в prod compose | Warning |
+| No `:-secret` default values | Critical |
+| Uses `:?` for required vars | Warning |
+| DB ports closed in prod compose | Warning |
 
 ---
 
-## 5. Проверка логирования
+## 5. Logging Verification
 
-### Команды проверки
+### Check Commands
 
 ```bash
-# Проверить что используется sanitize_sensitive_data
+# Check that sanitize_sensitive_data is used
 grep -rn "sanitize_sensitive_data" services/ --include="*.py" || \
-  echo "INFO: sanitize_sensitive_data не найден в services/"
+  echo "INFO: sanitize_sensitive_data not found in services/"
 
-# Проверить что не логируются секреты напрямую
+# Check that secrets are not logged directly
 grep -rn "logger.*password\|logger.*token\|logger.*secret" services/ --include="*.py" | \
-  grep -v "REDACTED\|sanitize" && echo "WARN: Возможно логирование секретов" || echo "OK"
+  grep -v "REDACTED\|sanitize" && echo "WARN: Possible secret logging" || echo "OK"
 
-# Проверить setup_logging в main.py
+# Check setup_logging in main.py
 for service in services/*/; do
   grep -q "setup_logging" "${service}src/main.py" 2>/dev/null && \
-    echo "OK: setup_logging в $service" || echo "WARN: Нет setup_logging в $service"
+    echo "OK: setup_logging in $service" || echo "WARN: No setup_logging in $service"
 done
 ```
 
-### Критерии
+### Criteria
 
-| Проверка | Критичность |
+| Check | Severity |
 |----------|-------------|
-| Используется structlog с sanitization | Warning |
-| Нет прямого логирования секретов | Critical |
+| Uses structlog with sanitization | Warning |
+| No direct secret logging | Critical |
 
 ---
 
-## 6. Проверка CI/CD
+## 6. CI/CD Verification
 
-### Рекомендации
+### Recommendations
 
-- Убедитесь, что в конфигурациях CI/CD нет хардкода секретов.
-- Используйте механизм секретов вашей CI-системы и переменные окружения.
+- Ensure there are no hardcoded secrets in CI/CD configurations.
+- Use your CI system's secrets mechanism and environment variables.
 
-### Критерии
+### Criteria
 
-| Проверка | Критичность |
+| Check | Severity |
 |----------|-------------|
-| Нет хардкода секретов в CI/CD конфигурациях | Critical |
-| Секреты передаются через механизм CI/CD | Warning |
+| No hardcoded secrets in CI/CD configs | Critical |
+| Secrets passed through CI/CD mechanism | Warning |
 
 ---
 
-## 7. Проверка pre-commit hooks
+## 7. Pre-commit Hooks Verification
 
-### Команды проверки
+### Check Commands
 
 ```bash
-# Проверить наличие .pre-commit-config.yaml
-test -f .pre-commit-config.yaml && echo "OK" || echo "WARN: pre-commit не настроен"
+# Check .pre-commit-config.yaml exists
+test -f .pre-commit-config.yaml && echo "OK" || echo "WARN: pre-commit not configured"
 
-# Проверить что gitleaks включён
+# Check that gitleaks is enabled
 grep -q "gitleaks" .pre-commit-config.yaml 2>/dev/null && \
-  echo "OK: gitleaks настроен" || echo "WARN: gitleaks не настроен"
+  echo "OK: gitleaks configured" || echo "WARN: gitleaks not configured"
 
-# Проверить что detect-secrets включён
+# Check that detect-secrets is enabled
 grep -q "detect-secrets" .pre-commit-config.yaml 2>/dev/null && \
-  echo "OK: detect-secrets настроен" || echo "INFO: detect-secrets не настроен"
+  echo "OK: detect-secrets configured" || echo "INFO: detect-secrets not configured"
 ```
 
-### Критерии
+### Criteria
 
-| Проверка | Критичность |
+| Check | Severity |
 |----------|-------------|
-| `.pre-commit-config.yaml` существует | Рекомендуется |
-| gitleaks hook настроен | Рекомендуется |
+| `.pre-commit-config.yaml` exists | Recommended |
+| gitleaks hook configured | Recommended |
 
 ---
 
-## 8. Проверка Settings (Pydantic)
+## 8. Settings (Pydantic) Verification
 
-### Что проверять в коде
+### What to Check in Code
 
 ```python
-# ХОРОШО: Обязательные поля без default
+# GOOD: Required fields without default
 class Settings(BaseSettings):
-    database_url: str  # Обязательно
-    secret_key: str = Field(..., min_length=32)  # С валидацией
+    database_url: str  # Required
+    secret_key: str = Field(..., min_length=32)  # With validation
 
-# ПЛОХО: Default значения для секретов
+# BAD: Default values for secrets
 class Settings(BaseSettings):
-    password: str = "default123"  # НИКОГДА так не делать!
+    password: str = "default123"  # NEVER do this!
 ```
 
-### Команды проверки
+### Check Commands
 
 ```bash
-# Найти Settings классы с default паролями
+# Find Settings classes with default passwords
 grep -A10 "class Settings" services/*/src/core/config.py | \
   grep -E "(password|secret|token).*=.*['\"]" && \
-  echo "WARN: Default значения для секретов" || echo "OK"
+  echo "WARN: Default values for secrets" || echo "OK"
 ```
 
 ---
 
-## 9. Сводная таблица для Review Report
+## 9. Summary Table for Review Report
 
 ```markdown
 ## Security Checklist
 
-| # | Проверка | Статус | Комментарий |
+| # | Check | Status | Comment |
 |---|----------|--------|-------------|
-| 1 | .gitignore содержит .env | ✅/❌ | |
-| 2 | .gitignore содержит *.pem, *.key | ✅/❌ | |
-| 3 | Нет hardcoded паролей в коде | ✅/❌ | |
-| 4 | Нет hardcoded токенов в коде | ✅/❌ | |
-| 5 | .env.example без реальных секретов | ✅/❌ | |
-| 6 | docker-compose без default паролей | ✅/❌ | |
-| 7 | Логирование с sanitization | ✅/❌ | |
-| 8 | CI/CD использует secrets | ✅/❌ | |
-| 9 | Pre-commit hooks настроены | ✅/⚠️ | |
-| 10 | Settings без default секретов | ✅/❌ | |
+| 1 | .gitignore contains .env | ✅/❌ | |
+| 2 | .gitignore contains *.pem, *.key | ✅/❌ | |
+| 3 | No hardcoded passwords in code | ✅/❌ | |
+| 4 | No hardcoded tokens in code | ✅/❌ | |
+| 5 | .env.example without real secrets | ✅/❌ | |
+| 6 | docker-compose without default passwords | ✅/❌ | |
+| 7 | Logging with sanitization | ✅/❌ | |
+| 8 | CI/CD uses secrets | ✅/❌ | |
+| 9 | Pre-commit hooks configured | ✅/⚠️ | |
+| 10 | Settings without default secrets | ✅/❌ | |
 ```
 
 ---
 
-## 10. Блокирующие критерии
+## 10. Blocking Criteria
 
-### BLOCKER (блокирует REVIEW_OK)
+### BLOCKER (blocks REVIEW_OK)
 
-- [ ] Hardcoded пароли в коде
-- [ ] Hardcoded токены в коде
-- [ ] .env не в .gitignore
-- [ ] Реальные секреты в .env.example
+- [ ] Hardcoded passwords in code
+- [ ] Hardcoded tokens in code
+- [ ] .env not in .gitignore
+- [ ] Real secrets in .env.example
 
-### CRITICAL (требует исправления)
+### CRITICAL (requires fixing)
 
-- [ ] Default пароли в docker-compose
-- [ ] Прямое логирование секретов
-- [ ] Секреты в CI/CD без ${{ secrets }}
-- [ ] *.pem, *.key не в .gitignore
+- [ ] Default passwords in docker-compose
+- [ ] Direct secret logging
+- [ ] Secrets in CI/CD without ${{ secrets }}
+- [ ] *.pem, *.key not in .gitignore
 
-### WARNING (рекомендуется исправить)
+### WARNING (recommended to fix)
 
-- [ ] Нет .pre-commit-config.yaml
-- [ ] Нет gitleaks hook
-- [ ] Нет CHANGE_ME в .env.example
+- [ ] No .pre-commit-config.yaml
+- [ ] No gitleaks hook
+- [ ] No CHANGE_ME in .env.example
 
 ---
 
-## 11. Интеграция в качественные ворота
+## 11. Integration with Quality Gates
 
-### REVIEW (Этап 5)
+### REVIEW (Stage 5)
 
-AI-ревьюер ОБЯЗАН:
-1. Выполнить проверки 1-8 из этого чек-листа
-2. Включить результаты в секцию "Безопасность" Review Report
-3. Заблокировать REVIEW_OK при наличии BLOCKER issues
+AI reviewer MUST:
+1. Perform checks 1-8 from this checklist
+2. Include results in the "Security" section of the Review Report
+3. Block REVIEW_OK if BLOCKER issues exist
 
-### VALIDATE (Этап 7)
+### VALIDATE (Stage 7)
 
-AI-валидатор ОБЯЗАН:
-1. Подтвердить что все BLOCKER и CRITICAL исправлены
-2. Задокументировать WARNING как "известные ограничения"
-3. Включить Security Summary в Validation Report
+AI validator MUST:
+1. Confirm all BLOCKER and CRITICAL issues are fixed
+2. Document WARNINGs as "known limitations"
+3. Include Security Summary in the Validation Report
 
-### DEPLOY (Этап 8)
+### DEPLOY (Stage 8)
 
-AI-валидатор ОБЯЗАН:
-1. Подтвердить что .env.example актуален
-2. Проверить что production compose не содержит debug режимов
-3. Убедиться что HTTPS настроен (для production)
+AI validator MUST:
+1. Confirm .env.example is up to date
+2. Verify production compose does not contain debug modes
+3. Ensure HTTPS is configured (for production)
 
 ---
 
 ## 12. Docker Security
 
-> **Подробнее**: `knowledge/security/docker-security.md`
+> **Details**: `knowledge/security/docker-security.md`
 
-### Dockerfile проверки
+### Dockerfile Checks
 
 ```bash
-# Проверить non-root user
+# Check non-root user
 for dockerfile in services/*/Dockerfile; do
   grep -q "USER appuser\|USER 1000" "$dockerfile" && \
-    echo "OK: Non-root user в $dockerfile" || \
-    echo "WARN: Нет non-root user в $dockerfile"
+    echo "OK: Non-root user in $dockerfile" || \
+    echo "WARN: No non-root user in $dockerfile"
 done
 
-# Проверить ENTRYPOINT + CMD паттерн
+# Check ENTRYPOINT + CMD pattern
 for dockerfile in services/*/Dockerfile; do
   grep -q "ENTRYPOINT" "$dockerfile" && \
-    echo "OK: ENTRYPOINT в $dockerfile" || \
-    echo "INFO: Нет ENTRYPOINT в $dockerfile"
+    echo "OK: ENTRYPOINT in $dockerfile" || \
+    echo "INFO: No ENTRYPOINT in $dockerfile"
 done
 ```
 
-### Docker Compose проверки
+### Docker Compose Checks
 
 ```bash
-# Проверить security_opt
+# Check security_opt
 grep -q "no-new-privileges" docker-compose.yml && \
-  echo "OK: security_opt настроен" || echo "WARN: security_opt не настроен"
+  echo "OK: security_opt configured" || echo "WARN: security_opt not configured"
 
-# Проверить cap_drop в prod
+# Check cap_drop in prod
 grep -q "cap_drop" docker-compose.prod.yml && \
-  echo "OK: cap_drop настроен в prod" || echo "WARN: cap_drop не настроен в prod"
+  echo "OK: cap_drop configured in prod" || echo "WARN: cap_drop not configured in prod"
 
-# Проверить read_only в prod
+# Check read_only in prod
 grep -q "read_only: true" docker-compose.prod.yml && \
-  echo "OK: read_only в prod" || echo "INFO: read_only не настроен в prod"
+  echo "OK: read_only in prod" || echo "INFO: read_only not configured in prod"
 ```
 
-### Критерии
+### Criteria
 
-| Проверка | Критичность |
+| Check | Severity |
 |----------|-------------|
-| Non-root user в Dockerfile | Warning |
+| Non-root user in Dockerfile | Warning |
 | security_opt: no-new-privileges | Warning |
-| cap_drop: ALL для stateless | Warning |
-| read_only + tmpfs в prod | Info |
-| Resource limits в prod | Warning |
+| cap_drop: ALL for stateless | Warning |
+| read_only + tmpfs in prod | Info |
+| Resource limits in prod | Warning |
 
 ---
 
 ## 13. VPS Security Mode
 
-> **Подробнее**: `knowledge/security/vps-mode.md`
+> **Details**: `knowledge/security/vps-mode.md`
 
-### Проверка SSH-сессии
+### SSH Session Check
 
 ```bash
-# Определить VPS/production среду
+# Detect VPS/production environment
 if [ -n "$SSH_CONNECTION" ] || [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-    echo "⚠️  ОБНАРУЖЕНА SSH-СЕССИЯ"
+    echo "WARNING: SSH SESSION DETECTED"
     echo ""
-    echo "Рекомендуется VPS Mode (только чтение):"
+    echo "VPS Mode (read-only) recommended:"
     echo "  cp .aidd/templates/project/.claude/settings.vps.json.example \\"
     echo "     .claude/settings.json"
 fi
 ```
 
-### Проверка VPS settings
+### VPS Settings Check
 
 ```bash
-# Проверить что Edit и Write запрещены
+# Check that Edit and Write are denied
 if [ -f ".claude/settings.json" ]; then
   grep -q '"Edit(\*\*)"' .claude/settings.json && \
-    echo "VPS Mode: Edit запрещён" || echo "WARN: Edit может быть разрешён"
+    echo "VPS Mode: Edit denied" || echo "WARN: Edit may be allowed"
 
   grep -q '"Write(\*\*)"' .claude/settings.json && \
-    echo "VPS Mode: Write запрещён" || echo "WARN: Write может быть разрешён"
+    echo "VPS Mode: Write denied" || echo "WARN: Write may be allowed"
 fi
 ```
 
-### Критерии для production
+### Production Criteria
 
-| Проверка | Критичность |
+| Check | Severity |
 |----------|-------------|
-| VPS Mode активирован на production | Рекомендуется |
-| Edit/Write запрещены | Рекомендуется |
-| docker exec запрещён | Рекомендуется |
-| systemctl start/stop/restart запрещены | Рекомендуется |
+| VPS Mode activated on production | Recommended |
+| Edit/Write denied | Recommended |
+| docker exec denied | Recommended |
+| systemctl start/stop/restart denied | Recommended |
 
 ---
 
-## 14. Сводная таблица (расширенная)
+## 14. Extended Summary Table
 
 ```markdown
 ## Security Checklist
 
-| # | Проверка | Статус | Комментарий |
+| # | Check | Status | Comment |
 |---|----------|--------|-------------|
-| 1 | .gitignore содержит .env | ✅/❌ | |
-| 2 | .gitignore содержит *.pem, *.key | ✅/❌ | |
-| 3 | Нет hardcoded паролей в коде | ✅/❌ | |
-| 4 | Нет hardcoded токенов в коде | ✅/❌ | |
-| 5 | .env.example без реальных секретов | ✅/❌ | |
-| 6 | docker-compose без default паролей | ✅/❌ | |
-| 7 | Логирование с sanitization | ✅/❌ | |
-| 8 | CI/CD использует secrets | ✅/❌ | |
-| 9 | Pre-commit hooks настроены | ✅/⚠️ | |
-| 10 | Settings без default секретов | ✅/❌ | |
-| 11 | Non-root user в Dockerfile | ✅/⚠️ | |
-| 12 | security_opt настроен | ✅/⚠️ | |
-| 13 | cap_drop для stateless | ✅/⚠️ | |
-| 14 | VPS Mode на production | ✅/ℹ️ | |
+| 1 | .gitignore contains .env | ✅/❌ | |
+| 2 | .gitignore contains *.pem, *.key | ✅/❌ | |
+| 3 | No hardcoded passwords in code | ✅/❌ | |
+| 4 | No hardcoded tokens in code | ✅/❌ | |
+| 5 | .env.example without real secrets | ✅/❌ | |
+| 6 | docker-compose without default passwords | ✅/❌ | |
+| 7 | Logging with sanitization | ✅/❌ | |
+| 8 | CI/CD uses secrets | ✅/❌ | |
+| 9 | Pre-commit hooks configured | ✅/⚠️ | |
+| 10 | Settings without default secrets | ✅/❌ | |
+| 11 | Non-root user in Dockerfile | ✅/⚠️ | |
+| 12 | security_opt configured | ✅/⚠️ | |
+| 13 | cap_drop for stateless | ✅/⚠️ | |
+| 14 | VPS Mode on production | ✅/ℹ️ | |
 ```
 
 ---
 
-## Связанные документы
+## Related Documents
 
-| Документ | Описание |
+| Document | Description |
 |----------|----------|
-| `knowledge/security/secrets-management.md` | Управление секретами |
+| `knowledge/security/secrets-management.md` | Secrets management |
 | `knowledge/security/docker-security.md` | Docker best practices |
-| `knowledge/security/vps-mode.md` | VPS режим для production |
-| `templates/documents/review-report-template.md` | Шаблон ревью |
-| `templates/documents/validation-report-template.md` | Шаблон валидации |
-| `.claude/settings.json` | Ограничения для AI |
-| `templates/project/.claude/settings.vps.json.example` | Шаблон VPS settings |
+| `knowledge/security/vps-mode.md` | VPS mode for production |
+| `templates/documents/review-report-template.md` | Review template |
+| `templates/documents/validation-report-template.md` | Validation template |
+| `.claude/settings.json` | AI restrictions |
+| `templates/project/.claude/settings.vps.json.example` | VPS settings template |
 
 ---
 
-**Версия документа**: 1.1
-**Обновлён**: 2026-01-03
+**Document version**: 1.1
+**Updated**: 2026-01-03

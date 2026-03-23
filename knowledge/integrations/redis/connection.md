@@ -1,13 +1,13 @@
-# Управление соединениями Redis
+# Redis Connection Management
 
-> **Назначение**: Настройка и управление подключением к Redis.
+> **Purpose**: Setting up and managing Redis connections.
 
 ---
 
-## Базовое подключение
+## Basic Connection
 
 ```python
-"""Подключение к Redis."""
+"""Redis connection."""
 
 import redis.asyncio as redis
 
@@ -16,10 +16,10 @@ from {context}_api.core.config import settings
 
 async def create_redis_client() -> redis.Redis:
     """
-    Создать клиент Redis.
+    Create Redis client.
 
     Returns:
-        Настроенный клиент Redis.
+        Configured Redis client.
     """
     return redis.from_url(
         settings.redis_url,
@@ -28,25 +28,25 @@ async def create_redis_client() -> redis.Redis:
     )
 
 
-# В lifespan
+# In lifespan
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Жизненный цикл с Redis."""
-    # Создание клиента
+    """Lifecycle with Redis."""
+    # Create client
     app.state.redis = await create_redis_client()
 
     yield
 
-    # Закрытие
+    # Close
     await app.state.redis.close()
 ```
 
 ---
 
-## Пул соединений
+## Connection Pool
 
 ```python
-"""Redis с пулом соединений."""
+"""Redis with connection pool."""
 
 import redis.asyncio as redis
 from redis.asyncio.connection import ConnectionPool
@@ -56,10 +56,10 @@ from {context}_api.core.config import settings
 
 def create_redis_pool() -> ConnectionPool:
     """
-    Создать пул соединений Redis.
+    Create Redis connection pool.
 
     Returns:
-        Настроенный пул соединений.
+        Configured connection pool.
     """
     return ConnectionPool.from_url(
         settings.redis_url,
@@ -71,52 +71,52 @@ def create_redis_pool() -> ConnectionPool:
 
 async def get_redis_client(pool: ConnectionPool) -> redis.Redis:
     """
-    Получить клиент из пула.
+    Get client from pool.
 
     Args:
-        pool: Пул соединений.
+        pool: Connection pool.
 
     Returns:
-        Клиент Redis.
+        Redis client.
     """
     return redis.Redis(connection_pool=pool)
 
 
-# В lifespan
+# In lifespan
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Жизненный цикл с пулом Redis."""
-    # Создание пула
+    """Lifecycle with Redis pool."""
+    # Create pool
     app.state.redis_pool = create_redis_pool()
     app.state.redis = await get_redis_client(app.state.redis_pool)
 
     yield
 
-    # Закрытие
+    # Close
     await app.state.redis.close()
     await app.state.redis_pool.disconnect()
 ```
 
 ---
 
-## Конфигурация
+## Configuration
 
 ```python
-"""Конфигурация Redis."""
+"""Redis configuration."""
 
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    """Настройки с Redis."""
+    """Settings with Redis."""
 
     # Redis URL
     redis_url: str = "redis://localhost:6379/0"
 
-    # Пул соединений
+    # Connection pool
     redis_max_connections: int = 10
 
-    # Таймауты
+    # Timeouts
     redis_socket_timeout: float = 5.0
     redis_socket_connect_timeout: float = 5.0
 
@@ -135,20 +135,20 @@ settings = Settings()
 ## Health Check
 
 ```python
-"""Health check Redis."""
+"""Redis health check."""
 
 import redis.asyncio as redis
 
 
 async def check_redis_health(client: redis.Redis) -> dict:
     """
-    Проверить состояние Redis.
+    Check Redis health.
 
     Args:
-        client: Клиент Redis.
+        client: Redis client.
 
     Returns:
-        Статус подключения.
+        Connection status.
     """
     try:
         await client.ping()
@@ -165,10 +165,10 @@ async def check_redis_health(client: redis.Redis) -> dict:
         }
 
 
-# В роуте health
+# In health route
 @router.get("/health/redis")
 async def redis_health(request: Request) -> dict:
-    """Проверить Redis."""
+    """Check Redis."""
     return await check_redis_health(request.app.state.redis)
 ```
 
@@ -177,7 +177,7 @@ async def redis_health(request: Request) -> dict:
 ## Dependency Injection
 
 ```python
-"""DI для Redis."""
+"""DI for Redis."""
 
 from fastapi import Depends, Request
 import redis.asyncio as redis
@@ -187,13 +187,13 @@ from {context}_api.infrastructure.cache.client import CacheClient
 
 def get_redis(request: Request) -> redis.Redis:
     """
-    Получить клиент Redis.
+    Get Redis client.
 
     Args:
-        request: HTTP запрос.
+        request: HTTP request.
 
     Returns:
-        Клиент Redis.
+        Redis client.
     """
     return request.app.state.redis
 
@@ -202,23 +202,23 @@ def get_cache_client(
     redis_client: redis.Redis = Depends(get_redis),
 ) -> CacheClient:
     """
-    Получить клиент кэширования.
+    Get cache client.
 
     Args:
-        redis_client: Клиент Redis.
+        redis_client: Redis client.
 
     Returns:
-        Клиент кэширования.
+        Cache client.
     """
     return CacheClient(redis_client)
 ```
 
 ---
 
-## Sentinel для HA
+## Sentinel for HA
 
 ```python
-"""Redis Sentinel для High Availability."""
+"""Redis Sentinel for High Availability."""
 
 from redis.asyncio.sentinel import Sentinel
 
@@ -227,17 +227,17 @@ from {context}_api.core.config import settings
 
 async def create_sentinel_client() -> redis.Redis:
     """
-    Создать клиент через Sentinel.
+    Create client via Sentinel.
 
     Returns:
-        Клиент Redis через Sentinel.
+        Redis client via Sentinel.
     """
     sentinel = Sentinel(
         settings.redis_sentinels,  # [("host1", 26379), ("host2", 26379)]
         socket_timeout=settings.redis_socket_timeout,
     )
 
-    # Получить мастер
+    # Get master
     master = sentinel.master_for(
         settings.redis_master_name,
         socket_timeout=settings.redis_socket_timeout,
@@ -247,9 +247,9 @@ async def create_sentinel_client() -> redis.Redis:
     return master
 
 
-# Конфигурация для Sentinel
+# Sentinel configuration
 class Settings(BaseSettings):
-    """Настройки с Sentinel."""
+    """Settings with Sentinel."""
 
     redis_sentinels: list[tuple[str, int]] = [
         ("sentinel1", 26379),
@@ -273,10 +273,10 @@ from {context}_api.core.config import settings
 
 async def create_cluster_client() -> RedisCluster:
     """
-    Создать клиент Redis Cluster.
+    Create Redis Cluster client.
 
     Returns:
-        Клиент Redis Cluster.
+        Redis Cluster client.
     """
     return RedisCluster.from_url(
         settings.redis_cluster_url,
@@ -284,9 +284,9 @@ async def create_cluster_client() -> RedisCluster:
     )
 
 
-# Конфигурация для Cluster
+# Cluster configuration
 class Settings(BaseSettings):
-    """Настройки с Cluster."""
+    """Settings with Cluster."""
 
     redis_cluster_url: str = "redis://node1:6379"
 ```
@@ -319,21 +319,21 @@ volumes:
 
 ---
 
-## Переменные окружения
+## Environment Variables
 
 ```bash
 # .env
 
-# Простое подключение
+# Simple connection
 REDIS_URL=redis://localhost:6379/0
 
-# С паролем
+# With password
 REDIS_URL=redis://:password@localhost:6379/0
 
 # SSL
 REDIS_URL=rediss://localhost:6379/0
 
-# Настройки пула
+# Pool settings
 REDIS_MAX_CONNECTIONS=10
 REDIS_SOCKET_TIMEOUT=5.0
 REDIS_SOCKET_CONNECT_TIMEOUT=5.0
@@ -341,11 +341,11 @@ REDIS_SOCKET_CONNECT_TIMEOUT=5.0
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Подключение через redis.asyncio
-- [ ] Пул соединений настроен
-- [ ] Health check реализован
-- [ ] DI через Depends
-- [ ] Закрытие в lifespan
-- [ ] Таймауты настроены
+- [ ] Connection via redis.asyncio
+- [ ] Connection pool configured
+- [ ] Health check implemented
+- [ ] DI via Depends
+- [ ] Closed in lifespan
+- [ ] Timeouts configured

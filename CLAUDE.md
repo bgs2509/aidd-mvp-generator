@@ -1,143 +1,143 @@
-# CLAUDE.md — Главная точка входа для AI-агентов
+# CLAUDE.md — Main Entry Point for AI Agents
 
-> **Философия**: VERIFY BEFORE ACT — Проверяй перед действием.
-> **Принцип**: Артефакты = Память. Не полагаемся на контекст чата.
+> **Philosophy**: VERIFY BEFORE ACT — Verify before acting.
+> **Principle**: Artifacts = Memory. Do not rely on chat context.
 >
-> Полный список артефактов: [docs/NAVIGATION.md](docs/NAVIGATION.md#сводная-таблица)
+> Full list of artifacts: [docs/NAVIGATION.md](docs/NAVIGATION.md#summary-table)
 
 ---
 
-## TL;DR (30 секунд)
+## TL;DR (30 seconds)
 
-| Вопрос | Ответ |
-|--------|-------|
-| **Что это?** | Фреймворк для генерации production-ready MVP за ~10 минут |
-| **Как работает?** | 6-этапный пайплайн с качественными воротами |
-| **Как начать?** | `/aidd-analyze "описание проекта"` |
-| **Результат** | Работающий MVP: FastAPI + PostgreSQL + Docker |
-
----
-
-## Что такое AIDD-MVP Generator
-
-**AIDD-MVP Generator** — фреймворк для быстрой генерации production-ready MVP проектов,
-объединяющий методологию AI-Driven Development (AIDD) с архитектурными шаблонами.
-
-### Ключевые характеристики
-
-| Параметр | Значение |
-|----------|----------|
-| Уровень зрелости | **Level 2 (MVP)** — всегда |
-| Покрытие тестами | ≥75% |
-| Архитектура | DDD/Hexagonal, HTTP-only доступ к данным |
-| Качественные ворота | 6 этапов (0-5), 6 ворот |
-| Типы сервисов | Business API, Data API, Bot, Worker |
+| Question | Answer |
+|----------|--------|
+| **What is it?** | Framework for generating production-ready MVPs in ~10 minutes |
+| **How does it work?** | 6-stage pipeline with quality gates |
+| **How to start?** | `/aidd-analyze "project description"` |
+| **Result** | Working MVP: FastAPI + PostgreSQL + Docker |
 
 ---
 
-## Уникальность: Git Submodule подход
+## What is AIDD-MVP Generator
 
-> **КЛЮЧЕВАЯ ИДЕЯ**: Фреймворк ≠ шаблон. Фреймворк = Knowledge Base.
+**AIDD-MVP Generator** — a framework for rapid generation of production-ready MVP projects,
+combining AI-Driven Development (AIDD) methodology with architectural templates.
+
+### Key Characteristics
+
+| Parameter | Value |
+|-----------|-------|
+| Maturity Level | **Level 2 (MVP)** — always |
+| Test Coverage | ≥75% |
+| Architecture | DDD/Hexagonal, HTTP-only data access |
+| Quality Gates | 6 stages (0-5), 6 gates |
+| Service Types | Business API, Data API, Bot, Worker |
+
+---
+
+## Uniqueness: Git Submodule Approach
+
+> **KEY IDEA**: Framework ≠ template. Framework = Knowledge Base.
 
 ```
 ┌────────────────────────────────────────────────────────────────────┐
-│                    МОДЕЛЬ ИСПОЛЬЗОВАНИЯ                            │
+│                        USAGE MODEL                                  │
 ├────────────────────────────────────────────────────────────────────┤
 │                                                                    │
-│  my-project/                    ← ЦЕЛЕВОЙ ПРОЕКТ (ваш код)         │
+│  my-project/                    ← TARGET PROJECT (your code)       │
 │  │                                                                 │
-│  ├── .aidd/                     ← Git Submodule (ТОЛЬКО ЧТЕНИЕ!)   │
-│  │   ├── CLAUDE.md              ← Инструкции                       │
-│  │   ├── .claude/agents/        ← Роли AI                          │
-│  │   ├── .claude/commands/      ← Slash-команды                    │
-│  │   ├── templates/             ← Шаблоны сервисов                 │
-│  │   └── knowledge/             ← База знаний                      │
+│  ├── .aidd/                     ← Git Submodule (READ ONLY!)       │
+│  │   ├── CLAUDE.md              ← Instructions                     │
+│  │   ├── .claude/agents/        ← AI Roles                         │
+│  │   ├── .claude/commands/      ← Slash commands                   │
+│  │   ├── templates/             ← Service Templates                │
+│  │   └── knowledge/             ← Knowledge Base                   │
 │  │                                                                 │
-│  ├── ai-docs/docs/              ← AI-ГЕНЕРИРУЕМЫЕ АРТЕФАКТЫ        │
+│  ├── ai-docs/docs/              ← AI-GENERATED ARTIFACTS           │
 │  │   ├── _analysis/{name}.md                                       │
 │  │   ├── _plans/mvp/{name}.md                                      │
 │  │   └── _validation/                                              │
 │  │                                                                 │
-│  ├── services/                  ← AI-ГЕНЕРИРУЕМЫЙ КОД              │
+│  ├── services/                  ← AI-GENERATED CODE                │
 │  │   ├── {context}_{domain}_api/                                   │
 │  │   └── {context}_{domain}_data/                                  │
 │  │                                                                 │
-│  ├── .pipeline-state.json       ← Состояние пайплайна              │
-│  └── docker-compose.yml         ← Инфраструктура                   │
+│  ├── .pipeline-state.json       ← Pipeline State                   │
+│  └── docker-compose.yml         ← Infrastructure                   │
 │                                                                    │
 └────────────────────────────────────────────────────────────────────┘
 ```
 
-### Критическое правило
+### Critical Rule
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  ⛔ НИКОГДА НЕ МОДИФИЦИРОВАТЬ ФАЙЛЫ В .aidd/                     │
+│  ⛔ NEVER MODIFY FILES IN .aidd/                                 │
 ├─────────────────────────────────────────────────────────────────┤
-│  • Фреймворк = Knowledge Base (только чтение)                   │
-│  • Весь код генерируется ВОВНЕ submodule                        │
-│  • Для обновления: git submodule update --remote                │
+│  • Framework = Knowledge Base (read only)                       │
+│  • All code is generated OUTSIDE the submodule                  │
+│  • To update: git submodule update --remote                     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Особенности работы с командами
+### Command Handling Details
 
-**Проблема**: Claude Code ищет slash-команды только в `{project}/.claude/commands/`.
-Когда фреймворк подключен как submodule (`.aidd/`), команды из `.aidd/.claude/commands/`
-**не регистрируются автоматически**.
+**Problem**: Claude Code looks for slash commands only in `{project}/.claude/commands/`.
+When the framework is connected as a submodule (`.aidd/`), commands from `.aidd/.claude/commands/`
+**are not registered automatically**.
 
-**Решение**: Команда `/aidd-init` автоматически копирует файлы команд:
+**Solution**: The `/aidd-init` command automatically copies command files:
 
 ```bash
-# При /aidd-init выполняется:
+# During /aidd-init the following is executed:
 mkdir -p .claude/commands
 cp .aidd/.claude/commands/*.md .claude/commands/
 ```
 
-После `/aidd-init` команды доступны в автодополнении CLI:
+After `/aidd-init`, commands are available in CLI autocompletion:
 ```
 /aidd-analyze, /aidd-research, /aidd-plan, /aidd-plan-feature, /aidd-code, /aidd-validate
 ```
 
-**Обновление команд**: При обновлении submodule (`.aidd/`) повторно запустите `/aidd-init` —
-изменённые файлы будут обновлены, существующие актуальные пропущены.
+**Updating commands**: When updating the submodule (`.aidd/`), re-run `/aidd-init` —
+modified files will be updated, already current files will be skipped.
 
-**Как AI выполняет команду**:
+**How AI executes a command**:
 ```
-Пользователь: /aidd-analyze "описание"
+User: /aidd-analyze "description"
      ↓
-Claude Code загружает: ./.claude/commands/aidd-analyze.md (копия из .aidd/)
+Claude Code loads: ./.claude/commands/aidd-analyze.md (copy from .aidd/)
      ↓
-AI читает: ./.aidd/.claude/agents/analyst.md (роль)
+AI reads: ./.aidd/.claude/agents/analyst.md (role)
      ↓
-AI выполняет команду по инструкциям
+AI executes the command according to instructions
 ```
 
 ---
 
-## Два режима работы
+## Two Operating Modes
 
-| Режим | Когда использовать | Отличия |
-|-------|-------------------|---------|
-| **CREATE** | Новый MVP с нуля | `/aidd-plan` → полная архитектура |
-| **FEATURE** | Добавление фичи в существующий проект | `/aidd-plan-feature` → план интеграции |
+| Mode | When to use | Differences |
+|------|-------------|-------------|
+| **CREATE** | New MVP from scratch | `/aidd-plan` → full architecture |
+| **FEATURE** | Adding a feature to an existing project | `/aidd-plan-feature` → integration plan |
 
-### Автоопределение режима
+### Auto-detection of Mode
 
-| Признак | Режим |
-|---------|-------|
-| Есть `services/` или `docker-compose.yml` | **FEATURE** |
-| Пустая директория | **CREATE** |
+| Indicator | Mode |
+|-----------|------|
+| `services/` or `docker-compose.yml` exists | **FEATURE** |
+| Empty directory | **CREATE** |
 
-Явное переопределение: `/aidd-analyze --mode=FEATURE "описание"`
+Explicit override: `/aidd-analyze --mode=FEATURE "description"`
 
-### Параллельные пайплайны (Pipeline State v2)
+### Parallel Pipelines (Pipeline State v2)
 
-Фреймворк поддерживает одновременную разработку нескольких фич:
+The framework supports simultaneous development of multiple features:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                         ПАРАЛЛЕЛЬНЫЕ ПАЙПЛАЙНЫ                          │
+│                         PARALLEL PIPELINES                              │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
 │  main                                                                   │
@@ -149,63 +149,63 @@ AI выполняет команду по инструкциям
 │    │  │     └── ... → DEPLOYED                                          │
 │    │  │                                                                 │
 │    │  └── feature/F043-payments ──────────────────────▶ merge           │
-│    │        ├── /aidd-analyze (параллельно!)                              │
+│    │        ├── /aidd-analyze (in parallel!)                              │
 │    │        └── ...                                                     │
 │    ▼                                                                    │
-│  main (с обеими фичами)                                                 │
+│  main (with both features)                                              │
 │                                                                         │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-**Ключевые особенности**:
-- Каждая фича разрабатывается в отдельной git ветке `feature/{FID}-{slug}`
-- Ворота изолированы: `active_pipelines[FID].gates` вместо общих `gates`
-- Контекст фичи определяется автоматически по текущей git ветке
-- При `/aidd-validate` (DEPLOYED) фича переносится в `features_registry`
+**Key features**:
+- Each feature is developed in a separate git branch `feature/{FID}-{slug}`
+- Gates are isolated: `active_pipelines[FID].gates` instead of shared `gates`
+- Feature context is determined automatically by the current git branch
+- Upon `/aidd-validate` (DEPLOYED), the feature is moved to `features_registry`
 
-**Правила параллельной разработки**:
-- ✅ **Можно** начинать новую фичу даже если предыдущая не завершена (DEPLOYED)
-- ✅ **Можно** разрабатывать несколько фич одновременно в разных ветках
-- ⚠️ **Рекомендуется** отслеживать конфликты: `python3 scripts/git_helpers.py conflicts F042 F043`
-- ⚠️ **Избегайте** изменения одних файлов в разных активных фичах
+**Parallel development rules**:
+- ✅ **Allowed** to start a new feature even if the previous one is not completed (DEPLOYED)
+- ✅ **Allowed** to develop multiple features simultaneously in different branches
+- ⚠️ **Recommended** to track conflicts: `python3 scripts/git_helpers.py conflicts F042 F043`
+- ⚠️ **Avoid** modifying the same files in different active features
 
-**Документация**: [knowledge/pipeline/git-integration.md](knowledge/pipeline/git-integration.md)
+**Documentation**: [knowledge/pipeline/git-integration.md](knowledge/pipeline/git-integration.md)
 
-### Режимы инициализации (`/aidd-init`)
+### Initialization Modes (`/aidd-init`)
 
-Команда `/aidd-init` автоматически определяет тип проекта и запускает соответствующий режим:
+The `/aidd-init` command automatically detects the project type and launches the corresponding mode:
 
-| Режим | Условие | Поведение |
-|-------|---------|-----------|
-| **NEW_PROJECT** | Проект пустой | Стандартная инициализация — создание всех файлов |
-| **EXISTING_PROJECT** | Есть значимые файлы | Интерактивный режим — AI спрашивает для каждого файла |
+| Mode | Condition | Behavior |
+|------|-----------|----------|
+| **NEW_PROJECT** | Project is empty | Standard initialization — creating all files |
+| **EXISTING_PROJECT** | Has significant files | Interactive mode — AI asks for each file |
 
-**Критерии существующего проекта** (любой из):
-- `services/`, `src/`, `app/` — директории с кодом
-- `docker-compose.yml` — инфраструктура
-- `CLAUDE.md` — документация проекта
-- `README.md` размером > 500 байт
-- Более 2 Python файлов в корне
+**Existing project criteria** (any of):
+- `services/`, `src/`, `app/` — code directories
+- `docker-compose.yml` — infrastructure
+- `CLAUDE.md` — project documentation
+- `README.md` larger than 500 bytes
+- More than 2 Python files in root
 
-**Интерактивный режим EXISTING_PROJECT**:
+**Interactive EXISTING_PROJECT mode**:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  Для каждого файла/папки AI задаёт вопрос:                       │
+│  For each file/folder AI asks a question:                        │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                  │
-│  Файл существует и отличается от шаблона:                        │
-│  • [1] Сохранить текущую версию (рекомендуется)                 │
-│  • [2] Заменить на шаблон                                        │
-│  • [3] Объединить (добавить секции из шаблона)                  │
+│  File exists and differs from template:                          │
+│  • [1] Keep current version (recommended)                       │
+│  • [2] Replace with template                                     │
+│  • [3] Merge (add sections from template)                       │
 │                                                                  │
-│  Файл/папка не существует:                                       │
-│  • Создать? [Y/n] или [y/N]                                      │
+│  File/folder does not exist:                                     │
+│  • Create? [Y/n] or [y/N]                                       │
 │                                                                  │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-Все решения записываются в `.pipeline-state.json`:
+All decisions are recorded in `.pipeline-state.json`:
 ```json
 {
   "init_mode": "EXISTING_PROJECT",
@@ -220,7 +220,7 @@ AI выполняет команду по инструкциям
 
 ---
 
-## 6-этапный пайплайн
+## 6-Stage Pipeline
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -228,14 +228,14 @@ AI выполняет команду по инструкциям
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
 │  ┌───────────┐                                                               │
-│  │ BOOTSTRAP │  Этап 0: Инициализация целевого проекта                      │
+│  │ BOOTSTRAP │  Stage 0: Target Project Initialization                      │
 │  │/aidd-init │  ─────────────────────────────────────────────────────────── │
 │  └─────┬─────┘                                                               │
 │        │ BOOTSTRAP_READY                                                     │
 │        ▼                                                                     │
 │  ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌──────────────┐             │
-│  │  ИДЕЯ   │───▶│ИССЛЕДО- │───▶│АРХИТЕК- │───▶│   РЕАЛИЗА-   │             │
-│  │         │    │ ВАНИЕ   │    │  ТУРА   │    │     ЦИЯ       │             │
+│  │  IDEA   │───▶│RESEARCH │───▶│ARCHITEC-│───▶│IMPLEMENTA-   │             │
+│  │         │    │         │    │  TURE   │    │    TION       │             │
 │  └────┬────┘    └────┬────┘    └────┬────┘    └──────┬───────┘             │
 │       │              │              │                 │                     │
 │  ┌────▼────┐    ┌────▼────┐    ┌────▼────┐    ┌──────▼───────┐             │
@@ -243,8 +243,8 @@ AI выполняет команду по инструкциям
 │  │         │    │  RESEARCH_DONE  │    │APPROVED │    │     IMPLEMENT_OK      │             │
 │  └─────────┘    └─────────┘    └─────────┘    └──────────────┘             │
 │                                      ⚠️                                      │
-│                              Требует подтверждения                           │
-│                                пользователя!                                 │
+│                                Requires user                                │
+│                                confirmation!                                 │
 │                                                                              │
 │                                     ▼                                        │
 │  ┌───────────────────────────────────────────────────────────────┐          │
@@ -257,78 +257,78 @@ AI выполняет команду по инструкциям
 │  │                                 PASSED                        │          │
 │  └───────────────────────────────────────────────────────────────┘          │
 │                                                                              │
-│  Артефакт: 1 Completion Report (вместо 4 файлов)                            │
+│  Artifact: 1 Completion Report (instead of 4 files)                         │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Таблица команд и ворот
+### Commands and Gates Table
 
-| # | Этап | Команда | Агент | Ворота | Артефакт |
-|---|------|---------|-------|--------|----------|
-| 0 | Bootstrap | `/aidd-init` | — | `BOOTSTRAP_READY` | Структура ЦП |
-| 1 | Идея | `/aidd-analyze` | Аналитик | `PRD_READY` | `_analysis/{name}.md` |
-| 2 | Исследование | `/aidd-research` | Исследователь | `RESEARCH_DONE` | `_research/{name}.md` |
-| 3 | Архитектура (CREATE) | `/aidd-plan` | Планировщик | `PLAN_APPROVED` | `_plans/mvp/{name}.md` |
-| 3 | Архитектура (FEATURE) | `/aidd-plan-feature` | Планировщик | `PLAN_APPROVED` | `_plans/features/{name}.md` |
-| 4 | Реализация | `/aidd-code` | Программист | `IMPLEMENT_OK` | `services/`, тесты |
-| 5 | Quality & Deploy | `/aidd-validate` | Валидатор | **Full**: `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED` <br> **Quick**: `DOCUMENTED` | `_validation/{name}.md` |
+| # | Stage | Command | Agent | Gate | Artifact |
+|---|-------|---------|-------|------|----------|
+| 0 | Bootstrap | `/aidd-init` | — | `BOOTSTRAP_READY` | TP Structure |
+| 1 | Idea | `/aidd-analyze` | Analyst | `PRD_READY` | `_analysis/{name}.md` |
+| 2 | Research | `/aidd-research` | Researcher | `RESEARCH_DONE` | `_research/{name}.md` |
+| 3 | Architecture (CREATE) | `/aidd-plan` | Planner | `PLAN_APPROVED` | `_plans/mvp/{name}.md` |
+| 3 | Architecture (FEATURE) | `/aidd-plan-feature` | Planner | `PLAN_APPROVED` | `_plans/features/{name}.md` |
+| 4 | Implementation | `/aidd-code` | Coder | `IMPLEMENT_OK` | `services/`, tests |
+| 5 | Quality & Deploy | `/aidd-validate` | Validator | **Full**: `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED` <br> **Quick**: `DOCUMENTED` | `_validation/{name}.md` |
 
-> **Примечание**: `/aidd-validate` поддерживает два режима:
-> - **Полный (рекомендуется)**: Review → Test → Validate → Deploy → Production-ready MVP
-> - **Быстрый**: Только DRAFT Completion Report + Static Analysis → для документации или незавершённых фич
+> **Note**: `/aidd-validate` supports two modes:
+> - **Full (recommended)**: Review → Test → Validate → Deploy → Production-ready MVP
+> - **Quick**: Only DRAFT Completion Report + Static Analysis → for documentation or stalled features
 >
-> Файлы команд: [docs/INDEX.md](docs/INDEX.md#slash-команды)
+> Command files: [docs/INDEX.md](docs/INDEX.md#slash-commands)
 
-### Принцип блокировки
+### Blocking Principle
 
 ```
-❌ Ворота не пройдены → Переход на следующий этап ЗАБЛОКИРОВАН
-✅ Ворота пройдены → Можно продолжать
+❌ Gate not passed → Transition to next stage is BLOCKED
+✅ Gate passed → May proceed
 ```
 
-**Пример**: Нельзя выполнить `/aidd-code` без `PLAN_APPROVED`.
+**Example**: Cannot execute `/aidd-code` without `PLAN_APPROVED`.
 
-### Completion Report (Итоговый отчёт)
+### Completion Report (Final Report)
 
-После `DEPLOYED` каждая фича получает **Completion Report** — единый документ,
-содержащий всё что нужно знать о реализованной фиче.
+After `DEPLOYED`, each feature receives a **Completion Report** — a single document
+containing everything you need to know about the implemented feature.
 
-#### Зачем нужен
+#### Why It Is Needed
 
-| Проблема | Решение |
-|----------|---------|
-| AI теряет контекст между сессиями | Single source of truth |
-| Решения не документированы | ADR в каждом отчёте |
-| Scope changes не отслеживаются | План vs Факт |
-| Known issues теряются | Явная секция ограничений |
+| Problem | Solution |
+|---------|----------|
+| AI loses context between sessions | Single source of truth |
+| Decisions are not documented | ADR in each report |
+| Scope changes are not tracked | Plan vs Actual |
+| Known issues get lost | Explicit limitations section |
 
-#### Что содержит
+#### What It Contains
 
-1. **Executive Summary** — что сделано (2-3 предложения)
-2. **Code Review Summary** — результаты проверки качества
-3. **Testing Summary** — результаты тестирования
-4. **Requirements Traceability** — соответствие требованиям
-5. **ADR** — архитектурные решения с обоснованием
-6. **Scope Changes** — отклонения от плана
-7. **Known Limitations** — ограничения и workarounds
-8. **Метрики** — coverage, tests, security
-9. **Ссылки** — на все артефакты
+1. **Executive Summary** — what was done (2-3 sentences)
+2. **Code Review Summary** — quality check results
+3. **Testing Summary** — testing results
+4. **Requirements Traceability** — requirements compliance
+5. **ADR** — architectural decisions with rationale
+6. **Scope Changes** — deviations from the plan
+7. **Known Limitations** — limitations and workarounds
+8. **Metrics** — coverage, tests, security
+9. **References** — to all artifacts
 
-#### Когда AI ОБЯЗАН читать
+#### When AI MUST Read
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  При работе в FEATURE режиме AI ОБЯЗАН:                     │
+│  When working in FEATURE mode AI MUST:                       │
 │                                                             │
-│  1. Прочитать .pipeline-state.json                          │
-│  2. Для каждой фичи в features_registry:                    │
-│     → Прочитать artifacts.completion                        │
-│  3. Понять зависимости и возможности интеграции             │
+│  1. Read .pipeline-state.json                               │
+│  2. For each feature in features_registry:                   │
+│     → Read artifacts.completion                              │
+│  3. Understand dependencies and integration possibilities    │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-#### Путь к файлу
+#### File Path
 
 ```
 ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}-completion.md
@@ -336,119 +336,119 @@ ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}-completion.md
 
 ---
 
-### CHANGELOG.md (Журнал изменений)
+### CHANGELOG.md (Change Log)
 
-Каждый целевой проект автоматически получает `CHANGELOG.md` — **единую точку входа** для понимания истории проекта.
+Each target project automatically receives `CHANGELOG.md` — a **single entry point** for understanding project history.
 
-#### Зачем нужен
+#### Why It Is Needed
 
-| Проблема | Решение |
-|----------|---------|
-| AI теряет контекст при новой сессии | Быстрый обзор всех фич за 30 секунд |
-| История проекта распределена | Единый файл с хронологией |
-| Критические изменения не отслеживаются | Ручные записи между фичами |
-
-#### Что содержит
-
-1. **[Unreleased]** — активные фичи и недавние изменения
-2. **Завершённые фичи** — автоматически из Completion Reports
-3. **Критические изменения** — hotfix, breaking changes, security fixes (вручную от AI)
-
-#### Автоматическое обновление
-
-| Событие | Действие |
+| Problem | Solution |
 |---------|----------|
-| `/aidd-init` | Создаётся из шаблона или генерируется из `features_registry` |
-| `/aidd-validate` → DEPLOYED | Автоматически добавляется секция фичи |
-| Критические изменения | AI вручную добавляет записи (см. правила в CLAUDE.md ЦП) |
+| AI loses context in a new session | Quick overview of all features in 30 seconds |
+| Project history is scattered | Single file with chronology |
+| Critical changes are not tracked | Manual entries between features |
 
-#### Когда AI ОБЯЗАН читать
+#### What It Contains
+
+1. **[Unreleased]** — active features and recent changes
+2. **Completed features** — automatically from Completion Reports
+3. **Critical changes** — hotfix, breaking changes, security fixes (manually by AI)
+
+#### Automatic Update
+
+| Event | Action |
+|-------|--------|
+| `/aidd-init` | Created from template or generated from `features_registry` |
+| `/aidd-validate` → DEPLOYED | Feature section is automatically added |
+| Critical changes | AI manually adds entries (see rules in TP CLAUDE.md) |
+
+#### When AI MUST Read
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  AI ОБЯЗАН прочитать CHANGELOG.md ПЕРЕД:                     │
-│  • Планированием любых изменений                            │
-│  • Добавлением новой функциональности                       │
-│  • Исправлением багов                                       │
-│  • Рефакторингом кода                                       │
+│  AI MUST read CHANGELOG.md BEFORE:                           │
+│  • Planning any changes                                      │
+│  • Adding new functionality                                  │
+│  • Fixing bugs                                               │
+│  • Refactoring code                                          │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-**Подробнее**: См. CLAUDE.md целевого проекта → секция "Правила ведения CHANGELOG.md"
+**More details**: See TP CLAUDE.md → section "CHANGELOG.md Maintenance Rules"
 
 ---
 
-## 5 базовых ролей AI-агентов (7 файлов)
+## 5 Core AI Agent Roles (7 files)
 
-| Роль | Файл | Этапы | Ответственность |
-|------|------|-------|-----------------|
-| **Аналитик** | `analyst.md` | 1 | PRD, требования |
-| **Исследователь** | `researcher.md` | 2 | Анализ кода/требований |
-| **Планировщик** | `planner.md` | 3 | Проектирование |
-| **Программист** | `coder.md` | 4 | Генерация кода |
-| **Валидатор** | `validator.md` | 5 | Quality & Deploy (4 шага) |
+| Role | File | Stages | Responsibility |
+|------|------|--------|----------------|
+| **Analyst** | `analyst.md` | 1 | PRD, requirements |
+| **Researcher** | `researcher.md` | 2 | Code/requirements analysis |
+| **Planner** | `planner.md` | 3 | Design |
+| **Coder** | `coder.md` | 4 | Code generation |
+| **Validator** | `validator.md` | 5 | Quality & Deploy (4 steps) |
 
-**Вспомогательные библиотеки инструкций** (используются внутри Валидатора):
-- `code-review-library.md` — детальные инструкции для Code Review (Шаг 1)
-- `testing-library.md` — детальные инструкции для Testing (Шаг 2)
+**Auxiliary instruction libraries** (used within the Validator):
+- `code-review-library.md` — detailed instructions for Code Review (Step 1)
+- `testing-library.md` — detailed instructions for Testing (Step 2)
 
 ---
 
-## Взаимодействие пользователя с фреймворком
+## User Interaction with the Framework
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│  ПОЛЬЗОВАТЕЛЬ                           AI-АГЕНТ                    │
+│  USER                                   AI AGENT                    │
 ├─────────────────────────────────────────────────────────────────────┤
 │                                                                     │
-│  1. Подключает .aidd/ как submodule                                 │
-│  2. Запускает Claude Code                                           │
+│  1. Connects .aidd/ as submodule                                    │
+│  2. Launches Claude Code                                            │
 │                                                                     │
-│  3. /aidd-analyze "описание"       ───▶    Создаёт PRD                 │
-│                                         Задаёт уточняющие вопросы   │
+│  3. /aidd-analyze "description"    ───▶    Creates PRD                 │
+│                                         Asks clarifying questions    │
 │                                                                     │
-│  4. Отвечает на вопросы         ◀───    PRD_READY ✓                 │
+│  4. Answers questions              ◀───    PRD_READY ✓              │
 │                                                                     │
-│  5. /aidd-research              ───▶    Анализирует                 │
+│  5. /aidd-research                 ───▶    Analyzes                  │
 │                                         RESEARCH_DONE ✓             │
 │                                                                     │
-│  6. /aidd-plan                  ───▶    Создаёт план архитектуры    │
+│  6. /aidd-plan                     ───▶    Creates architecture plan │
 │                                                                     │
-│  7. ⚠️ УТВЕРЖДАЕТ ПЛАН          ◀───    Ждёт подтверждения          │
-│     "Да, план утверждаю"                PLAN_APPROVED ✓             │
+│  7. ⚠️ APPROVES PLAN               ◀───    Awaits confirmation       │
+│     "Yes, I approve the plan"              PLAN_APPROVED ✓          │
 │                                                                     │
-│  8. /aidd-code              ───▶    Генерирует код              │
+│  8. /aidd-code                     ───▶    Generates code            │
 │                                         IMPLEMENT_OK ✓              │
 │                                                                     │
-│  9. /aidd-validate              ───▶    Quality & Deploy:           │
+│  9. /aidd-validate                 ───▶    Quality & Deploy:         │
 │                                         • Review → REVIEW_OK ✓      │
 │                                         • Test → QA_PASSED ✓        │
 │                                         • Validate → ALL_GATES ✓    │
 │                                         • Deploy → DEPLOYED ✓       │
 │                                         • Completion Report         │
 │                                                                     │
-│  🎉 MVP готов!                                                      │
+│  🎉 MVP is ready!                                                   │
 │                                                                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Архитектурные принципы
+## Architectural Principles
 
-| Принцип | Правило |
-|---------|---------|
-| **HTTP-only** | Бизнес-сервисы НИКОГДА не обращаются к БД напрямую. Только через Data API. |
-| **DDD/Hexagonal** | Разделение на `api/application/domain/infrastructure` |
-| **Async-First** | Все I/O операции используют `async/await` |
-| **Типобезопасность** | Полные type hints для всех функций |
-| **Level 2 (MVP)** | Готов к продакшену, но без сложной масштабируемости |
+| Principle | Rule |
+|-----------|------|
+| **HTTP-only** | Business services NEVER access the DB directly. Only through Data API. |
+| **DDD/Hexagonal** | Separation into `api/application/domain/infrastructure` |
+| **Async-First** | All I/O operations use `async/await` |
+| **Type Safety** | Full type hints for all functions |
+| **Level 2 (MVP)** | Production-ready, but without complex scalability |
 
-### HTTP-only архитектура
+### HTTP-only Architecture
 
 ```
 ┌─────────────┐      HTTP       ┌─────────────┐      SQL      ┌─────────┐
-│ Business API│ ──────────────▶ │  Data API   │ ────────────▶ │   БД    │
+│ Business API│ ──────────────▶ │  Data API   │ ────────────▶ │   DB    │
 │  (FastAPI)  │                 │  (FastAPI)  │               │(Postgres)│
 └─────────────┘                 └─────────────┘               └─────────┘
       ▲
@@ -462,126 +462,126 @@ ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}-completion.md
 
 ---
 
-## Критические правила (VERIFY BEFORE ACT)
+## Critical Rules (VERIFY BEFORE ACT)
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  ПЕРЕД ЛЮБЫМ ДЕЙСТВИЕМ AI ОБЯЗАН:                               │
+│  BEFORE ANY ACTION AI MUST:                                      │
 ├─────────────────────────────────────────────────────────────────┤
-│  1. СОЗДАНИЕ ФАЙЛА  → Проверить, что файл НЕ существует         │
-│  2. РЕДАКТИРОВАНИЕ  → Сначала прочитать текущее содержимое      │
-│  3. УДАЛЕНИЕ        → Проверить все зависимости и ссылки        │
-│  4. ДОБАВЛЕНИЕ ССЫЛКИ → Проверить, что цель существует          │
-│  5. НАПИСАНИЕ КОДА  → Проверить нет ли похожего кода (DRY)      │
-│  6. ДОБАВЛЕНИЕ ФИЧИ → Проверить, что это нужно СЕЙЧАС (YAGNI)   │
+│  1. CREATING A FILE  → Verify that the file does NOT exist       │
+│  2. EDITING          → First read the current contents           │
+│  3. DELETING         → Check all dependencies and references     │
+│  4. ADDING A LINK    → Verify that the target exists             │
+│  5. WRITING CODE     → Check if similar code exists (DRY)        │
+│  6. ADDING A FEATURE → Verify it is needed NOW (YAGNI)           │
 └─────────────────────────────────────────────────────────────────┘
 
-НИКОГДА НЕ ПРЕДПОЛАГАТЬ → ВСЕГДА ПРОВЕРЯТЬ → ЗАТЕМ ДЕЙСТВОВАТЬ
+NEVER ASSUME → ALWAYS VERIFY → THEN ACT
 ```
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  ⛔ AI НИКОГДА НЕ ЧИТАЕТ .env ФАЙЛЫ                             │
+│  ⛔ AI NEVER READS .env FILES                                    │
 ├─────────────────────────────────────────────────────────────────┤
-│  • Файлы .env, .env.*, *.env, .env.local содержат СЕКРЕТЫ       │
-│  • Запрещены ВСЕ инструменты: Read, Bash (cat/grep/less/...)   │
-│  • Альтернатива: .env.example (БЕЗ реальных значений)           │
-│  • Исключений НЕТ — даже для других проектов                    │
+│  • Files .env, .env.*, *.env, .env.local contain SECRETS        │
+│  • ALL tools are prohibited: Read, Bash (cat/grep/less/...)     │
+│  • Alternative: .env.example (WITHOUT real values)               │
+│  • NO exceptions — even for other projects                       │
 │                                                                 │
-│  Нарушение = BLOCKER для любой задачи                           │
+│  Violation = BLOCKER for any task                                │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-**Почему нельзя**:
-- .env содержит API ключи, пароли БД, токены
-- Чтение .env = потенциальная утечка в логи/контекст
-- Даже чтение без вывода пользователю = нарушение
+**Why it is prohibited**:
+- .env contains API keys, DB passwords, tokens
+- Reading .env = potential leak into logs/context
+- Even reading without showing to user = violation
 
-**Паттерны запрещённых файлов**:
-- `.env*` — любые env файлы
-- `*.pem`, `*.key` — ключи шифрования
+**Prohibited file patterns**:
+- `.env*` — any env files
+- `*.pem`, `*.key` — encryption keys
 - `credentials.json` — credentials
-- `*secret*` — файлы со словом secret
-- Подробнее: knowledge/security/secrets-management.md
+- `*secret*` — files with the word secret
+- More details: knowledge/security/secrets-management.md
 
 ---
 
-## Выполнение команд /aidd-*
+## Executing /aidd-* Commands
 
-> **Lesson Learned**: F007 (2026-01-14) — пропущен Completion Report при `/aidd-validate`
+> **Lesson Learned**: F007 (2026-01-14) — missed Completion Report during `/aidd-validate`
 
-### Обязательный алгоритм
+### Mandatory Algorithm
 
-При выполнении любой команды `/aidd-*` AI ОБЯЗАН:
+When executing any `/aidd-*` command, AI MUST:
 
-1. **Прочитать ВЕСЬ** файл команды `.aidd/.claude/commands/{cmd}.md`
-2. **Найти** секцию "Чеклист ворот" в конце файла
-3. **Создать TodoWrite** со ВСЕМИ пунктами чеклиста
-4. **Выполнить** каждый пункт и отметить completed
-5. **Завершить** команду ТОЛЬКО когда ВСЕ 🔴 пункты выполнены
+1. **Read the ENTIRE** command file `.aidd/.claude/commands/{cmd}.md`
+2. **Find** the "Gate Checklist" section at the end of the file
+3. **Create a TodoWrite** with ALL checklist items
+4. **Execute** each item and mark it completed
+5. **Complete** the command ONLY when ALL 🔴 items are done
 
-### Маркеры критичности
+### Criticality Markers
 
-| Маркер | Значение | Правило |
-|--------|----------|---------|
-| 🔴 | **BLOCKER** | Без этого команда НЕ завершена |
-| 🟡 | **REQUIRED** | Обязательно выполнить |
-| ⚪ | **OPTIONAL** | Рекомендуется |
+| Marker | Meaning | Rule |
+|--------|---------|------|
+| 🔴 | **BLOCKER** | Without this the command is NOT complete |
+| 🟡 | **REQUIRED** | Must be executed |
+| ⚪ | **OPTIONAL** | Recommended |
 
-### Запрещено
+### Prohibited
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  ❌ Считать команду завершённой при невыполненных 🔴 пунктах    │
-│  ❌ Пропускать "документационные" шаги (reports, artifacts)     │
-│  ❌ Выборочно читать файлы команд (только технические секции)   │
+│  ❌ Consider command complete with unfulfilled 🔴 items          │
+│  ❌ Skip "documentation" steps (reports, artifacts)              │
+│  ❌ Selectively read command files (only technical sections)     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Порядок чтения для AI-агента
+## Reading Order for AI Agent
 
-### При работе в целевом проекте (ЦП)
+### When Working in the Target Project (TP)
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│  ФАЗА 1: Контекст целевого проекта (СНАЧАЛА!)                       │
+│  PHASE 1: Target Project Context (FIRST!)                            │
 ├─────────────────────────────────────────────────────────────────────┤
-│  1. ./CLAUDE.md              ← Точка входа ЦП                       │
-│  2. ./.pipeline-state.json   ← Состояние, режим, пройденные ворота  │
-│  3. ./ai-docs/docs/          ← Существующие артефакты               │
+│  1. ./CLAUDE.md              ← TP Entry Point                        │
+│  2. ./.pipeline-state.json   ← State, mode, passed gates            │
+│  3. ./ai-docs/docs/          ← Existing artifacts                    │
 └─────────────────────────────────────────────────────────────────────┘
                                     │
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│  ФАЗА 2: Проверка предусловий                                       │
+│  PHASE 2: Precondition Check                                         │
 ├─────────────────────────────────────────────────────────────────────┤
-│  4. Проверить требуемые ворота для команды                          │
-│  5. Если не пройдены → сообщить пользователю                        │
+│  4. Check required gates for the command                             │
+│  5. If not passed → notify the user                                  │
 └─────────────────────────────────────────────────────────────────────┘
                                     │
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│  ФАЗА 3: Инструкции фреймворка                                      │
+│  PHASE 3: Framework Instructions                                     │
 ├─────────────────────────────────────────────────────────────────────┤
-│  6. .aidd/workflow.md        ← Процесс и ворота                     │
-│  7. .aidd/.claude/commands/  ← Инструкции команды                   │
-│  8. .aidd/.claude/agents/    ← Инструкции роли                      │
+│  6. .aidd/workflow.md        ← Process and gates                     │
+│  7. .aidd/.claude/commands/  ← Command instructions                  │
+│  8. .aidd/.claude/agents/    ← Role instructions                     │
 └─────────────────────────────────────────────────────────────────────┘
                                     │
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────┐
-│  ФАЗА 4: Шаблоны (только если артефакт НЕ существует)               │
+│  PHASE 4: Templates (only if artifact does NOT exist)                │
 ├─────────────────────────────────────────────────────────────────────┤
-│  9. .aidd/templates/documents/  ← Шаблоны документов                │
-│  10. .aidd/knowledge/           ← База знаний по теме               │
+│  9. .aidd/templates/documents/  ← Document Templates                 │
+│  10. .aidd/knowledge/           ← Knowledge Base by topic            │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-**Подробный алгоритм**: [docs/initialization.md](docs/initialization.md)
+**Detailed algorithm**: [docs/initialization.md](docs/initialization.md)
 
-### При разработке самого фреймворка
+### When Developing the Framework Itself
 
 ```
 CLAUDE.md → docs/INDEX.md → conventions.md → workflow.md
@@ -589,57 +589,57 @@ CLAUDE.md → docs/INDEX.md → conventions.md → workflow.md
 
 ---
 
-## Быстрый старт
+## Quick Start
 
-### Новый проект (CREATE)
+### New Project (CREATE)
 
 ```bash
-# 1. Создать проект и подключить фреймворк
+# 1. Create project and connect framework
 mkdir my-mvp && cd my-mvp
 git init
 git submodule add https://github.com/your-org/aidd-mvp-generator.git .aidd
 
-# 2. Запустить Claude Code
+# 2. Launch Claude Code
 claude
 
-# 3. Начать работу
-/aidd-analyze "Создать сервис бронирования столиков в ресторанах"
+# 3. Start working
+/aidd-analyze "Create a restaurant table booking service"
 
-# 4. Следовать пайплайну (этапы 0-5)
+# 4. Follow the pipeline (stages 0-5)
 /aidd-init → /aidd-analyze → /aidd-research → /aidd-plan → /aidd-code → /aidd-validate
 ```
 
-### Добавление фичи (FEATURE)
+### Adding a Feature (FEATURE)
 
 ```bash
 cd existing-project
 claude
 
-# Начать работу
-/aidd-analyze "Добавить систему email уведомлений"
+# Start working
+/aidd-analyze "Add email notification system"
 
-# Пайплайн
+# Pipeline
 /aidd-analyze → /aidd-research → /aidd-plan-feature → /aidd-code → /aidd-validate
 ```
 
 ---
 
-## Типы генерируемых сервисов
+## Generated Service Types
 
-| Тип | Шаблон | Порт | Описание |
-|-----|--------|------|----------|
-| **Business API** | `fastapi_business_api/` | 8000-8099 | REST API на FastAPI |
-| **Data API (PostgreSQL)** | `postgres_data_api/` | 8001 | CRUD для PostgreSQL |
-| **Data API (MongoDB)** | `mongo_data_api/` | 8002 | CRUD для MongoDB |
-| **Telegram Bot** | `aiogram_bot/` | — | Бот на Aiogram |
-| **Background Worker** | `asyncio_worker/` | — | Фоновые задачи |
+| Type | Template | Port | Description |
+|------|----------|------|-------------|
+| **Business API** | `fastapi_business_api/` | 8000-8099 | REST API on FastAPI |
+| **Data API (PostgreSQL)** | `postgres_data_api/` | 8001 | CRUD for PostgreSQL |
+| **Data API (MongoDB)** | `mongo_data_api/` | 8002 | CRUD for MongoDB |
+| **Telegram Bot** | `aiogram_bot/` | — | Bot on Aiogram |
+| **Background Worker** | `asyncio_worker/` | — | Background tasks |
 
-### Именование сервисов
+### Service Naming
 
 ```
-{контекст}_{домен}_{тип}
+{context}_{domain}_{type}
 
-Примеры:
+Examples:
 - finance_lending_api      — Business API
 - finance_lending_data     — Data API
 - finance_lending_bot      — Telegram Bot
@@ -647,51 +647,51 @@ claude
 
 ---
 
-## Структура фреймворка
+## Framework Structure
 
 ```
 aidd-mvp-generator/
 │
-├── CLAUDE.md              ← ВЫ ЗДЕСЬ — точка входа
-├── conventions.md         ← Соглашения о коде и стиле
-├── workflow.md            ← Описание 6-этапного процесса
+├── CLAUDE.md              ← YOU ARE HERE — entry point
+├── conventions.md         ← Code Conventions
+├── workflow.md            ← 6-stage process description
 │
-├── .claude/               ← Интеграция Claude Code
-│   ├── settings.json      ← Permissions и hooks (коммитится)
-│   ├── settings.local.json← Локальные permissions (НЕ коммитить!)
-│   ├── agents/            ← 5 ролей + алиасы + библиотеки (9 файлов)
-│   └── commands/          ← 11 файлов команд (6 уникальных)
+├── .claude/               ← Claude Code Integration
+│   ├── settings.json      ← Permissions and hooks (committed)
+│   ├── settings.local.json← Local permissions (DO NOT commit!)
+│   ├── agents/            ← 5 roles + aliases + libraries (9 files)
+│   └── commands/          ← 11 command files (6 unique)
 │
-├── roles/                 ← Детальные инструкции по ролям
-├── knowledge/             ← База знаний (архитектура, сервисы, качество)
-├── templates/             ← Шаблоны (сервисы, документы, инфраструктура)
-└── docs/                  ← Документация генератора
+├── roles/                 ← Detailed role instructions
+├── knowledge/             ← Knowledge Base (architecture, services, quality)
+├── templates/             ← Templates (services, documents, infrastructure)
+└── docs/                  ← Generator documentation
 ```
 
-**Полный индекс**: [docs/INDEX.md](docs/INDEX.md)
+**Full index**: [docs/INDEX.md](docs/INDEX.md)
 
 ---
 
-## Навигация по документации
+## Documentation Navigation
 
-| Ищу | Документ |
-|-----|----------|
-| Полный индекс файлов | [docs/INDEX.md](docs/INDEX.md) |
-| Навигационная матрица | [docs/NAVIGATION.md](docs/NAVIGATION.md) |
-| Алгоритм инициализации | [docs/initialization.md](docs/initialization.md) |
-| 6-этапный процесс | [workflow.md](workflow.md) |
-| Соглашения о коде | [conventions.md](conventions.md) |
-| Структура целевого проекта | [docs/target-project-structure.md](docs/target-project-structure.md) |
-| **Параллельные пайплайны** | [knowledge/pipeline/git-integration.md](knowledge/pipeline/git-integration.md) |
+| Looking for | Document |
+|-------------|----------|
+| Full file index | [docs/INDEX.md](docs/INDEX.md) |
+| Navigation matrix | [docs/NAVIGATION.md](docs/NAVIGATION.md) |
+| Initialization algorithm | [docs/initialization.md](docs/initialization.md) |
+| 6-stage process | [workflow.md](workflow.md) |
+| Code Conventions | [conventions.md](conventions.md) |
+| Target Project structure | [docs/target-project-structure.md](docs/target-project-structure.md) |
+| **Parallel pipelines** | [knowledge/pipeline/git-integration.md](knowledge/pipeline/git-integration.md) |
 | Pipeline State v2 | [knowledge/pipeline/state-v2.md](knowledge/pipeline/state-v2.md) |
-| Инструкции роли | `.claude/agents/{role}.md` |
-| Инструкции команды | `.claude/commands/{command}.md` |
-| Шаблоны документов | `templates/documents/*.md` |
-| Шаблоны сервисов | `templates/services/*/` |
-| База знаний | `knowledge/` |
+| Role instructions | `.claude/agents/{role}.md` |
+| Command instructions | `.claude/commands/{command}.md` |
+| Document Templates | `templates/documents/*.md` |
+| Service Templates | `templates/services/*/` |
+| Knowledge Base | `knowledge/` |
 
 ---
 
-**Версия документа**: 2.3
-**Обновлён**: 2025-12-25
-**Назначение**: Главная точка входа для AI-агентов AIDD-MVP Generator
+**Document version**: 2.3
+**Updated**: 2025-12-25
+**Purpose**: Main Entry Point for AI agents of AIDD-MVP Generator

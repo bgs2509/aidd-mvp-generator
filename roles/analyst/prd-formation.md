@@ -1,198 +1,198 @@
-# Функция: Формирование PRD
+# Function: PRD Formation
 
-> **Назначение**: Создание финального PRD документа.
-
----
-
-## Цель
-
-Собрать все требования в структурированный PRD документ,
-готовый для передачи на этап архитектуры.
+> **Purpose**: Creating the final PRD document.
 
 ---
 
-## Структура PRD (11 разделов)
+## Goal
+
+Collect all requirements into a structured PRD document,
+ready for handoff to the architecture stage.
+
+---
+
+## PRD Structure (11 sections)
 
 ```markdown
-# PRD: {Название проекта}
+# PRD: {Project Name}
 
-**Версия**: 1.0
-**Дата**: {YYYY-MM-DD}
-**Автор**: AI Agent (Аналитик)
-**Статус**: Draft | Review | Approved
+**Version**: 1.0
+**Date**: {YYYY-MM-DD}
+**Author**: AI Agent (Analyst)
+**Status**: Draft | Review | Approved
 
 ---
 
-## 1. Обзор
-### 1.1 Проблема
-### 1.2 Решение
-### 1.3 Целевая аудитория
-### 1.4 Scope MVP
+## 1. Overview
+### 1.1 Problem
+### 1.2 Solution
+### 1.3 Target Audience
+### 1.4 MVP Scope
 
-## 2. Функциональные требования
-| ID | Название | Описание | Приоритет | Критерий приёмки |
+## 2. Functional Requirements
+| ID | Name | Description | Priority | Acceptance Criteria |
 
 ## 3. User Stories
-### US-001: {Название}
+### US-001: {Name}
 
-## 4. Пайплайны
-### 4.0 Тип изменений
-### 4.1 Бизнес-пайплайн
+## 4. Pipelines
+### 4.0 Change Type
+### 4.1 Business Pipeline
 ### 4.2 Data Pipeline
-### 4.3 Интеграционный пайплайн
-### 4.4 Влияние на существующие пайплайны
+### 4.3 Integration Pipeline
+### 4.4 Impact on Existing Pipelines
 
-## 5. UI/UX требования
-| ID | Название | Описание | Приоритет |
+## 5. UI/UX Requirements
+| ID | Name | Description | Priority |
 
-## 6. Нефункциональные требования
-| ID | Название | Описание | Метрика |
+## 6. Non-Functional Requirements
+| ID | Name | Description | Metric |
 
-## 7. Технические ограничения
-## 8. Допущения и риски
-## 9. Открытые вопросы
-## 10. Глоссарий
-## 11. История изменений
+## 7. Technical Constraints
+## 8. Assumptions and Risks
+## 9. Open Questions
+## 10. Glossary
+## 11. Change History
 
-## Качественные ворота
+## Quality Gates
 ### PRD_READY Checklist
 ```
 
 ---
 
-## Правила формирования
+## Formation Rules
 
-### 1. Обзор (Секция 1)
-
-```
-1.1 Проблема:
-- Описать боль пользователя
-- Почему текущие решения не подходят
-
-1.2 Решение:
-- Как проект решает проблему
-- Ключевые преимущества
-
-1.3 Целевая аудитория:
-- Основные пользователи
-- Их характеристики
-
-1.4 Scope MVP:
-- Что ВХОДИТ в MVP
-- Что НЕ ВХОДИТ (осознанно отложено)
-```
-
-### 2. Функциональные требования (Секция 2)
+### 1. Overview (Section 1)
 
 ```
-Каждое требование:
-- Уникальный ID (FR-001, FR-002, ...)
-- Краткое название
-- Детальное описание
-- Приоритет (Must/Should/Could)
-- Измеримый критерий приёмки
+1.1 Problem:
+- Describe the user's pain point
+- Why current solutions are inadequate
+
+1.2 Solution:
+- How the project solves the problem
+- Key advantages
+
+1.3 Target Audience:
+- Primary users
+- Their characteristics
+
+1.4 MVP Scope:
+- What IS INCLUDED in the MVP
+- What is NOT INCLUDED (consciously deferred)
 ```
 
-### 3. Пайплайны (Секция 4)
+### 2. Functional Requirements (Section 2)
 
 ```
-4.0 Тип изменений:
-- Режим: CREATE (новый) / FEATURE (изменение)
-- Затрагиваемые пайплайны
+Each requirement:
+- Unique ID (FR-001, FR-002, ...)
+- Short name
+- Detailed description
+- Priority (Must/Should/Could)
+- Measurable acceptance criteria
+```
 
-4.1 Бизнес-пайплайн:
-- Основной flow операций
-- Состояния сущностей и переходы
-- Условия переходов между этапами
+### 3. Pipelines (Section 4)
+
+```
+4.0 Change Type:
+- Mode: CREATE (new) / FEATURE (modification)
+- Affected pipelines
+
+4.1 Business Pipeline:
+- Main operations flow
+- Entity states and transitions
+- Conditions for transitions between stages
 
 4.2 Data Pipeline:
-- Диаграмма потока данных (ASCII)
-- Таблица: источник → назначение → данные → формат
-- Трансформации данных
+- Data flow diagram (ASCII)
+- Table: source → destination → data → format
+- Data transformations
 
-4.3 Интеграционный пайплайн:
-- Карта сервисов (ASCII)
-- Точки интеграции (INT-001, INT-002, ...)
-- Контракты API (Request/Response/Errors)
+4.3 Integration Pipeline:
+- Service map (ASCII)
+- Integration points (INT-001, INT-002, ...)
+- API contracts (Request/Response/Errors)
 
-4.4 Влияние на существующие пайплайны:
-- Для CREATE: "Новая система"
-- Для FEATURE: таблица изменений, breaking changes
+4.4 Impact on Existing Pipelines:
+- For CREATE: "New system"
+- For FEATURE: change table, breaking changes
 ```
 
-### 4. Нефункциональные требования (Секция 6)
+### 4. Non-Functional Requirements (Section 6)
 
 ```
-Стандартный набор для MVP:
-- NF-001: Время отклика (<500ms)
-- NF-002: Доступность (99%)
-- NF-003: Покрытие тестами (≥75%)
-- NF-004: Безопасность (авторизация, валидация)
+Standard set for MVP:
+- NF-001: Response time (<500ms)
+- NF-002: Availability (99%)
+- NF-003: Test coverage (≥75%)
+- NF-004: Security (authorization, validation)
 ```
 
-### 5. Открытые вопросы (Секция 9)
+### 5. Open Questions (Section 9)
 
 ```
-Вопросы, требующие уточнения.
-Статусы:
-- Open: Требует решения
-- Resolved: Решён (указать решение)
+Questions requiring clarification.
+Statuses:
+- Open: Requires resolution
+- Resolved: Resolved (specify the resolution)
 
-Блокирующие вопросы ДОЛЖНЫ быть решены
-до прохождения ворот PRD_READY.
+Blocking questions MUST be resolved
+before passing the PRD_READY gate.
 ```
 
-### 6. История изменений (Секция 11)
+### 6. Change History (Section 11)
 
 ```
-Версионность документа.
-Фиксировать все значимые изменения PRD.
+Document versioning.
+Record all significant PRD changes.
 ```
 
 ---
 
-## Путь сохранения (в целевом проекте)
+## Save Path (in Target Project)
 
 ```
 ai-docs/docs/_analysis/{project-name}-prd.md
 
-Примеры:
+Examples:
 - ai-docs/docs/_analysis/booking-restaurant-prd.md
 - ai-docs/docs/_analysis/personal-finance-prd.md
 ```
 
-Для режима FEATURE:
+For FEATURE mode:
 ```
 ai-docs/docs/_analysis/{feature-name}-feature-prd.md
 ```
 
 ---
 
-## Чек-лист PRD_READY
+## PRD_READY Checklist
 
-- [ ] Секция 1 (Обзор) заполнена
-- [ ] Секция 2 (FR) содержит все требования
-- [ ] Секция 3 (User Stories) связаны с FR
-- [ ] Секция 4 (Пайплайны) заполнена:
-  - [ ] Бизнес-пайплайн описан (flow, состояния)
-  - [ ] Data Pipeline описан (диаграмма, трансформации)
-  - [ ] Интеграционный пайплайн описан (карта, контракты)
-  - [ ] Влияние на существующие пайплайны указано
-- [ ] Секция 5 (UI/UX) заполнена (если применимо)
-- [ ] Секция 6 (NF) содержит стандартные требования
-- [ ] Секция 7 (Технические ограничения) заполнена
-- [ ] Секция 8 (Допущения и риски) заполнена
-- [ ] Секция 9 (Вопросы) не имеет Open блокеров
-- [ ] Все ID уникальны (FR-*, NF-*, UI-*, INT-*)
-- [ ] Все Must-требования имеют критерии приёмки
-- [ ] Документ сохранён в `ai-docs/docs/_analysis/` (целевой проект)
+- [ ] Section 1 (Overview) filled in
+- [ ] Section 2 (FR) contains all requirements
+- [ ] Section 3 (User Stories) linked to FR
+- [ ] Section 4 (Pipelines) filled in:
+  - [ ] Business pipeline described (flow, states)
+  - [ ] Data Pipeline described (diagram, transformations)
+  - [ ] Integration pipeline described (map, contracts)
+  - [ ] Impact on existing pipelines specified
+- [ ] Section 5 (UI/UX) filled in (if applicable)
+- [ ] Section 6 (NF) contains standard requirements
+- [ ] Section 7 (Technical Constraints) filled in
+- [ ] Section 8 (Assumptions and Risks) filled in
+- [ ] Section 9 (Questions) has no Open blockers
+- [ ] All IDs are unique (FR-*, NF-*, UI-*, INT-*)
+- [ ] All Must requirements have acceptance criteria
+- [ ] Document saved to `ai-docs/docs/_analysis/` (Target Project)
 
 ---
 
-## Источники
+## Sources
 
-| Документ | Описание |
-|----------|----------|
-| `.ai-framework/docs/workflows/analyst-workflow.md` | Workflow аналитика |
-| `.ai-framework/docs/reference/aidd-roles-reference.md` | Справочник ролей |
-| `templates/documents/prd-template.md` | Шаблон PRD |
+| Document | Description |
+|----------|-------------|
+| `.ai-framework/docs/workflows/analyst-workflow.md` | Analyst workflow |
+| `.ai-framework/docs/reference/aidd-roles-reference.md` | Roles reference |
+| `templates/documents/prd-template.md` | PRD Template |

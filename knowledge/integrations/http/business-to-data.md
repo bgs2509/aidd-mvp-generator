@@ -1,27 +1,27 @@
-# HTTP вызовы Business → Data API
+# HTTP Calls Business → Data API
 
-> **Назначение**: Паттерны взаимодействия Business API с Data API.
+> **Purpose**: Patterns for Business API interaction with Data API.
 
 ---
 
-## Принцип HTTP-only
+## HTTP-only Principle
 
 ```
 ┌─────────────────┐    HTTP     ┌─────────────────┐    SQL     ┌──────────────┐
-│  Business API   │────────────▶│    Data API     │───────────▶│  PostgreSQL  │
-│  (бизнес-логика)│◀────────────│ (доступ к данным)│◀───────────│   (БД)       │
+│  Business API   │────────────>│    Data API     │───────────>│  PostgreSQL  │
+│ (business logic)│<────────────│ (data access)   │<───────────│   (DB)       │
 └─────────────────┘             └─────────────────┘            └──────────────┘
 
-❌ Business API НИКОГДА не обращается к БД напрямую
-✓ Все операции с данными через HTTP к Data API
+Business API NEVER accesses the database directly
+All data operations go through HTTP to Data API
 ```
 
 ---
 
-## HTTP клиент
+## HTTP Client
 
 ```python
-"""HTTP клиент для Data API."""
+"""HTTP client for Data API."""
 
 from typing import Any
 from uuid import UUID
@@ -32,14 +32,14 @@ from {context}_api.core.config import settings
 
 
 class DataApiClient:
-    """Клиент для взаимодействия с Data API."""
+    """Client for interacting with Data API."""
 
     def __init__(self, client: httpx.AsyncClient):
         """
-        Инициализация клиента.
+        Initialize client.
 
         Args:
-            client: Экземпляр httpx.AsyncClient.
+            client: httpx.AsyncClient instance.
         """
         self.client = client
         self.base_url = settings.data_api_url
@@ -51,18 +51,18 @@ class DataApiClient:
         **kwargs,
     ) -> dict[str, Any] | list[dict[str, Any]] | None:
         """
-        Выполнить HTTP запрос.
+        Execute HTTP request.
 
         Args:
-            method: HTTP метод.
-            path: Путь API.
-            **kwargs: Дополнительные параметры.
+            method: HTTP method.
+            path: API path.
+            **kwargs: Additional parameters.
 
         Returns:
-            Ответ API.
+            API response.
 
         Raises:
-            DataApiError: При ошибке API.
+            DataApiError: On API error.
         """
         url = f"{self.base_url}{path}"
 
@@ -83,13 +83,13 @@ class DataApiClient:
 
     async def get_user(self, user_id: UUID) -> dict | None:
         """
-        Получить пользователя.
+        Get a user.
 
         Args:
-            user_id: ID пользователя.
+            user_id: User ID.
 
         Returns:
-            Данные пользователя или None.
+            User data or None.
         """
         try:
             return await self._request("GET", f"/api/v1/users/{user_id}")
@@ -100,35 +100,35 @@ class DataApiClient:
 
     async def create_user(self, data: dict) -> dict:
         """
-        Создать пользователя.
+        Create a user.
 
         Args:
-            data: Данные пользователя.
+            data: User data.
 
         Returns:
-            Созданный пользователь.
+            Created user.
         """
         return await self._request("POST", "/api/v1/users", json=data)
 
     async def update_user(self, user_id: UUID, data: dict) -> dict:
         """
-        Обновить пользователя.
+        Update a user.
 
         Args:
-            user_id: ID пользователя.
-            data: Данные для обновления.
+            user_id: User ID.
+            data: Update data.
 
         Returns:
-            Обновлённый пользователь.
+            Updated user.
         """
         return await self._request("PUT", f"/api/v1/users/{user_id}", json=data)
 
     async def delete_user(self, user_id: UUID) -> None:
         """
-        Удалить пользователя.
+        Delete a user.
 
         Args:
-            user_id: ID пользователя.
+            user_id: User ID.
         """
         await self._request("DELETE", f"/api/v1/users/{user_id}")
 
@@ -138,14 +138,14 @@ class DataApiClient:
         page_size: int = 20,
     ) -> dict:
         """
-        Получить список пользователей.
+        Get user list.
 
         Args:
-            page: Номер страницы.
-            page_size: Размер страницы.
+            page: Page number.
+            page_size: Page size.
 
         Returns:
-            Список пользователей с метаданными пагинации.
+            User list with pagination metadata.
         """
         return await self._request(
             "GET",
@@ -155,13 +155,13 @@ class DataApiClient:
 
     async def get_user_by_email(self, email: str) -> dict | None:
         """
-        Получить пользователя по email.
+        Get user by email.
 
         Args:
-            email: Email пользователя.
+            email: User email.
 
         Returns:
-            Данные пользователя или None.
+            User data or None.
         """
         try:
             return await self._request(
@@ -177,7 +177,7 @@ class DataApiClient:
     # === Orders ===
 
     async def get_order(self, order_id: UUID) -> dict | None:
-        """Получить заказ."""
+        """Get an order."""
         try:
             return await self._request("GET", f"/api/v1/orders/{order_id}")
         except DataApiError as e:
@@ -186,7 +186,7 @@ class DataApiClient:
             raise
 
     async def create_order(self, data: dict) -> dict:
-        """Создать заказ."""
+        """Create an order."""
         return await self._request("POST", "/api/v1/orders", json=data)
 
     async def get_user_orders(
@@ -195,7 +195,7 @@ class DataApiClient:
         page: int = 1,
         page_size: int = 20,
     ) -> dict:
-        """Получить заказы пользователя."""
+        """Get user orders."""
         return await self._request(
             "GET",
             f"/api/v1/users/{user_id}/orders",
@@ -205,10 +205,10 @@ class DataApiClient:
 
 ---
 
-## Использование в сервисе
+## Usage in Service
 
 ```python
-"""Application Service с HTTP клиентом."""
+"""Application Service with HTTP client."""
 
 from uuid import UUID
 
@@ -218,31 +218,31 @@ from {context}_api.infrastructure.http.data_api_client import DataApiClient
 
 
 class UserService:
-    """Сервис пользователей."""
+    """User service."""
 
     def __init__(self, data_client: DataApiClient):
         """
-        Инициализация сервиса.
+        Initialize service.
 
         Args:
-            data_client: HTTP клиент для Data API.
+            data_client: HTTP client for Data API.
         """
         self.data_client = data_client
 
     async def create_user(self, dto: CreateUserDTO) -> UserDTO:
         """
-        Создать пользователя.
+        Create a user.
 
         Args:
-            dto: Данные для создания.
+            dto: Creation data.
 
         Returns:
-            Созданный пользователь.
+            Created user.
 
         Raises:
-            ValidationError: Если email уже существует.
+            ValidationError: If email already exists.
         """
-        # Проверка уникальности (бизнес-логика)
+        # Uniqueness check (business logic)
         existing = await self.data_client.get_user_by_email(dto.email)
         if existing:
             raise ValidationError(
@@ -250,22 +250,22 @@ class UserService:
                 field="email",
             )
 
-        # Создание через Data API
+        # Create via Data API
         result = await self.data_client.create_user(dto.model_dump())
         return UserDTO.model_validate(result)
 
     async def get_user(self, user_id: UUID) -> UserDTO:
         """
-        Получить пользователя.
+        Get a user.
 
         Args:
-            user_id: ID пользователя.
+            user_id: User ID.
 
         Returns:
-            Данные пользователя.
+            User data.
 
         Raises:
-            NotFoundError: Если не найден.
+            NotFoundError: If not found.
         """
         result = await self.data_client.get_user(user_id)
         if result is None:
@@ -275,10 +275,10 @@ class UserService:
 
 ---
 
-## Настройка в lifespan
+## Lifespan Setup
 
 ```python
-"""Управление HTTP клиентом в lifespan."""
+"""HTTP client management in lifespan."""
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
@@ -289,8 +289,8 @@ from {context}_api.core.config import settings
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Жизненный цикл приложения."""
-    # Создание HTTP клиента
+    """Application lifecycle."""
+    # Create HTTP client
     app.state.http_client = httpx.AsyncClient(
         base_url=settings.data_api_url,
         timeout=httpx.Timeout(30.0),
@@ -299,30 +299,30 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    # Закрытие клиента
+    # Close client
     await app.state.http_client.aclose()
 ```
 
 ---
 
-## Передача Request ID
+## Request ID Forwarding
 
 ```python
-"""Передача request_id между сервисами."""
+"""Request ID forwarding between services."""
 
 from fastapi import Request
 
 
 class DataApiClient:
-    """Клиент с передачей request_id."""
+    """Client with request_id forwarding."""
 
     def __init__(self, client: httpx.AsyncClient, request_id: str | None = None):
-        """Инициализация."""
+        """Initialize."""
         self.client = client
         self.request_id = request_id
 
     async def _request(self, method: str, path: str, **kwargs) -> dict:
-        """Выполнить запрос с request_id."""
+        """Execute request with request_id."""
         headers = kwargs.pop("headers", {})
 
         if self.request_id:
@@ -336,9 +336,9 @@ class DataApiClient:
         )
 
 
-# В dependencies.py
+# In dependencies.py
 def get_data_client(request: Request) -> DataApiClient:
-    """Создать клиент с request_id."""
+    """Create client with request_id."""
     request_id = getattr(request.state, "request_id", None)
     return DataApiClient(
         request.app.state.http_client,
@@ -348,10 +348,10 @@ def get_data_client(request: Request) -> DataApiClient:
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Business API не имеет доступа к БД
-- [ ] Все данные получаются через Data API
-- [ ] HTTP клиент создаётся в lifespan
-- [ ] Request ID передаётся между сервисами
-- [ ] Ошибки Data API обрабатываются
+- [ ] Business API has no direct DB access
+- [ ] All data retrieved through Data API
+- [ ] HTTP client created in lifespan
+- [ ] Request ID forwarded between services
+- [ ] Data API errors handled

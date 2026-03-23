@@ -1,94 +1,94 @@
-# Функция: Инициализация (Stage 0)
+# Function: Initialization (Stage 0)
 
-> **Назначение**: Загрузка контекста фреймворка и подготовка к работе.
-
----
-
-## Цель
-
-Перед началом работы Аналитик ОБЯЗАН загрузить контекст фреймворка
-и подготовиться к обработке идеи пользователя.
+> **Purpose**: Loading the framework context and preparing for work.
 
 ---
 
-## Порядок чтения документов
+## Goal
+
+Before starting work, the Analyst MUST load the framework context
+and prepare for processing the user's idea.
+
+---
+
+## Document Reading Order
 
 ```
 1. CLAUDE.md
-   └── Основные правила фреймворка
-   └── Архитектурные принципы
-   └── Структура проекта
+   └── Main framework rules
+   └── Architectural principles
+   └── Project structure
 
 2. conventions.md
-   └── Соглашения о коде
-   └── Стиль документации
-   └── Именование
+   └── Code conventions
+   └── Documentation style
+   └── Naming
 
 3. workflow.md
-   └── 9-этапный процесс (0-8)
-   └── Качественные ворота
-   └── Артефакты
+   └── 9-stage process (0-8)
+   └── Quality Gates
+   └── Artifacts
 ```
 
 ---
 
-## Определение режима работы
+## Determining the Work Mode
 
 ```
-Проверить наличие существующего кода:
+Check for existing code:
 
 if exists(src/) or exists(services/):
     MODE = FEATURE
-    → Создавать FEATURE_PRD
-    → Учитывать существующую архитектуру
+    → Create FEATURE_PRD
+    → Account for existing architecture
 else:
     MODE = CREATE
-    → Создавать полный PRD
-    → Проектировать с нуля
+    → Create full PRD
+    → Design from scratch
 ```
 
 ---
 
-## Критические правила
+## Critical Rules
 
-### 1. Контекст обязателен
+### 1. Context is Mandatory
 
 ```
-❌ НЕПРАВИЛЬНО: Начать работу без чтения CLAUDE.md
-✅ ПРАВИЛЬНО: Прочитать CLAUDE.md → понять контекст → начать работу
+❌ WRONG: Start working without reading CLAUDE.md
+✅ CORRECT: Read CLAUDE.md → understand context → start working
 ```
 
-### 2. Уровень зрелости
+### 2. Maturity Level
 
-Фреймворк AIDD-MVP Generator ВСЕГДА создаёт **Level 2 (MVP)**:
+The AIDD-MVP Generator framework ALWAYS creates **Level 2 (MVP)**:
 - Docker-compose + dev overrides
-- Структурированное логирование
-- Покрытие тестами ≥75%
-- ~10 минут на генерацию
+- Structured logging
+- Test coverage ≥75%
+- ~10 minutes for generation
 
-### 3. Язык документации
+### 3. Documentation Language
 
-Все артефакты создаются на **русском языке**:
-- PRD на русском
-- Docstrings на русском
-- Комментарии на русском
-
----
-
-## Чек-лист инициализации
-
-- [ ] CLAUDE.md прочитан
-- [ ] conventions.md прочитан
-- [ ] workflow.md прочитан
-- [ ] Режим работы определён (CREATE/FEATURE)
-- [ ] Уровень зрелости понят (Level 2 MVP)
-- [ ] Готов к обработке идеи
+All artifacts are created in **Russian**:
+- PRD in Russian
+- Docstrings in Russian
+- Comments in Russian
 
 ---
 
-## Источники
+## Initialization Checklist
 
-| Документ | Описание |
-|----------|----------|
-| [CLAUDE.md](../../CLAUDE.md) | Главная точка входа фреймворка |
-| [docs/initialization.md](../../docs/initialization.md) | Алгоритм инициализации (4 фазы) |
+- [ ] CLAUDE.md read
+- [ ] conventions.md read
+- [ ] workflow.md read
+- [ ] Work mode determined (CREATE/FEATURE)
+- [ ] Maturity level understood (Level 2 MVP)
+- [ ] Ready to process the idea
+
+---
+
+## Sources
+
+| Document | Description |
+|----------|-------------|
+| [CLAUDE.md](../../CLAUDE.md) | Main framework entry point |
+| [docs/initialization.md](../../docs/initialization.md) | Initialization algorithm (4 phases) |

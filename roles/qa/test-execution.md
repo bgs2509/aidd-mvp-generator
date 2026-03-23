@@ -1,84 +1,84 @@
-# Функция: Выполнение тестов
+# Function: Test Execution
 
-> **Назначение**: Запуск тестов и сбор результатов.
-
----
-
-## Цель
-
-Выполнить все тестовые сценарии и собрать результаты
-для формирования QA отчёта.
+> **Purpose**: Running tests and collecting results.
 
 ---
 
-## Инструменты тестирования
+## Goal
+
+Execute all test scenarios and collect results
+for generating the QA report.
+
+---
+
+## Testing Tools
 
 ### pytest
 
 ```bash
-# Основной инструмент для Python тестов
+# Main tool for Python tests
 
-# Запуск всех тестов
+# Run all tests
 pytest
 
-# С подробным выводом
+# With verbose output
 pytest -v
 
-# Конкретный файл
+# Specific file
 pytest tests/unit/test_service.py
 
-# Конкретный тест
+# Specific test
 pytest tests/unit/test_service.py::test_create_entity
 
-# С покрытием
+# With coverage
 pytest --cov=src --cov-report=html
 
-# Параллельный запуск
+# Parallel execution
 pytest -n auto
 ```
 
-### Команды Makefile
+### Makefile Commands
 
 ```bash
-# Все тесты всех сервисов
+# All tests for all services
 make test
 
-# Тесты конкретного сервиса
+# Tests for a specific service
 make test-api
 make test-data
 
-# С покрытием
+# With coverage
 make coverage
 
-# Unit тесты
+# Unit tests
 make test-unit
 
-# Integration тесты
+# Integration tests
 make test-integration
 ```
 
 ---
 
-## Процесс выполнения
+## Execution Process
 
-### Шаг 1: Подготовка окружения
+### Step 1: Environment Preparation
 
 ```bash
-# Запустить все сервисы
+# Start all services
 make up
 
-# Проверить статус
+# Check status
 docker-compose ps
 
-# Убедиться, что все healthy
+# Ensure all are healthy
 curl http://localhost:8000/api/v1/health
 curl http://localhost:8001/api/v1/health
 ```
 
-### Шаг 2: Запуск Unit тестов
+### Step 2: Run Unit Tests
 
 ```bash
-# Запуск unit тестов для каждого сервиса
+# Run unit tests for each service
 
 # Business API
 docker-compose exec {context}-api pytest tests/unit -v
@@ -86,17 +86,17 @@ docker-compose exec {context}-api pytest tests/unit -v
 # Data API
 docker-compose exec {context}-data pytest tests/unit -v
 
-# Bot (если есть)
+# Bot (if exists)
 docker-compose exec {context}-bot pytest tests/unit -v
 
-# Worker (если есть)
+# Worker (if exists)
 docker-compose exec {context}-worker pytest tests/unit -v
 ```
 
-### Шаг 3: Запуск Integration тестов
+### Step 3: Run Integration Tests
 
 ```bash
-# Integration тесты требуют запущенных сервисов
+# Integration tests require running services
 
 # Business API
 docker-compose exec {context}-api pytest tests/integration -v
@@ -105,34 +105,34 @@ docker-compose exec {context}-api pytest tests/integration -v
 docker-compose exec {context}-data pytest tests/integration -v
 ```
 
-### Шаг 4: Проверка покрытия
+### Step 4: Check Coverage
 
 ```bash
-# Запуск с измерением покрытия
+# Run with coverage measurement
 docker-compose exec {context}-api pytest --cov=src --cov-report=term --cov-report=html
 
-# Проверка минимального покрытия (75%)
+# Check minimum coverage (75%)
 docker-compose exec {context}-api pytest --cov=src --cov-fail-under=75
 ```
 
-### Шаг 5: Запуск линтеров
+### Step 5: Run Linters
 
 ```bash
-# Ruff (линтинг)
+# Ruff (linting)
 docker-compose exec {context}-api ruff check src tests
 
-# Ruff (форматирование)
+# Ruff (formatting)
 docker-compose exec {context}-api ruff format --check src tests
 
-# Mypy (типы)
+# Mypy (types)
 docker-compose exec {context}-api mypy src
 ```
 
 ---
 
-## Сбор результатов
+## Collecting Results
 
-### Формат вывода pytest
+### pytest Output Format
 
 ```
 ==================== test session starts ====================
@@ -149,7 +149,7 @@ tests/integration/test_api.py::test_full_flow PASSED     [100%]
 ==================== 50 passed in 5.23s ====================
 ```
 
-### Формат отчёта о покрытии
+### Coverage Report Format
 
 ```
 ---------- coverage: platform linux, python 3.11.x ----------
@@ -166,9 +166,9 @@ TOTAL                                     500     50    90%
 
 ---
 
-## Обработка ошибок
+## Error Handling
 
-### Падающий тест
+### Failing Test
 
 ```
 FAILED tests/unit/test_service.py::test_create_entity
@@ -180,54 +180,54 @@ E     + Expected
 tests/unit/test_service.py:42: AssertionError
 ```
 
-### Действия при падении
+### Actions on Failure
 
 ```
-1. Записать упавший тест в отчёт
-2. Определить причину:
-   - Баг в коде → создать задачу на исправление
-   - Баг в тесте → исправить тест
-   - Изменились требования → обновить тест
-3. Продолжить выполнение остальных тестов
+1. Record the failed test in the report
+2. Determine the cause:
+   - Bug in code → create a fix task
+   - Bug in test → fix the test
+   - Requirements changed → update the test
+3. Continue executing remaining tests
 ```
 
 ---
 
-## Таблица результатов
+## Results Table
 
 ```markdown
-## Результаты выполнения тестов
+## Test Execution Results
 
-### Unit тесты
+### Unit Tests
 
-| Сервис | Всего | Passed | Failed | Skipped | Время |
-|--------|-------|--------|--------|---------|-------|
+| Service | Total | Passed | Failed | Skipped | Time |
+|---------|-------|--------|--------|---------|------|
 | {context}_api | 30 | 30 | 0 | 0 | 2.1s |
 | {context}_data | 25 | 25 | 0 | 0 | 1.8s |
 | {context}_bot | 15 | 14 | 1 | 0 | 1.2s |
-| **Итого** | **70** | **69** | **1** | **0** | **5.1s** |
+| **Total** | **70** | **69** | **1** | **0** | **5.1s** |
 
-### Integration тесты
+### Integration Tests
 
-| Сервис | Всего | Passed | Failed | Skipped | Время |
-|--------|-------|--------|--------|---------|-------|
+| Service | Total | Passed | Failed | Skipped | Time |
+|---------|-------|--------|--------|---------|------|
 | {context}_api | 15 | 15 | 0 | 0 | 8.5s |
 | {context}_data | 10 | 10 | 0 | 0 | 6.2s |
-| **Итого** | **25** | **25** | **0** | **0** | **14.7s** |
+| **Total** | **25** | **25** | **0** | **0** | **14.7s** |
 
-### Покрытие кода
+### Code Coverage
 
-| Сервис | Statements | Missing | Coverage |
-|--------|------------|---------|----------|
+| Service | Statements | Missing | Coverage |
+|---------|------------|---------|----------|
 | {context}_api | 500 | 50 | 90% |
 | {context}_data | 300 | 25 | 92% |
 | {context}_bot | 200 | 30 | 85% |
-| **Итого** | **1000** | **105** | **89%** |
+| **Total** | **1000** | **105** | **89%** |
 
-### Линтеры
+### Linters
 
-| Инструмент | Статус | Ошибок |
-|------------|--------|--------|
+| Tool | Status | Errors |
+|------|--------|--------|
 | ruff check | PASSED | 0 |
 | ruff format | PASSED | 0 |
 | mypy | PASSED | 0 |
@@ -235,46 +235,46 @@ tests/unit/test_service.py:42: AssertionError
 
 ---
 
-## Автоматизация в CI
+## CI Automation
 
-### CI (пример команд)
+### CI (command examples)
 
 ```bash
-# Unit тесты
+# Unit tests
 pytest tests/unit -v --junitxml=junit-unit.xml
 
-# Integration тесты
+# Integration tests
 pytest tests/integration -v --junitxml=junit-integration.xml
 
-# Покрытие
+# Coverage
 pytest --cov=src --cov-fail-under=75 --cov-report=xml
 ```
 
 ---
 
-## Критерии успеха
+## Success Criteria
 
-### Минимальные требования (Level 2)
+### Minimum Requirements (Level 2)
 
 ```
-✓ Все unit тесты проходят
-✓ Все integration тесты проходят
+✓ All unit tests pass
+✓ All integration tests pass
 ✓ Coverage ≥75%
-✓ Линтеры проходят без ошибок
+✓ Linters pass without errors
 ```
 
-### Допустимые отклонения
+### Acceptable Deviations
 
 ```
-- Skipped тесты допустимы с обоснованием
-- Flaky тесты должны быть помечены и задокументированы
+- Skipped tests are acceptable with justification
+- Flaky tests must be marked and documented
 ```
 
 ---
 
-## Источники
+## Sources
 
-| Документ | Описание |
-|----------|----------|
-| `knowledge/quality/testing/pytest-setup.md` | Настройка pytest |
-| `roles/implementer/testing.md` | Создание тестов |
+| Document | Description |
+|----------|-------------|
+| `knowledge/quality/testing/pytest-setup.md` | pytest setup |
+| `roles/implementer/testing.md` | Test creation |

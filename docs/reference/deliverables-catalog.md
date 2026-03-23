@@ -1,242 +1,242 @@
-# Каталог артефактов AIDD-MVP
+# AIDD-MVP Artifact Catalog
 
-> **Назначение**: Полный каталог всех артефактов, создаваемых в процессе генерации MVP.
-> Для каждого артефакта указаны шаблон, путь и критерии готовности.
+> **Purpose**: Complete catalog of all artifacts created during MVP generation.
+> For each artifact the template, path, and readiness criteria are specified.
 
 ---
 
-## Обзор
+## Overview
 
 ```
-ГЕНЕРАТОР (шаблоны)              →    ЦЕЛЕВОЙ ПРОЕКТ (артефакты)
-templates/documents/prd-template.md   →    ai-docs/docs/_analysis/{name}-prd.md
+GENERATOR (templates)                →    TARGET PROJECT (artifacts)
+templates/documents/prd-template.md  →    ai-docs/docs/_analysis/{name}-prd.md
 templates/documents/research-report-template.md →    ai-docs/docs/research/{name}-research.md
 templates/documents/architecture-*.md →    ai-docs/docs/_plans/mvp/{name}-plan.md
-templates/services/*             →    services/{name}_{type}/
+templates/services/*                 →    services/{name}_{type}/
 ```
 
 ---
 
-## Этап 1: Идея (PRD)
+## Stage 1: Idea (PRD)
 
-### PRD документ
+### PRD Document
 
-| Параметр | Значение |
-|----------|----------|
-| **Команда** | `/idea` |
-| **Агент** | Аналитик |
-| **Шаблон (генератор)** | `templates/documents/prd-template.md` |
-| **Путь (целевой проект)** | `ai-docs/docs/_analysis/{name}-prd.md` |
-| **Ворота** | `PRD_READY` |
+| Parameter | Value |
+|-----------|-------|
+| **Command** | `/idea` |
+| **Agent** | Analyst |
+| **Template (generator)** | `templates/documents/prd-template.md` |
+| **Path (Target Project)** | `ai-docs/docs/_analysis/{name}-prd.md` |
+| **Gates** | `PRD_READY` |
 
-**Критерии готовности**:
-- [ ] Все секции заполнены
-- [ ] Требования имеют ID (FR-*, NF-*, UI-*)
-- [ ] Критерии приёмки определены
-- [ ] Нет блокирующих Open вопросов
+**Readiness criteria**:
+- [ ] All sections filled
+- [ ] Requirements have IDs (FR-*, NF-*, UI-*)
+- [ ] Acceptance criteria defined
+- [ ] No blocking Open questions
 
-**Пример имени файла**: `booking-restaurant-prd.md`
+**Example file name**: `booking-restaurant-prd.md`
 
 ---
 
-## Этап 2: Исследование
+## Stage 2: Research
 
 ### Research Report
 
-| Параметр | Значение |
-|----------|----------|
-| **Команда** | `/research` |
-| **Агент** | Исследователь |
-| **Шаблон (генератор)** | `templates/documents/research-report-template.md` |
-| **Путь (целевой проект)** | `ai-docs/docs/research/{name}-research.md` |
-| **Ворота** | `RESEARCH_DONE` |
+| Parameter | Value |
+|-----------|-------|
+| **Command** | `/research` |
+| **Agent** | Researcher |
+| **Template (generator)** | `templates/documents/research-report-template.md` |
+| **Path (Target Project)** | `ai-docs/docs/research/{name}-research.md` |
+| **Gates** | `RESEARCH_DONE` |
 
-**Критерии готовности**:
-- [ ] Код и/или требования проанализированы
-- [ ] Паттерны и ограничения описаны в отчёте
-- [ ] Рекомендации по интеграции сформулированы
-- [ ] `.pipeline-state.json` обновлён (`RESEARCH_DONE`)
-
----
-
-## Этап 3: Архитектура
-
-### План архитектуры (CREATE)
-
-| Параметр | Значение |
-|----------|----------|
-| **Команда** | `/plan` |
-| **Агент** | Планировщик |
-| **Шаблон (генератор)** | `templates/documents/architecture-template.md` |
-| **Путь (целевой проект)** | `ai-docs/docs/_plans/mvp/{name}-plan.md` |
-| **Ворота** | `PLAN_APPROVED` |
-
-### План фичи (FEATURE)
-
-| Параметр | Значение |
-|----------|----------|
-| **Команда** | `/feature-plan` |
-| **Агент** | Планировщик |
-| **Шаблон (генератор)** | `templates/documents/feature-plan-template.md` |
-| **Путь (целевой проект)** | `ai-docs/docs/_plans/features/{feature}-plan.md` |
-| **Ворота** | `PLAN_APPROVED` |
-
-**Критерии готовности**:
-- [ ] Компоненты системы определены
-- [ ] API контракты описаны
-- [ ] NFR учтены
-- [ ] **План утверждён пользователем**
-
-**Пример имени файла**: `booking-restaurant-plan.md`, `notifications-plan.md`
+**Readiness criteria**:
+- [ ] Code and/or requirements analyzed
+- [ ] Patterns and constraints described in report
+- [ ] Integration recommendations formulated
+- [ ] `.pipeline-state.json` updated (`RESEARCH_DONE`)
 
 ---
 
-## Этап 4: Реализация
+## Stage 3: Architecture
 
-### Инфраструктура
+### Architecture Plan (CREATE)
 
-| Артефакт | Шаблон (генератор) | Путь (целевой проект) |
-|----------|--------------------|-----------------------|
+| Parameter | Value |
+|-----------|-------|
+| **Command** | `/plan` |
+| **Agent** | Planner |
+| **Template (generator)** | `templates/documents/architecture-template.md` |
+| **Path (Target Project)** | `ai-docs/docs/_plans/mvp/{name}-plan.md` |
+| **Gates** | `PLAN_APPROVED` |
+
+### Feature Plan (FEATURE)
+
+| Parameter | Value |
+|-----------|-------|
+| **Command** | `/feature-plan` |
+| **Agent** | Planner |
+| **Template (generator)** | `templates/documents/feature-plan-template.md` |
+| **Path (Target Project)** | `ai-docs/docs/_plans/features/{feature}-plan.md` |
+| **Gates** | `PLAN_APPROVED` |
+
+**Readiness criteria**:
+- [ ] System components defined
+- [ ] API contracts described
+- [ ] NFR accounted for
+- [ ] **Plan approved by user**
+
+**Example file name**: `booking-restaurant-plan.md`, `notifications-plan.md`
+
+---
+
+## Stage 4: Implementation
+
+### Infrastructure
+
+| Artifact | Template (generator) | Path (Target Project) |
+|----------|---------------------|-----------------------|
 | Docker Compose | `templates/infrastructure/docker-compose.yml` | `docker-compose.yml` |
 | Docker Dev | `templates/infrastructure/docker-compose.dev.yml` | `docker-compose.dev.yml` |
 | Makefile | `templates/infrastructure/Makefile` | `Makefile` |
 | .env | `templates/infrastructure/.env.example` | `.env.example` |
 
-### Сервисы
+### Services
 
-| Тип сервиса | Шаблон (генератор) | Путь (целевой проект) |
-|-------------|--------------------|-----------------------|
+| Service Type | Template (generator) | Path (Target Project) |
+|-------------|---------------------|-----------------------|
 | Business API | `templates/services/fastapi_business_api/` | `services/{name}_api/` |
 | Telegram Bot | `templates/services/aiogram_bot/` | `services/{name}_bot/` |
 | Background Worker | `templates/services/asyncio_worker/` | `services/{name}_worker/` |
 | Data API (PostgreSQL) | `templates/services/postgres_data_api/` | `services/{name}_data/` |
 | Data API (MongoDB) | `templates/services/mongo_data_api/` | `services/{name}_data/` |
 
-### Тесты
+### Tests
 
-| Артефакт | Путь (целевой проект) |
+| Artifact | Path (Target Project) |
 |----------|-----------------------|
-| Unit тесты | `services/{name}/tests/unit/` |
-| Integration тесты | `services/{name}/tests/integration/` |
+| Unit tests | `services/{name}/tests/unit/` |
+| Integration tests | `services/{name}/tests/integration/` |
 | conftest.py | `services/{name}/tests/conftest.py` |
 
-**Критерии готовности (IMPLEMENT_OK)**:
-- [ ] Код написан согласно плану
-- [ ] Структура соответствует DDD/Hexagonal
-- [ ] Type hints присутствуют
-- [ ] Все unit-тесты проходят
+**Readiness criteria (IMPLEMENT_OK)**:
+- [ ] Code written according to plan
+- [ ] Structure follows DDD/Hexagonal
+- [ ] Type hints present
+- [ ] All unit tests pass
 
 ---
 
-## Этап 5: Ревью
+## Stage 5: Review
 
-### Отчёт ревью
+### Review Report
 
-| Параметр | Значение |
-|----------|----------|
-| **Команда** | `/review` |
-| **Агент** | Ревьюер |
-| **Путь (целевой проект)** | `ai-docs/docs/_validation/review-report.md` |
-| **Ворота** | `REVIEW_OK` |
+| Parameter | Value |
+|-----------|-------|
+| **Command** | `/review` |
+| **Agent** | Reviewer |
+| **Path (Target Project)** | `ai-docs/docs/_validation/review-report.md` |
+| **Gates** | `REVIEW_OK` |
 
-**Критерии готовности**:
-- [ ] Код соответствует conventions.md
-- [ ] Архитектура соответствует плану
-- [ ] Нет Blocker/Critical замечаний
-- [ ] DRY/KISS/YAGNI соблюдены
+**Readiness criteria**:
+- [ ] Code follows conventions.md
+- [ ] Architecture matches the plan
+- [ ] No Blocker/Critical findings
+- [ ] DRY/KISS/YAGNI followed
 
 ---
 
-## Этап 6: QA
+## Stage 6: QA
 
-### Отчёт QA
+### QA Report
 
-| Параметр | Значение |
-|----------|----------|
-| **Команда** | `/test` |
-| **Агент** | QA |
-| **Путь (целевой проект)** | `ai-docs/docs/_validation/qa-report.md` |
-| **Ворота** | `QA_PASSED` |
+| Parameter | Value |
+|-----------|-------|
+| **Command** | `/test` |
+| **Agent** | QA |
+| **Path (Target Project)** | `ai-docs/docs/_validation/qa-report.md` |
+| **Gates** | `QA_PASSED` |
 
-**Критерии готовности**:
-- [ ] Все тесты проходят
+**Readiness criteria**:
+- [ ] All tests pass
 - [ ] Coverage ≥75%
-- [ ] Нет Critical/Blocker багов
-- [ ] Требования из PRD верифицированы
+- [ ] No Critical/Blocker bugs
+- [ ] PRD requirements verified
 
 ---
 
-## Этап 7: Валидация
+## Stage 7: Validation
 
-### Отчёт валидации
+### Validation Report
 
-| Параметр | Значение |
-|----------|----------|
-| **Команда** | `/validate` |
-| **Агент** | Валидатор |
-| **Путь (целевой проект)** | `ai-docs/docs/_validation/validation-report.md` |
-| **Ворота** | `ALL_GATES_PASSED` |
+| Parameter | Value |
+|-----------|-------|
+| **Command** | `/validate` |
+| **Agent** | Validator |
+| **Path (Target Project)** | `ai-docs/docs/_validation/validation-report.md` |
+| **Gates** | `ALL_GATES_PASSED` |
 
 ### RTM (Requirements Traceability Matrix)
 
-| Параметр | Значение |
-|----------|----------|
-| **Шаблон (генератор)** | `templates/documents/rtm-template.md` |
-| **Путь (целевой проект)** | `ai-docs/docs/rtm.md` |
+| Parameter | Value |
+|-----------|-------|
+| **Template (generator)** | `templates/documents/rtm-template.md` |
+| **Path (Target Project)** | `ai-docs/docs/rtm.md` |
 
-**Критерии готовности**:
-- [ ] Все предыдущие ворота пройдены
-- [ ] Все артефакты существуют
-- [ ] RTM актуальна
-- [ ] Проект готов к деплою
-
----
-
-## Этап 8: Деплой
-
-### Работающее приложение
-
-| Параметр | Значение |
-|----------|----------|
-| **Команда** | `/deploy` |
-| **Агент** | Валидатор |
-| **Ворота** | `DEPLOYED` |
-
-**Критерии готовности**:
-- [ ] Docker-контейнеры собраны
-- [ ] Приложение запущено
-- [ ] Health-check проходит
-- [ ] Базовые сценарии работают
+**Readiness criteria**:
+- [ ] All previous gates passed
+- [ ] All artifacts exist
+- [ ] RTM is up to date
+- [ ] Project ready for deploy
 
 ---
 
-## Служебные артефакты
+## Stage 8: Deploy
+
+### Running Application
+
+| Parameter | Value |
+|-----------|-------|
+| **Command** | `/deploy` |
+| **Agent** | Validator |
+| **Gates** | `DEPLOYED` |
+
+**Readiness criteria**:
+- [ ] Docker containers built
+- [ ] Application running
+- [ ] Health-check passes
+- [ ] Basic scenarios work
+
+---
+
+## Service Artifacts
 
 ### Pipeline State
 
-| Параметр | Значение |
-|----------|----------|
-| **Шаблон (генератор)** | `templates/documents/pipeline-state-template.json` |
-| **Путь (целевой проект)** | `.pipeline-state.json` |
+| Parameter | Value |
+|-----------|-------|
+| **Template (generator)** | `templates/documents/pipeline-state-template.json` |
+| **Path (Target Project)** | `.pipeline-state.json` |
 
-**Назначение**: Хранит текущее состояние пайплайна, пройденные ворота, пути артефактов.
+**Purpose**: Stores the current pipeline state, passed gates, artifact paths.
 
 ---
 
-## Сводная таблица
+## Summary Table
 
-| Этап | Артефакт | Путь в целевом проекте | Ворота |
-|------|----------|------------------------|--------|
+| Stage | Artifact | Path in Target Project | Gates |
+|-------|----------|------------------------|-------|
 | 1 | PRD | `ai-docs/docs/_analysis/{name}-prd.md` | PRD_READY |
 | 2 | Research Report | `ai-docs/docs/research/{name}-research.md` | RESEARCH_DONE |
-| 3 | План | `ai-docs/docs/_plans/mvp/{name}-plan.md` | PLAN_APPROVED |
-| 4 | Код | `services/`, `docker-compose.yml` | IMPLEMENT_OK |
-| 5 | Ревью | `ai-docs/docs/_validation/review-report.md` | REVIEW_OK |
+| 3 | Plan | `ai-docs/docs/_plans/mvp/{name}-plan.md` | PLAN_APPROVED |
+| 4 | Code | `services/`, `docker-compose.yml` | IMPLEMENT_OK |
+| 5 | Review | `ai-docs/docs/_validation/review-report.md` | REVIEW_OK |
 | 6 | QA | `ai-docs/docs/_validation/qa-report.md` | QA_PASSED |
-| 7 | Валидация | `ai-docs/docs/_validation/validation-report.md`, `rtm.md` | ALL_GATES_PASSED |
-| 8 | Деплой | Работающее приложение | DEPLOYED |
+| 7 | Validation | `ai-docs/docs/_validation/validation-report.md`, `rtm.md` | ALL_GATES_PASSED |
+| 8 | Deploy | Running application | DEPLOYED |
 
 ---
 
-**Версия**: 1.0
-**Создан**: 2025-12-21
+**Version**: 1.0
+**Created**: 2025-12-21

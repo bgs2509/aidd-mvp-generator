@@ -1,109 +1,109 @@
-# Чек-лист задач: {Название}
+# Task Checklist: {Title}
 
-**Версия**: 1.0
-**Дата создания**: {YYYY-MM-DD}
-**Автор**: AI Agent
-**Статус**: В работе | Завершён
+**Version**: 1.0
+**Created**: {YYYY-MM-DD}
+**Author**: AI Agent
+**Status**: In Progress | Completed
 
 ---
 
-## Обзор
+## Overview
 
-**Цель**: {Краткое описание цели чек-листа}
+**Goal**: {Brief description of the checklist's goal}
 
-**Связанные документы** (в целевом проекте):
+**Related documents** (in Target Project):
 - PRD: `ai-docs/docs/_analysis/{name}-prd.md`
 - Research Report: `ai-docs/docs/research/{name}-research.md`
-- План: `ai-docs/docs/_plans/mvp/{name}-plan.md`
+- Plan: `ai-docs/docs/_plans/mvp/{name}-plan.md`
 
 ---
 
-## Легенда статусов
+## Status Legend
 
-| Символ | Значение |
-|--------|----------|
-| [ ] | Не начато |
-| [~] | В процессе |
-| [x] | Завершено |
-| [!] | Заблокировано |
-| [?] | Требует уточнения |
-
----
-
-## Задачи
-
-### Этап 1: {Название этапа}
-
-| # | Статус | Задача | Исполнитель | Зависит от |
-|---|--------|--------|-------------|------------|
-| 1.1 | [ ] | {Описание задачи} | {Роль} | — |
-| 1.2 | [ ] | {Описание задачи} | {Роль} | 1.1 |
-| 1.3 | [ ] | {Описание задачи} | {Роль} | 1.2 |
-
-**Критерий завершения этапа**: {Что должно быть сделано}
+| Symbol | Meaning |
+|--------|---------|
+| [ ] | Not started |
+| [~] | In progress |
+| [x] | Completed |
+| [!] | Blocked |
+| [?] | Requires clarification |
 
 ---
 
-### Этап 2: {Название этапа}
+## Tasks
 
-| # | Статус | Задача | Исполнитель | Зависит от |
-|---|--------|--------|-------------|------------|
-| 2.1 | [ ] | {Описание задачи} | {Роль} | 1.3 |
-| 2.2 | [ ] | {Описание задачи} | {Роль} | 2.1 |
+### Stage 1: {Stage Name}
 
-**Критерий завершения этапа**: {Что должно быть сделано}
+| # | Status | Task | Assignee | Depends on |
+|---|--------|------|----------|------------|
+| 1.1 | [ ] | {Task description} | {Role} | — |
+| 1.2 | [ ] | {Task description} | {Role} | 1.1 |
+| 1.3 | [ ] | {Task description} | {Role} | 1.2 |
 
----
-
-### Этап 3: {Название этапа}
-
-| # | Статус | Задача | Исполнитель | Зависит от |
-|---|--------|--------|-------------|------------|
-| 3.1 | [ ] | {Описание задачи} | {Роль} | 2.2 |
-| 3.2 | [ ] | {Описание задачи} | {Роль} | 3.1 |
-
-**Критерий завершения этапа**: {Что должно быть сделано}
+**Stage completion criteria**: {What must be done}
 
 ---
 
-## Блокеры
+### Stage 2: {Stage Name}
 
-| # | Описание | Влияет на | Статус | Решение |
-|---|----------|-----------|--------|---------|
-| B-1 | {Описание блокера} | {Номера задач} | Open/Resolved | {Как решить} |
+| # | Status | Task | Assignee | Depends on |
+|---|--------|------|----------|------------|
+| 2.1 | [ ] | {Task description} | {Role} | 1.3 |
+| 2.2 | [ ] | {Task description} | {Role} | 2.1 |
 
----
-
-## Риски
-
-| # | Риск | Вероятность | Влияние | Митигация |
-|---|------|-------------|---------|-----------|
-| R-1 | {Описание риска} | Низкая/Средняя/Высокая | Низкое/Среднее/Высокое | {Как снизить} |
+**Stage completion criteria**: {What must be done}
 
 ---
 
-## Прогресс
+### Stage 3: {Stage Name}
 
-| Этап | Всего | Завершено | Прогресс |
-|------|-------|-----------|----------|
-| Этап 1 | X | Y | Y/X |
-| Этап 2 | X | Y | Y/X |
-| Этап 3 | X | Y | Y/X |
-| **ИТОГО** | **X** | **Y** | **Y/X** |
+| # | Status | Task | Assignee | Depends on |
+|---|--------|------|----------|------------|
+| 3.1 | [ ] | {Task description} | {Role} | 2.2 |
+| 3.2 | [ ] | {Task description} | {Role} | 3.1 |
 
----
-
-## История изменений
-
-| Дата | Автор | Изменение |
-|------|-------|-----------|
-| {YYYY-MM-DD} | AI Agent | Создан чек-лист |
+**Stage completion criteria**: {What must be done}
 
 ---
 
-## Качественные ворота
+## Blockers
 
-- [ ] Все задачи имеют статус [x]
-- [ ] Нет открытых блокеров
-- [ ] Критерии завершения этапов выполнены
-- [ ] Документация актуализирована
+| # | Description | Affects | Status | Resolution |
+|---|-------------|---------|--------|------------|
+| B-1 | {Blocker description} | {Task numbers} | Open/Resolved | {How to resolve} |
+
+---
+
+## Risks
+
+| # | Risk | Probability | Impact | Mitigation |
+|---|------|-------------|--------|------------|
+| R-1 | {Risk description} | Low/Medium/High | Low/Medium/High | {How to mitigate} |
+
+---
+
+## Progress
+
+| Stage | Total | Completed | Progress |
+|-------|-------|-----------|----------|
+| Stage 1 | X | Y | Y/X |
+| Stage 2 | X | Y | Y/X |
+| Stage 3 | X | Y | Y/X |
+| **TOTAL** | **X** | **Y** | **Y/X** |
+
+---
+
+## Change History
+
+| Date | Author | Change |
+|------|--------|--------|
+| {YYYY-MM-DD} | AI Agent | Checklist created |
+
+---
+
+## Quality Gates
+
+- [ ] All tasks have status [x]
+- [ ] No open blockers
+- [ ] Stage completion criteria met
+- [ ] Documentation updated

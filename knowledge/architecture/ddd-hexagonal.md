@@ -1,23 +1,23 @@
-# DDD и Hexagonal Architecture
+# DDD and Hexagonal Architecture
 
-> **Назначение**: Принципы Domain-Driven Design и Hexagonal Architecture.
+> **Purpose**: Domain-Driven Design and Hexagonal Architecture principles.
 
 ---
 
 ## Domain-Driven Design (DDD)
 
-### Основная идея
+### Core Idea
 
 ```
-Организация кода вокруг бизнес-домена, а не технических деталей.
+Organizing code around the business domain, not technical details.
 
-Фокус на:
-- Ubiquitous Language (единый язык с бизнесом)
-- Bounded Contexts (ограниченные контексты)
-- Domain Model (модель предметной области)
+Focus on:
+- Ubiquitous Language (shared language with the business)
+- Bounded Contexts
+- Domain Model
 ```
 
-### Слои DDD
+### DDD Layers
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -34,18 +34,18 @@
 │  (Database, HTTP Clients, Message Queues, External APIs)    │
 └─────────────────────────────────────────────────────────────┘
 
-Правило зависимостей:
-API → Application → Domain ← Infrastructure
+Dependency rule:
+API -> Application -> Domain <- Infrastructure
               ↓
-    Domain НЕ зависит от Infrastructure
+    Domain does NOT depend on Infrastructure
 ```
 
-### Компоненты Domain Layer
+### Domain Layer Components
 
 #### Entity
 
 ```python
-"""Сущность с идентичностью."""
+"""Entity with identity."""
 
 from dataclasses import dataclass
 from uuid import UUID
@@ -53,7 +53,7 @@ from uuid import UUID
 
 @dataclass
 class Order:
-    """Сущность заказа."""
+    """Order entity."""
 
     id: UUID
     customer_id: UUID
@@ -62,14 +62,14 @@ class Order:
     total: "Money"
 
     def add_item(self, item: "OrderItem") -> None:
-        """Добавить товар в заказ."""
+        """Add an item to the order."""
         if self.status != OrderStatus.DRAFT:
             raise DomainError("Cannot modify confirmed order")
         self.items.append(item)
         self._recalculate_total()
 
     def confirm(self) -> None:
-        """Подтвердить заказ."""
+        """Confirm the order."""
         if not self.items:
             raise DomainError("Cannot confirm empty order")
         self.status = OrderStatus.CONFIRMED
@@ -78,7 +78,7 @@ class Order:
 #### Value Object
 
 ```python
-"""Объект-значение без идентичности."""
+"""Value object without identity."""
 
 from dataclasses import dataclass
 from decimal import Decimal
@@ -86,7 +86,7 @@ from decimal import Decimal
 
 @dataclass(frozen=True)
 class Money:
-    """Денежное значение."""
+    """Monetary value."""
 
     amount: Decimal
     currency: str = "RUB"
@@ -103,24 +103,24 @@ class Money:
 #### Domain Service
 
 ```python
-"""Доменный сервис для логики, не принадлежащей одной сущности."""
+"""Domain service for logic not belonging to a single entity."""
 
 class PricingService:
-    """Сервис расчёта цен."""
+    """Pricing service."""
 
     def calculate_discount(
         self,
         order: Order,
         customer: Customer,
     ) -> Money:
-        """Рассчитать скидку."""
+        """Calculate discount."""
         discount = Money(Decimal("0"))
 
-        # Скидка за объём
+        # Volume discount
         if order.total > Money(Decimal("10000")):
             discount += order.total * Decimal("0.05")
 
-        # Скидка постоянному клиенту
+        # Loyal customer discount
         if customer.is_vip:
             discount += order.total * Decimal("0.10")
 
@@ -131,10 +131,10 @@ class PricingService:
 
 ## Hexagonal Architecture
 
-### Основная идея
+### Core Idea
 
 ```
-Изоляция бизнес-логики от внешнего мира через порты и адаптеры.
+Isolating business logic from the outside world through ports and adapters.
 
 ┌─────────────────────────────────────────────────┐
 │                                                 │
@@ -154,52 +154,52 @@ class PricingService:
 │   └─────────┘                    └─────────┘   │
 │                                                 │
 │         Driving           Core           Driven │
-│        (входящие)        (ядро)       (исходящие)│
+│        (incoming)        (core)       (outgoing)│
 └─────────────────────────────────────────────────┘
 ```
 
-### Порты (Интерфейсы)
+### Ports (Interfaces)
 
 ```python
-"""Порт — интерфейс для взаимодействия с внешним миром."""
+"""Port -- interface for interacting with the outside world."""
 
 from abc import ABC, abstractmethod
 from uuid import UUID
 
 
-# Исходящий порт (Secondary Port)
+# Outgoing port (Secondary Port)
 class OrderRepositoryPort(ABC):
-    """Порт для работы с хранилищем заказов."""
+    """Port for working with the order store."""
 
     @abstractmethod
     async def get_by_id(self, order_id: UUID) -> Order | None:
-        """Получить заказ по ID."""
+        """Get order by ID."""
         pass
 
     @abstractmethod
     async def save(self, order: Order) -> None:
-        """Сохранить заказ."""
+        """Save order."""
         pass
 
 
-# Входящий порт (Primary Port) — обычно это Use Case
+# Incoming port (Primary Port) -- usually a Use Case
 class CreateOrderUseCase(ABC):
-    """Порт для создания заказа."""
+    """Port for creating an order."""
 
     @abstractmethod
     async def execute(self, command: CreateOrderCommand) -> Order:
-        """Создать заказ."""
+        """Create an order."""
         pass
 ```
 
-### Адаптеры (Реализации)
+### Adapters (Implementations)
 
 ```python
-"""Адаптер — реализация порта для конкретной технологии."""
+"""Adapter -- port implementation for a specific technology."""
 
-# Исходящий адаптер: HTTP клиент
+# Outgoing adapter: HTTP client
 class HttpOrderRepository(OrderRepositoryPort):
-    """HTTP адаптер для репозитория заказов."""
+    """HTTP adapter for order repository."""
 
     def __init__(self, http_client: DataApiClient):
         self.client = http_client
@@ -212,9 +212,9 @@ class HttpOrderRepository(OrderRepositoryPort):
         await self.client.post("/orders", order.to_dict())
 
 
-# Исходящий адаптер: SQL база данных (только для Data API!)
+# Outgoing adapter: SQL database (only for Data API!)
 class SqlOrderRepository(OrderRepositoryPort):
-    """SQL адаптер для репозитория заказов."""
+    """SQL adapter for order repository."""
 
     def __init__(self, session: AsyncSession):
         self.session = session
@@ -231,63 +231,63 @@ class SqlOrderRepository(OrderRepositoryPort):
 
 ---
 
-## Применение в AIDD-MVP
+## Application in AIDD-MVP
 
 ### Business API
 
 ```
-Использует:
-- DDD слои (api, application, domain, infrastructure)
-- Hexagonal порты и адаптеры
-- HTTP адаптер для Data API (исходящий)
-- FastAPI как входящий адаптер
+Uses:
+- DDD layers (api, application, domain, infrastructure)
+- Hexagonal ports and adapters
+- HTTP adapter for Data API (outgoing)
+- FastAPI as incoming adapter
 ```
 
 ### Data API
 
 ```
-Использует:
-- DDD слои
-- SQL адаптер для БД (исходящий)
-- FastAPI как входящий адаптер
+Uses:
+- DDD layers
+- SQL adapter for DB (outgoing)
+- FastAPI as incoming adapter
 ```
 
 ### Telegram Bot
 
 ```
-Использует:
-- Handlers как входящие адаптеры
-- HTTP адаптер для Business API (исходящий)
+Uses:
+- Handlers as incoming adapters
+- HTTP adapter for Business API (outgoing)
 ```
 
 ---
 
-## Правила
+## Rules
 
-### DO (Делать)
-
-```
-✓ Domain слой не зависит от Infrastructure
-✓ Бизнес-логика в Domain
-✓ Use Cases в Application
-✓ Внешние зависимости через порты
-✓ Инверсия зависимостей
-```
-
-### DON'T (Не делать)
+### DO
 
 ```
-✗ Импортировать Infrastructure в Domain
-✗ Бизнес-логика в контроллерах
-✗ Прямые зависимости на внешние сервисы
-✗ Анемичные модели (логика вне сущностей)
+✓ Domain layer does not depend on Infrastructure
+✓ Business logic in Domain
+✓ Use Cases in Application
+✓ External dependencies through ports
+✓ Dependency inversion
+```
+
+### DON'T
+
+```
+✗ Import Infrastructure in Domain
+✗ Business logic in controllers
+✗ Direct dependencies on external services
+✗ Anemic models (logic outside entities)
 ```
 
 ---
 
-## Связанные документы
+## Related Documents
 
-| Документ | Описание |
+| Document | Description |
 |----------|----------|
-| `improved-hybrid.md` | Общая архитектура |
-| `data-access.md` | HTTP-only доступ |
+| `improved-hybrid.md` | Overall architecture |
+| `data-access.md` | HTTP-only access |

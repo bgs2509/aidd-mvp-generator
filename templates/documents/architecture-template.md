@@ -1,8 +1,8 @@
 ---
-# === YAML Frontmatter (машиночитаемые метаданные) ===
+# === YAML Frontmatter (machine-readable metadata) ===
 feature_id: "{FID}"
 feature_name: "{slug}"
-title: "Architecture: {Название проекта}"
+title: "Architecture: {Project Name}"
 created: "{YYYY-MM-DD}"
 author: "AI (Architect)"
 type: "architecture"
@@ -10,50 +10,50 @@ status: "PLAN_APPROVED"                # Draft → PLAN_APPROVED
 version: 1
 mode: "CREATE"
 
-# Ссылки на связанные артефакты
+# Links to related artifacts
 prd_ref: "prd/{YYYY-MM-DD}_{FID}_{slug}-prd.md"
 research_ref: "research/{YYYY-MM-DD}_{FID}_{slug}-research.md"
 
-# Сервисы
+# Services
 services:
   - "{context}_api"
   - "{context}_data"
 
-# Технологии
+# Technologies
 technologies:
   backend: "FastAPI"
   database: "PostgreSQL"
   cache: "Redis"
 
-# Опционально
+# Optional
 approved_by: null
 approved_at: null
 ---
 
-# Архитектурный план: {Название проекта}
+# Architecture Plan: {Project Name}
 
 **Feature ID**: {FID}
-**Версия**: 1.0
-**Дата**: {YYYY-MM-DD}
-**Автор**: AI Agent (Планировщик)
-**Статус**: Draft | Review | Approved
-**Связанный PRD**: {prd-name}-prd.md
+**Version**: 1.0
+**Date**: {YYYY-MM-DD}
+**Author**: AI Agent (Planner)
+**Status**: Draft | Review | Approved
+**Related PRD**: {prd-name}-prd.md
 
 ---
 
-## 1. Обзор архитектуры
+## 1. Architecture Overview
 
-### 1.1 Архитектурный стиль
+### 1.1 Architectural Style
 
-- **Основной паттерн**: Hexagonal Architecture (Ports & Adapters)
-- **Принцип доступа к данным**: HTTP-only (Data API)
-- **Уровень зрелости**: Level 2 (MVP)
+- **Core pattern**: Hexagonal Architecture (Ports & Adapters)
+- **Data access principle**: HTTP-only (Data API)
+- **Maturity Level**: Level 2 (MVP)
 
-### 1.2 Высокоуровневая диаграмма
+### 1.2 High-Level Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                         Клиенты                                  │
+│                           Clients                                │
 │  [Web App]  [Mobile App]  [Telegram Bot]  [External Systems]    │
 └──────────────────────────┬──────────────────────────────────────┘
                            │ HTTPS
@@ -87,31 +87,31 @@ approved_at: null
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### 1.3 Ключевые решения
+### 1.3 Key Decisions
 
-| Аспект | Решение | Обоснование |
-|--------|---------|-------------|
-| Доступ к данным | HTTP-only через Data API | Изоляция, независимый scaling |
-| Аутентификация | JWT tokens | Stateless, масштабируемость |
-| Коммуникация | Синхронная HTTP | Простота для MVP |
-| Логирование | structlog JSON | Структурированность, ELK ready |
+| Aspect | Decision | Rationale |
+|--------|----------|-----------|
+| Data access | HTTP-only through Data API | Isolation, independent scaling |
+| Authentication | JWT tokens | Stateless, scalability |
+| Communication | Synchronous HTTP | Simplicity for MVP |
+| Logging | structlog JSON | Structured, ELK ready |
 
 ---
 
-## 2. Компоненты системы
+## 2. System Components
 
-### 2.1 Сервисы
+### 2.1 Services
 
 #### {context}_api — Business API
 
-**Назначение**: Основной API для бизнес-логики
+**Purpose**: Main API for business logic
 
-**Технологии**:
+**Technologies**:
 - FastAPI 0.100+
 - Python 3.11+
 - httpx (HTTP client)
 
-**Структура**:
+**Structure**:
 ```
 {context}_api/
 ├── src/
@@ -136,27 +136,27 @@ approved_at: null
 
 **Endpoints**:
 
-| Method | Path | Описание | Требование |
-|--------|------|----------|------------|
-| GET | /api/v1/{entities} | Список сущностей | FR-001 |
-| POST | /api/v1/{entities} | Создание | FR-002 |
-| GET | /api/v1/{entities}/{id} | Получение по ID | FR-001 |
-| PUT | /api/v1/{entities}/{id} | Обновление | FR-003 |
-| DELETE | /api/v1/{entities}/{id} | Удаление | FR-004 |
+| Method | Path | Description | Requirement |
+|--------|------|-------------|-------------|
+| GET | /api/v1/{entities} | List entities | FR-001 |
+| POST | /api/v1/{entities} | Create | FR-002 |
+| GET | /api/v1/{entities}/{id} | Get by ID | FR-001 |
+| PUT | /api/v1/{entities}/{id} | Update | FR-003 |
+| DELETE | /api/v1/{entities}/{id} | Delete | FR-004 |
 
 ---
 
 #### {context}_data — Data API
 
-**Назначение**: Единая точка доступа к данным
+**Purpose**: Single point of data access
 
-**Технологии**:
+**Technologies**:
 - FastAPI 0.100+
 - SQLAlchemy 2.0+ (async)
 - Alembic (migrations)
 - asyncpg
 
-**Структура**:
+**Structure**:
 ```
 {context}_data/
 ├── src/
@@ -176,16 +176,16 @@ approved_at: null
 
 ---
 
-### 2.2 Базы данных
+### 2.2 Databases
 
 #### PostgreSQL
 
-**Версия**: 15+
+**Version**: 15+
 
-**Схема данных**:
+**Data schema**:
 
 ```sql
--- Пример таблицы
+-- Example table
 CREATE TABLE {entities} (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     {field_1} VARCHAR(255) NOT NULL,
@@ -196,12 +196,12 @@ CREATE TABLE {entities} (
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
 );
 
--- Индексы
+-- Indexes
 CREATE INDEX idx_{entities}_{field_1} ON {entities}({field_1});
 CREATE INDEX idx_{entities}_created_at ON {entities}(created_at);
 ```
 
-**ER-диаграмма**:
+**ER Diagram**:
 
 ```
 ┌─────────────────┐       ┌─────────────────┐
@@ -224,31 +224,31 @@ CREATE INDEX idx_{entities}_created_at ON {entities}(created_at);
 
 ---
 
-### 2.3 Инфраструктура
+### 2.3 Infrastructure
 
-| Компонент | Технология | Назначение |
-|-----------|-----------|------------|
+| Component | Technology | Purpose |
+|-----------|-----------|---------|
 | Reverse Proxy | Nginx | SSL, Rate Limiting |
-| Containerization | Docker | Изоляция сервисов |
-| Orchestration | Docker Compose | Локальная разработка |
-| CI/CD | {инструмент} | Автоматизация |
+| Containerization | Docker | Service isolation |
+| Orchestration | Docker Compose | Local development |
+| CI/CD | {tool} | Automation |
 | Registry | GHCR | Docker images |
 
 ---
 
-## 3. API контракты
+## 3. API Contracts
 
-### 3.1 Общие соглашения
+### 3.1 General Conventions
 
-- **Формат**: JSON
-- **Версионирование**: URL path (/api/v1/)
-- **Аутентификация**: Bearer JWT token
-- **Пагинация**: page + page_size
-- **Сортировка**: sort_by + sort_order
+- **Format**: JSON
+- **Versioning**: URL path (/api/v1/)
+- **Authentication**: Bearer JWT token
+- **Pagination**: page + page_size
+- **Sorting**: sort_by + sort_order
 
-### 3.2 Формат ответов
+### 3.2 Response Format
 
-**Успешный ответ (единичный объект)**:
+**Successful response (single object)**:
 ```json
 {
   "id": "uuid",
@@ -258,7 +258,7 @@ CREATE INDEX idx_{entities}_created_at ON {entities}(created_at);
 }
 ```
 
-**Успешный ответ (список с пагинацией)**:
+**Successful response (list with pagination)**:
 ```json
 {
   "items": [...],
@@ -273,34 +273,34 @@ CREATE INDEX idx_{entities}_created_at ON {entities}(created_at);
 }
 ```
 
-**Ответ с ошибкой**:
+**Error response**:
 ```json
 {
   "error": {
     "code": "NOT_FOUND",
-    "message": "Ресурс не найден",
+    "message": "Resource not found",
     "details": {}
   }
 }
 ```
 
-### 3.3 Коды ошибок
+### 3.3 Error Codes
 
-| HTTP | Code | Описание |
-|------|------|----------|
-| 400 | VALIDATION_ERROR | Ошибка валидации |
-| 401 | UNAUTHORIZED | Не авторизован |
-| 403 | FORBIDDEN | Доступ запрещён |
-| 404 | NOT_FOUND | Не найден |
-| 409 | CONFLICT | Конфликт |
-| 429 | RATE_LIMIT_EXCEEDED | Слишком много запросов |
-| 500 | INTERNAL_ERROR | Внутренняя ошибка |
+| HTTP | Code | Description |
+|------|------|-------------|
+| 400 | VALIDATION_ERROR | Validation error |
+| 401 | UNAUTHORIZED | Not authorized |
+| 403 | FORBIDDEN | Access denied |
+| 404 | NOT_FOUND | Not found |
+| 409 | CONFLICT | Conflict |
+| 429 | RATE_LIMIT_EXCEEDED | Too many requests |
+| 500 | INTERNAL_ERROR | Internal error |
 
 ---
 
-## 4. Безопасность
+## 4. Security
 
-### 4.1 Аутентификация
+### 4.1 Authentication
 
 ```
 ┌──────────┐        ┌──────────┐        ┌──────────┐
@@ -314,32 +314,32 @@ CREATE INDEX idx_{entities}_created_at ON {entities}(created_at);
 (4) Return {access_token, refresh_token}
 ```
 
-### 4.2 Авторизация
+### 4.2 Authorization
 
-- **Модель**: RBAC (Role-Based Access Control)
-- **Роли**: admin, user, guest
-- **Проверка**: Middleware + Dependencies
+- **Model**: RBAC (Role-Based Access Control)
+- **Roles**: admin, user, guest
+- **Enforcement**: Middleware + Dependencies
 
-### 4.3 Защита данных
+### 4.3 Data Protection
 
-| Аспект | Мера |
-|--------|------|
-| Транспорт | TLS 1.3 |
-| Хранение паролей | bcrypt/argon2 |
+| Aspect | Measure |
+|--------|---------|
+| Transport | TLS 1.3 |
+| Password storage | bcrypt/argon2 |
 | Sensitive data | Encryption at rest |
 | API keys | Vault/Secrets Manager |
 
 ---
 
-## 5. Наблюдаемость
+## 5. Observability
 
-### 5.1 Логирование
+### 5.1 Logging
 
-- **Формат**: JSON (structlog)
-- **Уровни**: DEBUG, INFO, WARNING, ERROR
-- **Корреляция**: X-Request-ID
+- **Format**: JSON (structlog)
+- **Levels**: DEBUG, INFO, WARNING, ERROR
+- **Correlation**: X-Request-ID
 
-### 5.2 Метрики (Level 3+)
+### 5.2 Metrics (Level 3+)
 
 - Request rate
 - Response time (p50, p95, p99)
@@ -349,29 +349,29 @@ CREATE INDEX idx_{entities}_created_at ON {entities}(created_at);
 
 ### 5.3 Health Checks
 
-| Endpoint | Проверки |
-|----------|----------|
-| /health | Сервис запущен |
-| /health/ready | Все зависимости доступны |
-| /health/live | Сервис отвечает |
+| Endpoint | Checks |
+|----------|--------|
+| /health | Service is running |
+| /health/ready | All dependencies available |
+| /health/live | Service is responding |
 
 ---
 
-## 6. Масштабирование
+## 6. Scaling
 
-### 6.1 Стратегия
+### 6.1 Strategy
 
-| Сервис | Тип | Метод |
-|--------|-----|-------|
+| Service | Type | Method |
+|---------|------|--------|
 | API | Stateless | Horizontal (replicas) |
 | Data API | Stateless | Horizontal (replicas) |
 | PostgreSQL | Stateful | Vertical / Read replicas |
 | Redis | Stateful | Cluster mode |
 
-### 6.2 Узкие места
+### 6.2 Bottlenecks
 
-| Компонент | Риск | Митигация |
-|-----------|------|-----------|
+| Component | Risk | Mitigation |
+|-----------|------|------------|
 | PostgreSQL | Connection limit | Connection pooling |
 | API | CPU bound | Horizontal scaling |
 | External API | Rate limits | Caching, queuing |
@@ -380,17 +380,17 @@ CREATE INDEX idx_{entities}_created_at ON {entities}(created_at);
 
 ## 7. Deployment
 
-### 7.1 Окружения
+### 7.1 Environments
 
-| Окружение | Назначение | URL |
-|-----------|-----------|-----|
-| Development | Локальная разработка | localhost |
-| Staging | Тестирование | staging.domain.com |
-| Production | Боевой | domain.com |
+| Environment | Purpose | URL |
+|-------------|---------|-----|
+| Development | Local development | localhost |
+| Staging | Testing | staging.domain.com |
+| Production | Live | domain.com |
 
-### 7.2 Конфигурация
+### 7.2 Configuration
 
-Все настройки через переменные окружения:
+All settings via environment variables:
 
 | Variable | Development | Production |
 |----------|-------------|------------|
@@ -400,10 +400,10 @@ CREATE INDEX idx_{entities}_created_at ON {entities}(created_at);
 
 ---
 
-## 8. Трассировка требований
+## 8. Requirements Traceability
 
-| Требование | Компонент | API | Таблица |
-|------------|-----------|-----|---------|
+| Requirement | Component | API | Table |
+|-------------|-----------|-----|-------|
 | FR-001 | {context}_api | GET /entities | {entities} |
 | FR-002 | {context}_api | POST /entities | {entities} |
 | FR-003 | {context}_api | PUT /entities/{id} | {entities} |
@@ -411,43 +411,43 @@ CREATE INDEX idx_{entities}_created_at ON {entities}(created_at);
 
 ---
 
-## 9. План тестирования
+## 9. Test Plan
 
-### 9.1 Smoke тесты (обязательно, внутри сервисов)
+### 9.1 Smoke Tests (mandatory, inside services)
 
-| Сервис | Endpoint | Тест | Статус |
-|--------|----------|------|--------|
-| {api} | GET /health | test_health_check | План |
-| {api} | POST /users | test_create_user_happy | План |
+| Service | Endpoint | Test | Status |
+|---------|----------|------|--------|
+| {api} | GET /health | test_health_check | Planned |
+| {api} | POST /users | test_create_user_happy | Planned |
 
-### 9.2 Unit тесты (если TRQ-005 = Да)
+### 9.2 Unit Tests (if TRQ-005 = Yes)
 
-| Модуль | Функция | Тест | Моки |
-|--------|---------|------|------|
+| Module | Function | Test | Mocks |
+|--------|----------|------|-------|
 | services/user | create_user() | test_create_user | DataApiClient |
 
-### 9.3 Integration тесты (если TRQ-006 = Да)
+### 9.3 Integration Tests (if TRQ-006 = Yes)
 
-| Пайплайн | Тест | Тестовая БД |
+| Pipeline | Test | Test DB |
+|----------|------|---------|
+| User registration | test_registration_flow | testcontainers for {DB from PRD} |
+
+### 9.4 E2E Tests (if TRQ-007 = Yes, global)
+
+| Scenario | Test | Description |
 |----------|------|-------------|
-| User registration | test_registration_flow | testcontainers для {БД из PRD} |
-
-### 9.4 E2E тесты (если TRQ-007 = Да, глобально)
-
-| Сценарий | Тест | Описание |
-|----------|------|----------|
-| {сценарий} | test_{name}_e2e | {описание} |
+| {scenario} | test_{name}_e2e | {description} |
 
 ---
 
-## Качественные ворота
+## Quality Gates
 
 ### PLAN_APPROVED Checklist
 
-- [ ] Архитектура соответствует принципам фреймворка
-- [ ] Все компоненты определены
-- [ ] API контракты специфицированы
-- [ ] Схема БД спроектирована
-- [ ] Требования к безопасности покрыты
-- [ ] Стратегия масштабирования определена
-- [ ] Требования трассируются к компонентам
+- [ ] Architecture conforms to framework principles
+- [ ] All components defined
+- [ ] API contracts specified
+- [ ] DB schema designed
+- [ ] Security requirements covered
+- [ ] Scaling strategy defined
+- [ ] Requirements traced to components

@@ -1,196 +1,196 @@
-# Функция: Проверка архитектуры
+# Function: Architecture Compliance Check
 
-> **Назначение**: Верификация соответствия кода архитектурным принципам.
-
----
-
-## Цель
-
-Проверить, что реализованный код соответствует
-архитектурным принципам AIDD-MVP Framework.
+> **Purpose**: Verifying code compliance with architectural principles.
 
 ---
 
-## Входные данные
+## Goal
 
-| Артефакт | Путь | Описание |
-|----------|------|----------|
-| Код | `services/` | Реализованные сервисы |
-| Архитектура | `ai-docs/docs/_plans/mvp/` | Архитектурное решение |
-| Ворота | IMPLEMENT_OK | Должны быть пройдены |
+Verify that the implemented code complies with
+the architectural principles of the AIDD-MVP Framework.
 
 ---
 
-## Проверяемые принципы
+## Input Data
 
-### 1. HTTP-only доступ к данным
+| Artifact | Path | Description |
+|----------|------|-------------|
+| Code | `services/` | Implemented services |
+| Architecture | `ai-docs/docs/_plans/mvp/` | Architectural decision |
+| Gate | IMPLEMENT_OK | Must be passed |
+
+---
+
+## Verified Principles
+
+### 1. HTTP-only Data Access
 
 ```
-ПРАВИЛО: Business сервисы НЕ обращаются к БД напрямую.
+RULE: Business services DO NOT access the DB directly.
 
-Проверить:
-- Business API использует HTTP клиент для Data API
-- Нет импортов SQLAlchemy в business сервисах
-- Нет прямых подключений к БД
+Check:
+- Business API uses HTTP client for Data API
+- No SQLAlchemy imports in business services
+- No direct DB connections
 ```
 
-**Команды проверки:**
+**Verification commands:**
 
 ```bash
-# Поиск импортов SQLAlchemy в business сервисах
+# Search for SQLAlchemy imports in business services
 Grep: "from sqlalchemy" in services/{context}_api/
 Grep: "import sqlalchemy" in services/{context}_api/
 
-# Должно быть ПУСТО. Если найдено — НАРУШЕНИЕ.
+# Should be EMPTY. If found — VIOLATION.
 
-# Поиск HTTP клиентов
+# Search for HTTP clients
 Grep: "httpx" in services/{context}_api/
 Grep: "DataApiClient" in services/{context}_api/
 
-# Должны быть найдены. Если нет — НАРУШЕНИЕ.
+# Should be found. If not — VIOLATION.
 ```
 
-### 2. DDD структура
+### 2. DDD Structure
 
 ```
-ПРАВИЛО: Код организован по слоям DDD.
+RULE: Code is organized by DDD layers.
 
-Проверить:
-- api/ — только роуты и HTTP обработка
-- application/ — сервисы приложения
-- domain/ — бизнес-логика
-- infrastructure/ — адаптеры
+Check:
+- api/ — only routes and HTTP handling
+- application/ — application services
+- domain/ — business logic
+- infrastructure/ — adapters
 ```
 
-**Команды проверки:**
+**Verification commands:**
 
 ```bash
-# Проверка структуры
+# Check structure
 ls services/{context}_api/src/{context}_api/
-# Должны быть: api/, application/, domain/, infrastructure/
+# Should have: api/, application/, domain/, infrastructure/
 
-# Проверка зависимостей
-# api/ НЕ должен импортировать из infrastructure/ напрямую
+# Check dependencies
+# api/ SHOULD NOT import from infrastructure/ directly
 Grep: "from.*infrastructure" in services/{context}_api/src/{context}_api/api/
 
-# domain/ НЕ должен импортировать из api/ или infrastructure/
+# domain/ SHOULD NOT import from api/ or infrastructure/
 Grep: "from.*api" in services/{context}_api/src/{context}_api/domain/
 Grep: "from.*infrastructure" in services/{context}_api/src/{context}_api/domain/
 ```
 
-### 3. Один Event Loop на сервис
+### 3. One Event Loop per Service
 
 ```
-ПРАВИЛО: Каждый сервис владеет одним event loop.
+RULE: Each service owns one event loop.
 
-Проверить:
-- Нет asyncio.run() внутри async функций
-- Нет создания новых event loops
-- Нет asyncio.get_event_loop().run_until_complete()
+Check:
+- No asyncio.run() inside async functions
+- No creation of new event loops
+- No asyncio.get_event_loop().run_until_complete()
 ```
 
-**Команды проверки:**
+**Verification commands:**
 
 ```bash
-# Поиск проблемных паттернов
+# Search for problematic patterns
 Grep: "asyncio.run(" in services/
 Grep: "get_event_loop().run" in services/
 Grep: "new_event_loop()" in services/
 
-# Допустимо только в main.py на верхнем уровне
+# Allowed only in main.py at the top level
 ```
 
-### 4. Разделение сервисов
+### 4. Service Separation
 
 ```
-ПРАВИЛО: Сервисы изолированы и общаются через HTTP.
+RULE: Services are isolated and communicate via HTTP.
 
-Проверить:
-- Каждый сервис — отдельная директория
-- Нет общих импортов между сервисами
-- Взаимодействие только через HTTP клиенты
+Check:
+- Each service is a separate directory
+- No shared imports between services
+- Interaction only through HTTP clients
 ```
 
-**Команды проверки:**
+**Verification commands:**
 
 ```bash
-# Проверка изоляции
-# Сервис A не должен импортировать из сервиса B
+# Check isolation
+# Service A should not import from service B
 Grep: "from {context}_data" in services/{context}_api/
 Grep: "from {context}_api" in services/{context}_data/
 
-# Должно быть ПУСТО
+# Should be EMPTY
 ```
 
 ---
 
-## Чек-лист проверки
+## Verification Checklist
 
-### Архитектурные принципы
+### Architectural Principles
 
-- [ ] **HTTP-only**: Business API использует только HTTP клиенты
-- [ ] **Нет SQLAlchemy в business**: Импорты SQLAlchemy только в data сервисах
-- [ ] **DDD структура**: Все слои присутствуют и правильно организованы
-- [ ] **Разделение**: Сервисы не импортируют друг друга напрямую
-- [ ] **Event Loop**: Один event loop на сервис
+- [ ] **HTTP-only**: Business API uses only HTTP clients
+- [ ] **No SQLAlchemy in business**: SQLAlchemy imports only in data services
+- [ ] **DDD structure**: All layers present and properly organized
+- [ ] **Separation**: Services do not import from each other directly
+- [ ] **Event Loop**: One event loop per service
 
-### Качество кода
+### Code Quality
 
-- [ ] **DRY**: Нет дублирования кода
-- [ ] **KISS**: Решения простые и понятные
-- [ ] **YAGNI**: Нет избыточной функциональности
+- [ ] **DRY**: No code duplication
+- [ ] **KISS**: Solutions are simple and clear
+- [ ] **YAGNI**: No excessive functionality
 
 ---
 
-## Результат проверки
+## Verification Result
 
 ```markdown
-## Проверка архитектуры
+## Architecture Check
 
-### Статус: PASSED / FAILED
+### Status: PASSED / FAILED
 
-### Проверенные принципы
+### Verified Principles
 
-| Принцип | Статус | Комментарий |
-|---------|--------|-------------|
-| HTTP-only | ✓/✗ | {Комментарий} |
-| DDD структура | ✓/✗ | {Комментарий} |
-| Один Event Loop | ✓/✗ | {Комментарий} |
-| Разделение сервисов | ✓/✗ | {Комментарий} |
+| Principle | Status | Comment |
+|-----------|--------|---------|
+| HTTP-only | ✓/✗ | {Comment} |
+| DDD structure | ✓/✗ | {Comment} |
+| One Event Loop | ✓/✗ | {Comment} |
+| Service separation | ✓/✗ | {Comment} |
 
-### Найденные нарушения
+### Violations Found
 
-| # | Файл | Строка | Нарушение | Рекомендация |
-|---|------|--------|-----------|--------------|
-| 1 | {файл} | {строка} | {описание} | {как исправить} |
+| # | File | Line | Violation | Recommendation |
+|---|------|------|-----------|----------------|
+| 1 | {file} | {line} | {description} | {how to fix} |
 
-### Рекомендации
+### Recommendations
 
-1. {Рекомендация 1}
-2. {Рекомендация 2}
+1. {Recommendation 1}
+2. {Recommendation 2}
 ```
 
 ---
 
-## Критерии прохождения
+## Passing Criteria
 
 ```
-PASSED: Все принципы соблюдены, нет критических нарушений.
+PASSED: All principles are followed, no critical violations.
 
-FAILED: Есть хотя бы одно нарушение:
-- HTTP-only нарушен
-- DDD структура нарушена
-- Event Loop проблемы
-- Сервисы не изолированы
+FAILED: At least one violation:
+- HTTP-only violated
+- DDD structure violated
+- Event Loop issues
+- Services not isolated
 ```
 
 ---
 
-## Источники
+## Sources
 
-| Документ | Описание |
-|----------|----------|
-| `knowledge/architecture/improved-hybrid.md` | Гибридная архитектура |
-| `knowledge/architecture/ddd-hexagonal.md` | DDD принципы |
-| `knowledge/architecture/data-access.md` | HTTP-only доступ |
-| `knowledge/quality/dry-kiss-yagni.md` | Принципы качества |
+| Document | Description |
+|----------|-------------|
+| `knowledge/architecture/improved-hybrid.md` | Hybrid architecture |
+| `knowledge/architecture/ddd-hexagonal.md` | DDD principles |
+| `knowledge/architecture/data-access.md` | HTTP-only access |
+| `knowledge/quality/dry-kiss-yagni.md` | Quality principles |

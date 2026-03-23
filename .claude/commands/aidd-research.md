@@ -1,24 +1,24 @@
 ---
 allowed-tools: Read(*), Glob(*), Grep(*), Bash(git :*), Bash(python3 :*)
-description: Анализ кодовой базы и технологий
+description: Analyze codebase and technologies
 ---
 
-> ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
-> 1. Найти секцию "Чеклист ворот" в конце этого файла
-> 2. Создать TodoWrite со ВСЕМИ пунктами (особенно 🔴)
-> 3. Выполнить ВСЕ пункты и отметить completed
-> 4. Команда завершена ТОЛЬКО когда все 🔴 пункты ✅
+> ⚠️ **ENFORCEMENT**: Before completing this command, AI MUST:
+> 1. Find the "Gate Checklist" section at the end of this file
+> 2. Create TodoWrite with ALL items (especially 🔴)
+> 3. Complete ALL items and mark them completed
+> 4. Command is complete ONLY when all 🔴 items are ✅
 >
-> Правила: `.aidd/CLAUDE.md` → "Выполнение команд /aidd-*"
+> Rules: `.aidd/CLAUDE.md` → "Executing /aidd-* commands"
 
-# Команда: /aidd-research
+# Command: /aidd-research
 
-> Запускает Исследователя для анализа кодовой базы и технологий.
-> **Pipeline State v2**: Поддержка параллельных пайплайнов.
+> Launches the Researcher to analyze the codebase and technologies.
+> **Pipeline State v2**: Parallel pipeline support.
 
 ---
 
-## Синтаксис
+## Syntax
 
 ```bash
 /aidd-research
@@ -26,166 +26,166 @@ description: Анализ кодовой базы и технологий
 
 ---
 
-## Описание
+## Description
 
-Команда `/aidd-research` выполняет анализ существующего кода (для FEATURE)
-или анализ требований и технологий (для CREATE).
+The `/aidd-research` command performs analysis of existing code (for FEATURE)
+or analysis of requirements and technologies (for CREATE).
 
-> **VERIFY BEFORE ACT**: Перед созданием файлов/директорий проверьте их
-> существование (см. CLAUDE.md, раздел "Критические правила").
-
----
-
-## Агент
-
-**Исследователь** (`.claude/agents/researcher.md`)
+> **VERIFY BEFORE ACT**: Before creating files/directories, check their
+> existence (see CLAUDE.md, "Critical Rules" section).
 
 ---
 
-## Порядок чтения файлов
+## Agent
 
-> **Принцип**: Сначала контекст ЦП, потом инструкции фреймворка.
-> **Подробнее**: [docs/initialization.md](../../docs/initialization.md)
+**Researcher** (`.claude/agents/researcher.md`)
 
-### Фаза 1: Контекст целевого проекта
+---
 
-| # | Файл | Условие | Зачем |
-|---|------|---------|-------|
-| 1 | `./CLAUDE.md` | Если существует | Специфика проекта |
-| 2 | `./.pipeline-state.json` | Обязательно | Режим, этап, ворота |
-| 3 | `./ai-docs/docs/_analysis/*.md` | Обязательно | PRD для анализа |
-| 4 | `./services/` | Для FEATURE | Существующий код |
+## File Reading Order
 
-### Фаза 2: Автомиграция и предусловия
+> **Principle**: First TP context, then framework instructions.
+> **Details**: [docs/initialization.md](../../docs/initialization.md)
 
-> **Важно**: Перед выполнением команды проверить версию `.pipeline-state.json`
-> и выполнить миграцию v1 → v2 если требуется (см. `knowledge/pipeline/automigration.md`).
+### Phase 1: Target Project Context
 
-| Ворота | Проверка (v2) |
-|--------|---------------|
+| # | File | Condition | Purpose |
+|---|------|-----------|---------|
+| 1 | `./CLAUDE.md` | If exists | Project specifics |
+| 2 | `./.pipeline-state.json` | Required | Mode, stage, gates |
+| 3 | `./ai-docs/docs/_analysis/*.md` | Required | PRD for analysis |
+| 4 | `./services/` | For FEATURE | Existing code |
+
+### Phase 2: Auto-migration and Preconditions
+
+> **Important**: Before executing the command, check `.pipeline-state.json` version
+> and perform v1 → v2 migration if required (see `knowledge/pipeline/automigration.md`).
+
+| Gate | Check (v2) |
+|------|------------|
 | `PRD_READY` | `active_pipelines[FID].gates.PRD_READY.passed == true` |
 
-> **Примечание v2**: FID определяется по текущей git ветке.
+> **Note v2**: FID is determined by the current git branch.
 
-### Фаза 3: Инструкции фреймворка
+### Phase 3: Framework Instructions
 
-| # | Файл | Зачем |
-|---|------|-------|
-| 5 | `.aidd/CLAUDE.md` | Правила фреймворка |
-| 6 | `.aidd/workflow.md` | Процесс и ворота |
-| 7 | `.aidd/.claude/commands/research.md` | Этот файл |
-| 8 | `.aidd/.claude/agents/researcher.md` | Инструкции роли |
-
-### Фаза 4: База знаний
-
-| # | Файл | Условие |
+| # | File | Purpose |
 |---|------|---------|
-| 9 | `.aidd/knowledge/architecture/*.md` | По необходимости |
+| 5 | `.aidd/CLAUDE.md` | Framework rules |
+| 6 | `.aidd/workflow.md` | Process and gates |
+| 7 | `.aidd/.claude/commands/research.md` | This file |
+| 8 | `.aidd/.claude/agents/researcher.md` | Role instructions |
+
+### Phase 4: Knowledge Base
+
+| # | File | Condition |
+|---|------|-----------|
+| 9 | `.aidd/knowledge/architecture/*.md` | As needed |
 
 ---
 
-## Режимы
+## Modes
 
-| Режим | Поведение |
-|-------|-----------|
-| **CREATE** | Анализ требований из PRD, выбор технологий |
-| **FEATURE** | Анализ существующего кода, выявление паттернов |
-
----
-
-## Анализ тестов (FEATURE)
-
-Если проект уже содержит код, обязательно:
-- Проанализировать существующие тесты (smoke/unit/integration/e2e)
-- Заполнить секцию "3.6 Анализ существующих тестов" в Research Report
-- Сопоставить найденные тесты с требованиями PRD секции 6.5 (TRQ-001..TRQ-007)
+| Mode | Behavior |
+|------|----------|
+| **CREATE** | Requirements analysis from PRD, technology selection |
+| **FEATURE** | Existing code analysis, pattern identification |
 
 ---
 
-## Предусловия
+## Test Analysis (FEATURE)
 
-| Ворота | Требование |
-|--------|------------|
-| `PRD_READY` | PRD документ должен существовать |
+If the project already contains code, it is mandatory to:
+- Analyze existing tests (smoke/unit/integration/e2e)
+- Fill in section "3.6 Existing Test Analysis" in the Research Report
+- Map found tests to PRD section 6.5 requirements (TRQ-001..TRQ-007)
 
-### Алгоритм проверки (v2)
+---
+
+## Preconditions
+
+| Gate | Requirement |
+|------|-------------|
+| `PRD_READY` | PRD document must exist |
+
+### Verification Algorithm (v2)
 
 ```python
 def check_research_preconditions() -> tuple[str, dict] | None:
     """
-    Проверить предусловия для /research.
+    Check preconditions for /research.
 
-    v2: Определяем FID по git ветке, проверяем active_pipelines[fid].gates
+    v2: Determine FID by git branch, check active_pipelines[fid].gates
     """
-    # 1. Проверить и мигрировать state
-    state = ensure_v2_state()  # см. knowledge/pipeline/automigration.md
+    # 1. Check and migrate state
+    state = ensure_v2_state()  # see knowledge/pipeline/automigration.md
     if not state:
-        print("❌ Пайплайн не инициализирован → /aidd-analyze")
+        print("❌ Pipeline not initialized → /aidd-analyze")
         return None
 
-    # 2. Определить FID по текущей git ветке
+    # 2. Determine FID by current git branch
     fid, pipeline = get_current_feature_context(state)
     if not fid:
-        print("❌ Не удалось определить контекст фичи")
+        print("❌ Could not determine feature context")
         return None
 
-    # 3. Проверить PRD_READY
+    # 3. Check PRD_READY
     if not pipeline["gates"].get("PRD_READY", {}).get("passed"):
-        print(f"❌ Ворота PRD_READY не пройдены для {fid}")
-        print("   → Сначала выполните /aidd-analyze")
+        print(f"❌ PRD_READY gate not passed for {fid}")
+        print("   → First run /aidd-analyze")
         return None
 
-    print(f"✓ Фича {fid}: {pipeline.get('title')}")
+    print(f"✓ Feature {fid}: {pipeline.get('title')}")
     return (fid, pipeline)
 ```
 
 ---
 
-## Выходные артефакты
+## Output Artifacts
 
-| Артефакт | Путь (v2) | Путь (v3) |
+| Artifact | Path (v2) | Path (v3) |
 |----------|-----------|-----------|
 | Research Report | `ai-docs/docs/research/{YYYY-MM-DD}_{FID}_{slug}-research.md` | `ai-docs/docs/_research/{YYYY-MM-DD}_{FID}_{slug}.md` |
 
-> **Примечание (v2.4+)**:
-> - **v2** (по умолчанию): Старая структура `research/`, имя с дублированием `{name}-research.md`
-> - **v3** (после миграции): Новая структура `_research/`, имя без дублирования `{name}.md`
-> - Режим определяется из `.pipeline-state.json → naming_version`
+> **Note (v2.4+)**:
+> - **v2** (default): Old structure `research/`, name with duplication `{name}-research.md`
+> - **v3** (after migration): New structure `_research/`, name without duplication `{name}.md`
+> - Mode determined from `.pipeline-state.json → naming_version`
 
-### Именование артефакта
+### Artifact Naming
 
-FID и slug берутся из `active_pipelines[FID]` в `.pipeline-state.json` (v2):
+FID and slug are taken from `active_pipelines[FID]` in `.pipeline-state.json` (v2):
 
 ```python
-# Получить данные из state (v2)
+# Get data from state (v2)
 fid, pipeline = get_current_feature_context(state)
 if not fid:
-    print("❌ Не удалось определить контекст фичи")
+    print("❌ Could not determine feature context")
     return None
 
 slug = pipeline["name"]  # table-booking
 date = datetime.now().strftime("%Y-%m-%d")  # 2024-12-23
 
-# Определить naming_version и структуру артефактов
+# Determine naming_version and artifact structure
 naming_version = state.get("naming_version", "v2")
 
 if naming_version == "v3":
     folder = "_research"
-    filename = f"{date}_{fid}_{slug}.md"  # Без дублирования
+    filename = f"{date}_{fid}_{slug}.md"  # Without duplication
 else:
     folder = "research"
-    filename = f"{date}_{fid}_{slug}-research.md"  # С дублированием
+    filename = f"{date}_{fid}_{slug}-research.md"  # With duplication
 
 artifact_path = f"{folder}/{filename}"
 # v2: research/2024-12-23_F001_table-booking-research.md
 # v3: _research/2024-12-23_F001_table-booking.md
 ```
 
-### Обновление .pipeline-state.json
+### Updating .pipeline-state.json
 
-После создания отчёта обновить `active_pipelines[FID].artifacts` (v2):
+After creating the report, update `active_pipelines[FID].artifacts` (v2):
 
-**Пример для v2 (по умолчанию)**:
+**Example for v2 (default)**:
 ```json
 {
   "naming_version": "v2",
@@ -193,7 +193,7 @@ artifact_path = f"{folder}/{filename}"
     "F001": {
       "branch": "feature/F001-table-booking",
       "name": "table-booking",
-      "title": "Бронирование столиков",
+      "title": "Table Booking",
       "stage": "RESEARCH",
       "gates": {
         "PRD_READY": {"passed": true, "passed_at": "2024-12-23T10:00:00Z"},
@@ -208,7 +208,7 @@ artifact_path = f"{folder}/{filename}"
 }
 ```
 
-**Пример для v3 (после миграции)**:
+**Example for v3 (after migration)**:
 ```json
 {
   "naming_version": "v3",
@@ -225,51 +225,51 @@ artifact_path = f"{folder}/{filename}"
 
 ---
 
-## Качественные ворота
+## Quality Gates
 
 ### RESEARCH_DONE
 
-| Критерий | Описание |
-|----------|----------|
-| Анализ кода | Существующий код изучен (для FEATURE) |
-| Анализ тестов | Существующие тесты проанализированы (для FEATURE) |
-| Паттерны | Архитектурные паттерны выявлены |
-| Ограничения | Технические ограничения определены |
-| Рекомендации | Сформулированы рекомендации |
-| Файл сохранён | Отчёт сохранён в правильной папке:<br>v2: `research/{YYYY-MM-DD}_{FID}_{slug}-research.md`<br>v3: `_research/{YYYY-MM-DD}_{FID}_{slug}.md` |
+| Criterion | Description |
+|-----------|-------------|
+| Code analysis | Existing code studied (for FEATURE) |
+| Test analysis | Existing tests analyzed (for FEATURE) |
+| Patterns | Architectural patterns identified |
+| Constraints | Technical constraints defined |
+| Recommendations | Recommendations formulated |
+| File saved | Report saved in correct folder:<br>v2: `research/{YYYY-MM-DD}_{FID}_{slug}-research.md`<br>v3: `_research/{YYYY-MM-DD}_{FID}_{slug}.md` |
 
 ---
 
-## Примеры использования
+## Usage Examples
 
 ```bash
-# После /aidd-analyze
+# After /aidd-analyze
 /aidd-research
 ```
 
 ---
 
-## Чеклист ворот RESEARCH_DONE
+## RESEARCH_DONE Gate Checklist
 
-> ⚠️ AI ОБЯЗАН создать TodoWrite с этими пунктами.
+> ⚠️ AI MUST create TodoWrite with these items.
 
-- [ ] 🔴 Research отчёт создан в правильной папке:
+- [ ] 🔴 Research report created in correct folder:
   - v2: `ai-docs/docs/research/{name}-research.md`
   - v3: `ai-docs/docs/_research/{name}.md`
-- [ ] 🔴 Существующий код проанализирован
-- [ ] 🔴 Существующие тесты проанализированы (FEATURE)
-- [ ] 🔴 Зависимости определены
-- [ ] 🔴 `.pipeline-state.json` обновлён (gate: RESEARCH_DONE, artifact path соответствует naming_version)
-- [ ] 🟡 Риски идентифицированы
-- [ ] 🟡 Технические ограничения описаны
+- [ ] 🔴 Existing code analyzed
+- [ ] 🔴 Existing tests analyzed (FEATURE)
+- [ ] 🔴 Dependencies identified
+- [ ] 🔴 `.pipeline-state.json` updated (gate: RESEARCH_DONE, artifact path matches naming_version)
+- [ ] 🟡 Risks identified
+- [ ] 🟡 Technical constraints described
 
 ---
 
-## Следующий шаг
+## Next Step
 
-После прохождения ворот `RESEARCH_DONE`:
+After passing the `RESEARCH_DONE` gate:
 
 ```bash
-/aidd-plan          # для CREATE
-/aidd-plan-feature  # для FEATURE
+/aidd-plan          # for CREATE
+/aidd-plan-feature  # for FEATURE
 ```

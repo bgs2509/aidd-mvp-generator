@@ -1,66 +1,66 @@
-# Функция: Проверка артефактов
+# Function: Artifact Verification
 
-> **Назначение**: Верификация наличия и полноты всех артефактов.
-
----
-
-## Цель
-
-Проверить, что все артефакты, созданные на этапах пайплайна,
-существуют, актуальны и соответствуют требованиям.
+> **Purpose**: Verifying the presence and completeness of all artifacts.
 
 ---
 
-## Список артефактов
+## Goal
 
-### Документация (ai-docs/)
+Verify that all artifacts created during pipeline stages
+exist, are up to date, and meet requirements.
 
-| Артефакт | Путь | Этап | Обязательный |
-|----------|------|------|--------------|
-| PRD | `ai-docs/docs/_analysis/{name}-prd.md` | Анализ | Да |
-| Research Report | `ai-docs/docs/research/{name}-research.md` | Исследование | Да |
-| Architecture | `ai-docs/docs/_plans/mvp/{name}-arch.md` | Архитектура | Да |
-| Implementation Plan | `ai-docs/docs/_plans/features/{name}-plan.md` | Архитектура | Да |
-| Review Report | `ai-docs/docs/_validation/review-report.md` | Ревью | Да |
-| QA Report | `ai-docs/docs/_validation/qa-report.md` | QA | Да |
-| RTM | `ai-docs/docs/rtm.md` | Все этапы | Да |
+---
 
-### Код (services/)
+## Artifact List
 
-| Артефакт | Путь | Описание |
-|----------|------|----------|
-| Business API | `services/{context}_api/` | REST API сервис |
-| Data API | `services/{context}_data/` | Сервис данных |
-| Telegram Bot | `services/{context}_bot/` | Бот (опционально) |
-| Background Worker | `services/{context}_worker/` | Воркер (опционально) |
+### Documentation (ai-docs/)
 
-### Инфраструктура
+| Artifact | Path | Stage | Required |
+|----------|------|-------|----------|
+| PRD | `ai-docs/docs/_analysis/{name}-prd.md` | Analysis | Yes |
+| Research Report | `ai-docs/docs/research/{name}-research.md` | Research | Yes |
+| Architecture | `ai-docs/docs/_plans/mvp/{name}-arch.md` | Architecture | Yes |
+| Implementation Plan | `ai-docs/docs/_plans/features/{name}-plan.md` | Architecture | Yes |
+| Review Report | `ai-docs/docs/_validation/review-report.md` | Review | Yes |
+| QA Report | `ai-docs/docs/_validation/qa-report.md` | QA | Yes |
+| RTM | `ai-docs/docs/rtm.md` | All stages | Yes |
 
-| Артефакт | Путь | Описание |
-|----------|------|----------|
-| Docker Compose | `docker-compose.yml` | Основная конфигурация |
+### Code (services/)
+
+| Artifact | Path | Description |
+|----------|------|-------------|
+| Business API | `services/{context}_api/` | REST API service |
+| Data API | `services/{context}_data/` | Data service |
+| Telegram Bot | `services/{context}_bot/` | Bot (optional) |
+| Background Worker | `services/{context}_worker/` | Worker (optional) |
+
+### Infrastructure
+
+| Artifact | Path | Description |
+|----------|------|-------------|
+| Docker Compose | `docker-compose.yml` | Main configuration |
 | Docker Compose Dev | `docker-compose.dev.yml` | Dev overrides |
-| Environment | `.env.example` | Пример переменных |
-| Makefile | `Makefile` | Команды |
-| CI конфигурация (опционально) | — | CI/CD (если используется) |
+| Environment | `.env.example` | Environment variables example |
+| Makefile | `Makefile` | Commands |
+| CI configuration (optional) | — | CI/CD (if used) |
 
-### Тесты
+### Tests
 
-| Артефакт | Путь | Описание |
-|----------|------|----------|
-| Unit Tests | `services/*/tests/unit/` | Unit тесты |
-| Integration Tests | `services/*/tests/integration/` | Integration тесты |
-| conftest.py | `services/*/tests/conftest.py` | Фикстуры |
-| Coverage Report | `htmlcov/` | HTML отчёт |
+| Artifact | Path | Description |
+|----------|------|-------------|
+| Unit Tests | `services/*/tests/unit/` | Unit tests |
+| Integration Tests | `services/*/tests/integration/` | Integration tests |
+| conftest.py | `services/*/tests/conftest.py` | Fixtures |
+| Coverage Report | `htmlcov/` | HTML report |
 
 ---
 
-## Процесс верификации
+## Verification Process
 
-### Шаг 1: Проверка документации
+### Step 1: Documentation Check
 
 ```bash
-# Проверить наличие документов
+# Check for document presence
 
 # PRD
 if [ -f "ai-docs/docs/_analysis/*-prd.md" ]; then
@@ -101,15 +101,15 @@ else
 fi
 ```
 
-### Шаг 2: Проверка кода
+### Step 2: Code Check
 
 ```bash
-# Проверить структуру сервисов
+# Check service structure
 
 for service in services/*/; do
     echo "Checking $service..."
 
-    # Основные файлы
+    # Main files
     [ -f "$service/Dockerfile" ] && echo "  ✓ Dockerfile" || echo "  ✗ Dockerfile"
     [ -f "$service/requirements.txt" ] && echo "  ✓ requirements.txt" || echo "  ✗ requirements.txt"
     [ -d "$service/src/" ] && echo "  ✓ src/" || echo "  ✗ src/"
@@ -117,10 +117,10 @@ for service in services/*/; do
 done
 ```
 
-### Шаг 3: Проверка инфраструктуры
+### Step 3: Infrastructure Check
 
 ```bash
-# Проверить инфраструктурные файлы
+# Check infrastructure files
 
 [ -f "docker-compose.yml" ] && echo "✓ docker-compose.yml" || echo "✗ docker-compose.yml"
 [ -f "docker-compose.dev.yml" ] && echo "✓ docker-compose.dev.yml" || echo "✗ docker-compose.dev.yml"
@@ -128,34 +128,34 @@ done
 [ -f "Makefile" ] && echo "✓ Makefile" || echo "✗ Makefile"
 ```
 
-### Шаг 4: Валидация содержимого
+### Step 4: Content Validation
 
 ```python
-# Псевдокод валидации содержимого
+# Content validation pseudocode
 
 def validate_prd(path):
-    """Проверить структуру PRD."""
+    """Validate PRD structure."""
     content = read(path)
 
     required_sections = [
-        "## 1. Обзор",
-        "## 2. Функциональные требования",
+        "## 1. Overview",
+        "## 2. Functional Requirements",
         "## 3. User Stories",
-        "## 4. Пайплайны",
-        "## 5. UI/UX требования",
-        "## 6. Нефункциональные требования",
-        "## 7. Технические ограничения",
-        "## 8. Допущения и риски",
-        "## 9. Открытые вопросы",
-        "## 10. Глоссарий",
-        "## 11. История изменений",
+        "## 4. Pipelines",
+        "## 5. UI/UX Requirements",
+        "## 6. Non-Functional Requirements",
+        "## 7. Technical Constraints",
+        "## 8. Assumptions and Risks",
+        "## 9. Open Questions",
+        "## 10. Glossary",
+        "## 11. Change History",
     ]
 
     for section in required_sections:
         if section not in content:
             return False, f"Missing section: {section}"
 
-    # Проверка ID требований
+    # Check requirement IDs
     if not re.search(r"FR-\d{3}", content):
         return False, "No FR IDs found"
 
@@ -163,10 +163,10 @@ def validate_prd(path):
 
 
 def validate_rtm(path):
-    """Проверить RTM."""
+    """Validate RTM."""
     content = read(path)
 
-    # Должна содержать все FR из PRD
+    # Must contain all FRs from PRD
     prd = read("ai-docs/docs/_analysis/*.md")
     fr_ids = extract_fr_ids(prd)
 
@@ -179,108 +179,108 @@ def validate_rtm(path):
 
 ---
 
-## Чек-лист артефактов
+## Artifact Checklist
 
-### Документация
+### Documentation
 
-- [ ] PRD существует и содержит все секции
-- [ ] Architecture документ существует
-- [ ] Implementation Plan существует
-- [ ] Review Report существует
-- [ ] QA Report существует
-- [ ] RTM существует и актуальна
+- [ ] PRD exists and contains all sections
+- [ ] Architecture document exists
+- [ ] Implementation Plan exists
+- [ ] Review Report exists
+- [ ] QA Report exists
+- [ ] RTM exists and is up to date
 
-### Код
+### Code
 
-- [ ] Business API сервис создан
-- [ ] Data API сервис создан
-- [ ] Telegram Bot создан (если требуется)
-- [ ] Background Worker создан (если требуется)
-- [ ] Все сервисы имеют Dockerfile
-- [ ] Все сервисы имеют tests/
+- [ ] Business API service created
+- [ ] Data API service created
+- [ ] Telegram Bot created (if required)
+- [ ] Background Worker created (if required)
+- [ ] All services have Dockerfile
+- [ ] All services have tests/
 
-### Инфраструктура
+### Infrastructure
 
-- [ ] docker-compose.yml существует и валиден
-- [ ] docker-compose.dev.yml существует
-- [ ] .env.example содержит все переменные
-- [ ] Makefile содержит основные команды
-- [ ] CI pipeline настроен
+- [ ] docker-compose.yml exists and is valid
+- [ ] docker-compose.dev.yml exists
+- [ ] .env.example contains all variables
+- [ ] Makefile contains main commands
+- [ ] CI pipeline configured
 
-### Тесты
+### Tests
 
-- [ ] Unit тесты существуют для всех сервисов
-- [ ] Integration тесты существуют
-- [ ] Coverage report сгенерирован
+- [ ] Unit tests exist for all services
+- [ ] Integration tests exist
+- [ ] Coverage report generated
 - [ ] Coverage ≥75%
 
 ---
 
-## Результат проверки
+## Verification Result
 
 ```markdown
-## Верификация артефактов
+## Artifact Verification
 
-### Общий статус: COMPLETE / INCOMPLETE
+### Overall Status: COMPLETE / INCOMPLETE
 
-### Документация
+### Documentation
 
-| Артефакт | Статус | Путь | Комментарий |
-|----------|--------|------|-------------|
+| Artifact | Status | Path | Comment |
+|----------|--------|------|---------|
 | PRD | ✓ | ai-docs/docs/_analysis/booking-prd.md | — |
 | Architecture | ✓ | ai-docs/docs/_plans/mvp/booking-arch.md | — |
 | Plan | ✓ | ai-docs/docs/_plans/features/booking-plan.md | — |
 | Review Report | ✓ | ai-docs/docs/_validation/review-report.md | — |
 | QA Report | ✓ | ai-docs/docs/_validation/qa-report.md | — |
-| RTM | ✓ | ai-docs/docs/rtm.md | Актуальна |
+| RTM | ✓ | ai-docs/docs/rtm.md | Up to date |
 
-### Код
+### Code
 
-| Сервис | Статус | Dockerfile | Tests | Комментарий |
-|--------|--------|------------|-------|-------------|
+| Service | Status | Dockerfile | Tests | Comment |
+|---------|--------|------------|-------|---------|
 | booking_api | ✓ | ✓ | ✓ | — |
 | booking_data | ✓ | ✓ | ✓ | — |
 | booking_bot | ✓ | ✓ | ✓ | — |
 
-### Инфраструктура
+### Infrastructure
 
-| Артефакт | Статус | Комментарий |
-|----------|--------|-------------|
-| docker-compose.yml | ✓ | Валиден |
+| Artifact | Status | Comment |
+|----------|--------|---------|
+| docker-compose.yml | ✓ | Valid |
 | docker-compose.dev.yml | ✓ | — |
-| .env.example | ✓ | 15 переменных |
-| Makefile | ✓ | 20 команд |
+| .env.example | ✓ | 15 variables |
+| Makefile | ✓ | 20 commands |
 | CI Pipeline | ✓ | — |
 
-### Отсутствующие артефакты
+### Missing Artifacts
 
-| # | Артефакт | Причина | Действие |
-|---|----------|---------|----------|
-| — | Нет отсутствующих | — | — |
+| # | Artifact | Reason | Action |
+|---|----------|--------|--------|
+| — | None missing | — | — |
 ```
 
 ---
 
-## Критерии прохождения
+## Passing Criteria
 
 ```
 COMPLETE:
-- Все обязательные артефакты существуют
-- Документы содержат требуемые секции
-- Код соответствует структуре
-- Тесты присутствуют
+- All required artifacts exist
+- Documents contain required sections
+- Code matches structure
+- Tests are present
 
 INCOMPLETE:
-- Отсутствует хотя бы один обязательный артефакт
-- Документ не содержит обязательных секций
-- Сервис не имеет тестов
+- At least one required artifact is missing
+- Document lacks required sections
+- Service has no tests
 ```
 
 ---
 
-## Источники
+## Sources
 
-| Документ | Описание |
-|----------|----------|
-| `workflow.md` | Описание артефактов по этапам |
-| `knowledge/architecture/project-structure.md` | Структура проекта |
+| Document | Description |
+|----------|-------------|
+| `workflow.md` | Artifacts by stage description |
+| `knowledge/architecture/project-structure.md` | Project structure |

@@ -1,17 +1,17 @@
-# Обработка ошибок HTTP
+# HTTP Error Handling
 
-> **Назначение**: Стратегии обработки ошибок при HTTP взаимодействии.
+> **Purpose**: Error handling strategies for HTTP interactions.
 
 ---
 
-## Исключения
+## Exceptions
 
 ```python
-"""Исключения для HTTP клиентов."""
+"""Exceptions for HTTP clients."""
 
 
 class ExternalServiceError(Exception):
-    """Ошибка внешнего сервиса."""
+    """External service error."""
 
     def __init__(
         self,
@@ -20,12 +20,12 @@ class ExternalServiceError(Exception):
         status_code: int | None = None,
     ):
         """
-        Инициализация.
+        Initialize.
 
         Args:
-            service: Имя сервиса.
-            message: Сообщение об ошибке.
-            status_code: HTTP код ответа.
+            service: Service name.
+            message: Error message.
+            status_code: HTTP response code.
         """
         self.service = service
         self.message = message
@@ -34,23 +34,23 @@ class ExternalServiceError(Exception):
 
 
 class DataApiError(ExternalServiceError):
-    """Ошибка Data API."""
+    """Data API error."""
 
     def __init__(self, message: str, status_code: int | None = None):
-        """Инициализация."""
+        """Initialize."""
         super().__init__("Data API", message, status_code)
 
 
 class DataApiNotFoundError(DataApiError):
-    """Ресурс не найден в Data API."""
+    """Resource not found in Data API."""
 
     def __init__(self, resource: str, resource_id: str):
         """
-        Инициализация.
+        Initialize.
 
         Args:
-            resource: Тип ресурса.
-            resource_id: ID ресурса.
+            resource: Resource type.
+            resource_id: Resource ID.
         """
         super().__init__(
             f"{resource} {resource_id} not found",
@@ -61,34 +61,34 @@ class DataApiNotFoundError(DataApiError):
 
 
 class DataApiValidationError(DataApiError):
-    """Ошибка валидации в Data API."""
+    """Validation error in Data API."""
 
     def __init__(self, message: str, errors: list | None = None):
         """
-        Инициализация.
+        Initialize.
 
         Args:
-            message: Сообщение об ошибке.
-            errors: Детали ошибок валидации.
+            message: Error message.
+            errors: Validation error details.
         """
         super().__init__(message, status_code=422)
         self.errors = errors or []
 
 
 class DataApiConflictError(DataApiError):
-    """Конфликт данных в Data API."""
+    """Data conflict in Data API."""
 
     def __init__(self, message: str):
-        """Инициализация."""
+        """Initialize."""
         super().__init__(message, status_code=409)
 ```
 
 ---
 
-## Маппинг ошибок
+## Error Mapping
 
 ```python
-"""Маппинг ошибок HTTP в исключения."""
+"""HTTP error to exception mapping."""
 
 from typing import Any
 import httpx
@@ -96,13 +96,13 @@ import httpx
 
 def map_data_api_error(response: httpx.Response) -> DataApiError:
     """
-    Преобразовать HTTP ответ в исключение.
+    Convert HTTP response to exception.
 
     Args:
-        response: HTTP ответ с ошибкой.
+        response: HTTP error response.
 
     Returns:
-        Соответствующее исключение.
+        Corresponding exception.
     """
     status_code = response.status_code
 
@@ -127,10 +127,10 @@ def map_data_api_error(response: httpx.Response) -> DataApiError:
 
 
 class DataApiClient:
-    """Клиент с маппингом ошибок."""
+    """Client with error mapping."""
 
     async def _request(self, method: str, path: str, **kwargs) -> Any:
-        """Запрос с обработкой ошибок."""
+        """Request with error handling."""
         response = await self.client.request(
             method,
             f"{self.base_url}{path}",
@@ -148,10 +148,10 @@ class DataApiClient:
 
 ---
 
-## Обработка в сервисе
+## Service-level Handling
 
 ```python
-"""Обработка ошибок в Application Service."""
+"""Error handling in Application Service."""
 
 from uuid import UUID
 
@@ -164,44 +164,44 @@ from {context}_api.infrastructure.http.data_api_client import (
 
 
 class UserService:
-    """Сервис с обработкой ошибок."""
+    """Service with error handling."""
 
     def __init__(self, data_client: DataApiClient):
-        """Инициализация."""
+        """Initialize."""
         self.data_client = data_client
 
     async def get_user(self, user_id: UUID) -> UserDTO:
         """
-        Получить пользователя.
+        Get a user.
 
         Args:
-            user_id: ID пользователя.
+            user_id: User ID.
 
         Returns:
-            Данные пользователя.
+            User data.
 
         Raises:
-            NotFoundError: Если пользователь не найден.
+            NotFoundError: If user not found.
         """
         try:
             result = await self.data_client.get_user(user_id)
             return UserDTO.model_validate(result)
         except DataApiNotFoundError:
-            # Преобразуем в бизнес-исключение
+            # Convert to business exception
             raise NotFoundError("User", str(user_id))
 
     async def create_user(self, dto: CreateUserDTO) -> UserDTO:
         """
-        Создать пользователя.
+        Create a user.
 
         Args:
-            dto: Данные для создания.
+            dto: Creation data.
 
         Returns:
-            Созданный пользователь.
+            Created user.
 
         Raises:
-            ValidationError: Если email занят.
+            ValidationError: If email is taken.
         """
         try:
             result = await self.data_client.create_user(dto.model_dump())
@@ -212,10 +212,10 @@ class UserService:
 
 ---
 
-## Обработчики FastAPI
+## FastAPI Handlers
 
 ```python
-"""Обработчики исключений для HTTP ошибок."""
+"""Exception handlers for HTTP errors."""
 
 from fastapi import FastAPI, Request
 from fastapi.responses import JSONResponse
@@ -227,14 +227,14 @@ from {context}_api.infrastructure.http.exceptions import (
 
 
 def setup_http_error_handlers(app: FastAPI) -> None:
-    """Настроить обработчики HTTP ошибок."""
+    """Set up HTTP error handlers."""
 
     @app.exception_handler(ExternalServiceError)
     async def external_service_handler(
         request: Request,
         exc: ExternalServiceError,
     ) -> JSONResponse:
-        """Обработать ошибку внешнего сервиса."""
+        """Handle external service error."""
         return JSONResponse(
             status_code=502,
             content={
@@ -249,8 +249,8 @@ def setup_http_error_handlers(app: FastAPI) -> None:
         request: Request,
         exc: DataApiError,
     ) -> JSONResponse:
-        """Обработать ошибку Data API."""
-        # Для некоторых ошибок прокидываем статус
+        """Handle Data API error."""
+        # Forward status for certain errors
         if exc.status_code in (404, 409, 422):
             status_code = exc.status_code
         else:
@@ -267,10 +267,10 @@ def setup_http_error_handlers(app: FastAPI) -> None:
 
 ---
 
-## Логирование ошибок
+## Error Logging
 
 ```python
-"""Логирование HTTP ошибок."""
+"""HTTP error logging."""
 
 import logging
 from functools import wraps
@@ -284,13 +284,13 @@ T = TypeVar("T")
 
 def log_http_errors(func: Callable[..., Awaitable[T]]) -> Callable[..., Awaitable[T]]:
     """
-    Декоратор для логирования HTTP ошибок.
+    Decorator for logging HTTP errors.
 
     Args:
-        func: Асинхронная функция.
+        func: Async function.
 
     Returns:
-        Обёрнутая функция.
+        Wrapped function.
     """
     @wraps(func)
     async def wrapper(*args, **kwargs) -> T:
@@ -321,37 +321,37 @@ def log_http_errors(func: Callable[..., Awaitable[T]]) -> Callable[..., Awaitabl
     return wrapper
 
 
-# Использование
+# Usage
 class DataApiClient:
     @log_http_errors
     async def get_user(self, user_id: UUID) -> dict | None:
-        """Получить пользователя с логированием."""
+        """Get user with logging."""
         return await self._request("GET", f"/api/v1/users/{user_id}")
 ```
 
 ---
 
-## Таблица обработки ошибок
+## Error Handling Table
 
-| HTTP код | Тип ошибки | Действие |
-|----------|------------|----------|
-| 400 | Bad Request | Вернуть 400 клиенту |
-| 401 | Unauthorized | Вернуть 401 клиенту |
-| 403 | Forbidden | Вернуть 403 клиенту |
+| HTTP Code | Error Type | Action |
+|-----------|------------|--------|
+| 400 | Bad Request | Return 400 to client |
+| 401 | Unauthorized | Return 401 to client |
+| 403 | Forbidden | Return 403 to client |
 | 404 | Not Found | NotFoundError |
 | 409 | Conflict | ConflictError/ValidationError |
 | 422 | Validation | ValidationError |
-| 500 | Server Error | Вернуть 502 (Bad Gateway) |
-| 502 | Bad Gateway | Retry, затем 502 |
-| 503 | Unavailable | Retry, затем 503 |
-| 504 | Timeout | Retry, затем 504 |
+| 500 | Server Error | Return 502 (Bad Gateway) |
+| 502 | Bad Gateway | Retry, then 502 |
+| 503 | Unavailable | Retry, then 503 |
+| 504 | Timeout | Retry, then 504 |
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Иерархия исключений определена
-- [ ] Маппинг HTTP кодов в исключения
-- [ ] Бизнес-исключения отделены от HTTP
-- [ ] Обработчики зарегистрированы в FastAPI
-- [ ] Логирование ошибок настроено
+- [ ] Exception hierarchy defined
+- [ ] HTTP code to exception mapping
+- [ ] Business exceptions separated from HTTP
+- [ ] Handlers registered in FastAPI
+- [ ] Error logging configured

@@ -1,21 +1,21 @@
-# Гибридная архитектура AIDD-MVP
+# AIDD-MVP Hybrid Architecture
 
-> **Назначение**: Описание улучшенной гибридной архитектуры фреймворка.
-
----
-
-## Обзор
-
-AIDD-MVP использует гибридную архитектуру, сочетающую:
-- **DDD (Domain-Driven Design)** — для организации бизнес-логики
-- **Hexagonal Architecture** — для изоляции от внешних зависимостей
-- **HTTP-only Data Access** — для разделения сервисов
+> **Purpose**: Description of the improved hybrid architecture of the framework.
 
 ---
 
-## Основные принципы
+## Overview
 
-### 1. Разделение на сервисы
+AIDD-MVP uses a hybrid architecture combining:
+- **DDD (Domain-Driven Design)** — for organizing business logic
+- **Hexagonal Architecture** — for isolation from external dependencies
+- **HTTP-only Data Access** — for service separation
+
+---
+
+## Core Principles
+
+### 1. Service Separation
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -45,48 +45,48 @@ AIDD-MVP использует гибридную архитектуру, соч�
 └─────────────────────────────────────────────────────────────┘
 ```
 
-### 2. HTTP-only доступ к данным
+### 2. HTTP-only Data Access
 
 ```
-ПРАВИЛО: Бизнес-сервисы НИКОГДА не обращаются к БД напрямую.
+RULE: Business services NEVER access the database directly.
 
-Business API ──HTTP──▶ Data API ──SQL──▶ Database
+Business API --HTTP--> Data API --SQL--> Database
 
-Почему:
-- Изоляция сервисов
-- Независимое масштабирование
-- Чёткие контракты (API)
-- Упрощение тестирования
+Why:
+- Service isolation
+- Independent scaling
+- Clear contracts (API)
+- Simplified testing
 ```
 
-### 3. DDD внутри сервиса
+### 3. DDD Within a Service
 
 ```
 service/
-├── api/                 ← Входящий адаптер (HTTP)
+├── api/                 <- Incoming adapter (HTTP)
 │   └── v1/
 │       └── routes.py
-├── application/         ← Сервисы приложения
+├── application/         <- Application services
 │   ├── services/
 │   └── dtos/
-├── domain/              ← Ядро (бизнес-логика)
+├── domain/              <- Core (business logic)
 │   ├── entities/
 │   ├── value_objects/
 │   └── services/
-└── infrastructure/      ← Исходящие адаптеры
-    └── http/            (HTTP клиенты, не SQL!)
+└── infrastructure/      <- Outgoing adapters
+    └── http/            (HTTP clients, not SQL!)
 ```
 
 ---
 
-## Компоненты системы
+## System Components
 
 ### Business API
 
 ```python
-"""Сервис бизнес-логики."""
+"""Business logic service."""
 
-# Использует HTTP клиент для Data API
+# Uses HTTP client for Data API
 from infrastructure.http import DataApiClient
 
 class OrderService:
@@ -94,10 +94,10 @@ class OrderService:
         self.data_client = data_client
 
     async def create_order(self, data: CreateOrderDTO) -> Order:
-        # Бизнес-логика
+        # Business logic
         validated = self.validate(data)
 
-        # Сохранение через Data API (HTTP!)
+        # Save via Data API (HTTP!)
         result = await self.data_client.create_order(validated)
 
         return Order.from_dict(result)
@@ -106,9 +106,9 @@ class OrderService:
 ### Data API
 
 ```python
-"""Сервис доступа к данным."""
+"""Data access service."""
 
-# Единственный сервис с доступом к БД
+# The only service with database access
 from sqlalchemy.ext.asyncio import AsyncSession
 
 class OrderRepository:
@@ -125,100 +125,100 @@ class OrderRepository:
 ### Telegram Bot
 
 ```python
-"""Telegram бот использует Business API."""
+"""Telegram bot uses Business API."""
 
 from infrastructure.http import BusinessApiClient
 
 @router.message(Command("order"))
 async def create_order(message: Message, api_client: BusinessApiClient):
-    # Вызов бизнес-логики через HTTP
+    # Call business logic via HTTP
     result = await api_client.create_order({
         "user_id": message.from_user.id,
         "items": [...],
     })
 
-    await message.answer(f"Заказ {result['id']} создан!")
+    await message.answer(f"Order {result['id']} created!")
 ```
 
 ---
 
-## Преимущества
+## Advantages
 
-### 1. Изоляция
-
-```
-- Каждый сервис независим
-- Можно менять реализацию внутри сервиса
-- Чёткие границы ответственности
-```
-
-### 2. Масштабируемость
+### 1. Isolation
 
 ```
-- Независимое масштабирование сервисов
-- Data API может кэшировать результаты
-- Business API можно дублировать
+- Each service is independent
+- Internal implementation can be changed
+- Clear boundaries of responsibility
 ```
 
-### 3. Тестируемость
+### 2. Scalability
 
 ```
-- Моки для HTTP клиентов
-- Изолированные unit тесты
-- Integration тесты через HTTP
+- Independent service scaling
+- Data API can cache results
+- Business API can be replicated
+```
+
+### 3. Testability
+
+```
+- Mocks for HTTP clients
+- Isolated unit tests
+- Integration tests via HTTP
 ```
 
 ### 4. Maintainability
 
 ```
-- Понятная структура
-- Легко добавлять новые сервисы
-- Минимальные зависимости между сервисами
+- Clear structure
+- Easy to add new services
+- Minimal dependencies between services
 ```
 
 ---
 
-## Правила архитектуры
+## Architecture Rules
 
-### DO (Делать)
-
-```
-✓ Использовать HTTP клиенты для межсервисного взаимодействия
-✓ Держать бизнес-логику в domain слое
-✓ Определять чёткие API контракты
-✓ Использовать DI для зависимостей
-✓ Писать async код
-```
-
-### DON'T (Не делать)
+### DO
 
 ```
-✗ Импортировать SQLAlchemy в бизнес-сервисы
-✗ Обращаться к БД напрямую из Business API
-✗ Создавать циклические зависимости
-✗ Смешивать слои DDD
-✗ Использовать синхронный код в async приложении
+✓ Use HTTP clients for inter-service communication
+✓ Keep business logic in the domain layer
+✓ Define clear API contracts
+✓ Use DI for dependencies
+✓ Write async code
+```
+
+### DON'T
+
+```
+✗ Import SQLAlchemy in business services
+✗ Access DB directly from Business API
+✗ Create circular dependencies
+✗ Mix DDD layers
+✗ Use synchronous code in async applications
 ```
 
 ---
 
-## Порты по умолчанию
+## Default Ports
 
-| Сервис | Порт | Описание |
+| Service | Port | Description |
 |--------|------|----------|
-| Business API | 8000 | REST API для клиентов |
-| Data API | 8001 | Доступ к PostgreSQL |
-| Data API Mongo | 8002 | Доступ к MongoDB |
-| PostgreSQL | 5432 | Основная БД |
-| MongoDB | 27017 | Документная БД |
-| Redis | 6379 | Кэш, сессии |
+| Business API | 8000 | REST API for clients |
+| Data API | 8001 | PostgreSQL access |
+| Data API Mongo | 8002 | MongoDB access |
+| PostgreSQL | 5432 | Primary DB |
+| MongoDB | 27017 | Document DB |
+| Redis | 6379 | Cache, sessions |
 
 ---
 
-## Связанные документы
+## Related Documents
 
-| Документ | Описание |
+| Document | Description |
 |----------|----------|
-| `ddd-hexagonal.md` | DDD и Hexagonal принципы |
-| `data-access.md` | HTTP-only доступ к данным |
-| `service-separation.md` | Разделение сервисов |
+| `ddd-hexagonal.md` | DDD and Hexagonal principles |
+| `data-access.md` | HTTP-only data access |
+| `service-separation.md` | Service separation |

@@ -1,26 +1,26 @@
-# Функция: Выявление паттернов
+# Function: Pattern Identification
 
-> **Назначение**: Идентификация архитектурных и кодовых паттернов.
-
----
-
-## Цель
-
-Определить используемые паттерны для обеспечения консистентности
-при добавлении нового кода.
-
-**Артефакт**: обнаруженные паттерны фиксируются в разделе отчёта
-`ai-docs/docs/research/{name}-research.md`, чтобы архитекторы понимали,
-какие принципы уже заданы в проекте.
+> **Purpose**: Identifying architectural and code patterns.
 
 ---
 
-## Архитектурные паттерны
+## Goal
+
+Identify patterns in use to ensure consistency
+when adding new code.
+
+**Artifact**: discovered patterns are recorded in the report section
+`ai-docs/docs/research/{name}-research.md`, so architects understand
+which principles are already established in the project.
+
+---
+
+## Architectural Patterns
 
 ### DDD (Domain-Driven Design)
 
 ```bash
-# Признаки DDD
+# DDD indicators
 Grep: "domain/"
 Grep: "application/"
 Grep: "infrastructure/"
@@ -29,45 +29,45 @@ Grep: "ValueObject"
 Grep: "AggregateRoot"
 ```
 
-**Чек-лист DDD**:
-- [ ] Выделен domain слой
-- [ ] Есть entities и value objects
-- [ ] Application services отделены от domain
-- [ ] Infrastructure содержит адаптеры
+**DDD Checklist**:
+- [ ] Domain layer is defined
+- [ ] Entities and value objects exist
+- [ ] Application services are separated from domain
+- [ ] Infrastructure contains adapters
 
 ### Hexagonal Architecture
 
 ```bash
-# Признаки Hexagonal
+# Hexagonal indicators
 Grep: "ports/"
 Grep: "adapters/"
 Grep: "Port"
 Grep: "Adapter"
 ```
 
-**Чек-лист Hexagonal**:
-- [ ] Определены порты (интерфейсы)
-- [ ] Есть входящие адаптеры (API, CLI)
-- [ ] Есть исходящие адаптеры (DB, HTTP)
-- [ ] Domain не зависит от infrastructure
+**Hexagonal Checklist**:
+- [ ] Ports (interfaces) are defined
+- [ ] Inbound adapters exist (API, CLI)
+- [ ] Outbound adapters exist (DB, HTTP)
+- [ ] Domain does not depend on infrastructure
 
-### HTTP-only доступ к данным
+### HTTP-only Data Access
 
 ```bash
-# Признаки HTTP-only
+# HTTP-only indicators
 Grep: "httpx"
 Grep: "DataApiClient"
 Grep: "async def.*get.*http"
 ```
 
-**Чек-лист HTTP-only**:
-- [ ] Бизнес-сервисы используют HTTP клиенты
-- [ ] Нет прямого импорта SQLAlchemy в бизнес-слое
-- [ ] Data API отдельный сервис
+**HTTP-only Checklist**:
+- [ ] Business services use HTTP clients
+- [ ] No direct SQLAlchemy imports in business layer
+- [ ] Data API is a separate service
 
 ---
 
-## Кодовые паттерны
+## Code Patterns
 
 ### Repository Pattern
 
@@ -105,25 +105,25 @@ Grep: "def get_.*service"
 
 ---
 
-## Паттерны именования
+## Naming Patterns
 
-### Файлы
+### Files
 
 ```bash
-# Проверить стиль
+# Check style
 ls -la src/**/*.py
 
 # snake_case? kebab-case?
 ```
 
-### Классы
+### Classes
 
 ```bash
 Grep: "^class "
 # PascalCase?
 ```
 
-### Функции
+### Functions
 
 ```bash
 Grep: "^def "
@@ -133,40 +133,40 @@ Grep: "async def "
 
 ---
 
-## Результат анализа
+## Analysis Result
 
 ```markdown
-## Архитектурные паттерны
+## Architectural Patterns
 
-| Паттерн | Используется | Комментарий |
-|---------|--------------|-------------|
-| DDD | Да/Нет | |
-| Hexagonal | Да/Нет | |
-| HTTP-only | Да/Нет | |
+| Pattern | Used | Comment |
+|---------|------|---------|
+| DDD | Yes/No | |
+| Hexagonal | Yes/No | |
+| HTTP-only | Yes/No | |
 
-## Кодовые паттерны
+## Code Patterns
 
-| Паттерн | Используется | Пример |
-|---------|--------------|--------|
-| Repository | Да | UserRepository |
-| Service | Да | OrderService |
-| Factory | Да | create_app() |
-| DI | Да | Depends() |
+| Pattern | Used | Example |
+|---------|------|---------|
+| Repository | Yes | UserRepository |
+| Service | Yes | OrderService |
+| Factory | Yes | create_app() |
+| DI | Yes | Depends() |
 
-## Стиль именования
+## Naming Style
 
-| Элемент | Стиль |
+| Element | Style |
 |---------|-------|
-| Файлы | snake_case |
-| Классы | PascalCase |
-| Функции | snake_case |
+| Files | snake_case |
+| Classes | PascalCase |
+| Functions | snake_case |
 ```
 
 ---
 
-## Источники
+## Sources
 
-| Документ | Описание |
-|----------|----------|
-| `.ai-framework/docs/atomic/architecture/ddd-hexagonal-principles.md` | DDD и Hexagonal |
-| `.ai-framework/docs/atomic/architecture/service-separation-principles.md` | Разделение сервисов |
+| Document | Description |
+|----------|-------------|
+| `.ai-framework/docs/atomic/architecture/ddd-hexagonal-principles.md` | DDD and Hexagonal |
+| `.ai-framework/docs/atomic/architecture/service-separation-principles.md` | Service separation |

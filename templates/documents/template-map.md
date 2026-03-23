@@ -1,14 +1,14 @@
-# Template Map — Карта соответствия шаблонов
+# Template Map — Template-to-Output Mapping
 
-> **Назначение**: Связь между шаблонами генератора и результатом в целевом проекте.
-> Помогает понять, что получится из каждого шаблона.
+> **Purpose**: Mapping between generator templates and the result in the Target Project (TP).
+> Helps understand what each template produces.
 
 ---
 
-## Обзор
+## Overview
 
 ```
-ГЕНЕРАТОР (templates/)           →         ЦЕЛЕВОЙ ПРОЕКТ
+GENERATOR (templates/)           →         TARGET PROJECT
 ─────────────────────────────────────────────────────────
 templates/services/              →    services/{name}_{type}/
 templates/shared/                →    services/{name}_api/src/shared/
@@ -18,123 +18,123 @@ templates/documents/                  →    ai-docs/docs/
 
 ---
 
-## Шаблоны сервисов
+## Service Templates
 
 ### fastapi_business_api/
 
-| Шаблон | Результат | Описание |
-|--------|-----------|----------|
-| `src/api/` | `services/{name}_api/src/api/` | REST API роутеры |
+| Template | Result | Description |
+|----------|--------|-------------|
+| `src/api/` | `services/{name}_api/src/api/` | REST API routers |
 | `src/application/` | `services/{name}_api/src/application/` | Application services |
 | `src/domain/` | `services/{name}_api/src/domain/` | Domain entities |
-| `src/infrastructure/` | `services/{name}_api/src/infrastructure/` | HTTP клиенты |
+| `src/infrastructure/` | `services/{name}_api/src/infrastructure/` | HTTP clients |
 | `src/schemas/` | `services/{name}_api/src/schemas/` | Pydantic schemas |
 | `src/core/` | `services/{name}_api/src/core/` | Config, logging |
 | `tests/` | `services/{name}_api/tests/` | Unit + Integration |
-| `Dockerfile` | `services/{name}_api/Dockerfile` | Сборка контейнера |
+| `Dockerfile` | `services/{name}_api/Dockerfile` | Container build |
 
-**Пример**: `booking_api/`
+**Example**: `booking_api/`
 
 ### postgres_data_api/
 
-| Шаблон | Результат | Описание |
-|--------|-----------|----------|
+| Template | Result | Description |
+|----------|--------|-------------|
 | `src/api/` | `services/{name}_data/src/api/` | CRUD endpoints |
 | `src/domain/entities/` | `services/{name}_data/src/domain/entities/` | SQLAlchemy models |
 | `src/repositories/` | `services/{name}_data/src/repositories/` | DB repositories |
-| `alembic/` | `services/{name}_data/alembic/` | Миграции |
-| `Dockerfile` | `services/{name}_data/Dockerfile` | Сборка контейнера |
+| `alembic/` | `services/{name}_data/alembic/` | Migrations |
+| `Dockerfile` | `services/{name}_data/Dockerfile` | Container build |
 
-**Пример**: `booking_data/`
+**Example**: `booking_data/`
 
 ### aiogram_bot/
 
-| Шаблон | Результат | Описание |
-|--------|-----------|----------|
+| Template | Result | Description |
+|----------|--------|-------------|
 | `src/handlers/` | `services/{name}_bot/src/handlers/` | Telegram handlers |
 | `src/keyboards/` | `services/{name}_bot/src/keyboards/` | Inline/Reply keyboards |
 | `src/states/` | `services/{name}_bot/src/states/` | FSM states |
 | `src/middlewares/` | `services/{name}_bot/src/middlewares/` | Bot middlewares |
 
-**Пример**: `booking_bot/`
+**Example**: `booking_bot/`
 
 ### asyncio_worker/
 
-| Шаблон | Результат | Описание |
-|--------|-----------|----------|
+| Template | Result | Description |
+|----------|--------|-------------|
 | `src/tasks/` | `services/{name}_worker/src/tasks/` | Task handlers |
 | `src/processor.py` | `services/{name}_worker/src/processor.py` | Task processor |
 | `src/scheduler.py` | `services/{name}_worker/src/scheduler.py` | Task scheduler |
 
-**Пример**: `booking_worker/`
+**Example**: `booking_worker/`
 
 ---
 
-## Шаблоны инфраструктуры
+## Infrastructure Templates
 
 ### infrastructure/
 
-| Шаблон | Результат | Описание |
-|--------|-----------|----------|
-| `docker-compose.yml` | `docker-compose.yml` | Оркестрация |
-| `docker-compose.dev.yml` | `docker-compose.dev.yml` | Dev окружение |
-| `.env.example` | `.env.example` | Переменные окружения |
-| `Makefile` | `Makefile` | Команды сборки |
+| Template | Result | Description |
+|----------|--------|-------------|
+| `docker-compose.yml` | `docker-compose.yml` | Orchestration |
+| `docker-compose.dev.yml` | `docker-compose.dev.yml` | Dev environment |
+| `.env.example` | `.env.example` | Environment variables |
+| `Makefile` | `Makefile` | Build commands |
 
-### CI/CD (опционально)
+### CI/CD (optional)
 
-CI/CD конфигурация не генерируется автоматически. Добавляйте вручную под свой инструмент.
+CI/CD configuration is not generated automatically. Add it manually for your tool.
 
 ### nginx/
 
-| Шаблон | Результат | Описание |
-|--------|-----------|----------|
+| Template | Result | Description |
+|----------|--------|-------------|
 | `nginx.conf` | `nginx/nginx.conf` | API Gateway |
-| `Dockerfile` | `nginx/Dockerfile` | Nginx контейнер |
+| `Dockerfile` | `nginx/Dockerfile` | Nginx container |
 
 ---
 
-## Шаблоны документов
+## Document Templates
 
 ### templates/documents/
 
-| Шаблон генератора | Результат в целевом проекте | Этап |
-|-------------------|----------------------------|------|
-| `prd-template.md` | `ai-docs/docs/_analysis/{name}-prd.md` | 1 (Идея) |
-| `research-report-template.md` | `ai-docs/docs/research/{name}-research.md` | 2 (Исследование) |
-| `architecture-template.md` | `ai-docs/docs/_plans/mvp/{name}-plan.md` | 3 (Архитектура) |
+| Generator Template | Result in Target Project | Stage |
+|--------------------|--------------------------|-------|
+| `prd-template.md` | `ai-docs/docs/_analysis/{name}-prd.md` | 1 (Idea) |
+| `research-report-template.md` | `ai-docs/docs/research/{name}-research.md` | 2 (Research) |
+| `architecture-template.md` | `ai-docs/docs/_plans/mvp/{name}-plan.md` | 3 (Architecture) |
 | `feature-plan-template.md` | `ai-docs/docs/_plans/features/{feature}-plan.md` | 3 (FEATURE) |
-| `rtm-template.md` | `ai-docs/docs/rtm.md` | 7 (Валидация) |
-| `pipeline-state-template.json` | `.pipeline-state.json` | 1 (Идея) |
+| `rtm-template.md` | `ai-docs/docs/rtm.md` | 7 (Validation) |
+| `pipeline-state-template.json` | `.pipeline-state.json` | 1 (Idea) |
 
 ---
 
-## Общие компоненты
+## Shared Components
 
 ### shared/
 
-| Шаблон | Результат | Используется в |
-|--------|-----------|---------------|
+| Template | Result | Used in |
+|----------|--------|---------|
 | `http_client/` | `services/{name}_api/src/infrastructure/http/` | Business API |
-| `logging/` | `services/*/src/core/logging.py` | Все сервисы |
-| `health/` | `services/*/src/api/health.py` | Все сервисы |
-| `exceptions/` | `services/*/src/core/exceptions.py` | Все сервисы |
+| `logging/` | `services/*/src/core/logging.py` | All services |
+| `health/` | `services/*/src/api/health.py` | All services |
+| `exceptions/` | `services/*/src/core/exceptions.py` | All services |
 
 ---
 
-## Трансформации при копировании
+## Transformations During Copying
 
-### Замены в файлах
+### File Replacements
 
-| Плейсхолдер | Заменяется на | Пример |
-|-------------|---------------|--------|
-| `{context}` | Контекст проекта | `booking` |
-| `{domain}` | Домен | `restaurant` |
-| `{name}` | Полное имя | `booking_restaurant` |
-| `{type}` | Тип сервиса | `api`, `data`, `bot` |
-| `{entity}` | Название сущности | `Restaurant`, `Booking` |
+| Placeholder | Replaced with | Example |
+|-------------|---------------|---------|
+| `{context}` | Project context | `booking` |
+| `{domain}` | Domain | `restaurant` |
+| `{name}` | Full name | `booking_restaurant` |
+| `{type}` | Service type | `api`, `data`, `bot` |
+| `{entity}` | Entity name | `Restaurant`, `Booking` |
 
-### Пример трансформации
+### Transformation Example
 
 ```
 templates/services/fastapi_business_api/src/api/v1/{entity}_router.py
@@ -144,7 +144,7 @@ services/booking_api/src/api/v1/restaurants_router.py
 
 ---
 
-## Визуальная карта
+## Visual Map
 
 ```
 templates/
@@ -171,10 +171,10 @@ templates/
 
 ---
 
-## Связанные документы
+## Related Documents
 
-| Документ | Описание |
-|----------|----------|
-| [CLAUDE.md](../../CLAUDE.md) | Главная точка входа |
-| [workflow.md](../../workflow.md) | Процесс разработки |
-| [target-project-structure.md](../../docs/target-project-structure.md) | Структура целевого проекта |
+| Document | Description |
+|----------|-------------|
+| [CLAUDE.md](../../CLAUDE.md) | Main entry point |
+| [workflow.md](../../workflow.md) | Development process |
+| [target-project-structure.md](../../docs/target-project-structure.md) | Target Project structure |

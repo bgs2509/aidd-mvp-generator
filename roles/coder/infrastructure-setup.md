@@ -1,39 +1,39 @@
-# Функция: Stage 4.1 — Настройка инфраструктуры
+# Function: Stage 4.1 — Infrastructure Setup
 
-> **Назначение**: Создание базовой инфраструктуры проекта.
-
----
-
-## Цель
-
-Подготовить инфраструктуру проекта: структуру директорий,
-Docker конфигурацию и вспомогательные файлы. CI/CD настраивается вручную при необходимости.
+> **Purpose**: Creating the base project infrastructure.
 
 ---
 
-## Входные данные
+## Goal
 
-| Артефакт | Путь | Описание |
-|----------|------|----------|
-| Implementation Plan | `ai-docs/docs/_plans/features/{name}-plan.md` | План реализации |
-| Архитектура | `ai-docs/docs/_plans/mvp/{name}-arch.md` | Архитектурное решение |
-| Ворота | PLAN_APPROVED | Должны быть пройдены |
+Prepare the project infrastructure: directory structure,
+Docker configuration and auxiliary files. CI/CD is configured manually as needed.
 
 ---
 
-## Что создаётся
+## Input Data
 
-### 1. Структура директорий
+| Artifact | Path | Description |
+|----------|------|-------------|
+| Implementation Plan | `ai-docs/docs/_plans/features/{name}-plan.md` | Implementation plan |
+| Architecture | `ai-docs/docs/_plans/mvp/{name}-arch.md` | Architectural solution |
+| Gates | PLAN_APPROVED | Must be passed |
+
+---
+
+## What Gets Created
+
+### 1. Directory Structure
 
 ```
 {project}/
-├── services/                    # Сервисы
+├── services/                    # Services
 │   ├── {context}_api/          # Business API
 │   ├── {context}_data/         # Data API
-│   ├── {context}_bot/          # Telegram Bot (если нужен)
-│   └── {context}_worker/       # Background Worker (если нужен)
-├── docs/                        # Документация
-├── ai-docs/                     # AI документы
+│   ├── {context}_bot/          # Telegram Bot (if needed)
+│   └── {context}_worker/       # Background Worker (if needed)
+├── docs/                        # Documentation
+├── ai-docs/                     # AI documents
 │   └── docs/
 │       ├── prd/
 │       ├── architecture/
@@ -50,8 +50,8 @@ Docker конфигурацию и вспомогательные файлы. CI
 
 ```yaml
 # docker-compose.yml
-# Основная конфигурация Docker Compose
-# Использовать шаблон: templates/infrastructure/docker-compose/
+# Main Docker Compose configuration
+# Use template: templates/infrastructure/docker-compose/
 
 version: "3.8"
 
@@ -98,7 +98,7 @@ services:
     networks:
       - {context}-network
 
-  # Redis (если нужен)
+  # Redis (if needed)
   {context}-redis:
     image: redis:7-alpine
     ports:
@@ -118,7 +118,7 @@ volumes:
 
 ```yaml
 # docker-compose.dev.yml
-# Переопределения для разработки
+# Overrides for development
 
 version: "3.8"
 
@@ -146,9 +146,9 @@ services:
 
 ```bash
 # .env.example
-# Переменные окружения (скопировать в .env)
+# Environment variables (copy to .env)
 
-# Общие
+# General
 ENVIRONMENT=development
 DEBUG=true
 LOG_LEVEL=DEBUG
@@ -162,11 +162,11 @@ DATABASE_URL=postgresql://postgres:postgres@localhost:5432/{context}
 # Redis
 REDIS_URL=redis://localhost:6379/0
 
-# Сервисы
+# Services
 DATA_API_URL=http://localhost:8001
 BUSINESS_API_URL=http://localhost:8000
 
-# Telegram Bot (если нужен)
+# Telegram Bot (if needed)
 BOT_TOKEN=your_bot_token_here
 ```
 
@@ -174,85 +174,85 @@ BOT_TOKEN=your_bot_token_here
 
 ```makefile
 # Makefile
-# Команды для разработки
+# Development commands
 
 .PHONY: help build up down logs test lint
 
-# Переменные
+# Variables
 COMPOSE = docker-compose
 COMPOSE_DEV = $(COMPOSE) -f docker-compose.yml -f docker-compose.dev.yml
 
-help: ## Показать справку
+help: ## Show help
 	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}'
 
 # Docker
-build: ## Собрать образы
+build: ## Build images
 	$(COMPOSE) build
 
-up: ## Запустить сервисы
+up: ## Start services
 	$(COMPOSE_DEV) up -d
 
-down: ## Остановить сервисы
+down: ## Stop services
 	$(COMPOSE) down
 
-logs: ## Показать логи
+logs: ## Show logs
 	$(COMPOSE) logs -f
 
-restart: ## Перезапустить сервисы
+restart: ## Restart services
 	$(COMPOSE) restart
 
-# Разработка
-dev: ## Запустить в режиме разработки
+# Development
+dev: ## Start in development mode
 	$(COMPOSE_DEV) up
 
-shell-api: ## Shell в Business API
+shell-api: ## Shell into Business API
 	$(COMPOSE) exec {context}-api bash
 
-shell-data: ## Shell в Data API
+shell-data: ## Shell into Data API
 	$(COMPOSE) exec {context}-data bash
 
-# Тестирование
-test: ## Запустить все тесты
+# Testing
+test: ## Run all tests
 	$(COMPOSE) exec {context}-api pytest
 	$(COMPOSE) exec {context}-data pytest
 
-test-api: ## Тесты Business API
+test-api: ## Business API tests
 	$(COMPOSE) exec {context}-api pytest -v
 
-test-data: ## Тесты Data API
+test-data: ## Data API tests
 	$(COMPOSE) exec {context}-data pytest -v
 
-coverage: ## Отчёт о покрытии
+coverage: ## Coverage report
 	$(COMPOSE) exec {context}-api pytest --cov=src --cov-report=html
 
-# Качество кода
-lint: ## Проверка линтером
+# Code quality
+lint: ## Lint check
 	$(COMPOSE) exec {context}-api ruff check src tests
 	$(COMPOSE) exec {context}-data ruff check src tests
 
-format: ## Форматирование кода
+format: ## Format code
 	$(COMPOSE) exec {context}-api ruff format src tests
 	$(COMPOSE) exec {context}-data ruff format src tests
 
-# База данных
-db-migrate: ## Применить миграции
+# Database
+db-migrate: ## Apply migrations
 	$(COMPOSE) exec {context}-data alembic upgrade head
 
-db-rollback: ## Откатить миграцию
+db-rollback: ## Rollback migration
 	$(COMPOSE) exec {context}-data alembic downgrade -1
 
-db-shell: ## Shell PostgreSQL
+db-shell: ## PostgreSQL shell
 	$(COMPOSE) exec {context}-postgres psql -U postgres -d {context}
 
-# Очистка
-clean: ## Очистить всё
+# Cleanup
+clean: ## Clean everything
 	$(COMPOSE) down -v --rmi local
 	docker system prune -f
 ```
 
-### 6. CI/CD (опционально)
+### 6. CI/CD (optional)
 
-Шаблоны CI/CD не создаются автоматически. Настройте CI/CD под свой инструмент при необходимости. Рекомендации: `knowledge/infrastructure/ci-cd.md`.
+CI/CD templates are not created automatically. Configure CI/CD for your tool as needed. Recommendations: `knowledge/infrastructure/ci-cd.md`.
 
 ### 7. .gitignore
 
@@ -326,59 +326,59 @@ credentials.json
 
 ---
 
-## Порядок выполнения
+## Execution Order
 
 ```
-1. Создать корневую директорию проекта
-2. Создать структуру директорий services/
-3. Создать docker-compose.yml из шаблона
-4. Создать docker-compose.dev.yml
-5. Создать .env.example
-6. Создать Makefile
-7. Создать .gitignore
-8. Инициализировать git репозиторий
+1. Create the root project directory
+2. Create the services/ directory structure
+3. Create docker-compose.yml from template
+4. Create docker-compose.dev.yml
+5. Create .env.example
+6. Create Makefile
+7. Create .gitignore
+8. Initialize the git repository
 ```
 
-1. Создать корневую директорию проекта
-2. Создать структуру директорий services/
-3. Создать docker-compose.yml из шаблона
-4. Создать docker-compose.dev.yml
-5. Создать .env.example
-6. Создать Makefile
-8. Создать .gitignore
-9. Инициализировать git репозиторий
+1. Create the root project directory
+2. Create the services/ directory structure
+3. Create docker-compose.yml from template
+4. Create docker-compose.dev.yml
+5. Create .env.example
+6. Create Makefile
+8. Create .gitignore
+9. Initialize the git repository
 ```
 
 ---
 
-## Шаблоны для использования
+## Templates to Use
 
-| Файл | Шаблон |
-|------|--------|
+| File | Template |
+|------|----------|
 | docker-compose.yml | `templates/infrastructure/docker-compose/docker-compose.yml` |
 | docker-compose.dev.yml | `templates/infrastructure/docker-compose/docker-compose.dev.yml` |
 | .env.example | `templates/infrastructure/docker-compose/.env.example` |
 
 ---
 
-## Качественные ворота
+## Quality Gates
 
 ### INFRA_READY
 
-- [ ] Структура директорий создана
-- [ ] docker-compose.yml создан и валиден
-- [ ] .env.example содержит все переменные
-- [ ] Makefile содержит основные команды
-- [ ] CI pipeline настроен (опционально)
-- [ ] .gitignore настроен
-- [ ] `docker-compose config` выполняется без ошибок
+- [ ] Directory structure created
+- [ ] docker-compose.yml created and valid
+- [ ] .env.example contains all variables
+- [ ] Makefile contains essential commands
+- [ ] CI pipeline configured (optional)
+- [ ] .gitignore configured
+- [ ] `docker-compose config` executes without errors
 
 ---
 
-## Источники
+## References
 
-| Документ | Описание |
-|----------|----------|
+| Document | Description |
+|----------|-------------|
 | `knowledge/infrastructure/docker-compose.md` | Docker Compose |
-| `knowledge/infrastructure/ci-cd.md` | CI/CD паттерны |
-| `templates/infrastructure/` | Шаблоны |
+| `knowledge/infrastructure/ci-cd.md` | CI/CD patterns |
+| `templates/infrastructure/` | Templates |

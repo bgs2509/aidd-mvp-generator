@@ -1,13 +1,13 @@
-# Валидация схем FastAPI
+# FastAPI Schema Validation
 
-> **Назначение**: Pydantic схемы для валидации данных.
+> **Purpose**: Pydantic schemas for data validation.
 
 ---
 
-## Базовые схемы
+## Base Schemas
 
 ```python
-"""Базовые Pydantic схемы."""
+"""Base Pydantic schemas."""
 
 from datetime import datetime
 from uuid import UUID
@@ -16,7 +16,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class BaseSchema(BaseModel):
-    """Базовая схема с общими настройками."""
+    """Base schema with common settings."""
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -25,24 +25,24 @@ class BaseSchema(BaseModel):
 
 
 class TimestampMixin(BaseModel):
-    """Миксин с временными метками."""
+    """Mixin with timestamps."""
 
     created_at: datetime
     updated_at: datetime | None = None
 
 
 class IDMixin(BaseModel):
-    """Миксин с идентификатором."""
+    """Mixin with identifier."""
 
     id: UUID
 ```
 
 ---
 
-## CRUD схемы
+## CRUD Schemas
 
 ```python
-"""Схемы пользователя."""
+"""User schemas."""
 
 from datetime import datetime
 from uuid import UUID
@@ -53,34 +53,34 @@ from {context}_api.schemas.base import BaseSchema, TimestampMixin
 
 
 class UserBase(BaseModel):
-    """Базовые поля пользователя."""
+    """Base user fields."""
 
     name: str = Field(..., min_length=1, max_length=100)
     email: EmailStr
 
 
 class UserCreate(UserBase):
-    """Схема создания пользователя."""
+    """User creation schema."""
 
     password: str = Field(..., min_length=8, max_length=100)
 
 
 class UserUpdate(BaseModel):
-    """Схема обновления пользователя."""
+    """User update schema."""
 
     name: str | None = Field(None, min_length=1, max_length=100)
     email: EmailStr | None = None
 
 
 class UserResponse(UserBase, TimestampMixin, BaseSchema):
-    """Схема ответа с пользователем."""
+    """User response schema."""
 
     id: UUID
     is_active: bool = True
 
 
 class UserListResponse(BaseModel):
-    """Схема списка пользователей."""
+    """User list schema."""
 
     items: list[UserResponse]
     total: int
@@ -91,17 +91,17 @@ class UserListResponse(BaseModel):
 
 ---
 
-## Валидаторы
+## Validators
 
 ```python
-"""Схемы с кастомными валидаторами."""
+"""Schemas with custom validators."""
 
 from pydantic import BaseModel, field_validator, model_validator
 import re
 
 
 class PhoneNumber(BaseModel):
-    """Схема с валидацией телефона."""
+    """Schema with phone validation."""
 
     phone: str
 
@@ -109,28 +109,28 @@ class PhoneNumber(BaseModel):
     @classmethod
     def validate_phone(cls, v: str) -> str:
         """
-        Валидировать номер телефона.
+        Validate phone number.
 
         Args:
-            v: Номер телефона.
+            v: Phone number.
 
         Returns:
-            Нормализованный номер.
+            Normalized number.
 
         Raises:
-            ValueError: Если формат неверный.
+            ValueError: If format is invalid.
         """
-        # Удаляем всё кроме цифр
+        # Remove everything except digits
         digits = re.sub(r"\D", "", v)
 
         if len(digits) < 10 or len(digits) > 15:
-            raise ValueError("Неверный формат телефона")
+            raise ValueError("Invalid phone format")
 
         return digits
 
 
 class DateRange(BaseModel):
-    """Схема с валидацией диапазона дат."""
+    """Schema with date range validation."""
 
     start_date: datetime
     end_date: datetime
@@ -138,25 +138,25 @@ class DateRange(BaseModel):
     @model_validator(mode="after")
     def validate_dates(self) -> "DateRange":
         """
-        Валидировать диапазон дат.
+        Validate date range.
 
         Returns:
-            Валидная модель.
+            Valid model.
 
         Raises:
-            ValueError: Если end_date раньше start_date.
+            ValueError: If end_date is before start_date.
         """
         if self.end_date < self.start_date:
-            raise ValueError("end_date должна быть позже start_date")
+            raise ValueError("end_date must be after start_date")
         return self
 ```
 
 ---
 
-## Вложенные схемы
+## Nested Schemas
 
 ```python
-"""Вложенные схемы."""
+"""Nested schemas."""
 
 from decimal import Decimal
 from uuid import UUID
@@ -165,7 +165,7 @@ from pydantic import BaseModel, Field
 
 
 class OrderItem(BaseModel):
-    """Элемент заказа."""
+    """Order item."""
 
     product_id: UUID
     quantity: int = Field(..., ge=1)
@@ -173,7 +173,7 @@ class OrderItem(BaseModel):
 
 
 class OrderCreate(BaseModel):
-    """Создание заказа."""
+    """Order creation."""
 
     customer_id: UUID
     items: list[OrderItem] = Field(..., min_length=1)
@@ -181,7 +181,7 @@ class OrderCreate(BaseModel):
 
 
 class OrderResponse(BaseModel):
-    """Ответ с заказом."""
+    """Order response."""
 
     id: UUID
     customer_id: UUID
@@ -193,10 +193,10 @@ class OrderResponse(BaseModel):
 
 ---
 
-## Enum и Literal
+## Enum and Literal
 
 ```python
-"""Схемы с ограниченными значениями."""
+"""Schemas with constrained values."""
 
 from enum import Enum
 from typing import Literal
@@ -205,7 +205,7 @@ from pydantic import BaseModel
 
 
 class OrderStatus(str, Enum):
-    """Статусы заказа."""
+    """Order statuses."""
 
     PENDING = "pending"
     CONFIRMED = "confirmed"
@@ -214,7 +214,7 @@ class OrderStatus(str, Enum):
 
 
 class OrderFilter(BaseModel):
-    """Фильтр заказов."""
+    """Order filter."""
 
     status: OrderStatus | None = None
     sort_by: Literal["created_at", "total", "status"] = "created_at"
@@ -223,16 +223,16 @@ class OrderFilter(BaseModel):
 
 ---
 
-## Схемы ошибок
+## Error Schemas
 
 ```python
-"""Схемы ошибок API."""
+"""API error schemas."""
 
 from pydantic import BaseModel
 
 
 class ErrorDetail(BaseModel):
-    """Детали ошибки."""
+    """Error detail."""
 
     loc: list[str | int]
     msg: str
@@ -240,14 +240,14 @@ class ErrorDetail(BaseModel):
 
 
 class ErrorResponse(BaseModel):
-    """Ответ с ошибкой."""
+    """Error response."""
 
     detail: str
     errors: list[ErrorDetail] | None = None
 
 
 class ValidationErrorResponse(BaseModel):
-    """Ответ с ошибкой валидации."""
+    """Validation error response."""
 
     detail: str = "Validation error"
     errors: list[ErrorDetail]
@@ -255,10 +255,10 @@ class ValidationErrorResponse(BaseModel):
 
 ---
 
-## Пагинация
+## Pagination
 
 ```python
-"""Схемы пагинации."""
+"""Pagination schemas."""
 
 from typing import Generic, TypeVar
 
@@ -268,7 +268,7 @@ T = TypeVar("T")
 
 
 class PaginatedResponse(BaseModel, Generic[T]):
-    """Пагинированный ответ."""
+    """Paginated response."""
 
     items: list[T]
     total: int = Field(..., ge=0)
@@ -285,16 +285,16 @@ class PaginatedResponse(BaseModel, Generic[T]):
         page_size: int,
     ) -> "PaginatedResponse[T]":
         """
-        Создать пагинированный ответ.
+        Create paginated response.
 
         Args:
-            items: Элементы страницы.
-            total: Общее количество.
-            page: Текущая страница.
-            page_size: Размер страницы.
+            items: Page items.
+            total: Total count.
+            page: Current page.
+            page_size: Page size.
 
         Returns:
-            Пагинированный ответ.
+            Paginated response.
         """
         pages = (total + page_size - 1) // page_size
         return cls(
@@ -308,12 +308,12 @@ class PaginatedResponse(BaseModel, Generic[T]):
 
 ---
 
-## Правила
+## Rules
 
-| Тип схемы | Паттерн | Пример |
-|-----------|---------|--------|
-| Создание | `{Entity}Create` | `UserCreate` |
-| Обновление | `{Entity}Update` | `UserUpdate` |
-| Ответ | `{Entity}Response` | `UserResponse` |
-| Список | `{Entity}ListResponse` | `UserListResponse` |
-| Фильтр | `{Entity}Filter` | `UserFilter` |
+| Schema Type | Pattern | Example |
+|-------------|---------|---------|
+| Create | `{Entity}Create` | `UserCreate` |
+| Update | `{Entity}Update` | `UserUpdate` |
+| Response | `{Entity}Response` | `UserResponse` |
+| List | `{Entity}ListResponse` | `UserListResponse` |
+| Filter | `{Entity}Filter` | `UserFilter` |

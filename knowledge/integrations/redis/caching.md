@@ -1,13 +1,13 @@
-# Стратегии кэширования Redis
+# Redis Caching Strategies
 
-> **Назначение**: Паттерны кэширования с Redis.
+> **Purpose**: Caching patterns with Redis.
 
 ---
 
-## Базовый клиент
+## Base Client
 
 ```python
-"""Клиент Redis для кэширования."""
+"""Redis caching client."""
 
 import json
 from typing import Any, TypeVar
@@ -21,27 +21,27 @@ T = TypeVar("T")
 
 
 class CacheClient:
-    """Клиент для кэширования."""
+    """Caching client."""
 
     def __init__(self, redis_client: redis.Redis):
         """
-        Инициализация.
+        Initialize.
 
         Args:
-            redis_client: Экземпляр Redis клиента.
+            redis_client: Redis client instance.
         """
         self.redis = redis_client
         self.default_ttl = timedelta(minutes=5)
 
     async def get(self, key: str) -> Any | None:
         """
-        Получить значение из кэша.
+        Get value from cache.
 
         Args:
-            key: Ключ кэша.
+            key: Cache key.
 
         Returns:
-            Значение или None.
+            Value or None.
         """
         data = await self.redis.get(key)
         if data is None:
@@ -55,12 +55,12 @@ class CacheClient:
         ttl: timedelta | None = None,
     ) -> None:
         """
-        Сохранить значение в кэш.
+        Save value to cache.
 
         Args:
-            key: Ключ кэша.
-            value: Значение для сохранения.
-            ttl: Время жизни.
+            key: Cache key.
+            value: Value to save.
+            ttl: Time to live.
         """
         ttl = ttl or self.default_ttl
         data = json.dumps(value, default=str)
@@ -68,22 +68,22 @@ class CacheClient:
 
     async def delete(self, key: str) -> None:
         """
-        Удалить ключ из кэша.
+        Delete key from cache.
 
         Args:
-            key: Ключ для удаления.
+            key: Key to delete.
         """
         await self.redis.delete(key)
 
     async def delete_pattern(self, pattern: str) -> int:
         """
-        Удалить ключи по паттерну.
+        Delete keys by pattern.
 
         Args:
-            pattern: Паттерн ключей (например, "user:*").
+            pattern: Key pattern (e.g., "user:*").
 
         Returns:
-            Количество удалённых ключей.
+            Number of deleted keys.
         """
         keys = await self.redis.keys(pattern)
         if keys:
@@ -92,23 +92,23 @@ class CacheClient:
 
     async def exists(self, key: str) -> bool:
         """
-        Проверить существование ключа.
+        Check if key exists.
 
         Args:
-            key: Ключ для проверки.
+            key: Key to check.
 
         Returns:
-            True если существует.
+            True if exists.
         """
         return bool(await self.redis.exists(key))
 ```
 
 ---
 
-## Cache-Aside паттерн
+## Cache-Aside Pattern
 
 ```python
-"""Cache-Aside (Lazy Loading) паттерн."""
+"""Cache-Aside (Lazy Loading) pattern."""
 
 from typing import Callable, Awaitable, TypeVar
 from datetime import timedelta
@@ -117,10 +117,10 @@ T = TypeVar("T")
 
 
 class CacheService:
-    """Сервис кэширования с Cache-Aside."""
+    """Caching service with Cache-Aside."""
 
     def __init__(self, cache: CacheClient):
-        """Инициализация."""
+        """Initialize."""
         self.cache = cache
 
     async def get_or_set(
@@ -130,42 +130,42 @@ class CacheService:
         ttl: timedelta | None = None,
     ) -> T:
         """
-        Получить из кэша или загрузить и закэшировать.
+        Get from cache or fetch and cache.
 
         Args:
-            key: Ключ кэша.
-            fetch_func: Функция загрузки данных.
-            ttl: Время жизни кэша.
+            key: Cache key.
+            fetch_func: Data fetching function.
+            ttl: Cache time to live.
 
         Returns:
-            Данные из кэша или загруженные.
+            Cached or fetched data.
         """
-        # Попытка получить из кэша
+        # Try to get from cache
         cached = await self.cache.get(key)
         if cached is not None:
             return cached
 
-        # Загрузка данных
+        # Fetch data
         data = await fetch_func()
 
-        # Сохранение в кэш
+        # Save to cache
         if data is not None:
             await self.cache.set(key, data, ttl)
 
         return data
 
 
-# Использование
+# Usage
 class UserService:
-    """Сервис с кэшированием."""
+    """Service with caching."""
 
     def __init__(self, data_client: DataApiClient, cache: CacheService):
-        """Инициализация."""
+        """Initialize."""
         self.data_client = data_client
         self.cache = cache
 
     async def get_user(self, user_id: UUID) -> UserDTO:
-        """Получить пользователя с кэшированием."""
+        """Get user with caching."""
         cache_key = f"user:{user_id}"
 
         data = await self.cache.get_or_set(
@@ -182,32 +182,32 @@ class UserService:
 
 ---
 
-## Write-Through паттерн
+## Write-Through Pattern
 
 ```python
-"""Write-Through паттерн."""
+"""Write-Through pattern."""
 
 from uuid import UUID
 
 
 class UserService:
-    """Сервис с Write-Through кэшированием."""
+    """Service with Write-Through caching."""
 
     async def update_user(self, user_id: UUID, dto: UpdateUserDTO) -> UserDTO:
         """
-        Обновить пользователя с обновлением кэша.
+        Update user with cache update.
 
         Args:
-            user_id: ID пользователя.
-            dto: Данные для обновления.
+            user_id: User ID.
+            dto: Update data.
 
         Returns:
-            Обновлённый пользователь.
+            Updated user.
         """
-        # Обновляем в Data API
+        # Update in Data API
         data = await self.data_client.update_user(user_id, dto.model_dump())
 
-        # Обновляем кэш
+        # Update cache
         cache_key = f"user:{user_id}"
         await self.cache.set(cache_key, data, ttl=timedelta(minutes=10))
 
@@ -215,55 +215,55 @@ class UserService:
 
     async def delete_user(self, user_id: UUID) -> None:
         """
-        Удалить пользователя с инвалидацией кэша.
+        Delete user with cache invalidation.
 
         Args:
-            user_id: ID пользователя.
+            user_id: User ID.
         """
-        # Удаляем в Data API
+        # Delete in Data API
         await self.data_client.delete_user(user_id)
 
-        # Инвалидируем кэш
+        # Invalidate cache
         cache_key = f"user:{user_id}"
         await self.cache.delete(cache_key)
 ```
 
 ---
 
-## Инвалидация кэша
+## Cache Invalidation
 
 ```python
-"""Стратегии инвалидации кэша."""
+"""Cache invalidation strategies."""
 
 from typing import List
 
 
 class CacheInvalidator:
-    """Инвалидатор кэша."""
+    """Cache invalidator."""
 
     def __init__(self, cache: CacheClient):
-        """Инициализация."""
+        """Initialize."""
         self.cache = cache
 
     async def invalidate_user(self, user_id: UUID) -> None:
         """
-        Инвалидировать кэш пользователя.
+        Invalidate user cache.
 
         Args:
-            user_id: ID пользователя.
+            user_id: User ID.
         """
-        # Основной ключ
+        # Primary key
         await self.cache.delete(f"user:{user_id}")
 
-        # Связанные ключи
+        # Related keys
         await self.cache.delete_pattern(f"user:{user_id}:*")
 
     async def invalidate_user_orders(self, user_id: UUID) -> None:
         """
-        Инвалидировать кэш заказов пользователя.
+        Invalidate user orders cache.
 
         Args:
-            user_id: ID пользователя.
+            user_id: User ID.
         """
         await self.cache.delete_pattern(f"orders:user:{user_id}:*")
 
@@ -274,17 +274,17 @@ class CacheInvalidator:
         related_patterns: List[str] | None = None,
     ) -> None:
         """
-        Универсальная инвалидация сущности.
+        Universal entity invalidation.
 
         Args:
-            entity_type: Тип сущности.
-            entity_id: ID сущности.
-            related_patterns: Дополнительные паттерны.
+            entity_type: Entity type.
+            entity_id: Entity ID.
+            related_patterns: Additional patterns.
         """
-        # Основной ключ
+        # Primary key
         await self.cache.delete(f"{entity_type}:{entity_id}")
 
-        # Связанные паттерны
+        # Related patterns
         if related_patterns:
             for pattern in related_patterns:
                 await self.cache.delete_pattern(pattern.format(id=entity_id))
@@ -292,16 +292,16 @@ class CacheInvalidator:
 
 ---
 
-## Ключи кэша
+## Cache Keys
 
 ```python
-"""Генерация ключей кэша."""
+"""Cache key generation."""
 
 
 class CacheKeys:
-    """Генератор ключей кэша."""
+    """Cache key generator."""
 
-    # Паттерны ключей
+    # Key patterns
     USER = "user:{user_id}"
     USER_BY_EMAIL = "user:email:{email}"
     USER_ORDERS = "orders:user:{user_id}:page:{page}"
@@ -311,67 +311,67 @@ class CacheKeys:
 
     @classmethod
     def user(cls, user_id: UUID) -> str:
-        """Ключ пользователя."""
+        """User key."""
         return cls.USER.format(user_id=user_id)
 
     @classmethod
     def user_by_email(cls, email: str) -> str:
-        """Ключ пользователя по email."""
+        """User by email key."""
         return cls.USER_BY_EMAIL.format(email=email)
 
     @classmethod
     def user_orders(cls, user_id: UUID, page: int = 1) -> str:
-        """Ключ заказов пользователя."""
+        """User orders key."""
         return cls.USER_ORDERS.format(user_id=user_id, page=page)
 
     @classmethod
     def order(cls, order_id: UUID) -> str:
-        """Ключ заказа."""
+        """Order key."""
         return cls.ORDER.format(order_id=order_id)
 
     @classmethod
     def restaurant_menu(cls, restaurant_id: UUID) -> str:
-        """Ключ меню ресторана."""
+        """Restaurant menu key."""
         return cls.RESTAURANT_MENU.format(restaurant_id=restaurant_id)
 ```
 
 ---
 
-## TTL стратегии
+## TTL Strategies
 
 ```python
-"""TTL для разных типов данных."""
+"""TTL for different data types."""
 
 from datetime import timedelta
 
 
 class CacheTTL:
-    """Константы TTL."""
+    """TTL constants."""
 
-    # Часто изменяемые данные
+    # Frequently changing data
     USER = timedelta(minutes=5)
     ORDER = timedelta(minutes=2)
 
-    # Редко изменяемые данные
+    # Rarely changing data
     RESTAURANT = timedelta(hours=1)
     MENU = timedelta(minutes=30)
 
-    # Справочники
+    # Reference data
     CATEGORIES = timedelta(hours=24)
     CONFIG = timedelta(hours=12)
 
-    # Временные данные
+    # Temporary data
     SESSION = timedelta(hours=2)
     OTP = timedelta(minutes=5)
 ```
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] CacheClient реализован
-- [ ] Cache-Aside для чтения
-- [ ] Write-Through для записи
-- [ ] Инвалидация настроена
-- [ ] Ключи стандартизированы
-- [ ] TTL определены для типов данных
+- [ ] CacheClient implemented
+- [ ] Cache-Aside for reads
+- [ ] Write-Through for writes
+- [ ] Invalidation configured
+- [ ] Keys standardized
+- [ ] TTL defined for data types

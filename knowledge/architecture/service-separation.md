@@ -1,77 +1,77 @@
-# Разделение сервисов
+# Service Separation
 
-> **Назначение**: Принципы разделения системы на независимые сервисы.
-
----
-
-## Принцип
-
-```
-Каждый сервис — отдельная единица деплоя с чёткой ответственностью.
-Сервисы общаются только через HTTP (REST API).
-```
+> **Purpose**: Principles for splitting the system into independent services.
 
 ---
 
-## Типы сервисов
+## Principle
+
+```
+Each service is a separate deployment unit with clear responsibility.
+Services communicate only via HTTP (REST API).
+```
+
+---
+
+## Service Types
 
 ### 1. Business API
 
 ```
-Ответственность:
-- Бизнес-логика
-- Валидация бизнес-правил
-- Оркестрация вызовов к Data API
-- REST API для клиентов
+Responsibility:
+- Business logic
+- Business rules validation
+- Orchestrating calls to Data API
+- REST API for clients
 
-Использует:
-- HTTP клиент для Data API
-- НЕ использует прямой доступ к БД
+Uses:
+- HTTP client for Data API
+- Does NOT use direct DB access
 ```
 
 ### 2. Data API
 
 ```
-Ответственность:
-- CRUD операции с БД
-- Валидация схем данных
-- Миграции базы данных
+Responsibility:
+- CRUD operations with DB
+- Data schema validation
+- Database migrations
 
-Использует:
+Uses:
 - SQLAlchemy / Motor
-- Прямое подключение к БД
-- Alembic для миграций
+- Direct DB connection
+- Alembic for migrations
 ```
 
 ### 3. Telegram Bot
 
 ```
-Ответственность:
-- UI для Telegram
-- Обработка команд и сообщений
-- FSM для сложных диалогов
+Responsibility:
+- Telegram UI
+- Command and message handling
+- FSM for complex dialogs
 
-Использует:
-- HTTP клиент для Business API
-- НЕ вызывает Data API напрямую
+Uses:
+- HTTP client for Business API
+- Does NOT call Data API directly
 ```
 
 ### 4. Background Worker
 
 ```
-Ответственность:
-- Фоновые задачи
-- Периодические операции
-- Обработка очередей
+Responsibility:
+- Background tasks
+- Periodic operations
+- Queue processing
 
-Использует:
-- HTTP клиент для Business API
-- Redis для очередей (опционально)
+Uses:
+- HTTP client for Business API
+- Redis for queues (optional)
 ```
 
 ---
 
-## Схема взаимодействия
+## Interaction Diagram
 
 ```
                     ┌─────────────────┐
@@ -112,41 +112,41 @@
 
 ---
 
-## Правила разделения
+## Separation Rules
 
-### 1. Изоляция кода
+### 1. Code Isolation
 
 ```
-ПРАВИЛО: Сервисы НЕ импортируют код друг друга.
+RULE: Services do NOT import code from each other.
 
-# ПЛОХО
+# BAD
 from booking_data.models import Order  # ❌
 
-# ХОРОШО
-# Каждый сервис имеет свои модели/схемы
+# GOOD
+# Each service has its own models/schemas
 from booking_api.schemas import OrderResponse  # ✓
 ```
 
-### 2. Изоляция данных
+### 2. Data Isolation
 
 ```
-ПРАВИЛО: Только Data API имеет доступ к БД.
+RULE: Only Data API has access to the database.
 
 Business API:
-- Не знает о SQLAlchemy
-- Не имеет DATABASE_URL
-- Работает через HTTP клиент
+- Does not know about SQLAlchemy
+- Does not have DATABASE_URL
+- Works through HTTP client
 
 Data API:
-- Единственный с доступом к БД
-- Управляет миграциями
-- Валидирует данные
+- The only one with DB access
+- Manages migrations
+- Validates data
 ```
 
-### 3. Изоляция конфигурации
+### 3. Configuration Isolation
 
 ```
-ПРАВИЛО: Каждый сервис имеет свою конфигурацию.
+RULE: Each service has its own configuration.
 
 # Business API
 DATA_API_URL=http://booking-data:8001
@@ -161,10 +161,10 @@ BOT_TOKEN=...
 BUSINESS_API_URL=http://booking-api:8000
 ```
 
-### 4. Изоляция деплоя
+### 4. Deployment Isolation
 
 ```
-ПРАВИЛО: Каждый сервис — отдельный Docker контейнер.
+RULE: Each service is a separate Docker container.
 
 docker-compose.yml:
 - booking-api
@@ -177,7 +177,7 @@ docker-compose.yml:
 
 ---
 
-## Структура директорий
+## Directory Structure
 
 ```
 project/
@@ -272,26 +272,26 @@ volumes:
 
 ---
 
-## Проверка изоляции
+## Isolation Verification
 
 ```bash
-# Проверить, что сервисы не импортируют друг друга
+# Check that services do not import from each other
 
-# В booking_api не должно быть импортов booking_data
+# booking_api should not have imports from booking_data
 grep -r "from booking_data" services/booking_api/
 grep -r "import booking_data" services/booking_api/
 
-# В booking_bot не должно быть импортов booking_data
+# booking_bot should not have imports from booking_data
 grep -r "from booking_data" services/booking_bot/
 
-# Результат должен быть пустым!
+# Result should be empty!
 ```
 
 ---
 
-## Связанные документы
+## Related Documents
 
-| Документ | Описание |
+| Document | Description |
 |----------|----------|
-| `improved-hybrid.md` | Общая архитектура |
-| `data-access.md` | HTTP-only доступ |
+| `improved-hybrid.md` | Overall architecture |
+| `data-access.md` | HTTP-only access |

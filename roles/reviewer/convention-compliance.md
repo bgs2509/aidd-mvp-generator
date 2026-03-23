@@ -1,106 +1,106 @@
-# Функция: Проверка конвенций
+# Function: Convention Compliance Check
 
-> **Назначение**: Верификация соответствия кода конвенциям проекта.
-
----
-
-## Цель
-
-Проверить, что код соответствует соглашениям о коде,
-определённым в `conventions.md`.
+> **Purpose**: Verifying code compliance with project conventions.
 
 ---
 
-## Проверяемые конвенции
+## Goal
 
-### 1. Именование
+Verify that the code complies with code conventions
+defined in `conventions.md`.
 
-#### Python код
+---
 
-| Элемент | Стиль | Пример |
-|---------|-------|--------|
-| Пакет | snake_case | `booking_api` |
-| Модуль | snake_case | `user_service.py` |
-| Класс | PascalCase | `UserService` |
-| Функция | snake_case | `create_user` |
-| Переменная | snake_case | `user_id` |
-| Константа | UPPER_SNAKE | `MAX_RETRIES` |
+## Verified Conventions
 
-**Команды проверки:**
+### 1. Naming
+
+#### Python Code
+
+| Element | Style | Example |
+|---------|-------|---------|
+| Package | snake_case | `booking_api` |
+| Module | snake_case | `user_service.py` |
+| Class | PascalCase | `UserService` |
+| Function | snake_case | `create_user` |
+| Variable | snake_case | `user_id` |
+| Constant | UPPER_SNAKE | `MAX_RETRIES` |
+
+**Verification commands:**
 
 ```bash
-# Проверка имён классов (должны быть PascalCase)
+# Check class names (should be PascalCase)
 Grep: "^class [a-z]" in services/
-# Если найдено — нарушение
+# If found — violation
 
-# Проверка имён функций (должны быть snake_case)
+# Check function names (should be snake_case)
 Grep: "def [A-Z]" in services/
-# Если найдено — нарушение
+# If found — violation
 
-# Проверка констант (должны быть UPPER_SNAKE)
+# Check constants (should be UPPER_SNAKE)
 Grep: "^[A-Z][a-z].*=" in services/*/src/*/core/
-# Может быть нарушением (нужна ручная проверка)
+# May be a violation (manual check needed)
 ```
 
-#### API и база данных
+#### API and Database
 
-| Элемент | Стиль | Пример |
-|---------|-------|--------|
-| API путь | kebab-case | `/api/v1/user-profiles` |
-| Query параметр | snake_case | `?user_id=123` |
-| JSON поле | snake_case | `{"user_name": "..."}` |
-| Таблица БД | snake_case, мн.ч. | `users` |
-| Колонка БД | snake_case | `created_at` |
+| Element | Style | Example |
+|---------|-------|---------|
+| API path | kebab-case | `/api/v1/user-profiles` |
+| Query parameter | snake_case | `?user_id=123` |
+| JSON field | snake_case | `{"user_name": "..."}` |
+| DB table | snake_case, plural | `users` |
+| DB column | snake_case | `created_at` |
 
-**Команды проверки:**
+**Verification commands:**
 
 ```bash
-# Проверка API путей
+# Check API paths
 Grep: '@router\.(get|post|put|delete)\("[^"]*[A-Z]' in services/
-# CamelCase в путях — нарушение
+# CamelCase in paths — violation
 
-# Проверка таблиц
+# Check tables
 Grep: '__tablename__.*[A-Z]' in services/
-# CamelCase в таблицах — нарушение
+# CamelCase in tables — violation
 ```
 
 ### 2. Type Hints
 
 ```
-ПРАВИЛО: Все функции должны иметь type hints.
+RULE: All functions must have type hints.
 
-Проверить:
-- Все параметры функций типизированы
-- Возвращаемые значения типизированы
-- Используются современные типы (list вместо List)
+Check:
+- All function parameters are typed
+- Return values are typed
+- Modern types are used (list instead of List)
 ```
 
-**Команды проверки:**
+**Verification commands:**
 
 ```bash
-# Проверка отсутствия типов
+# Check for missing types
 Grep: "def.*\):" in services/
-# Функции без -> return type
+# Functions without -> return type
 
-# Проверка устаревших типов
+# Check for deprecated types
 Grep: "from typing import List" in services/
 Grep: "from typing import Dict" in services/
-# Должны использоваться list, dict (Python 3.9+)
+# Should use list, dict (Python 3.9+)
 ```
 
 ### 3. Docstrings
 
 ```
-ПРАВИЛО: Все публичные функции и классы имеют docstrings.
-ФОРМАТ: Google стиль, на русском языке.
+RULE: All public functions and classes have docstrings.
+FORMAT: Google style, in Russian.
 
-Проверить:
-- Все классы имеют docstrings
-- Все публичные методы имеют docstrings
-- Docstrings на русском языке
+Check:
+- All classes have docstrings
+- All public methods have docstrings
+- Docstrings are in Russian
 ```
 
-**Пример правильного docstring:**
+**Correct docstring example:**
 
 ```python
 def create_user(name: str, email: str) -> User:
@@ -119,181 +119,181 @@ def create_user(name: str, email: str) -> User:
     """
 ```
 
-**Команды проверки:**
+**Verification commands:**
 
 ```bash
-# Поиск классов без docstrings
+# Search for classes without docstrings
 Grep: "^class.*:\s*$" in services/
-# Класс без docstring на следующей строке — нарушение
+# Class without docstring on the next line — violation
 
-# Поиск функций без docstrings
+# Search for functions without docstrings
 Grep: "def.*:\s*$" in services/
-# Функция без docstring — нарушение (для публичных)
+# Function without docstring — violation (for public ones)
 ```
 
-### 4. Импорты
+### 4. Imports
 
 ```
-ПРАВИЛО: Импорты организованы и сгруппированы.
+RULE: Imports are organized and grouped.
 
-Порядок:
-1. Стандартная библиотека
-2. Сторонние библиотеки
-3. Локальные импорты
+Order:
+1. Standard library
+2. Third-party libraries
+3. Local imports
 
-Разделение:
-- Пустая строка между группами
-- Абсолютные импорты
+Separation:
+- Empty line between groups
+- Absolute imports
 ```
 
-**Пример правильных импортов:**
+**Correct imports example:**
 
 ```python
-# Стандартная библиотека
+# Standard library
 import asyncio
 from datetime import datetime
 from uuid import UUID
 
-# Сторонние библиотеки
+# Third-party libraries
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 
-# Локальные импорты
+# Local imports
 from booking_api.core.config import settings
 from booking_api.application.services.user_service import UserService
 ```
 
-### 5. Обработка ошибок
+### 5. Error Handling
 
 ```
-ПРАВИЛО: Используются кастомные исключения.
+RULE: Custom exceptions are used.
 
-Проверить:
-- Определены кастомные исключения в core/exceptions.py
-- Не используется голый except
-- Исключения информативны
+Check:
+- Custom exceptions defined in core/exceptions.py
+- Bare except is not used
+- Exceptions are informative
 ```
 
-**Команды проверки:**
+**Verification commands:**
 
 ```bash
-# Поиск голого except
+# Search for bare except
 Grep: "except:" in services/
-# Голый except — нарушение
+# Bare except — violation
 
-# Поиск кастомных исключений
+# Search for custom exceptions
 Grep: "class.*Error.*Exception" in services/*/src/*/core/
-# Должны быть определены
+# Should be defined
 ```
 
 ---
 
-## Чек-лист проверки
+## Verification Checklist
 
-### Именование
+### Naming
 
-- [ ] Классы в PascalCase
-- [ ] Функции в snake_case
-- [ ] Переменные в snake_case
-- [ ] Константы в UPPER_SNAKE_CASE
-- [ ] API пути в kebab-case
-- [ ] Таблицы БД в snake_case, множественное число
+- [ ] Classes in PascalCase
+- [ ] Functions in snake_case
+- [ ] Variables in snake_case
+- [ ] Constants in UPPER_SNAKE_CASE
+- [ ] API paths in kebab-case
+- [ ] DB tables in snake_case, plural
 
 ### Type Hints
 
-- [ ] Все функции типизированы
-- [ ] Используются современные типы
-- [ ] Возвращаемые типы указаны
+- [ ] All functions are typed
+- [ ] Modern types are used
+- [ ] Return types are specified
 
 ### Docstrings
 
-- [ ] Все классы имеют docstrings
-- [ ] Все публичные функции имеют docstrings
-- [ ] Docstrings на русском языке
-- [ ] Используется Google стиль
+- [ ] All classes have docstrings
+- [ ] All public functions have docstrings
+- [ ] Docstrings are in Russian
+- [ ] Google style is used
 
-### Импорты
+### Imports
 
-- [ ] Импорты сгруппированы
-- [ ] Пустые строки между группами
-- [ ] Абсолютные импорты
+- [ ] Imports are grouped
+- [ ] Empty lines between groups
+- [ ] Absolute imports
 
-### Ошибки
+### Errors
 
-- [ ] Кастомные исключения определены
-- [ ] Нет голого except
-- [ ] Исключения информативны
+- [ ] Custom exceptions are defined
+- [ ] No bare except
+- [ ] Exceptions are informative
 
 ---
 
-## Автоматические инструменты
+## Automated Tools
 
-### Ruff (линтер)
+### Ruff (linter)
 
 ```bash
-# Запуск проверки
+# Run check
 ruff check services/
 
-# Автоисправление
+# Auto-fix
 ruff check --fix services/
 ```
 
-### Ruff (форматирование)
+### Ruff (formatting)
 
 ```bash
-# Проверка форматирования
+# Check formatting
 ruff format --check services/
 
-# Автоформатирование
+# Auto-format
 ruff format services/
 ```
 
-### Mypy (типы)
+### Mypy (types)
 
 ```bash
-# Проверка типов
+# Type checking
 mypy services/
 ```
 
 ---
 
-## Результат проверки
+## Verification Result
 
 ```markdown
-## Проверка конвенций
+## Convention Check
 
-### Статус: PASSED / FAILED
+### Status: PASSED / FAILED
 
-### Автоматические проверки
+### Automated Checks
 
-| Инструмент | Статус | Ошибок |
-|------------|--------|--------|
+| Tool | Status | Errors |
+|------|--------|--------|
 | ruff check | ✓/✗ | {N} |
 | ruff format | ✓/✗ | {N} |
 | mypy | ✓/✗ | {N} |
 
-### Ручные проверки
+### Manual Checks
 
-| Категория | Статус | Комментарий |
-|-----------|--------|-------------|
-| Именование | ✓/✗ | {Комментарий} |
-| Type Hints | ✓/✗ | {Комментарий} |
-| Docstrings | ✓/✗ | {Комментарий} |
-| Импорты | ✓/✗ | {Комментарий} |
-| Ошибки | ✓/✗ | {Комментарий} |
+| Category | Status | Comment |
+|----------|--------|---------|
+| Naming | ✓/✗ | {Comment} |
+| Type Hints | ✓/✗ | {Comment} |
+| Docstrings | ✓/✗ | {Comment} |
+| Imports | ✓/✗ | {Comment} |
+| Errors | ✓/✗ | {Comment} |
 
-### Найденные нарушения
+### Violations Found
 
-| # | Файл | Строка | Нарушение | Рекомендация |
-|---|------|--------|-----------|--------------|
-| 1 | {файл} | {строка} | {описание} | {как исправить} |
+| # | File | Line | Violation | Recommendation |
+|---|------|------|-----------|----------------|
+| 1 | {file} | {line} | {description} | {how to fix} |
 ```
 
 ---
 
-## Источники
+## Sources
 
-| Документ | Описание |
-|----------|----------|
-| `conventions.md` | Соглашения о коде |
-| `knowledge/architecture/naming/` | Правила именования |
+| Document | Description |
+|----------|-------------|
+| `conventions.md` | Code conventions |
+| `knowledge/architecture/naming/` | Naming rules |

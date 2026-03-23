@@ -1,58 +1,58 @@
-# Функция: Stage 4.6 — Тестирование
+# Function: Stage 4.6 — Testing
 
-> **Назначение**: Создание тестов для всех компонентов.
-
----
-
-## Цель
-
-Создать тесты для достижения требуемого покрытия кода (≥75%)
-и обеспечения качества реализации.
+> **Purpose**: Creating tests for all components.
 
 ---
 
-## Требования к тестированию
+## Goal
+
+Create tests to achieve the required code coverage (>=75%)
+and ensure implementation quality.
+
+---
+
+## Testing Requirements
 
 ### Level 2 (MVP)
 
 ```
-ОБЯЗАТЕЛЬНО:
-✓ Unit тесты
-✓ Integration тесты
+REQUIRED:
+✓ Unit tests
+✓ Integration tests
 ✓ Coverage ≥75%
 
-НЕ ТРЕБУЕТСЯ:
-✗ E2E тесты
-✗ Performance тесты
-✗ Security тесты
+NOT REQUIRED:
+✗ E2E tests
+✗ Performance tests
+✗ Security tests
 ```
 
 ---
 
-## Структура тестов
+## Test Structure
 
 ```
 services/{context}_{service}/
 └── tests/
     ├── __init__.py
-    ├── conftest.py           # Общие фикстуры
-    ├── unit/                 # Unit тесты
+    ├── conftest.py           # Shared fixtures
+    ├── unit/                 # Unit tests
     │   ├── __init__.py
     │   ├── test_services.py
     │   └── test_repositories.py
-    └── integration/          # Integration тесты
+    └── integration/          # Integration tests
         ├── __init__.py
         └── test_api.py
 ```
 
 ---
 
-## Компоненты
+## Components
 
-### 1. conftest.py (общие фикстуры)
+### 1. conftest.py (shared fixtures)
 
 ```python
-"""Общие фикстуры для тестов."""
+"""Shared test fixtures."""
 
 import asyncio
 from typing import AsyncGenerator, Generator
@@ -71,19 +71,19 @@ from {context}_{service}.domain.entities.base import Base
 from {context}_{service}.core.config import settings
 
 
-# Настройка event loop для pytest-asyncio
+# Event loop setup for pytest-asyncio
 @pytest.fixture(scope="session")
 def event_loop() -> Generator:
-    """Создать event loop для сессии тестов."""
+    """Create an event loop for the test session."""
     loop = asyncio.get_event_loop_policy().new_event_loop()
     yield loop
     loop.close()
 
 
-# Тестовая база данных
+# Test database
 @pytest_asyncio.fixture(scope="session")
 async def test_engine():
-    """Создать тестовый движок БД."""
+    """Create a test DB engine."""
     engine = create_async_engine(
         settings.test_database_url,
         echo=False,
@@ -102,7 +102,7 @@ async def test_engine():
 
 @pytest_asyncio.fixture
 async def db_session(test_engine) -> AsyncGenerator[AsyncSession, None]:
-    """Создать сессию БД для теста."""
+    """Create a DB session for a test."""
     async_session = async_sessionmaker(
         test_engine,
         class_=AsyncSession,
@@ -114,10 +114,10 @@ async def db_session(test_engine) -> AsyncGenerator[AsyncSession, None]:
         await session.rollback()
 
 
-# HTTP клиент для API тестов
+# HTTP client for API tests
 @pytest_asyncio.fixture
 async def client() -> AsyncGenerator[AsyncClient, None]:
-    """Создать HTTP клиент для тестов API."""
+    """Create an HTTP client for API tests."""
     transport = ASGITransport(app=app)
     async with AsyncClient(
         transport=transport,
@@ -126,18 +126,18 @@ async def client() -> AsyncGenerator[AsyncClient, None]:
         yield client
 
 
-# Фабрики для создания тестовых данных
+# Factories for creating test data
 @pytest.fixture
 def {entity}_factory():
-    """Фабрика для создания тестовых {entities}."""
+    """Factory for creating test {entities}."""
     from tests.factories import {Entity}Factory
     return {Entity}Factory
 ```
 
-### 2. Фабрики (tests/factories.py)
+### 2. Factories (tests/factories.py)
 
 ```python
-"""Фабрики для создания тестовых данных."""
+"""Factories for creating test data."""
 
 from datetime import datetime
 from uuid import uuid4
@@ -146,11 +146,11 @@ from {context}_{service}.domain.entities.{entity} import {Entity}
 
 
 class {Entity}Factory:
-    """Фабрика для создания тестовых {entities}."""
+    """Factory for creating test {entities}."""
 
     @staticmethod
     def create(**kwargs) -> {Entity}:
-        """Создать {entity} с тестовыми данными."""
+        """Create {entity} with test data."""
         defaults = {
             "id": uuid4(),
             "name": f"Test {Entity} {uuid4().hex[:6]}",
@@ -162,7 +162,7 @@ class {Entity}Factory:
 
     @staticmethod
     def create_dict(**kwargs) -> dict:
-        """Создать словарь с тестовыми данными."""
+        """Create a dictionary with test data."""
         defaults = {
             "name": f"Test {Entity} {uuid4().hex[:6]}",
         }
@@ -170,10 +170,10 @@ class {Entity}Factory:
         return defaults
 ```
 
-### 3. Unit тесты сервисов
+### 3. Service Unit Tests
 
 ```python
-"""Unit тесты для {Entity}Service."""
+"""Unit tests for {Entity}Service."""
 
 import pytest
 from unittest.mock import AsyncMock, MagicMock
@@ -188,11 +188,11 @@ from {context}_api.core.exceptions import NotFoundError
 
 
 class TestCreate{Entity}:
-    """Тесты создания {entity}."""
+    """Tests for creating {entity}."""
 
     @pytest.mark.asyncio
     async def test_create_{entity}_success(self):
-        """Успешное создание {entity}."""
+        """Successful {entity} creation."""
         # Arrange
         mock_client = AsyncMock()
         mock_client.create_{entity}.return_value = {
@@ -212,23 +212,23 @@ class TestCreate{Entity}:
 
     @pytest.mark.asyncio
     async def test_create_{entity}_validation_error(self):
-        """Ошибка валидации при создании."""
+        """Validation error on creation."""
         # Arrange
         mock_client = AsyncMock()
         service = {Entity}Service(mock_client)
 
         # Act & Assert
         with pytest.raises(ValueError):
-            dto = Create{Entity}DTO(name="")  # Пустое имя
+            dto = Create{Entity}DTO(name="")  # Empty name
             await service.create_{entity}(dto)
 
 
 class TestGet{Entity}:
-    """Тесты получения {entity}."""
+    """Tests for getting {entity}."""
 
     @pytest.mark.asyncio
     async def test_get_{entity}_success(self):
-        """Успешное получение {entity}."""
+        """Successful {entity} retrieval."""
         # Arrange
         {entity}_id = uuid4()
         mock_client = AsyncMock()
@@ -247,7 +247,7 @@ class TestGet{Entity}:
 
     @pytest.mark.asyncio
     async def test_get_{entity}_not_found(self):
-        """{Entity} не найден."""
+        """{Entity} not found."""
         # Arrange
         mock_client = AsyncMock()
         mock_client.get_{entity}.return_value = None
@@ -260,11 +260,11 @@ class TestGet{Entity}:
 
 
 class TestUpdate{Entity}:
-    """Тесты обновления {entity}."""
+    """Tests for updating {entity}."""
 
     @pytest.mark.asyncio
     async def test_update_{entity}_success(self):
-        """Успешное обновление {entity}."""
+        """Successful {entity} update."""
         # Arrange
         {entity}_id = uuid4()
         mock_client = AsyncMock()
@@ -288,23 +288,23 @@ class TestUpdate{Entity}:
 
 
 class TestDelete{Entity}:
-    """Тесты удаления {entity}."""
+    """Tests for deleting {entity}."""
 
     @pytest.mark.asyncio
     async def test_delete_{entity}_success(self):
-        """Успешное удаление {entity}."""
+        """Successful {entity} deletion."""
         # Arrange
         mock_client = AsyncMock()
         mock_client.delete_{entity}.return_value = True
 
         service = {Entity}Service(mock_client)
 
-        # Act & Assert (не должен бросить исключение)
+        # Act & Assert (should not raise an exception)
         await service.delete_{entity}(uuid4())
 
     @pytest.mark.asyncio
     async def test_delete_{entity}_not_found(self):
-        """{Entity} не найден при удалении."""
+        """{Entity} not found on deletion."""
         # Arrange
         mock_client = AsyncMock()
         mock_client.delete_{entity}.return_value = False
@@ -316,10 +316,10 @@ class TestDelete{Entity}:
             await service.delete_{entity}(uuid4())
 ```
 
-### 4. Unit тесты репозиториев
+### 4. Repository Unit Tests
 
 ```python
-"""Unit тесты для {Entity}Repository."""
+"""Unit tests for {Entity}Repository."""
 
 import pytest
 from uuid import uuid4
@@ -330,11 +330,11 @@ from {context}_data.infrastructure.repositories.{entity}_repository import (
 
 
 class TestCreate{Entity}:
-    """Тесты создания в репозитории."""
+    """Tests for repository creation."""
 
     @pytest.mark.asyncio
     async def test_create_{entity}(self, db_session, {entity}_factory):
-        """Создание {entity} в БД."""
+        """Creating {entity} in the DB."""
         # Arrange
         repo = {Entity}Repository(db_session)
         data = {entity}_factory.create_dict()
@@ -348,11 +348,11 @@ class TestCreate{Entity}:
 
 
 class TestGet{Entity}:
-    """Тесты получения из репозитория."""
+    """Tests for repository retrieval."""
 
     @pytest.mark.asyncio
     async def test_get_by_id(self, db_session, {entity}_factory):
-        """Получение {entity} по ID."""
+        """Getting {entity} by ID."""
         # Arrange
         repo = {Entity}Repository(db_session)
         created = await repo.create(**{entity}_factory.create_dict())
@@ -366,7 +366,7 @@ class TestGet{Entity}:
 
     @pytest.mark.asyncio
     async def test_get_by_id_not_found(self, db_session):
-        """{Entity} не найден."""
+        """{Entity} not found."""
         # Arrange
         repo = {Entity}Repository(db_session)
 
@@ -378,15 +378,15 @@ class TestGet{Entity}:
 
 
 class TestList{Entities}:
-    """Тесты получения списка."""
+    """Tests for listing."""
 
     @pytest.mark.asyncio
     async def test_get_all_with_pagination(self, db_session, {entity}_factory):
-        """Получение списка с пагинацией."""
+        """Getting list with pagination."""
         # Arrange
         repo = {Entity}Repository(db_session)
 
-        # Создаём 5 записей
+        # Create 5 records
         for _ in range(5):
             await repo.create(**{entity}_factory.create_dict())
 
@@ -398,7 +398,7 @@ class TestList{Entities}:
 
     @pytest.mark.asyncio
     async def test_count(self, db_session, {entity}_factory):
-        """Подсчёт записей."""
+        """Record counting."""
         # Arrange
         repo = {Entity}Repository(db_session)
 
@@ -412,10 +412,10 @@ class TestList{Entities}:
         assert count >= 3
 ```
 
-### 5. Integration тесты API
+### 5. API Integration Tests
 
 ```python
-"""Integration тесты для {Entity} API."""
+"""Integration tests for {Entity} API."""
 
 import pytest
 from uuid import uuid4
@@ -424,11 +424,11 @@ from httpx import AsyncClient
 
 
 class TestCreate{Entity}API:
-    """Тесты создания через API."""
+    """Tests for creation via API."""
 
     @pytest.mark.asyncio
     async def test_create_{entity}_success(self, client: AsyncClient):
-        """Успешное создание через API."""
+        """Successful creation via API."""
         # Arrange
         data = {"name": "Test Entity"}
 
@@ -443,9 +443,9 @@ class TestCreate{Entity}API:
 
     @pytest.mark.asyncio
     async def test_create_{entity}_validation_error(self, client: AsyncClient):
-        """Ошибка валидации."""
+        """Validation error."""
         # Arrange
-        data = {}  # Пустые данные
+        data = {}  # Empty data
 
         # Act
         response = await client.post("/api/v1/{entities}", json=data)
@@ -455,12 +455,12 @@ class TestCreate{Entity}API:
 
 
 class TestGet{Entity}API:
-    """Тесты получения через API."""
+    """Tests for retrieval via API."""
 
     @pytest.mark.asyncio
     async def test_get_{entity}_success(self, client: AsyncClient):
-        """Успешное получение."""
-        # Arrange - создаём {entity}
+        """Successful retrieval."""
+        # Arrange - create {entity}
         create_response = await client.post(
             "/api/v1/{entities}",
             json={"name": "Test"},
@@ -476,7 +476,7 @@ class TestGet{Entity}API:
 
     @pytest.mark.asyncio
     async def test_get_{entity}_not_found(self, client: AsyncClient):
-        """{Entity} не найден."""
+        """{Entity} not found."""
         # Act
         response = await client.get(f"/api/v1/{entities}/{uuid4()}")
 
@@ -485,12 +485,12 @@ class TestGet{Entity}API:
 
 
 class TestList{Entities}API:
-    """Тесты списка через API."""
+    """Tests for listing via API."""
 
     @pytest.mark.asyncio
     async def test_list_{entities}(self, client: AsyncClient):
-        """Получение списка."""
-        # Arrange - создаём несколько {entities}
+        """Getting the list."""
+        # Arrange - create several {entities}
         for i in range(3):
             await client.post(
                 "/api/v1/{entities}",
@@ -508,7 +508,7 @@ class TestList{Entities}API:
 
     @pytest.mark.asyncio
     async def test_list_{entities}_pagination(self, client: AsyncClient):
-        """Пагинация списка."""
+        """List pagination."""
         # Act
         response = await client.get(
             "/api/v1/{entities}",
@@ -523,11 +523,11 @@ class TestList{Entities}API:
 
 
 class TestUpdate{Entity}API:
-    """Тесты обновления через API."""
+    """Tests for updating via API."""
 
     @pytest.mark.asyncio
     async def test_update_{entity}_success(self, client: AsyncClient):
-        """Успешное обновление."""
+        """Successful update."""
         # Arrange
         create_response = await client.post(
             "/api/v1/{entities}",
@@ -547,11 +547,11 @@ class TestUpdate{Entity}API:
 
 
 class TestDelete{Entity}API:
-    """Тесты удаления через API."""
+    """Tests for deletion via API."""
 
     @pytest.mark.asyncio
     async def test_delete_{entity}_success(self, client: AsyncClient):
-        """Успешное удаление."""
+        """Successful deletion."""
         # Arrange
         create_response = await client.post(
             "/api/v1/{entities}",
@@ -565,58 +565,58 @@ class TestDelete{Entity}API:
         # Assert
         assert response.status_code == 204
 
-        # Проверяем, что удалено
+        # Verify deletion
         get_response = await client.get(f"/api/v1/{entities}/{{{entity}_id}}")
         assert get_response.status_code == 404
 ```
 
 ---
 
-## Запуск тестов
+## Running Tests
 
-### Makefile команды
+### Makefile Commands
 
 ```makefile
-# Все тесты
+# All tests
 test:
 	pytest -v
 
-# С покрытием
+# With coverage
 test-cov:
 	pytest --cov=src --cov-report=html --cov-report=term
 
-# Только unit тесты
+# Unit tests only
 test-unit:
 	pytest tests/unit -v
 
-# Только integration тесты
+# Integration tests only
 test-integration:
 	pytest tests/integration -v
 
-# Проверка покрытия
+# Coverage check
 check-coverage:
 	pytest --cov=src --cov-fail-under=75
 ```
 
 ---
 
-## Качественные ворота
+## Quality Gates
 
 ### TESTS_READY
 
-- [ ] Unit тесты созданы для всех сервисов
-- [ ] Unit тесты созданы для всех репозиториев
-- [ ] Integration тесты созданы для всех API эндпоинтов
-- [ ] Coverage ≥75%
-- [ ] Все тесты проходят (`pytest` без ошибок)
+- [ ] Unit tests created for all services
+- [ ] Unit tests created for all repositories
+- [ ] Integration tests created for all API endpoints
+- [ ] Coverage >=75%
+- [ ] All tests pass (`pytest` without errors)
 
 ---
 
-## Источники
+## References
 
-| Документ | Описание |
-|----------|----------|
-| `knowledge/quality/testing/pytest-setup.md` | Настройка pytest |
-| `knowledge/quality/testing/fixture-patterns.md` | Паттерны фикстур |
-| `knowledge/quality/testing/mocking.md` | Стратегии мокирования |
-| `knowledge/quality/testing/fastapi-testing.md` | Тестирование FastAPI |
+| Document | Description |
+|----------|-------------|
+| `knowledge/quality/testing/pytest-setup.md` | pytest setup |
+| `knowledge/quality/testing/fixture-patterns.md` | Fixture patterns |
+| `knowledge/quality/testing/mocking.md` | Mocking strategies |
+| `knowledge/quality/testing/fastapi-testing.md` | FastAPI testing |

@@ -1,43 +1,43 @@
-# Управление Event Loop
+# Event Loop Management
 
-> **Назначение**: Правила работы с asyncio event loop в сервисах.
-
----
-
-## Принцип
-
-```
-ПРАВИЛО: Каждый сервис владеет ОДНИМ event loop.
-         Нельзя создавать дополнительные event loops внутри сервиса.
-```
+> **Purpose**: Rules for working with the asyncio event loop in services.
 
 ---
 
-## Event Loop по типам сервисов
+## Principle
+
+```
+RULE: Each service owns ONE event loop.
+      You must not create additional event loops inside a service.
+```
+
+---
+
+## Event Loop by Service Type
 
 ### FastAPI
 
 ```python
-"""FastAPI управляет event loop автоматически."""
+"""FastAPI manages the event loop automatically."""
 
 # main.py
 from fastapi import FastAPI
 
 app = FastAPI()
 
-# uvicorn создаёт и управляет event loop
-# НЕ нужно вызывать asyncio.run() или создавать loop
+# uvicorn creates and manages the event loop
+# No need to call asyncio.run() or create a loop
 ```
 
 ```bash
-# Запуск
+# Launch
 uvicorn booking_api.main:app --host 0.0.0.0 --port 8000
 ```
 
 ### Aiogram 3.x
 
 ```python
-"""Aiogram 3.x использует собственный event loop."""
+"""Aiogram 3.x uses its own event loop."""
 
 import asyncio
 from aiogram import Bot, Dispatcher
@@ -46,10 +46,10 @@ async def main():
     bot = Bot(token="...")
     dp = Dispatcher()
 
-    # dp.start_polling() работает в текущем event loop
+    # dp.start_polling() runs in the current event loop
     await dp.start_polling(bot)
 
-# asyncio.run() создаёт event loop ОДИН раз
+# asyncio.run() creates the event loop ONCE
 if __name__ == "__main__":
     asyncio.run(main())
 ```
@@ -57,7 +57,7 @@ if __name__ == "__main__":
 ### Background Worker
 
 ```python
-"""Worker с собственным event loop."""
+"""Worker with its own event loop."""
 
 import asyncio
 import signal
@@ -81,7 +81,7 @@ async def main():
     worker = Worker()
     loop = asyncio.get_event_loop()
 
-    # Обработка сигналов
+    # Signal handling
     for sig in (signal.SIGTERM, signal.SIGINT):
         loop.add_signal_handler(
             sig,
@@ -97,92 +97,92 @@ if __name__ == "__main__":
 
 ---
 
-## Что НЕЛЬЗЯ делать
+## What NOT to Do
 
-### ❌ Создавать новый event loop внутри async функции
+### Do NOT create a new event loop inside an async function
 
 ```python
 async def bad_example():
-    # ПЛОХО! Создание нового loop внутри async
+    # BAD! Creating a new loop inside async
     loop = asyncio.new_event_loop()  # ❌
     result = loop.run_until_complete(some_coro())  # ❌
 ```
 
-### ❌ Использовать asyncio.run() внутри сервиса
+### Do NOT use asyncio.run() inside a service
 
 ```python
 async def bad_example():
-    # ПЛОХО! asyncio.run() создаёт новый loop
+    # BAD! asyncio.run() creates a new loop
     result = asyncio.run(some_coro())  # ❌
 ```
 
-### ❌ Использовать get_event_loop().run_until_complete()
+### Do NOT use get_event_loop().run_until_complete()
 
 ```python
 async def bad_example():
-    # ПЛОХО! run_until_complete() блокирует
+    # BAD! run_until_complete() blocks
     loop = asyncio.get_event_loop()
     result = loop.run_until_complete(some_coro())  # ❌
 ```
 
-### ❌ Блокирующие операции в async коде
+### Do NOT use blocking operations in async code
 
 ```python
 async def bad_example():
-    # ПЛОХО! Блокирующий вызов
+    # BAD! Blocking call
     import time
-    time.sleep(5)  # ❌ Блокирует весь event loop
+    time.sleep(5)  # ❌ Blocks the entire event loop
 
-    # ПЛОХО! Синхронный HTTP
+    # BAD! Synchronous HTTP
     import requests
     response = requests.get("http://...")  # ❌
 ```
 
 ---
 
-## Что НУЖНО делать
+## What to Do
 
-### ✓ Использовать await для асинхронных операций
+### Use await for asynchronous operations
 
 ```python
 async def good_example():
-    # ХОРОШО! await для async операций
+    # GOOD! await for async operations
     result = await some_coro()  # ✓
 ```
 
-### ✓ asyncio.sleep() вместо time.sleep()
+### Use asyncio.sleep() instead of time.sleep()
 
 ```python
 async def good_example():
-    # ХОРОШО! Неблокирующий sleep
+    # GOOD! Non-blocking sleep
     await asyncio.sleep(5)  # ✓
 ```
 
-### ✓ httpx вместо requests
+### Use httpx instead of requests
 
 ```python
 async def good_example():
-    # ХОРОШО! Асинхронный HTTP клиент
+    # GOOD! Asynchronous HTTP client
     async with httpx.AsyncClient() as client:
         response = await client.get("http://...")  # ✓
 ```
 
-### ✓ asyncio.create_task() для параллельных задач
+### Use asyncio.create_task() for parallel tasks
 
 ```python
 async def good_example():
-    # ХОРОШО! Параллельное выполнение
+    # GOOD! Parallel execution
     task1 = asyncio.create_task(fetch_users())
     task2 = asyncio.create_task(fetch_orders())
 
     users, orders = await asyncio.gather(task1, task2)  # ✓
 ```
 
-### ✓ run_in_executor() для блокирующего кода
+### Use run_in_executor() for blocking code
 
 ```python
 async def good_example():
-    # ХОРОШО! Блокирующий код в executor
+    # GOOD! Blocking code in executor
     loop = asyncio.get_event_loop()
     result = await loop.run_in_executor(
         None,  # default ThreadPoolExecutor
@@ -193,33 +193,33 @@ async def good_example():
 
 ---
 
-## Проверка нарушений
+## Violation Detection
 
 ```bash
-# Поиск проблемных паттернов
+# Search for problematic patterns
 
-# asyncio.run() внутри кода (допустимо только в main)
+# asyncio.run() inside code (only acceptable in main)
 grep -r "asyncio.run(" services/ --include="*.py" | grep -v "main.py"
 
-# Создание новых event loops
+# Creating new event loops
 grep -r "new_event_loop()" services/
 
 # run_until_complete
 grep -r "run_until_complete" services/
 
-# Блокирующий sleep
+# Blocking sleep
 grep -r "time.sleep" services/
 
-# Синхронный requests
+# Synchronous requests
 grep -r "import requests" services/
 ```
 
 ---
 
-## Lifespan в FastAPI
+## Lifespan in FastAPI
 
 ```python
-"""Управление жизненным циклом через lifespan."""
+"""Lifecycle management through lifespan."""
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
@@ -227,7 +227,7 @@ from fastapi import FastAPI
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Управление ресурсами приложения."""
+    """Application resource management."""
     # Startup
     app.state.http_client = httpx.AsyncClient()
     app.state.db_pool = await create_pool()
@@ -244,33 +244,33 @@ app = FastAPI(lifespan=lifespan)
 
 ---
 
-## Обработка сигналов
+## Signal Handling
 
 ```python
-"""Graceful shutdown с обработкой сигналов."""
+"""Graceful shutdown with signal handling."""
 
 import asyncio
 import signal
 
 
 async def main():
-    # Получить текущий event loop
+    # Get current event loop
     loop = asyncio.get_event_loop()
 
-    # Создать event для shutdown
+    # Create shutdown event
     shutdown_event = asyncio.Event()
 
     def signal_handler():
         shutdown_event.set()
 
-    # Зарегистрировать обработчики
+    # Register handlers
     for sig in (signal.SIGTERM, signal.SIGINT):
         loop.add_signal_handler(sig, signal_handler)
 
-    # Запустить сервис
+    # Start service
     await start_service()
 
-    # Ждать сигнала
+    # Wait for signal
     await shutdown_event.wait()
 
     # Graceful shutdown
@@ -283,10 +283,10 @@ if __name__ == "__main__":
 
 ---
 
-## Связанные документы
+## Related Documents
 
-| Документ | Описание |
+| Document | Description |
 |----------|----------|
-| `../services/fastapi/application-factory.md` | Фабрика FastAPI |
-| `../services/aiogram/basic-setup.md` | Настройка aiogram |
-| `../services/asyncio-workers/basic-setup.md` | Настройка workers |
+| `../services/fastapi/application-factory.md` | FastAPI factory |
+| `../services/aiogram/basic-setup.md` | aiogram setup |
+| `../services/asyncio-workers/basic-setup.md` | Workers setup |

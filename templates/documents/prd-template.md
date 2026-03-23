@@ -1,161 +1,161 @@
 ---
-# === YAML Frontmatter (машиночитаемые метаданные) ===
-# Заполняется автоматически при создании артефакта
+# === YAML Frontmatter (machine-readable metadata) ===
+# Filled automatically when the artifact is created
 
-feature_id: "{FID}"                    # F001, F002, ... (автогенерация)
-feature_name: "{slug}"                 # kebab-case, ≤30 символов
-title: "{Название проекта/фичи}"
-created: "{YYYY-MM-DD}"                # Дата создания
+feature_id: "{FID}"                    # F001, F002, ... (auto-generated)
+feature_name: "{slug}"                 # kebab-case, <=30 characters
+title: "{Project/Feature Name}"
+created: "{YYYY-MM-DD}"                # Creation date
 author: "AI (Analyst)"
 type: "prd"
 status: "PRD_READY"                    # Draft → PRD_READY
 version: 1
 mode: "{CREATE|FEATURE}"
 
-# Опционально (заполняется по мере работы)
-related_features: []                   # [F001, F003] — связанные фичи
+# Optional (filled as work progresses)
+related_features: []                   # [F001, F003] — related features
 services: []                           # [booking_api, booking_data]
-requirements_count: 0                  # Количество FR-* требований
+requirements_count: 0                  # Number of FR-* requirements
 
-# Пайплайны
+# Pipelines
 pipelines:
-  business: true                       # Есть бизнес-пайплайн
-  data: true                           # Есть data pipeline
-  integration: true                    # Есть интеграции
-  modified: []                         # [pipeline1, pipeline2] — для FEATURE
+  business: true                       # Has business pipeline
+  data: true                           # Has data pipeline
+  integration: true                    # Has integrations
+  modified: []                         # [pipeline1, pipeline2] — for FEATURE
 ---
 
-# PRD: {Название проекта/фичи}
+# PRD: {Project/Feature Name}
 
 **Feature ID**: {FID}
-**Версия**: 1.0
-**Дата**: {YYYY-MM-DD}
-**Автор**: AI Agent (Аналитик)
-**Статус**: Draft | Review | Approved
+**Version**: 1.0
+**Date**: {YYYY-MM-DD}
+**Author**: AI Agent (Analyst)
+**Status**: Draft | Review | Approved
 
 ---
 
-## 1. Обзор
+## 1. Overview
 
-### 1.1 Проблема
+### 1.1 Problem
 
-{Описание проблемы, которую решает проект/фича}
+{Description of the problem the project/feature solves}
 
-- Какую боль испытывает пользователь?
-- Почему текущее решение неудовлетворительно?
-- Какие последствия нерешённой проблемы?
+- What pain does the user experience?
+- Why is the current solution unsatisfactory?
+- What are the consequences of an unsolved problem?
 
-### 1.2 Решение
+### 1.2 Solution
 
-{Краткое описание предлагаемого решения}
+{Brief description of the proposed solution}
 
-- Как решение устраняет проблему?
-- Ключевые компоненты решения
-- Ожидаемый результат
+- How does the solution address the problem?
+- Key components of the solution
+- Expected outcome
 
-### 1.3 Целевая аудитория
+### 1.3 Target Audience
 
-| Сегмент | Описание | Потребности |
-|---------|----------|-------------|
-| {Сегмент 1} | {Описание} | {Что им нужно} |
-| {Сегмент 2} | {Описание} | {Что им нужно} |
+| Segment | Description | Needs |
+|---------|-------------|-------|
+| {Segment 1} | {Description} | {What they need} |
+| {Segment 2} | {Description} | {What they need} |
 
-### 1.4 Ценностное предложение
+### 1.4 Value Proposition
 
-{Почему пользователь выберет это решение}
+{Why the user will choose this solution}
 
 ---
 
-## 2. Функциональные требования
+## 2. Functional Requirements
 
 ### 2.1 Core Features (Must Have)
 
-| ID | Название | Описание | Критерий приёмки |
-|----|----------|----------|------------------|
-| FR-001 | {Название} | {Детальное описание функции} | {Как проверить, что реализовано} |
-| FR-002 | {Название} | {Детальное описание функции} | {Как проверить, что реализовано} |
-| FR-003 | {Название} | {Детальное описание функции} | {Как проверить, что реализовано} |
+| ID | Name | Description | Acceptance Criteria |
+|----|------|-------------|---------------------|
+| FR-001 | {Name} | {Detailed function description} | {How to verify it is implemented} |
+| FR-002 | {Name} | {Detailed function description} | {How to verify it is implemented} |
+| FR-003 | {Name} | {Detailed function description} | {How to verify it is implemented} |
 
 ### 2.2 Important Features (Should Have)
 
-| ID | Название | Описание | Критерий приёмки |
-|----|----------|----------|------------------|
-| FR-010 | {Название} | {Детальное описание функции} | {Как проверить, что реализовано} |
-| FR-011 | {Название} | {Детальное описание функции} | {Как проверить, что реализовано} |
+| ID | Name | Description | Acceptance Criteria |
+|----|------|-------------|---------------------|
+| FR-010 | {Name} | {Detailed function description} | {How to verify it is implemented} |
+| FR-011 | {Name} | {Detailed function description} | {How to verify it is implemented} |
 
 ### 2.3 Nice to Have (Could Have)
 
-| ID | Название | Описание | Критерий приёмки |
-|----|----------|----------|------------------|
-| FR-020 | {Название} | {Детальное описание функции} | {Как проверить, что реализовано} |
+| ID | Name | Description | Acceptance Criteria |
+|----|------|-------------|---------------------|
+| FR-020 | {Name} | {Detailed function description} | {How to verify it is implemented} |
 
 ---
 
 ## 3. User Stories
 
-### US-001: {Название истории}
+### US-001: {Story Name}
 
-**Как** {роль пользователя}
-**Я хочу** {действие}
-**Чтобы** {цель/выгода}
+**As a** {user role}
+**I want to** {action}
+**So that** {goal/benefit}
 
-**Критерии приёмки:**
-- [ ] {Критерий 1}
-- [ ] {Критерий 2}
-- [ ] {Критерий 3}
+**Acceptance criteria:**
+- [ ] {Criterion 1}
+- [ ] {Criterion 2}
+- [ ] {Criterion 3}
 
-**Связанные требования:** FR-001, FR-002
-
----
-
-### US-002: {Название истории}
-
-**Как** {роль пользователя}
-**Я хочу** {действие}
-**Чтобы** {цель/выгода}
-
-**Критерии приёмки:**
-- [ ] {Критерий 1}
-- [ ] {Критерий 2}
-
-**Связанные требования:** FR-003
+**Related requirements:** FR-001, FR-002
 
 ---
 
-## 4. Пайплайны
+### US-002: {Story Name}
 
-### 4.0 Тип изменений
+**As a** {user role}
+**I want to** {action}
+**So that** {goal/benefit}
 
-| Параметр | Значение |
-|----------|----------|
-| Режим | CREATE (новый) / FEATURE (изменение) |
-| Затрагиваемые пайплайны | {список или "все новые"} |
+**Acceptance criteria:**
+- [ ] {Criterion 1}
+- [ ] {Criterion 2}
 
-### 4.1 Бизнес-пайплайн
+**Related requirements:** FR-003
 
-> Последовательность бизнес-операций и состояний сущностей
+---
 
-**Основной flow:**
+## 4. Pipelines
+
+### 4.0 Change Type
+
+| Parameter | Value |
+|-----------|-------|
+| Mode | CREATE (new) / FEATURE (modification) |
+| Affected pipelines | {list or "all new"} |
+
+### 4.1 Business Pipeline
+
+> Sequence of business operations and entity states
+
+**Main flow:**
 
 ```
-[Событие] → [Валидация] → [Обработка] → [Результат] → [Уведомление]
+[Event] → [Validation] → [Processing] → [Result] → [Notification]
 ```
 
-| # | Этап | Описание | Условия перехода | Результат |
-|---|------|----------|------------------|-----------|
-| 1 | {Этап} | {Что происходит} | {Когда переходим} | {Что получаем} |
+| # | Stage | Description | Transition Conditions | Result |
+|---|-------|-------------|----------------------|--------|
+| 1 | {Stage} | {What happens} | {When to transition} | {What we get} |
 
-**Состояния сущностей:**
+**Entity states:**
 
-| Сущность | Состояния | Переходы |
-|----------|-----------|----------|
-| {Сущность} | draft → pending → confirmed → completed | {Правила перехода} |
+| Entity | States | Transitions |
+|--------|--------|-------------|
+| {Entity} | draft → pending → confirmed → completed | {Transition rules} |
 
 ### 4.2 Data Pipeline
 
-> Поток данных между компонентами системы
+> Data flow between system components
 
-**Диаграмма потока данных:**
+**Data flow diagram:**
 
 ```
 ┌─────────┐     HTTP      ┌─────────────┐     HTTP     ┌──────────┐
@@ -174,25 +174,25 @@ pipelines:
                           └──────────┘
 ```
 
-| # | Источник | Назначение | Данные | Формат | Синхронность |
-|---|----------|------------|--------|--------|--------------|
-| 1 | {От} | {К} | {Что передаётся} | JSON/Protobuf | sync/async |
+| # | Source | Destination | Data | Format | Synchronicity |
+|---|--------|-------------|------|--------|---------------|
+| 1 | {From} | {To} | {What is transferred} | JSON/Protobuf | sync/async |
 
-**Трансформации данных:**
+**Data transformations:**
 
-| # | Точка | Входные данные | Преобразование | Выходные данные |
-|---|-------|----------------|----------------|-----------------|
-| 1 | {Где} | {Input DTO} | {Что делаем} | {Output DTO} |
+| # | Point | Input Data | Transformation | Output Data |
+|---|-------|------------|----------------|-------------|
+| 1 | {Where} | {Input DTO} | {What is done} | {Output DTO} |
 
-### 4.3 Интеграционный пайплайн
+### 4.3 Integration Pipeline
 
-> Взаимодействие между сервисами и внешними системами
+> Interaction between services and external systems
 
-**Карта сервисов:**
+**Service map:**
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                         СИСТЕМА                             │
+│                          SYSTEM                              │
 ├─────────────────────────────────────────────────────────────┤
 │  ┌──────────────┐       ┌──────────────┐                    │
 │  │ Business API │◄─────►│   Data API   │                    │
@@ -211,224 +211,224 @@ pipelines:
     └───────────┘          └────────────┘
 ```
 
-**Точки интеграции:**
+**Integration points:**
 
-| ID | От | К | Протокол | Endpoint | Описание |
-|----|----|----|----------|----------|----------|
-| INT-001 | Business API | Data API | HTTP/REST | /api/v1/* | CRUD операции |
-| INT-002 | Bot | Business API | HTTP/REST | /api/v1/* | Команды бота |
-| INT-003 | Worker | External | HTTP/REST | {URL} | {Описание} |
+| ID | From | To | Protocol | Endpoint | Description |
+|----|------|----|----------|----------|-------------|
+| INT-001 | Business API | Data API | HTTP/REST | /api/v1/* | CRUD operations |
+| INT-002 | Bot | Business API | HTTP/REST | /api/v1/* | Bot commands |
+| INT-003 | Worker | External | HTTP/REST | {URL} | {Description} |
 
-**Контракты API:**
+**API contracts:**
 
-| Интеграция | Request | Response | Ошибки |
-|------------|---------|----------|--------|
+| Integration | Request | Response | Errors |
+|-------------|---------|----------|--------|
 | INT-001 | {Schema} | {Schema} | 4xx, 5xx |
 
-### 4.4 Влияние на существующие пайплайны
+### 4.4 Impact on Existing Pipelines
 
-> Заполняется ВСЕГДА. Для CREATE: "Новая система". Для FEATURE: таблица изменений.
+> Filled in ALWAYS. For CREATE: "New system". For FEATURE: change table.
 
-**Режим:** CREATE / FEATURE
+**Mode:** CREATE / FEATURE
 
-**Для CREATE:**
+**For CREATE:**
 ```
-Новая система — существующих пайплайнов нет.
-Все пайплайны создаются с нуля согласно разделам 4.1-4.3.
+New system — no existing pipelines.
+All pipelines are created from scratch per sections 4.1-4.3.
 ```
 
-**Для FEATURE:**
+**For FEATURE:**
 
-| Пайплайн | Тип изменения | Затрагиваемые этапы | Обратная совместимость |
-|----------|---------------|---------------------|------------------------|
-| {Название} | add/modify/remove | {Этапы} | Да/Нет (причина) |
+| Pipeline | Change Type | Affected Stages | Backward Compatibility |
+|----------|-------------|-----------------|------------------------|
+| {Name} | add/modify/remove | {Stages} | Yes/No (reason) |
 
 **Breaking changes:**
-- [ ] Нет breaking changes
-- [ ] {Описание breaking change и план миграции}
+- [ ] No breaking changes
+- [ ] {Breaking change description and migration plan}
 
 ---
 
-## 5. UI/UX требования
+## 5. UI/UX Requirements
 
-### 5.1 Экраны и интерфейсы
+### 5.1 Screens and Interfaces
 
-| ID | Экран | Описание | Приоритет |
-|----|-------|----------|-----------|
-| UI-001 | {Название экрана} | {Описание назначения и ключевых элементов} | Must |
-| UI-002 | {Название экрана} | {Описание назначения и ключевых элементов} | Should |
+| ID | Screen | Description | Priority |
+|----|--------|-------------|----------|
+| UI-001 | {Screen name} | {Description of purpose and key elements} | Must |
+| UI-002 | {Screen name} | {Description of purpose and key elements} | Should |
 
 ### 5.2 User Flows
 
-**Flow 1: {Название}**
+**Flow 1: {Name}**
 
 ```
-[Начало] → [Шаг 1] → [Шаг 2] → [Решение?]
-                                    ↓ Да
-                              [Шаг 3] → [Конец]
-                                    ↓ Нет
-                              [Альтернатива]
+[Start] → [Step 1] → [Step 2] → [Decision?]
+                                    ↓ Yes
+                              [Step 3] → [End]
+                                    ↓ No
+                              [Alternative]
 ```
 
-### 5.3 Требования к доступности
+### 5.3 Accessibility Requirements
 
-- [ ] Поддержка клавиатурной навигации
-- [ ] Контрастность текста ≥ 4.5:1
-- [ ] Alt-тексты для изображений
-- [ ] Поддержка screen readers
+- [ ] Keyboard navigation support
+- [ ] Text contrast >= 4.5:1
+- [ ] Alt text for images
+- [ ] Screen reader support
 
 ---
 
-## 6. Нефункциональные требования
+## 6. Non-Functional Requirements
 
-### 6.1 Производительность
+### 6.1 Performance
 
-| ID | Метрика | Требование | Измерение |
-|----|---------|------------|-----------|
-| NF-001 | Время отклика API | < 200ms (p95) | Prometheus metrics |
-| NF-002 | Время загрузки страницы | < 3s | Lighthouse |
+| ID | Metric | Requirement | Measurement |
+|----|--------|-------------|-------------|
+| NF-001 | API response time | < 200ms (p95) | Prometheus metrics |
+| NF-002 | Page load time | < 3s | Lighthouse |
 | NF-003 | Throughput | > 100 RPS | Load testing |
 
-### 6.2 Масштабируемость
+### 6.2 Scalability
 
-| ID | Требование | Описание |
-|----|------------|----------|
-| NF-010 | Горизонтальное масштабирование | {Описание} |
-| NF-011 | Ожидаемая нагрузка | {X пользователей, Y запросов} |
+| ID | Requirement | Description |
+|----|-------------|-------------|
+| NF-010 | Horizontal scaling | {Description} |
+| NF-011 | Expected load | {X users, Y requests} |
 
-### 6.3 Безопасность
+### 6.3 Security
 
-| ID | Требование | Описание |
-|----|------------|----------|
-| NF-020 | Аутентификация | {JWT/OAuth2/etc} |
-| NF-021 | Авторизация | {RBAC/ABAC/etc} |
-| NF-022 | Шифрование | {TLS 1.3, данные at rest} |
-| NF-023 | Логирование | {Аудит действий} |
+| ID | Requirement | Description |
+|----|-------------|-------------|
+| NF-020 | Authentication | {JWT/OAuth2/etc} |
+| NF-021 | Authorization | {RBAC/ABAC/etc} |
+| NF-022 | Encryption | {TLS 1.3, data at rest} |
+| NF-023 | Logging | {Action audit} |
 
-### 6.4 Надёжность
+### 6.4 Reliability
 
-| ID | Метрика | Требование |
-|----|---------|------------|
-| NF-030 | Uptime | ≥ 99.9% |
-| NF-031 | RTO | < 1 час |
-| NF-032 | RPO | < 15 минут |
+| ID | Metric | Requirement |
+|----|--------|-------------|
+| NF-030 | Uptime | >= 99.9% |
+| NF-031 | RTO | < 1 hour |
+| NF-032 | RPO | < 15 minutes |
 
-### 6.5 Требования к тестированию
+### 6.5 Testing Requirements
 
-#### Smoke тесты (ОБЯЗАТЕЛЬНО)
-- [ ] 100% публичных endpoints имеют happy-path тест
-- [ ] Все контейнеры запускаются без ошибок
-- [ ] Health checks отвечают 200
-- [ ] Базы данных доступны и отвечают
+#### Smoke Tests (MANDATORY)
+- [ ] 100% of public endpoints have a happy-path test
+- [ ] All containers start without errors
+- [ ] Health checks respond 200
+- [ ] Databases are accessible and responding
 
-#### Unit тесты
-- **Требуются**: {Да/Нет}
-- **Порог покрытия**: {≥75%/другое}
-- **Критические модули**: {список}
+#### Unit Tests
+- **Required**: {Yes/No}
+- **Coverage threshold**: {>=75%/other}
+- **Critical modules**: {list}
 
-#### Integration тесты
-- **Требуются**: {Да/Нет}
-- **Критические пайплайны**: {список}
-- **Тестовые БД**: testcontainers для {БД из PRD} (например PostgreSQL)
+#### Integration Tests
+- **Required**: {Yes/No}
+- **Critical pipelines**: {list}
+- **Test DBs**: testcontainers for {DB from PRD} (e.g. PostgreSQL)
 
-#### E2E тесты
-- **Требуются**: {Да/Нет}
-- **Сценарии межсервисных потоков**: {список}
+#### E2E Tests
+- **Required**: {Yes/No}
+- **Cross-service flow scenarios**: {list}
 
-#### Сводная таблица
+#### Summary Table
 
-| ID | Тип | Требование | Обязательно |
-|----|-----|-----------|-------------|
-| TRQ-001 | Smoke | 100% endpoints happy-path | ✅ Да |
-| TRQ-002 | Smoke | Контейнеры запускаются | ✅ Да |
-| TRQ-003 | Smoke | Health checks отвечают 200 | ✅ Да |
-| TRQ-004 | Smoke | Базы данных доступны | ✅ Да |
-| TRQ-005 | Unit | Coverage ≥ {порог} | {Да/Нет} |
-| TRQ-006 | Integration | Критические пайплайны | {Да/Нет} |
-| TRQ-007 | E2E | Сквозные сценарии | {Да/Нет} |
+| ID | Type | Requirement | Mandatory |
+|----|------|-------------|-----------|
+| TRQ-001 | Smoke | 100% endpoints happy-path | ✅ Yes |
+| TRQ-002 | Smoke | Containers start | ✅ Yes |
+| TRQ-003 | Smoke | Health checks respond 200 | ✅ Yes |
+| TRQ-004 | Smoke | Databases accessible | ✅ Yes |
+| TRQ-005 | Unit | Coverage >= {threshold} | {Yes/No} |
+| TRQ-006 | Integration | Critical pipelines | {Yes/No} |
+| TRQ-007 | E2E | End-to-end scenarios | {Yes/No} |
 
 ---
 
-## 7. Технические ограничения
+## 7. Technical Constraints
 
-### 7.1 Обязательные технологии
+### 7.1 Required Technologies
 
 - **Backend**: Python 3.11+, FastAPI
 - **Database**: PostgreSQL 15+
 - **Cache**: Redis 7+
 - **Container**: Docker, Docker Compose
-- **CI/CD**: {инструмент или "нет"}
+- **CI/CD**: {tool or "none"}
 
-### 7.2 Интеграции
+### 7.2 Integrations
 
-| Система | Тип интеграции | Описание |
-|---------|---------------|----------|
-| {Система 1} | REST API | {Описание} |
-| {Система 2} | Webhook | {Описание} |
+| System | Integration Type | Description |
+|--------|-----------------|-------------|
+| {System 1} | REST API | {Description} |
+| {System 2} | Webhook | {Description} |
 
-### 7.3 Ограничения
+### 7.3 Constraints
 
-- {Ограничение 1: описание и причина}
-- {Ограничение 2: описание и причина}
-
----
-
-## 8. Допущения и риски
-
-### 8.1 Допущения
-
-| # | Допущение | Влияние если неверно |
-|---|-----------|---------------------|
-| 1 | {Допущение} | {Последствия} |
-| 2 | {Допущение} | {Последствия} |
-
-### 8.2 Риски
-
-| # | Риск | Вероятность | Влияние | Митигация |
-|---|------|-------------|---------|-----------|
-| 1 | {Риск} | High/Med/Low | High/Med/Low | {Как снизить} |
-| 2 | {Риск} | High/Med/Low | High/Med/Low | {Как снизить} |
+- {Constraint 1: description and reason}
+- {Constraint 2: description and reason}
 
 ---
 
-## 9. Открытые вопросы
+## 8. Assumptions and Risks
 
-| # | Вопрос | Статус | Ответственный | Решение |
-|---|--------|--------|--------------|---------|
-| 1 | {Вопрос} | Open | {Имя} | — |
-| 2 | {Вопрос} | Resolved | {Имя} | {Решение} |
+### 8.1 Assumptions
 
----
+| # | Assumption | Impact if Wrong |
+|---|-----------|-----------------|
+| 1 | {Assumption} | {Consequences} |
+| 2 | {Assumption} | {Consequences} |
 
-## 10. Глоссарий
+### 8.2 Risks
 
-| Термин | Определение |
-|--------|-------------|
-| {Термин 1} | {Определение} |
-| {Термин 2} | {Определение} |
-
----
-
-## 11. История изменений
-
-| Версия | Дата | Автор | Изменения |
-|--------|------|-------|-----------|
-| 1.0 | {YYYY-MM-DD} | AI Analyst | Первоначальная версия |
+| # | Risk | Probability | Impact | Mitigation |
+|---|------|-------------|--------|------------|
+| 1 | {Risk} | High/Med/Low | High/Med/Low | {How to mitigate} |
+| 2 | {Risk} | High/Med/Low | High/Med/Low | {How to mitigate} |
 
 ---
 
-## Качественные ворота
+## 9. Open Questions
+
+| # | Question | Status | Responsible | Resolution |
+|---|----------|--------|-------------|------------|
+| 1 | {Question} | Open | {Name} | — |
+| 2 | {Question} | Resolved | {Name} | {Resolution} |
+
+---
+
+## 10. Glossary
+
+| Term | Definition |
+|------|------------|
+| {Term 1} | {Definition} |
+| {Term 2} | {Definition} |
+
+---
+
+## 11. Change History
+
+| Version | Date | Author | Changes |
+|---------|------|--------|---------|
+| 1.0 | {YYYY-MM-DD} | AI Analyst | Initial version |
+
+---
+
+## Quality Gates
 
 ### PRD_READY Checklist
 
-- [ ] Все секции заполнены
-- [ ] Требования имеют уникальные ID (FR-*, NF-*, UI-*, INT-*)
-- [ ] Критерии приёмки определены для каждого требования
-- [ ] User stories связаны с требованиями
-- [ ] Бизнес-пайплайн описан (основной flow, состояния сущностей)
-- [ ] Data Pipeline описан (диаграмма потоков, трансформации данных)
-- [ ] Интеграционный пайплайн описан (карта сервисов, точки интеграции, контракты)
-- [ ] Раздел "Влияние на существующие пайплайны" заполнен
-- [ ] Нет блокирующих открытых вопросов
-- [ ] Риски идентифицированы и имеют план митигации
-- [ ] Документ согласован с заинтересованными сторонами
+- [ ] All sections filled in
+- [ ] Requirements have unique IDs (FR-*, NF-*, UI-*, INT-*)
+- [ ] Acceptance criteria defined for each requirement
+- [ ] User stories linked to requirements
+- [ ] Business pipeline described (main flow, entity states)
+- [ ] Data Pipeline described (flow diagram, data transformations)
+- [ ] Integration pipeline described (service map, integration points, contracts)
+- [ ] "Impact on existing pipelines" section filled in
+- [ ] No blocking open questions
+- [ ] Risks identified and have mitigation plans
+- [ ] Document agreed upon with stakeholders

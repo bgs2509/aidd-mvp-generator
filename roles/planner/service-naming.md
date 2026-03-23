@@ -1,60 +1,60 @@
-# Функция: Именование сервисов
+# Function: Service Naming
 
-> **Назначение**: Определение имён сервисов и компонентов.
-
----
-
-## Цель
-
-Выбрать консистентные и понятные имена для всех
-компонентов системы согласно конвенциям фреймворка.
+> **Purpose**: Defining names for services and components.
 
 ---
 
-## Соглашения об именовании
+## Goal
 
-### Контекст проекта
+Choose consistent and clear names for all
+system components according to framework conventions.
 
-```
-{context} — короткое имя проекта (2-15 символов)
+---
 
-Примеры:
-- booking (бронирование)
-- finance (финансы)
-- inventory (инвентарь)
-- orders (заказы)
-```
+## Naming Conventions
 
-### Домен
+### Project Context
 
 ```
-{domain} — основная сущность домена
+{context} — short project name (2-15 characters)
 
-Примеры:
-- restaurant (ресторан)
-- transaction (транзакция)
-- product (продукт)
-- order (заказ)
+Examples:
+- booking
+- finance
+- inventory
+- orders
+```
+
+### Domain
+
+```
+{domain} — primary domain entity
+
+Examples:
+- restaurant
+- transaction
+- product
+- order
 ```
 
 ---
 
-## Паттерны именования
+## Naming Patterns
 
-### Сервисы
+### Services
 
-| Тип | Паттерн | Пример |
-|-----|---------|--------|
+| Type | Pattern | Example |
+|------|---------|---------|
 | Business API | `{context}_api` | `booking_api` |
 | Data API (PG) | `{context}_data` | `booking_data` |
 | Data API (Mongo) | `{context}_docs` | `booking_docs` |
 | Telegram Bot | `{context}_bot` | `booking_bot` |
 | Background Worker | `{context}_worker` | `booking_worker` |
 
-### Docker сервисы
+### Docker Services
 
-| Тип | Паттерн | Пример |
-|-----|---------|--------|
+| Type | Pattern | Example |
+|------|---------|---------|
 | Business API | `{context}-api` | `booking-api` |
 | Data API | `{context}-data` | `booking-data` |
 | PostgreSQL | `{context}-postgres` | `booking-postgres` |
@@ -63,13 +63,13 @@
 | Bot | `{context}-bot` | `booking-bot` |
 | Worker | `{context}-worker` | `booking-worker` |
 
-### Директории
+### Directories
 
 ```
 services/
 ├── {context}_api/           # Business API
 │   └── src/
-│       └── {context}_api/   # Python пакет
+│       └── {context}_api/   # Python package
 ├── {context}_data/          # Data API
 │   └── src/
 │       └── {context}_data/
@@ -81,51 +81,51 @@ services/
         └── {context}_worker/
 ```
 
-### Python пакеты
+### Python Packages
 
-| Элемент | Стиль | Пример |
-|---------|-------|--------|
-| Пакет | snake_case | `booking_api` |
-| Модуль | snake_case | `user_service.py` |
-| Класс | PascalCase | `UserService` |
-| Функция | snake_case | `create_user` |
-| Переменная | snake_case | `user_id` |
-| Константа | UPPER_SNAKE | `MAX_RETRIES` |
+| Element | Style | Example |
+|---------|-------|---------|
+| Package | snake_case | `booking_api` |
+| Module | snake_case | `user_service.py` |
+| Class | PascalCase | `UserService` |
+| Function | snake_case | `create_user` |
+| Variable | snake_case | `user_id` |
+| Constant | UPPER_SNAKE | `MAX_RETRIES` |
 
-### API эндпоинты
+### API Endpoints
 
-| Элемент | Стиль | Пример |
-|---------|-------|--------|
-| Путь | kebab-case | `/api/v1/user-profiles` |
-| Query параметр | snake_case | `?user_id=123` |
-| Body поле | snake_case | `{"user_name": "..."}` |
+| Element | Style | Example |
+|---------|-------|---------|
+| Path | kebab-case | `/api/v1/user-profiles` |
+| Query parameter | snake_case | `?user_id=123` |
+| Body field | snake_case | `{"user_name": "..."}` |
 
-### База данных
+### Database
 
-| Элемент | Стиль | Пример |
-|---------|-------|--------|
-| Таблица | snake_case, множ. | `users`, `order_items` |
-| Колонка | snake_case | `created_at` |
-| Индекс | `ix_{table}_{column}` | `ix_users_email` |
+| Element | Style | Example |
+|---------|-------|---------|
+| Table | snake_case, plural | `users`, `order_items` |
+| Column | snake_case | `created_at` |
+| Index | `ix_{table}_{column}` | `ix_users_email` |
 | FK | `fk_{table}_{ref}` | `fk_orders_user_id` |
 
 ---
 
-## Процесс именования
+## Naming Process
 
-### Шаг 1: Определить контекст
+### Step 1: Define Context
 
 ```markdown
-Проект: Сервис бронирования столиков
-Контекст: booking
-Домен: restaurant
+Project: Restaurant table booking service
+Context: booking
+Domain: restaurant
 ```
 
-### Шаг 2: Определить сервисы
+### Step 2: Define Services
 
 ```markdown
-| Сервис | Имя Python | Имя Docker | Порт |
-|--------|------------|------------|------|
+| Service | Python Name | Docker Name | Port |
+|---------|-------------|-------------|------|
 | Business API | booking_api | booking-api | 8000 |
 | Data API | booking_data | booking-data | 8001 |
 | Telegram Bot | booking_bot | booking-bot | — |
@@ -133,92 +133,92 @@ services/
 | Redis | — | booking-redis | 6379 |
 ```
 
-### Шаг 3: Определить модели
+### Step 3: Define Models
 
 ```markdown
-| Модель | Таблица | Класс |
-|--------|---------|-------|
-| Ресторан | restaurants | Restaurant |
-| Бронирование | bookings | Booking |
-| Пользователь | users | User |
+| Model | Table | Class |
+|-------|-------|-------|
+| Restaurant | restaurants | Restaurant |
+| Booking | bookings | Booking |
+| User | users | User |
 ```
 
-### Шаг 4: Определить эндпоинты
+### Step 4: Define Endpoints
 
 ```markdown
-| Эндпоинт | Сервис | Путь |
-|----------|--------|------|
-| Список ресторанов | booking_api | /api/v1/restaurants |
-| Создать бронь | booking_api | /api/v1/bookings |
-| Получить ресторан | booking_data | /api/v1/restaurants/{id} |
+| Endpoint | Service | Path |
+|----------|---------|------|
+| List restaurants | booking_api | /api/v1/restaurants |
+| Create booking | booking_api | /api/v1/bookings |
+| Get restaurant | booking_data | /api/v1/restaurants/{id} |
 ```
 
 ---
 
-## Чек-лист именования
+## Naming Checklist
 
-### Сервисы
-- [ ] Контекст определён (2-15 символов, snake_case)
-- [ ] Все сервисы используют паттерн `{context}_{type}`
-- [ ] Docker сервисы используют паттерн `{context}-{type}`
-- [ ] Порты не конфликтуют
+### Services
+- [ ] Context is defined (2-15 characters, snake_case)
+- [ ] All services use the `{context}_{type}` pattern
+- [ ] Docker services use the `{context}-{type}` pattern
+- [ ] Ports do not conflict
 
-### Python код
-- [ ] Пакеты в snake_case
-- [ ] Классы в PascalCase
-- [ ] Функции в snake_case
-- [ ] Константы в UPPER_SNAKE_CASE
+### Python Code
+- [ ] Packages in snake_case
+- [ ] Classes in PascalCase
+- [ ] Functions in snake_case
+- [ ] Constants in UPPER_SNAKE_CASE
 
 ### API
-- [ ] Пути в kebab-case
-- [ ] Параметры в snake_case
-- [ ] Версионирование (/api/v1/)
+- [ ] Paths in kebab-case
+- [ ] Parameters in snake_case
+- [ ] Versioning (/api/v1/)
 
-### База данных
-- [ ] Таблицы в snake_case, множественное число
-- [ ] Колонки в snake_case
-- [ ] Индексы по паттерну ix_{table}_{column}
+### Database
+- [ ] Tables in snake_case, plural
+- [ ] Columns in snake_case
+- [ ] Indexes follow the ix_{table}_{column} pattern
 
 ---
 
-## Результат именования
+## Naming Result
 
 ```markdown
-## Контекст проекта
+## Project Context
 
-| Параметр | Значение |
-|----------|----------|
-| Контекст | {context} |
-| Домен | {domain} |
+| Parameter | Value |
+|-----------|-------|
+| Context | {context} |
+| Domain | {domain} |
 
-## Сервисы
+## Services
 
-| Сервис | Python | Docker | Порт |
-|--------|--------|--------|------|
+| Service | Python | Docker | Port |
+|---------|--------|--------|------|
 | Business API | {context}_api | {context}-api | 8000 |
 | Data API | {context}_data | {context}-data | 8001 |
 
-## Модели данных
+## Data Models
 
-| Сущность | Таблица | Класс Python |
-|----------|---------|--------------|
+| Entity | Table | Python Class |
+|--------|-------|--------------|
 | {Entity} | {entities} | {Entity} |
 
-## API эндпоинты
+## API Endpoints
 
-| Сервис | Префикс |
-|--------|---------|
+| Service | Prefix |
+|---------|--------|
 | Business API | /api/v1/{resource} |
 | Data API | /api/v1/{resource} |
 ```
 
 ---
 
-## Источники
+## References
 
-| Документ | Описание |
-|----------|----------|
-| `knowledge/architecture/naming/README.md` | Общие правила |
-| `knowledge/architecture/naming/services.md` | Именование сервисов |
-| `knowledge/architecture/naming/python.md` | Python конвенции |
-| `conventions.md` | Соглашения проекта |
+| Document | Description |
+|----------|-------------|
+| `knowledge/architecture/naming/README.md` | General rules |
+| `knowledge/architecture/naming/services.md` | Service naming |
+| `knowledge/architecture/naming/python.md` | Python conventions |
+| `conventions.md` | Project conventions |

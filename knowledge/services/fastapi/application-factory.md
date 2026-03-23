@@ -1,13 +1,13 @@
-# Фабрика приложений FastAPI
+# FastAPI Application Factory
 
-> **Назначение**: Паттерн создания FastAPI приложения.
+> **Purpose**: FastAPI application creation pattern.
 
 ---
 
-## Базовый паттерн
+## Basic Pattern
 
 ```python
-"""Фабрика приложения FastAPI."""
+"""FastAPI application factory."""
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
@@ -19,7 +19,7 @@ from {context}_api.core.logging import setup_logging
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Управление жизненным циклом приложения."""
+    """Manage application lifecycle."""
     # Startup
     setup_logging()
     yield
@@ -28,10 +28,10 @@ async def lifespan(app: FastAPI):
 
 def create_app() -> FastAPI:
     """
-    Создать экземпляр FastAPI приложения.
+    Create FastAPI application instance.
 
     Returns:
-        Настроенное FastAPI приложение.
+        Configured FastAPI application.
     """
     app = FastAPI(
         title=settings.service_name,
@@ -41,7 +41,7 @@ def create_app() -> FastAPI:
         redoc_url="/redoc" if settings.debug else None,
     )
 
-    # Подключение роутеров
+    # Include routers
     app.include_router(api_router, prefix="/api/v1")
 
     return app
@@ -52,10 +52,10 @@ app = create_app()
 
 ---
 
-## С HTTP клиентом
+## With HTTP Client
 
 ```python
-"""Фабрика с управлением HTTP клиентом."""
+"""Factory with HTTP client management."""
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
@@ -68,10 +68,10 @@ from {context}_api.core.logging import setup_logging
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Управление жизненным циклом."""
+    """Manage lifecycle."""
     setup_logging()
 
-    # Создание HTTP клиента
+    # Create HTTP client
     app.state.http_client = httpx.AsyncClient(
         base_url=settings.data_api_url,
         timeout=httpx.Timeout(30.0),
@@ -79,12 +79,12 @@ async def lifespan(app: FastAPI):
 
     yield
 
-    # Закрытие HTTP клиента
+    # Close HTTP client
     await app.state.http_client.aclose()
 
 
 def create_app() -> FastAPI:
-    """Создать приложение."""
+    """Create application."""
     app = FastAPI(
         title=settings.service_name,
         version="1.0.0",
@@ -104,7 +104,7 @@ app = create_app()
 ## Middleware
 
 ```python
-"""Добавление middleware."""
+"""Adding middleware."""
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
@@ -113,7 +113,7 @@ import uuid
 
 
 def create_app() -> FastAPI:
-    """Создать приложение с middleware."""
+    """Create application with middleware."""
     app = FastAPI(
         title=settings.service_name,
         version="1.0.0",
@@ -132,7 +132,7 @@ def create_app() -> FastAPI:
     # Request ID middleware
     @app.middleware("http")
     async def add_request_id(request: Request, call_next):
-        """Добавить request_id к запросу."""
+        """Add request_id to request."""
         request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
         request.state.request_id = request_id
 
@@ -144,7 +144,7 @@ def create_app() -> FastAPI:
     # Timing middleware
     @app.middleware("http")
     async def add_timing(request: Request, call_next):
-        """Измерить время обработки запроса."""
+        """Measure request processing time."""
         start_time = time.perf_counter()
 
         response = await call_next(request)
@@ -164,7 +164,7 @@ def create_app() -> FastAPI:
 ## Health Check
 
 ```python
-"""Health check эндпоинт."""
+"""Health check endpoint."""
 
 from fastapi import APIRouter, Response
 
@@ -174,10 +174,10 @@ router = APIRouter(tags=["health"])
 @router.get("/health")
 async def health_check() -> dict:
     """
-    Проверка состояния сервиса.
+    Check service health.
 
     Returns:
-        Статус сервиса.
+        Service status.
     """
     return {"status": "healthy"}
 
@@ -185,36 +185,36 @@ async def health_check() -> dict:
 @router.get("/ready")
 async def readiness_check() -> dict:
     """
-    Проверка готовности сервиса.
+    Check service readiness.
 
     Returns:
-        Статус готовности.
+        Readiness status.
     """
-    # Здесь можно добавить проверку зависимостей
+    # Dependency checks can be added here
     return {"status": "ready"}
 ```
 
 ---
 
-## Структура main.py
+## main.py Structure
 
 ```
 main.py
-├── Импорты
-├── lifespan() — управление жизненным циклом
-├── create_app() — фабрика приложения
-│   ├── Создание FastAPI
-│   ├── Добавление middleware
-│   └── Подключение роутеров
+├── Imports
+├── lifespan() — lifecycle management
+├── create_app() — application factory
+│   ├── Create FastAPI
+│   ├── Add middleware
+│   └── Include routers
 └── app = create_app()
 ```
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Используется lifespan для startup/shutdown
-- [ ] HTTP клиент создаётся в lifespan
-- [ ] Docs отключены в production
-- [ ] Request ID middleware добавлен
-- [ ] Health check эндпоинт есть
+- [ ] lifespan used for startup/shutdown
+- [ ] HTTP client created in lifespan
+- [ ] Docs disabled in production
+- [ ] Request ID middleware added
+- [ ] Health check endpoint present

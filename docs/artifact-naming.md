@@ -1,170 +1,170 @@
-# Система именования артефактов
+# Artifact Naming System
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Note:** This document may contain outdated commands `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Current commands: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
-> **Назначение**: Спецификация системы именования и организации артефактов в долгосрочных проектах.
-> **Проблема**: В проектах с сотнями фич папка `ai-docs/docs/` превращается в хаос без понятной системы.
+> **Purpose**: Specification of the naming and organization system for artifacts in long-term projects.
+> **Problem**: In projects with hundreds of features, the `ai-docs/docs/` folder becomes chaotic without a clear system.
 
 ---
 
 ## TL;DR
 
 ```
-Формат имени файла:
+File name format:
 {YYYY-MM-DD}_{FID}_{slug}-{type}.md
 
-Пример:
+Example:
 2024-01-15_F001_user-auth-prd.md
 ```
 
-| Компонент | Описание | Пример |
-|-----------|----------|--------|
-| `YYYY-MM-DD` | Дата создания | `2024-01-15` |
-| `FID` | Feature ID (уникальный) | `F001`, `F042` |
-| `slug` | Краткое имя (kebab-case) | `user-auth` |
-| `type` | Тип артефакта | `prd`, `plan`, `research` |
+| Component | Description | Example |
+|-----------|-------------|---------|
+| `YYYY-MM-DD` | Creation date | `2024-01-15` |
+| `FID` | Feature ID (unique) | `F001`, `F042` |
+| `slug` | Short name (kebab-case) | `user-auth` |
+| `type` | Artifact type | `prd`, `plan`, `research` |
 
 ---
 
-## 1. Проблема
+## 1. Problem
 
-### До: Хаос в долгосрочном проекте
+### Before: Chaos in a Long-Term Project
 
 ```
 ai-docs/docs/
 ├── prd/
-│   ├── booking-prd.md          # Какая фича? Когда создан?
-│   ├── notifications-prd.md    # Связана с booking?
-│   ├── auth-prd.md             # Версия 1 или итерация?
-│   ├── auth-v2-prd.md          # Связь с auth-prd.md?
+│   ├── booking-prd.md          # Which feature? When created?
+│   ├── notifications-prd.md    # Related to booking?
+│   ├── auth-prd.md             # Version 1 or iteration?
+│   ├── auth-v2-prd.md          # Connection to auth-prd.md?
 │   ├── payments-prd.md         #
-│   └── ... (100+ файлов)       # Полный хаос
+│   └── ... (100+ files)        # Total chaos
 ├── architecture/
-│   ├── booking-plan.md         # Тот же booking что в prd/?
+│   ├── booking-plan.md         # Same booking as in prd/?
 │   └── ...
 ```
 
-**Проблемы:**
-- Нет связи между артефактами одной фичи
-- Нет хронологии (что было раньше?)
-- Нет версионирования (итерации над фичей)
-- Поиск требует открытия каждого файла
+**Problems:**
+- No connection between artifacts of one feature
+- No chronology (what came first?)
+- No versioning (iterations over a feature)
+- Search requires opening every file
 
-### После: Структурированная система
+### After: Structured System
 
 ```
 ai-docs/docs/
-├── FEATURES.md                              # Реестр всех фич
+├── FEATURES.md                              # Registry of all features
 ├── prd/
 │   ├── 2024-01-15_F001_user-auth-prd.md
 │   ├── 2024-02-20_F002_table-booking-prd.md
 │   ├── 2024-03-10_F003_email-notify-prd.md
-│   └── 2024-06-01_F001_user-auth-v2-prd.md  # Итерация F001!
+│   └── 2024-06-01_F001_user-auth-v2-prd.md  # Iteration of F001!
 ├── architecture/
 │   ├── 2024-01-16_F001_user-auth-plan.md
 │   ├── 2024-02-21_F002_table-booking-plan.md
 │   └── ...
 ```
 
-**Преимущества:**
-- Сортировка по дате = хронология
-- FID связывает все артефакты фичи
-- `grep F002` находит всё про booking
-- FEATURES.md = оглавление проекта
+**Advantages:**
+- Sorting by date = chronology
+- FID links all artifacts of a feature
+- `grep F002` finds everything about booking
+- FEATURES.md = project table of contents
 
 ---
 
-## 2. Формат именования файлов
+## 2. File Naming Format
 
-### 2.1 Структура имени
+### 2.1 Name Structure
 
 ```
 {YYYY-MM-DD}_{FID}_{slug}-{type}.md
      │        │      │      │
-     │        │      │      └── Тип артефакта
-     │        │      └── Краткое имя (≤30 символов, kebab-case)
+     │        │      │      └── Artifact type
+     │        │      └── Short name (≤30 characters, kebab-case)
      │        └── Feature ID (F001, F002, ...)
-     └── Дата создания (ISO 8601)
+     └── Creation date (ISO 8601)
 ```
 
-### 2.2 Компоненты
+### 2.2 Components
 
-| Компонент | Формат | Правила | Примеры |
-|-----------|--------|---------|---------|
-| **Дата** | `YYYY-MM-DD` | ISO 8601, дата создания | `2024-01-15` |
-| **FID** | `F{NNN}` | Уникальный, автоинкремент | `F001`, `F042`, `F999` |
-| **Slug** | `kebab-case` | ≤30 символов, только `a-z`, `0-9`, `-` | `user-auth`, `table-booking` |
-| **Type** | `enum` | См. таблицу типов | `prd`, `plan`, `research` |
+| Component | Format | Rules | Examples |
+|-----------|--------|-------|---------|
+| **Date** | `YYYY-MM-DD` | ISO 8601, creation date | `2024-01-15` |
+| **FID** | `F{NNN}` | Unique, auto-increment | `F001`, `F042`, `F999` |
+| **Slug** | `kebab-case` | ≤30 characters, only `a-z`, `0-9`, `-` | `user-auth`, `table-booking` |
+| **Type** | `enum` | See types table | `prd`, `plan`, `research` |
 
-### 2.3 Типы артефактов
+### 2.3 Artifact Types
 
-| Type | Полное имя | Папка | Этап |
-|------|------------|-------|------|
+| Type | Full Name | Folder | Stage |
+|------|-----------|--------|-------|
 | `prd` | Product Requirements Document | `prd/` | 1 |
 | `research` | Research Report | `research/` | 2 |
-| `plan` | Architecture/Feature Plan | `architecture/` или `plans/` | 3 |
+| `plan` | Architecture/Feature Plan | `architecture/` or `plans/` | 3 |
 | `completion` | Completion Report | `reports/` | 5 |
 
-### 2.4 Версионирование (итерации)
+### 2.4 Versioning (Iterations)
 
-Для итераций над фичей добавляется суффикс `-v{N}`:
+For iterations over a feature, the suffix `-v{N}` is added:
 
 ```
-# Первоначальная фича
+# Initial feature
 2024-01-15_F001_user-auth-prd.md
 
-# Итерация (MFA)
+# Iteration (MFA)
 2024-06-01_F001_user-auth-v2-prd.md
 
-# Следующая итерация
+# Next iteration
 2024-09-15_F001_user-auth-v3-prd.md
 ```
 
-**Правила версионирования:**
-- `v2`, `v3`, ... — крупные изменения/дополнения к существующей фиче
-- Новая версия = новый файл (не перезапись!)
-- FID остаётся тем же (это та же фича)
-- Дата меняется на дату создания версии
+**Versioning rules:**
+- `v2`, `v3`, ... — major changes/additions to an existing feature
+- New version = new file (not overwrite!)
+- FID stays the same (it's the same feature)
+- Date changes to the version creation date
 
 ---
 
 ## 3. Feature ID (FID)
 
-### 3.1 Формат
+### 3.1 Format
 
 ```
 F{NNN}
 
-Где NNN — порядковый номер с ведущими нулями (001-999)
+Where NNN — sequential number with leading zeros (001-999)
 ```
 
-**Примеры:** `F001`, `F042`, `F123`, `F999`
+**Examples:** `F001`, `F042`, `F123`, `F999`
 
-### 3.2 Правила присвоения
+### 3.2 Assignment Rules
 
-1. **Автоинкремент**: Каждая новая фича получает следующий номер
-2. **Уникальность**: FID никогда не переиспользуется
-3. **Неизменяемость**: FID присваивается один раз и не меняется
-4. **Scope**: FID уникален в рамках одного проекта
+1. **Auto-increment**: Each new feature gets the next number
+2. **Uniqueness**: FID is never reused
+3. **Immutability**: FID is assigned once and never changes
+4. **Scope**: FID is unique within a single project
 
-### 3.3 Хранение
+### 3.3 Storage
 
-FID хранится в `.pipeline-state.json`:
+FID is stored in `.pipeline-state.json`:
 
 ```json
 {
   "features_registry": {
     "F001": {
       "name": "user-auth",
-      "title": "Аутентификация пользователей",
+      "title": "User authentication",
       "created": "2024-01-15",
       "status": "DEPLOYED",
       "services": ["auth_api", "auth_data"]
     },
     "F002": {
       "name": "table-booking",
-      "title": "Бронирование столиков",
+      "title": "Table booking",
       "created": "2024-02-20",
       "status": "DEPLOYED",
       "services": ["booking_api", "booking_data"]
@@ -174,11 +174,11 @@ FID хранится в `.pipeline-state.json`:
 }
 ```
 
-### 3.4 Генерация FID
+### 3.4 FID Generation
 
 ```python
 def generate_feature_id(state: dict) -> str:
-    """Генерирует следующий FID."""
+    """Generate the next FID."""
     next_id = state.get("next_feature_id", 1)
     fid = f"F{next_id:03d}"
     state["next_feature_id"] = next_id + 1
@@ -187,86 +187,86 @@ def generate_feature_id(state: dict) -> str:
 
 ---
 
-## 4. Реестр фич (FEATURES.md)
+## 4. Feature Registry (FEATURES.md)
 
-### 4.1 Расположение
+### 4.1 Location
 
 ```
 ai-docs/docs/FEATURES.md
 ```
 
-### 4.2 Формат
+### 4.2 Format
 
 ```markdown
-# Реестр фич проекта
+# Project Feature Registry
 
-> Автоматически обновляется при создании/завершении фич.
-> Последнее обновление: 2024-12-23
+> Automatically updated when features are created/completed.
+> Last update: 2024-12-23
 
 ---
 
-## Статистика
+## Statistics
 
-| Метрика | Значение |
-|---------|----------|
-| Всего фич | 42 |
+| Metric | Value |
+|--------|-------|
+| Total features | 42 |
 | Deployed | 38 |
 | In Progress | 3 |
 | Archived | 1 |
 
 ---
 
-## Активные фичи
+## Active Features
 
-| FID | Название | Статус | Дата | Сервисы | Артефакты |
-|-----|----------|--------|------|---------|-----------|
-| F042 | Email-уведомления | IN_PROGRESS | 2024-12-20 | notify_worker |  |
-| F041 | Платёжная система | QA_PASSED | 2024-12-15 | payments_api | [PRD](...), [Plan](...) |
+| FID | Name | Status | Date | Services | Artifacts |
+|-----|------|--------|------|----------|-----------|
+| F042 | Email notifications | IN_PROGRESS | 2024-12-20 | notify_worker |  |
+| F041 | Payment system | QA_PASSED | 2024-12-15 | payments_api | [PRD](...), [Plan](...) |
 
 ---
 
-## Завершённые фичи
+## Completed Features
 
-| FID | Название | Deployed | Сервисы | Артефакты |
-|-----|----------|----------|---------|-----------|
-| F001 | Аутентификация | 2024-01-20 | auth_api, auth_data | [PRD](...), [Plan](...), [v2](...) |
-| F002 | Бронирование столиков | 2024-02-25 | booking_api, booking_data | [PRD](...), [Plan](...) |
+| FID | Name | Deployed | Services | Artifacts |
+|-----|------|----------|----------|-----------|
+| F001 | Authentication | 2024-01-20 | auth_api, auth_data | [PRD](...), [Plan](...), [v2](...) |
+| F002 | Table booking | 2024-02-25 | booking_api, booking_data | [PRD](...), [Plan](...) |
 | ... | ... | ... | ... | ... |
 
 ---
 
-## Архивные фичи
+## Archived Features
 
-| FID | Название | Причина архивации | Дата |
-|-----|----------|-------------------|------|
-| F010 | Интеграция с X | Отменена заказчиком | 2024-05-01 |
+| FID | Name | Archive Reason | Date |
+|-----|------|----------------|------|
+| F010 | Integration with X | Cancelled by customer | 2024-05-01 |
 ```
 
-### 4.3 Автоматическое обновление
+### 4.3 Automatic Updates
 
-FEATURES.md обновляется автоматически командами:
-- `/aidd-analyze` — добавляет новую фичу (IN_PROGRESS)
-- `/aidd-validate` — обновляет статус на DEPLOYED
-- При ручном архивировании — переносит в "Архивные"
+FEATURES.md is automatically updated by commands:
+- `/aidd-analyze` — adds a new feature (IN_PROGRESS)
+- `/aidd-validate` — updates status to DEPLOYED
+- On manual archiving — moves to "Archived"
 
 ---
 
 ## 5. YAML Frontmatter
 
-### 5.1 Назначение
+### 5.1 Purpose
 
-Каждый артефакт содержит YAML frontmatter с метаданными для:
-- Машиночитаемости (AI-агенты)
-- Связывания артефактов
-- Быстрого поиска
+Each artifact contains YAML frontmatter with metadata for:
+- Machine readability (AI agents)
+- Artifact linking
+- Quick search
 
-### 5.2 Обязательные поля
+### 5.2 Required Fields
 
 ```yaml
 ---
 feature_id: F002
 feature_name: table-booking
-title: Бронирование столиков в ресторанах
+title: Restaurant table booking
 created: 2024-02-20
 author: AI (Analyst)
 type: prd
@@ -275,41 +275,41 @@ version: 1
 ---
 ```
 
-### 5.3 Опциональные поля
+### 5.3 Optional Fields
 
 ```yaml
 ---
-# ... обязательные поля ...
+# ... required fields ...
 
-# Связи
+# Relations
 related_features:
-  - F001  # Зависит от аутентификации
-  - F003  # Email уведомления
-previous_version: null  # или путь к предыдущей версии
-supersedes: null        # какой документ заменяет
+  - F001  # Depends on authentication
+  - F003  # Email notifications
+previous_version: null  # or path to previous version
+supersedes: null        # which document it replaces
 
-# Контекст
+# Context
 services:
   - booking_api
   - booking_data
 requirements_count: 12
-mode: CREATE  # или FEATURE
+mode: CREATE  # or FEATURE
 
-# История
+# History
 updated: 2024-02-21
 approved_by: user
 approved_at: 2024-02-21
 ---
 ```
 
-### 5.4 Примеры по типам артефактов
+### 5.4 Examples by Artifact Type
 
 **PRD:**
 ```yaml
 ---
 feature_id: F002
 feature_name: table-booking
-title: Система бронирования столиков
+title: Table booking system
 created: 2024-02-20
 author: AI (Analyst)
 type: prd
@@ -325,7 +325,7 @@ requirements_count: 15
 ---
 feature_id: F002
 feature_name: table-booking
-title: Архитектура системы бронирования
+title: Booking system architecture
 created: 2024-02-21
 author: AI (Architect)
 type: plan
@@ -341,12 +341,12 @@ approved_at: 2024-02-21
 ---
 ```
 
-**Feature Plan (режим FEATURE):**
+**Feature Plan (FEATURE mode):**
 ```yaml
 ---
 feature_id: F042
 feature_name: email-notify
-title: Добавление email-уведомлений
+title: Adding email notifications
 created: 2024-12-20
 author: AI (Architect)
 type: feature-plan
@@ -355,25 +355,25 @@ version: 1
 mode: FEATURE
 prd_ref: prd/2024-12-20_F042_email-notify-prd.md
 affected_services:
-  - booking_api      # Модификация
-  - notify_worker    # Создание
+  - booking_api      # Modification
+  - notify_worker    # Creation
 related_features:
-  - F002  # Бронирование
+  - F002  # Booking
 ---
 ```
 
 ---
 
-## 6. Структура папок
+## 6. Folder Structure
 
-### 6.1 Полная структура
+### 6.1 Full Structure
 
 ```
 ai-docs/docs/
 │
-├── FEATURES.md                    # Главный реестр фич
+├── FEATURES.md                    # Main feature registry
 │
-├── prd/                           # PRD документы
+├── prd/                           # PRD documents
 │   ├── 2024-01-15_F001_user-auth-prd.md
 │   ├── 2024-02-20_F002_table-booking-prd.md
 │   ├── 2024-06-01_F001_user-auth-v2-prd.md
@@ -384,12 +384,12 @@ ai-docs/docs/
 │   ├── 2024-02-20_F002_table-booking-research.md
 │   └── ...
 │
-├── architecture/                  # Архитектурные планы (CREATE mode)
+├── architecture/                  # Architecture plans (CREATE mode)
 │   ├── 2024-01-16_F001_user-auth-plan.md
 │   ├── 2024-02-21_F002_table-booking-plan.md
 │   └── ...
 │
-├── plans/                         # Feature планы (FEATURE mode)
+├── plans/                         # Feature plans (FEATURE mode)
 │   ├── 2024-06-02_F001_user-auth-v2-plan.md
 │   ├── 2024-12-20_F042_email-notify-plan.md
 │   └── ...
@@ -398,26 +398,26 @@ ai-docs/docs/
 │   ├── 2024-01-20_F001_user-auth-completion.md
 │   └── ...
 │
-└── archive/                       # Устаревшие/отменённые фичи
+└── archive/                       # Obsolete/cancelled features
     └── F010_integration-x/
         ├── 2024-04-01_F010_integration-x-prd.md
-        └── ARCHIVED.md            # Причина архивации
+        └── ARCHIVED.md            # Archive reason
 ```
 
-### 6.2 Правила организации
+### 6.2 Organization Rules
 
-| Правило | Описание |
-|---------|----------|
-| По типам | Артефакты в папках по типу (prd/, architecture/, ...) |
-| Хронология | Файлы сортируются по дате (ISO формат) |
-| Связь через FID | Все артефакты фичи имеют одинаковый FID |
-| Архивация | Отменённые фичи перемещаются в archive/ |
+| Rule | Description |
+|------|-------------|
+| By type | Artifacts in folders by type (prd/, architecture/, ...) |
+| Chronology | Files sorted by date (ISO format) |
+| Linking via FID | All artifacts of a feature share the same FID |
+| Archiving | Cancelled features are moved to archive/ |
 
 ---
 
-## 7. Расширение .pipeline-state.json
+## 7. .pipeline-state.json Extension
 
-### 7.1 Новая структура
+### 7.1 New Structure
 
 ```json
 {
@@ -435,7 +435,7 @@ ai-docs/docs/
     "F042": {
       "branch": "feature/F042-email-notify",
       "name": "email-notify",
-      "title": "Email-уведомления",
+      "title": "Email notifications",
       "created": "2024-12-20",
       "stage": "QA",
       "gates": {
@@ -457,7 +457,7 @@ ai-docs/docs/
   "features_registry": {
     "F001": {
       "name": "user-auth",
-      "title": "Аутентификация пользователей",
+      "title": "User authentication",
       "created": "2024-01-15",
       "status": "DEPLOYED",
       "deployed_at": "2024-01-20",
@@ -469,7 +469,7 @@ ai-docs/docs/
     },
     "F002": {
       "name": "table-booking",
-      "title": "Бронирование столиков",
+      "title": "Table booking",
       "created": "2024-02-20",
       "status": "DEPLOYED",
       "deployed_at": "2024-02-25",
@@ -481,66 +481,66 @@ ai-docs/docs/
 }
 ```
 
-### 7.2 Статусы фич
+### 7.2 Feature Statuses
 
-| Статус | Описание | После этапа |
-|--------|----------|-------------|
-| `IN_PROGRESS` | Фича в разработке | 1 (PRD_READY) |
-| `PLAN_APPROVED` | План утверждён | 3 |
-| `IMPLEMENTED` | Код написан | 4 |
-| `REVIEW_OK` | Код проверен | 5 |
-| `QA_PASSED` | Тесты пройдены | 6 |
-| `VALIDATED` | Все ворота пройдены | 7 |
-| `DEPLOYED` | В продакшене | 8 |
-| `ARCHIVED` | Отменена/устарела | — |
+| Status | Description | After stage |
+|--------|-------------|-------------|
+| `IN_PROGRESS` | Feature in development | 1 (PRD_READY) |
+| `PLAN_APPROVED` | Plan approved | 3 |
+| `IMPLEMENTED` | Code written | 4 |
+| `REVIEW_OK` | Code reviewed | 5 |
+| `QA_PASSED` | Tests passed | 6 |
+| `VALIDATED` | All gates passed | 7 |
+| `DEPLOYED` | In production | 8 |
+| `ARCHIVED` | Cancelled/obsolete | — |
 
 ---
 
-## 8. Поиск артефактов
+## 8. Artifact Search
 
-### 8.1 По FID
+### 8.1 By FID
 
 ```bash
-# Найти все артефакты фичи F002
+# Find all artifacts for feature F002
 grep -r "F002" ai-docs/docs/
 find ai-docs/docs -name "*F002*"
 
-# Или через filename
+# Or by filename
 ls ai-docs/docs/**/\*F002\*
 ```
 
-### 8.2 По дате
+### 8.2 By Date
 
 ```bash
-# Артефакты за декабрь 2024
+# Artifacts for December 2024
 ls ai-docs/docs/*/2024-12-*
 
-# Последние 10 артефактов
+# Last 10 artifacts
 ls -t ai-docs/docs/**/*.md | head -10
 ```
 
-### 8.3 По типу
+### 8.3 By Type
 
 ```bash
-# Все PRD
+# All PRDs
 ls ai-docs/docs/_analysis/
 
-# Все планы
+# All plans
 ls ai-docs/docs/_plans/mvp/ ai-docs/docs/_plans/features/
 ```
 
-### 8.4 Через frontmatter (для AI)
+### 8.4 Via Frontmatter (for AI)
 
 ```python
 def find_artifacts_by_feature(docs_dir: Path, fid: str) -> list[Path]:
-    """Найти все артефакты фичи через frontmatter."""
+    """Find all feature artifacts via frontmatter."""
     import yaml
 
     artifacts = []
     for md_file in docs_dir.rglob("*.md"):
         content = md_file.read_text()
         if content.startswith("---"):
-            # Извлечь frontmatter
+            # Extract frontmatter
             _, fm, _ = content.split("---", 2)
             meta = yaml.safe_load(fm)
             if meta.get("feature_id") == fid:
@@ -550,40 +550,40 @@ def find_artifacts_by_feature(docs_dir: Path, fid: str) -> list[Path]:
 
 ---
 
-## 9. Миграция существующих артефактов
+## 9. Migrating Existing Artifacts
 
-### 9.1 Стратегия
+### 9.1 Strategy
 
-1. **Анализ**: Прочитать существующие файлы
-2. **Группировка**: Сгруппировать по фичам (эвристика)
-3. **Присвоение FID**: Назначить уникальные ID
-4. **Переименование**: Добавить дату и FID
-5. **Frontmatter**: Добавить YAML метаданные
-6. **FEATURES.md**: Сгенерировать реестр
+1. **Analysis**: Read existing files
+2. **Grouping**: Group by features (heuristic)
+3. **FID Assignment**: Assign unique IDs
+4. **Renaming**: Add date and FID
+5. **Frontmatter**: Add YAML metadata
+6. **FEATURES.md**: Generate registry
 
-### 9.2 Скрипт миграции
+### 9.2 Migration Script
 
-См. файл `scripts/migrate_artifacts.py` (создаётся отдельно).
+See file `scripts/migrate_artifacts.py` (created separately).
 
-### 9.3 Пример миграции
+### 9.3 Migration Example
 
-**До:**
+**Before:**
 ```
 ai-docs/docs/_analysis/booking-prd.md
 ```
 
-**После:**
+**After:**
 ```
 ai-docs/docs/_analysis/2024-02-20_F002_table-booking-prd.md
 ```
 
-**Добавленный frontmatter:**
+**Added frontmatter:**
 ```yaml
 ---
 feature_id: F002
 feature_name: table-booking
-title: Система бронирования столиков
-created: 2024-02-20  # Из git log
+title: Table booking system
+created: 2024-02-20  # From git log
 author: AI (Analyst)
 type: prd
 status: DEPLOYED
@@ -595,62 +595,62 @@ migrated_at: 2024-12-23
 
 ---
 
-## 10. Интеграция с командами
+## 10. Integration with Commands
 
 ### 10.1 /aidd-analyze
 
 ```python
-# При создании PRD:
-1. Сгенерировать FID (или взять existing для FEATURE mode)
-2. Создать slug из названия
-3. Сформировать имя файла: {date}_{FID}_{slug}-prd.md
-4. Добавить frontmatter
-5. Обновить .pipeline-state.json (active_pipelines[FID])
-6. Обновить FEATURES.md
+# When creating a PRD:
+1. Generate FID (or take existing for FEATURE mode)
+2. Create slug from name
+3. Form file name: {date}_{FID}_{slug}-prd.md
+4. Add frontmatter
+5. Update .pipeline-state.json (active_pipelines[FID])
+6. Update FEATURES.md
 ```
 
-### 10.2 /aidd-plan и /aidd-plan-feature
+### 10.2 /aidd-plan and /aidd-plan-feature
 
 ```python
-# При создании плана:
-1. Взять FID из active_pipelines (текущая git-ветка)
-2. Сформировать имя: {date}_{FID}_{slug}-plan.md
-3. Добавить frontmatter с ссылками на PRD и research
-4. Сохранить путь в active_pipelines[FID].artifacts.plan
+# When creating a plan:
+1. Take FID from active_pipelines (current git branch)
+2. Form name: {date}_{FID}_{slug}-plan.md
+3. Add frontmatter with links to PRD and research
+4. Save path in active_pipelines[FID].artifacts.plan
 ```
 
 ### 10.3 /aidd-validate
 
 ```python
-# При успешном деплое (шаг 4: Deploy):
-1. Перенести фичу из active_pipelines в features_registry
-2. Добавить deployed_at и статус DEPLOYED
-3. Создать Completion Report
-4. Обновить FEATURES.md (перенести в "Завершённые")
-5. Удалить запись из active_pipelines
+# On successful deploy (step 4: Deploy):
+1. Move feature from active_pipelines to features_registry
+2. Add deployed_at and DEPLOYED status
+3. Create Completion Report
+4. Update FEATURES.md (move to "Completed")
+5. Remove record from active_pipelines
 ```
 
 ---
 
-## 11. Качественные ворота
+## 11. Quality Gates
 
-### Checklist для нового артефакта
+### Checklist for a New Artifact
 
-- [ ] Имя файла соответствует формату `{date}_{FID}_{slug}-{type}.md`
-- [ ] YAML frontmatter содержит все обязательные поля
-- [ ] FID уникален и зарегистрирован в .pipeline-state.json
-- [ ] FEATURES.md обновлён
-- [ ] Артефакт в правильной папке
-
----
-
-## См. также
-
-- [target-project-structure.md](target-project-structure.md) — Структура целевого проекта
-- [workflow.md](../workflow.md) — 9-этапный пайплайн
-- [NAVIGATION.md](NAVIGATION.md) — Навигационная матрица
+- [ ] File name follows format `{date}_{FID}_{slug}-{type}.md`
+- [ ] YAML frontmatter contains all required fields
+- [ ] FID is unique and registered in .pipeline-state.json
+- [ ] FEATURES.md updated
+- [ ] Artifact in the correct folder
 
 ---
 
-**Версия**: 1.0
-**Создан**: 2024-12-23
+## See Also
+
+- [target-project-structure.md](target-project-structure.md) — Target Project structure
+- [workflow.md](../workflow.md) — 9-stage pipeline
+- [NAVIGATION.md](NAVIGATION.md) — Navigation matrix
+
+---
+
+**Version**: 1.0
+**Created**: 2024-12-23

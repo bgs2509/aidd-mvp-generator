@@ -1,18 +1,18 @@
-# {context}_bot — Telegram Bot сервис
+# {context}_bot — Telegram Bot Service
 
-> **Тип**: Telegram Bot (Aiogram 3.x)
-> **Назначение**: Telegram бот для взаимодействия с пользователями
-
----
-
-## Описание
-
-Telegram бот на Aiogram 3.x с FSM для диалогов.
-Работает по принципу HTTP-only доступа к данным через Business API.
+> **Type**: Telegram Bot (Aiogram 3.x)
+> **Purpose**: Telegram bot for user interaction
 
 ---
 
-## Структура
+## Description
+
+Telegram bot on Aiogram 3.x with FSM for dialogs.
+Operates on the HTTP-only data access principle through the Business API.
+
+---
+
+## Structure
 
 ```
 {context}_bot/
@@ -20,38 +20,38 @@ Telegram бот на Aiogram 3.x с FSM для диалогов.
 ├── requirements.txt
 ├── src/
 │   ├── __init__.py
-│   ├── main.py                 # Точка входа
+│   ├── main.py                 # Entry point
 │   ├── bot/
 │   │   ├── __init__.py
-│   │   ├── handlers/           # Обработчики сообщений
+│   │   ├── handlers/           # Message handlers
 │   │   │   ├── __init__.py
 │   │   │   ├── start.py        # /start, /help
-│   │   │   ├── {domain}.py     # Обработчики домена
-│   │   │   └── errors.py       # Обработка ошибок
+│   │   │   ├── {domain}.py     # Domain handlers
+│   │   │   └── errors.py       # Error handling
 │   │   ├── middlewares/        # Middleware
 │   │   │   ├── __init__.py
-│   │   │   ├── auth.py         # Авторизация
+│   │   │   ├── auth.py         # Authorization
 │   │   │   ├── throttling.py   # Rate limiting
-│   │   │   └── logging.py      # Логирование
-│   │   ├── keyboards/          # Клавиатуры
+│   │   │   └── logging.py      # Logging
+│   │   ├── keyboards/          # Keyboards
 │   │   │   ├── __init__.py
-│   │   │   ├── inline.py       # Inline клавиатуры
-│   │   │   └── reply.py        # Reply клавиатуры
-│   │   ├── states/             # FSM состояния
+│   │   │   ├── inline.py       # Inline keyboards
+│   │   │   └── reply.py        # Reply keyboards
+│   │   ├── states/             # FSM states
 │   │   │   ├── __init__.py
-│   │   │   └── {domain}.py     # Состояния домена
-│   │   └── callbacks/          # Callback данные
+│   │   │   └── {domain}.py     # Domain states
+│   │   └── callbacks/          # Callback data
 │   │       ├── __init__.py
-│   │       └── {domain}.py     # Callback домена
+│   │       └── {domain}.py     # Domain callbacks
 │   ├── infrastructure/
 │   │   ├── __init__.py
 │   │   └── http/
 │   │       ├── __init__.py
-│   │       └── api_client.py   # Клиент Business API
+│   │       └── api_client.py   # Business API client
 │   └── core/
 │       ├── __init__.py
-│       ├── config.py           # Конфигурация
-│       └── logging.py          # Настройка логирования
+│       ├── config.py           # Configuration
+│       └── logging.py          # Logging setup
 └── tests/
     ├── __init__.py
     └── conftest.py
@@ -59,34 +59,34 @@ Telegram бот на Aiogram 3.x с FSM для диалогов.
 
 ---
 
-## Переменные для замены
+## Replacement Variables
 
-| Переменная | Описание | Пример |
-|------------|----------|--------|
-| `{context}` | Контекст проекта (snake_case) | `booking`, `ecommerce` |
-| `{domain}` | Домен сущности | `user`, `order`, `booking` |
-| `{Domain}` | Домен сущности (PascalCase) | `User`, `Order`, `Booking` |
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{context}` | Project context (snake_case) | `booking`, `ecommerce` |
+| `{domain}` | Entity domain | `user`, `order`, `booking` |
+| `{Domain}` | Entity domain (PascalCase) | `User`, `Order`, `Booking` |
 
 ---
 
-## Быстрый старт
+## Quick Start
 
 ```bash
-# Установка зависимостей
+# Install dependencies
 pip install -r requirements.txt
 
-# Запуск бота
+# Run bot
 python -m src.main
 
-# Запуск тестов
+# Run tests
 pytest tests/ -v
 ```
 
 ---
 
-## Конфигурация
+## Configuration
 
-Переменные окружения (`.env`):
+Environment variables (`.env`):
 
 ```bash
 # Telegram
@@ -96,30 +96,30 @@ TELEGRAM_BOT_TOKEN=your_bot_token
 BUSINESS_API_URL=http://business-api:8000
 BUSINESS_API_TIMEOUT=30
 
-# Redis (для FSM)
+# Redis (for FSM)
 REDIS_URL=redis://redis:6379/0
 
-# Логирование
+# Logging
 LOG_LEVEL=INFO
 ```
 
 ---
 
-## Зависимости
+## Dependencies
 
 - aiogram>=3.2.0
 - httpx
 - pydantic-settings
 - structlog
-- redis (для FSM)
+- redis (for FSM)
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Заменить `{context}` на название проекта
-- [ ] Настроить TELEGRAM_BOT_TOKEN
-- [ ] Настроить BUSINESS_API_URL
-- [ ] Реализовать обработчики в `handlers/`
-- [ ] Настроить FSM состояния
-- [ ] Добавить тесты
+- [ ] Replace `{context}` with the project name
+- [ ] Configure TELEGRAM_BOT_TOKEN
+- [ ] Configure BUSINESS_API_URL
+- [ ] Implement handlers in `handlers/`
+- [ ] Configure FSM states
+- [ ] Add tests

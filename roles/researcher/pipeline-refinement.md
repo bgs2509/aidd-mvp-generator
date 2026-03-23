@@ -1,129 +1,129 @@
-# Функция: Уточнение пайплайна
+# Function: Pipeline Refinement
 
-> **Назначение**: Адаптация пайплайна под конкретный проект.
-
----
-
-## Цель
-
-На основе анализа кода и ограничений уточнить, какие этапы
-и компоненты потребуются для реализации.
-
-**Артефакт**: результаты фиксируются в `ai-docs/docs/research/{name}-research.md`.
-Каждый вывод (паттерны, ограничения, рекомендации) должен быть записан,
-чтобы архитекторы и QA могли воспроизвести ход мыслей.
+> **Purpose**: Adapting the pipeline for a specific project.
 
 ---
 
-## Определение необходимых компонентов
+## Goal
 
-### Для режима CREATE
+Based on code analysis and constraints, refine which stages
+and components will be required for implementation.
+
+**Artifact**: results are recorded in `ai-docs/docs/research/{name}-research.md`.
+Each finding (patterns, constraints, recommendations) must be documented,
+so architects and QA can reproduce the reasoning.
+
+---
+
+## Determining Required Components
+
+### For CREATE Mode
 
 ```markdown
-На основе PRD определить:
+Based on the PRD, determine:
 
-1. Нужен ли Business API?
-   → Есть ли REST эндпоинты в требованиях?
+1. Is a Business API needed?
+   → Are there REST endpoints in the requirements?
 
-2. Нужен ли Telegram Bot?
-   → Есть ли требования к боту?
+2. Is a Telegram Bot needed?
+   → Are there bot requirements?
 
-3. Нужен ли Background Worker?
-   → Есть ли фоновые задачи?
+3. Is a Background Worker needed?
+   → Are there background tasks?
 
-4. Какой Data API нужен?
-   → PostgreSQL для реляционных данных
-   → MongoDB для документов
-   → Оба?
+4. What Data API is needed?
+   → PostgreSQL for relational data
+   → MongoDB for documents
+   → Both?
 
-5. Нужен ли Redis?
-   → Кэширование?
-   → Сессии?
-   → Очереди?
+5. Is Redis needed?
+   → Caching?
+   → Sessions?
+   → Queues?
 ```
 
-### Для режима FEATURE
+### For FEATURE Mode
 
 ```markdown
-На основе анализа кода:
+Based on code analysis:
 
-1. Какие существующие сервисы затрагивает фича?
-2. Нужны ли новые сервисы?
-3. Нужны ли изменения в Data API?
-4. Нужны ли новые эндпоинты?
-5. Нужны ли новые модели данных?
+1. Which existing services does the feature affect?
+2. Are new services needed?
+3. Are Data API changes needed?
+4. Are new endpoints needed?
+5. Are new data models needed?
 ```
 
 ---
 
-## Матрица компонентов
+## Component Matrix
 
-### Стандартные компоненты MVP
+### Standard MVP Components
 
-| Компонент | Порт | Когда нужен |
+| Component | Port | When needed |
 |-----------|------|-------------|
-| Business API | 8000 | Почти всегда (REST API) |
-| Data API PG | 8001 | Реляционные данные |
-| Data API Mongo | 8002 | Документы, логи |
-| Telegram Bot | — | Если нужен бот |
-| Background Worker | — | Фоновые задачи |
-| Redis | 6379 | Кэш, сессии |
-| PostgreSQL | 5432 | Основная БД |
-| MongoDB | 27017 | Документная БД |
+| Business API | 8000 | Almost always (REST API) |
+| Data API PG | 8001 | Relational data |
+| Data API Mongo | 8002 | Documents, logs |
+| Telegram Bot | — | If a bot is needed |
+| Background Worker | — | Background tasks |
+| Redis | 6379 | Cache, sessions |
+| PostgreSQL | 5432 | Primary DB |
+| MongoDB | 27017 | Document DB |
 
-### Определение по требованиям
+### Determination by Requirements
 
 ```
-FR содержит "API", "REST", "эндпоинт"
-  → Нужен Business API
+FR contains "API", "REST", "endpoint"
+  → Business API needed
 
-FR содержит "Telegram", "бот", "команда"
-  → Нужен Telegram Bot
+FR contains "Telegram", "bot", "command"
+  → Telegram Bot needed
 
-FR содержит "фоновая", "периодически", "по расписанию"
-  → Нужен Background Worker
+FR contains "background", "periodically", "scheduled"
+  → Background Worker needed
 
-FR содержит "хранить", "сохранять", "данные"
-  → Нужен Data API
+FR contains "store", "save", "data"
+  → Data API needed
 
-FR содержит "кэш", "быстрый доступ", "сессия"
-  → Нужен Redis
+FR contains "cache", "fast access", "session"
+  → Redis needed
 ```
 
 ---
 
-## Уточнение этапов реализации
+## Refining Implementation Stages
 
 ### CREATE Mode
 
 ```
-Стандартный порядок:
+Standard order:
 
-1. Инфраструктура
+1. Infrastructure
    ├── docker-compose.yml
    ├── Makefile
    └── CI/CD
 
 2. Data Service
-   ├── Модели
-   ├── Репозитории
+   ├── Models
+   ├── Repositories
    └── API
 
-3. Business API (если нужен)
-   ├── Сервисы
-   ├── Роуты
-   └── HTTP клиент
+3. Business API (if needed)
+   ├── Services
+   ├── Routes
+   └── HTTP client
 
-4. Telegram Bot (если нужен)
+4. Telegram Bot (if needed)
    ├── Handlers
    ├── Keyboards
    └── States
 
-5. Background Worker (если нужен)
+5. Background Worker (if needed)
    ├── Task handlers
    └── Scheduler
 
-6. Тесты
+6. Tests
    ├── Unit
    └── Integration
 ```
@@ -131,53 +131,53 @@ FR содержит "кэш", "быстрый доступ", "сессия"
 ### FEATURE Mode
 
 ```
-Адаптированный порядок:
+Adapted order:
 
-1. Изменения в Data API (если нужны)
-   ├── Новые модели
-   ├── Миграции
-   └── Новые эндпоинты
+1. Data API changes (if needed)
+   ├── New models
+   ├── Migrations
+   └── New endpoints
 
-2. Изменения в Business Services
-   ├── Новые методы
-   ├── Новые роуты
-   └── Обновление HTTP клиента
+2. Business Services changes
+   ├── New methods
+   ├── New routes
+   └── HTTP client update
 
-3. Изменения в UI (если нужны)
-   ├── Новые handlers
-   └── Новые keyboards
+3. UI changes (if needed)
+   ├── New handlers
+   └── New keyboards
 
-4. Тесты
-   ├── Тесты новой функции
-   └── Регрессионные тесты
+4. Tests
+   ├── New feature tests
+   └── Regression tests
 ```
 
 ---
 
-## Результат уточнения
+## Refinement Result
 
 ```markdown
-## Необходимые компоненты
+## Required Components
 
-| Компонент | Нужен | Комментарий |
-|-----------|-------|-------------|
-| Business API | Да | REST API для клиентов |
-| Telegram Bot | Да | Уведомления ресторанам |
-| Background Worker | Нет | Нет фоновых задач |
-| Data API PG | Да | Хранение бронирований |
-| Redis | Да | Кэширование поиска |
+| Component | Needed | Comment |
+|-----------|--------|---------|
+| Business API | Yes | REST API for clients |
+| Telegram Bot | Yes | Restaurant notifications |
+| Background Worker | No | No background tasks |
+| Data API PG | Yes | Booking storage |
+| Redis | Yes | Search caching |
 
-## План реализации
+## Implementation Plan
 
-| # | Этап | Компоненты |
-|---|------|------------|
-| 1 | Инфраструктура | docker-compose, Makefile |
+| # | Stage | Components |
+|---|-------|------------|
+| 1 | Infrastructure | docker-compose, Makefile |
 | 2 | Data API | booking_data |
 | 3 | Business API | booking_api |
 | 4 | Telegram Bot | booking_bot |
-| 5 | Тесты | unit, integration |
+| 5 | Tests | unit, integration |
 
-## Зависимости между компонентами
+## Dependencies Between Components
 
 booking_api ──HTTP──> booking_data
 booking_bot ──HTTP──> booking_api
@@ -185,9 +185,9 @@ booking_bot ──HTTP──> booking_api
 
 ---
 
-## Источники
+## Sources
 
-| Документ | Описание |
-|----------|----------|
-| `.ai-framework/docs/reference/aidd-roles-reference.md` | Справочник ролей |
-| `.ai-framework/docs/guides/conditional-stage-rules.md` | Условные правила |
+| Document | Description |
+|----------|-------------|
+| `.ai-framework/docs/reference/aidd-roles-reference.md` | Roles reference |
+| `.ai-framework/docs/guides/conditional-stage-rules.md` | Conditional rules |

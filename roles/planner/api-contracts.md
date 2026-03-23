@@ -1,42 +1,42 @@
-# Функция: Определение контрактов API
+# Function: Defining API Contracts
 
-> **Назначение**: Проектирование API контрактов между сервисами.
-
----
-
-## Цель
-
-Определить чёткие контракты API для всех сервисов,
-обеспечивающие корректное взаимодействие компонентов.
+> **Purpose**: Designing API contracts between services.
 
 ---
 
-## Принципы проектирования API
+## Goal
+
+Define clear API contracts for all services,
+ensuring correct interaction between components.
+
+---
+
+## API Design Principles
 
 ### 1. RESTful
 
 ```
-GET    /api/v1/{resource}      — список ресурсов
-GET    /api/v1/{resource}/{id} — получить один
-POST   /api/v1/{resource}      — создать
-PUT    /api/v1/{resource}/{id} — обновить полностью
-PATCH  /api/v1/{resource}/{id} — обновить частично
-DELETE /api/v1/{resource}/{id} — удалить
+GET    /api/v1/{resource}      — list resources
+GET    /api/v1/{resource}/{id} — get one
+POST   /api/v1/{resource}      — create
+PUT    /api/v1/{resource}/{id} — full update
+PATCH  /api/v1/{resource}/{id} — partial update
+DELETE /api/v1/{resource}/{id} — delete
 ```
 
-### 2. Версионирование
+### 2. Versioning
 
 ```
-/api/v1/...  — первая версия
-/api/v2/...  — вторая версия (при необходимости)
+/api/v1/...  — first version
+/api/v2/...  — second version (if needed)
 
-ПРАВИЛО: Всегда использовать версионирование с v1.
+RULE: Always use versioning starting with v1.
 ```
 
-### 3. Именование путей
+### 3. Path Naming
 
 ```
-ПРАВИЛО: Пути в kebab-case, множественное число для коллекций.
+RULE: Paths in kebab-case, plural for collections.
 
 ✓ /api/v1/restaurants
 ✓ /api/v1/user-profiles
@@ -47,10 +47,10 @@ DELETE /api/v1/{resource}/{id} — удалить
 ✗ /api/v1/order_items
 ```
 
-### 4. Формат ответов
+### 4. Response Format
 
 ```json
-// Успешный ответ (один объект)
+// Successful response (single object)
 {
   "id": "uuid",
   "field1": "value1",
@@ -59,7 +59,7 @@ DELETE /api/v1/{resource}/{id} — удалить
   "updated_at": "2024-01-15T10:30:00Z"
 }
 
-// Успешный ответ (список с пагинацией)
+// Successful response (list with pagination)
 {
   "items": [...],
   "total": 100,
@@ -68,11 +68,11 @@ DELETE /api/v1/{resource}/{id} — удалить
   "pages": 5
 }
 
-// Ошибка
+// Error
 {
   "error": {
     "code": "VALIDATION_ERROR",
-    "message": "Описание ошибки",
+    "message": "Error description",
     "details": [...]
   }
 }
@@ -80,9 +80,9 @@ DELETE /api/v1/{resource}/{id} — удалить
 
 ---
 
-## Шаблон контракта API
+## API Contract Template
 
-### Business API контракт
+### Business API Contract
 
 ```markdown
 ## Business API: {context}_api
@@ -90,21 +90,21 @@ DELETE /api/v1/{resource}/{id} — удалить
 **Base URL**: http://localhost:8000
 **Prefix**: /api/v1
 
-### Эндпоинты
+### Endpoints
 
-| Метод | Путь | Описание | Req ID |
-|-------|------|----------|--------|
-| POST | /restaurants | Создать ресторан | FR-001 |
-| GET | /restaurants | Список ресторанов | FR-002 |
-| GET | /restaurants/{id} | Получить ресторан | FR-003 |
-| POST | /bookings | Создать бронирование | FR-004 |
-| GET | /bookings/{id} | Получить бронирование | FR-005 |
+| Method | Path | Description | Req ID |
+|--------|------|-------------|--------|
+| POST | /restaurants | Create restaurant | FR-001 |
+| GET | /restaurants | List restaurants | FR-002 |
+| GET | /restaurants/{id} | Get restaurant | FR-003 |
+| POST | /bookings | Create booking | FR-004 |
+| GET | /bookings/{id} | Get booking | FR-005 |
 
 ---
 
 ### POST /restaurants
 
-**Описание**: Создание нового ресторана
+**Description**: Create a new restaurant
 
 **Request Body**:
 ```json
@@ -145,14 +145,14 @@ DELETE /api/v1/{resource}/{id} — удалить
 
 ### GET /restaurants
 
-**Описание**: Получение списка ресторанов
+**Description**: Get list of restaurants
 
 **Query Parameters**:
-| Параметр | Тип | Описание | По умолчанию |
-|----------|-----|----------|--------------|
-| page | integer | Номер страницы | 1 |
-| page_size | integer | Размер страницы | 20 |
-| search | string | Поиск по имени | — |
+| Parameter | Type | Description | Default |
+|-----------|------|-------------|---------|
+| page | integer | Page number | 1 |
+| page_size | integer | Page size | 20 |
+| search | string | Search by name | — |
 
 **Response 200**:
 ```json
@@ -173,7 +173,7 @@ DELETE /api/v1/{resource}/{id} — удалить
 ```
 ```
 
-### Data API контракт
+### Data API Contract
 
 ```markdown
 ## Data API: {context}_data
@@ -181,29 +181,29 @@ DELETE /api/v1/{resource}/{id} — удалить
 **Base URL**: http://localhost:8001
 **Prefix**: /api/v1
 
-### Эндпоинты
+### Endpoints
 
-| Метод | Путь | Описание |
-|-------|------|----------|
-| POST | /restaurants | Создать запись |
-| GET | /restaurants | Получить записи |
-| GET | /restaurants/{id} | Получить по ID |
-| PUT | /restaurants/{id} | Обновить запись |
-| DELETE | /restaurants/{id} | Удалить запись |
+| Method | Path | Description |
+|--------|------|-------------|
+| POST | /restaurants | Create record |
+| GET | /restaurants | Get records |
+| GET | /restaurants/{id} | Get by ID |
+| PUT | /restaurants/{id} | Update record |
+| DELETE | /restaurants/{id} | Delete record |
 
 ---
 
-### Особенности Data API
+### Data API Specifics
 
-1. **Прямой CRUD** — без бизнес-логики
-2. **Валидация схем** — на уровне Pydantic
-3. **Используется только Business API** — не клиентами напрямую
+1. **Direct CRUD** — no business logic
+2. **Schema validation** — at the Pydantic level
+3. **Used only by Business API** — not by clients directly
 
 ---
 
 ### POST /restaurants
 
-**Описание**: Создание записи в БД
+**Description**: Create a record in DB
 
 **Request Body**:
 ```json
@@ -231,12 +231,12 @@ DELETE /api/v1/{resource}/{id} — удалить
 
 ---
 
-## Схемы (Pydantic)
+## Schemas (Pydantic)
 
-### Base схемы
+### Base Schemas
 
 ```python
-"""Базовые схемы для API."""
+"""Base schemas for API."""
 
 from datetime import datetime
 from uuid import UUID
@@ -245,7 +245,7 @@ from pydantic import BaseModel, ConfigDict
 
 
 class BaseSchema(BaseModel):
-    """Базовая схема с общими настройками."""
+    """Base schema with common settings."""
 
     model_config = ConfigDict(
         from_attributes=True,
@@ -254,14 +254,14 @@ class BaseSchema(BaseModel):
 
 
 class TimestampMixin(BaseModel):
-    """Миксин для временных меток."""
+    """Mixin for timestamps."""
 
     created_at: datetime
     updated_at: datetime
 
 
 class PaginatedResponse(BaseModel):
-    """Схема пагинированного ответа."""
+    """Paginated response schema."""
 
     total: int
     page: int
@@ -269,10 +269,10 @@ class PaginatedResponse(BaseModel):
     pages: int
 ```
 
-### Пример схем ресурса
+### Resource Schema Example
 
 ```python
-"""Схемы для ресторанов."""
+"""Schemas for restaurants."""
 
 from uuid import UUID
 
@@ -280,7 +280,7 @@ from .base import BaseSchema, TimestampMixin
 
 
 class RestaurantCreate(BaseSchema):
-    """Схема создания ресторана."""
+    """Restaurant creation schema."""
 
     name: str
     address: str
@@ -289,7 +289,7 @@ class RestaurantCreate(BaseSchema):
 
 
 class RestaurantUpdate(BaseSchema):
-    """Схема обновления ресторана."""
+    """Restaurant update schema."""
 
     name: str | None = None
     address: str | None = None
@@ -298,7 +298,7 @@ class RestaurantUpdate(BaseSchema):
 
 
 class RestaurantResponse(BaseSchema, TimestampMixin):
-    """Схема ответа с рестораном."""
+    """Restaurant response schema."""
 
     id: UUID
     name: str
@@ -308,7 +308,7 @@ class RestaurantResponse(BaseSchema, TimestampMixin):
 
 
 class RestaurantListResponse(BaseSchema):
-    """Схема списка ресторанов."""
+    """Restaurant list schema."""
 
     items: list[RestaurantResponse]
     total: int
@@ -319,54 +319,54 @@ class RestaurantListResponse(BaseSchema):
 
 ---
 
-## HTTP коды ответов
+## HTTP Response Codes
 
-| Код | Описание | Когда использовать |
-|-----|----------|--------------------|
-| 200 | OK | Успешный GET, PUT, PATCH |
-| 201 | Created | Успешный POST (создание) |
-| 204 | No Content | Успешный DELETE |
-| 400 | Bad Request | Ошибка валидации |
-| 401 | Unauthorized | Не авторизован |
-| 403 | Forbidden | Нет доступа |
-| 404 | Not Found | Ресурс не найден |
-| 409 | Conflict | Конфликт (дубликат) |
-| 422 | Unprocessable Entity | Ошибка бизнес-логики |
-| 500 | Internal Server Error | Внутренняя ошибка |
+| Code | Description | When to Use |
+|------|-------------|-------------|
+| 200 | OK | Successful GET, PUT, PATCH |
+| 201 | Created | Successful POST (creation) |
+| 204 | No Content | Successful DELETE |
+| 400 | Bad Request | Validation error |
+| 401 | Unauthorized | Not authorized |
+| 403 | Forbidden | Access denied |
+| 404 | Not Found | Resource not found |
+| 409 | Conflict | Conflict (duplicate) |
+| 422 | Unprocessable Entity | Business logic error |
+| 500 | Internal Server Error | Internal error |
 
 ---
 
-## Коды ошибок
+## Error Codes
 
 ```python
-"""Коды ошибок API."""
+"""API error codes."""
 
 class ErrorCodes:
-    """Стандартные коды ошибок."""
+    """Standard error codes."""
 
-    # Валидация
+    # Validation
     VALIDATION_ERROR = "VALIDATION_ERROR"
     INVALID_FORMAT = "INVALID_FORMAT"
 
-    # Ресурсы
+    # Resources
     NOT_FOUND = "NOT_FOUND"
     ALREADY_EXISTS = "ALREADY_EXISTS"
 
-    # Авторизация
+    # Authorization
     UNAUTHORIZED = "UNAUTHORIZED"
     FORBIDDEN = "FORBIDDEN"
 
-    # Бизнес-логика
+    # Business logic
     BUSINESS_RULE_VIOLATION = "BUSINESS_RULE_VIOLATION"
 
-    # Внешние сервисы
+    # External services
     EXTERNAL_SERVICE_ERROR = "EXTERNAL_SERVICE_ERROR"
     DATA_API_ERROR = "DATA_API_ERROR"
 ```
 
 ---
 
-## Взаимодействие сервисов
+## Service Interactions
 
 ### Business API → Data API
 
@@ -396,24 +396,24 @@ Telegram Bot                       Business API
 
 ---
 
-## Результат
+## Result
 
 ```markdown
-## API контракты проекта
+## Project API Contracts
 
-### Сервисы
+### Services
 
-| Сервис | Base URL | Документация |
-|--------|----------|--------------|
+| Service | Base URL | Documentation |
+|---------|----------|---------------|
 | Business API | http://localhost:8000 | /docs |
 | Data API | http://localhost:8001 | /docs |
 
-### Файлы контрактов
+### Contract Files
 
 - ai-docs/docs/api/business-api-contract.md
 - ai-docs/docs/api/data-api-contract.md
 
-### Схемы
+### Schemas
 
 - services/{context}_api/src/schemas/
 - services/{context}_data/src/schemas/
@@ -421,10 +421,10 @@ Telegram Bot                       Business API
 
 ---
 
-## Источники
+## References
 
-| Документ | Описание |
-|----------|----------|
-| `knowledge/services/fastapi/routing-patterns.md` | Паттерны роутинга |
-| `knowledge/services/fastapi/schema-validation.md` | Валидация схем |
-| `conventions.md` | Соглашения об именовании |
+| Document | Description |
+|----------|-------------|
+| `knowledge/services/fastapi/routing-patterns.md` | Routing patterns |
+| `knowledge/services/fastapi/schema-validation.md` | Schema validation |
+| `conventions.md` | Naming conventions |

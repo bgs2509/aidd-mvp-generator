@@ -1,26 +1,26 @@
-# Функция: Логирование (Level ≥ 2)
+# Function: Logging (Level >= 2)
 
-> **Назначение**: Настройка структурированного логирования.
-
----
-
-## Цель
-
-Настроить структурированное логирование с использованием structlog
-для всех сервисов проекта.
+> **Purpose**: Setting up structured logging.
 
 ---
 
-## Требования к логированию (Level 2)
+## Goal
+
+Set up structured logging using structlog
+for all project services.
+
+---
+
+## Logging Requirements (Level 2)
 
 ```
-ОБЯЗАТЕЛЬНО:
-✓ Структурированные логи (JSON)
-✓ Уровни логирования (DEBUG, INFO, WARNING, ERROR)
-✓ Request ID для трассировки
-✓ Контекстная информация
+REQUIRED:
+✓ Structured logs (JSON)
+✓ Log levels (DEBUG, INFO, WARNING, ERROR)
+✓ Request ID for tracing
+✓ Contextual information
 
-НЕ ТРЕБУЕТСЯ (Level 3+):
+NOT REQUIRED (Level 3+):
 ✗ Centralized logging (ELK)
 ✗ Log aggregation
 ✗ Alerting
@@ -28,12 +28,12 @@
 
 ---
 
-## Компоненты
+## Components
 
-### 1. Настройка structlog (core/logging.py)
+### 1. structlog Setup (core/logging.py)
 
 ```python
-"""Настройка структурированного логирования."""
+"""Structured logging setup."""
 
 import logging
 import sys
@@ -45,12 +45,12 @@ from {context}_{service}.core.config import settings
 
 
 def setup_logging() -> None:
-    """Настроить логирование для сервиса."""
+    """Set up logging for the service."""
 
-    # Уровень логирования
+    # Log level
     log_level = getattr(logging, settings.log_level.upper(), logging.INFO)
 
-    # Процессоры structlog
+    # structlog processors
     shared_processors: list[Any] = [
         structlog.contextvars.merge_contextvars,
         structlog.stdlib.add_log_level,
@@ -62,18 +62,18 @@ def setup_logging() -> None:
     ]
 
     if settings.debug:
-        # Красивый вывод для разработки
+        # Pretty output for development
         processors = shared_processors + [
             structlog.dev.ConsoleRenderer(colors=True),
         ]
     else:
-        # JSON для продакшена
+        # JSON for production
         processors = shared_processors + [
             structlog.processors.format_exc_info,
             structlog.processors.JSONRenderer(),
         ]
 
-    # Настройка structlog
+    # structlog configuration
     structlog.configure(
         processors=processors,
         wrapper_class=structlog.stdlib.BoundLogger,
@@ -82,28 +82,28 @@ def setup_logging() -> None:
         cache_logger_on_first_use=True,
     )
 
-    # Настройка стандартного logging
+    # Standard logging configuration
     logging.basicConfig(
         format="%(message)s",
         stream=sys.stdout,
         level=log_level,
     )
 
-    # Уровень для сторонних библиотек
+    # Log level for third-party libraries
     logging.getLogger("uvicorn").setLevel(logging.WARNING)
     logging.getLogger("httpx").setLevel(logging.WARNING)
     logging.getLogger("sqlalchemy").setLevel(logging.WARNING)
 
 
 def get_logger(name: str) -> structlog.stdlib.BoundLogger:
-    """Получить логгер с заданным именем."""
+    """Get a logger with the given name."""
     return structlog.get_logger(name)
 ```
 
 ### 2. Request ID Middleware (middlewares/request_id.py)
 
 ```python
-"""Middleware для генерации и отслеживания Request ID."""
+"""Middleware for generating and tracking Request ID."""
 
 import uuid
 from typing import Callable
@@ -115,33 +115,33 @@ from starlette.responses import Response
 
 
 class RequestIDMiddleware(BaseHTTPMiddleware):
-    """Middleware для добавления Request ID к каждому запросу."""
+    """Middleware for adding a Request ID to each request."""
 
     async def dispatch(
         self,
         request: Request,
         call_next: Callable,
     ) -> Response:
-        """Обработать запрос с Request ID."""
-        # Получить или сгенерировать Request ID
+        """Process request with Request ID."""
+        # Get or generate Request ID
         request_id = request.headers.get(
             "X-Request-ID",
             str(uuid.uuid4()),
         )
 
-        # Добавить в контекст structlog
+        # Add to structlog context
         structlog.contextvars.clear_contextvars()
         structlog.contextvars.bind_contextvars(
             request_id=request_id,
         )
 
-        # Сохранить в state для использования в handlers
+        # Save in state for use in handlers
         request.state.request_id = request_id
 
-        # Выполнить запрос
+        # Execute request
         response = await call_next(request)
 
-        # Добавить Request ID в заголовки ответа
+        # Add Request ID to response headers
         response.headers["X-Request-ID"] = request_id
 
         return response
@@ -150,7 +150,7 @@ class RequestIDMiddleware(BaseHTTPMiddleware):
 ### 3. Logging Middleware (middlewares/logging.py)
 
 ```python
-"""Middleware для логирования HTTP запросов."""
+"""Middleware for HTTP request logging."""
 
 import time
 from typing import Callable
@@ -162,10 +162,10 @@ from starlette.responses import Response
 
 
 class LoggingMiddleware(BaseHTTPMiddleware):
-    """Middleware для логирования запросов и ответов."""
+    """Middleware for logging requests and responses."""
 
     def __init__(self, app, logger_name: str = "http"):
-        """Инициализация middleware."""
+        """Initialize middleware."""
         super().__init__(app)
         self.logger = structlog.get_logger(logger_name)
 
@@ -174,10 +174,10 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         request: Request,
         call_next: Callable,
     ) -> Response:
-        """Логировать запрос и ответ."""
+        """Log request and response."""
         start_time = time.perf_counter()
 
-        # Логируем входящий запрос
+        # Log incoming request
         self.logger.info(
             "request_started",
             method=request.method,
@@ -190,7 +190,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             response = await call_next(request)
             duration_ms = (time.perf_counter() - start_time) * 1000
 
-            # Логируем успешный ответ
+            # Log successful response
             self.logger.info(
                 "request_completed",
                 method=request.method,
@@ -204,7 +204,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
         except Exception as e:
             duration_ms = (time.perf_counter() - start_time) * 1000
 
-            # Логируем ошибку
+            # Log error
             self.logger.exception(
                 "request_failed",
                 method=request.method,
@@ -215,10 +215,10 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             raise
 ```
 
-### 4. Подключение middleware (main.py)
+### 4. Middleware Connection (main.py)
 
 ```python
-"""Точка входа с настроенным логированием."""
+"""Entry point with configured logging."""
 
 from fastapi import FastAPI
 
@@ -228,7 +228,7 @@ from {context}_{service}.middlewares.logging import LoggingMiddleware
 
 
 def create_app() -> FastAPI:
-    """Фабрика приложения."""
+    """Application factory."""
     setup_logging()
 
     app = FastAPI(
@@ -236,20 +236,20 @@ def create_app() -> FastAPI:
         version="1.0.0",
     )
 
-    # Middleware (порядок важен!)
-    # Request ID должен быть первым
+    # Middleware (order matters!)
+    # Request ID must be first
     app.add_middleware(RequestIDMiddleware)
     app.add_middleware(LoggingMiddleware)
 
-    # ... роутеры ...
+    # ... routers ...
 
     return app
 ```
 
-### 5. Использование в коде
+### 5. Usage in Code
 
 ```python
-"""Пример использования логирования."""
+"""Logging usage example."""
 
 import structlog
 
@@ -257,10 +257,10 @@ logger = structlog.get_logger(__name__)
 
 
 class {Entity}Service:
-    """Сервис с логированием."""
+    """Service with logging."""
 
     async def create_{entity}(self, data: dict) -> dict:
-        """Создать {entity} с логированием."""
+        """Create {entity} with logging."""
         logger.info(
             "{entity}_creation_started",
             name=data.get("name"),
@@ -293,7 +293,7 @@ class {Entity}Service:
             raise
 
     async def get_{entity}(self, {entity}_id: str) -> dict | None:
-        """Получить {entity}."""
+        """Get {entity}."""
         logger.debug(
             "{entity}_fetch_started",
             {entity}_id={entity}_id,
@@ -317,9 +317,9 @@ class {Entity}Service:
 
 ---
 
-## Формат логов
+## Log Format
 
-### Development (консоль)
+### Development (console)
 
 ```
 2024-01-15T10:30:45.123456+00:00 [info     ] request_started            method=GET path=/api/v1/entities request_id=abc-123
@@ -337,177 +337,177 @@ class {Entity}Service:
 
 ---
 
-## Уровни логирования
+## Log Levels
 
-| Уровень | Когда использовать |
-|---------|-------------------|
-| DEBUG | Детальная отладочная информация |
-| INFO | Нормальное выполнение операций |
-| WARNING | Потенциальные проблемы (не критичные) |
-| ERROR | Ошибки, требующие внимания |
-| CRITICAL | Критические ошибки (сервис не работает) |
+| Level | When to Use |
+|-------|-------------|
+| DEBUG | Detailed debug information |
+| INFO | Normal operation execution |
+| WARNING | Potential issues (non-critical) |
+| ERROR | Errors requiring attention |
+| CRITICAL | Critical errors (service is down) |
 
 ---
 
-## Что логировать
+## What to Log
 
-### ОБЯЗАТЕЛЬНО логировать
+### MUST log
 
 ```python
-# Входящие запросы
+# Incoming requests
 logger.info("request_started", method="GET", path="/api/v1/users")
 
-# Исходящие вызовы
+# Outgoing calls
 logger.info("external_call_started", service="data_api", endpoint="/users")
 
-# Важные бизнес-события
+# Important business events
 logger.info("order_created", order_id="123", user_id="456")
 
-# Ошибки
+# Errors
 logger.error("payment_failed", order_id="123", error="Insufficient funds")
 
-# Метрики производительности
+# Performance metrics
 logger.info("database_query", query="SELECT", duration_ms=5.2)
 ```
 
-### НЕ логировать
+### MUST NOT log
 
 ```python
-# Секретные данные
-logger.info("user_login", password="secret")  # ПЛОХО!
+# Secret data
+logger.info("user_login", password="secret")  # BAD!
 
-# PII без необходимости
-logger.info("user_data", email="user@example.com", phone="+1234567890")  # ПЛОХО!
+# PII without necessity
+logger.info("user_data", email="user@example.com", phone="+1234567890")  # BAD!
 
-# Большие объёмы данных
-logger.info("response", body=large_json_object)  # ПЛОХО!
+# Large data volumes
+logger.info("response", body=large_json_object)  # BAD!
 ```
 
 ---
 
-## Антипаттерны логирования
+## Logging Anti-patterns
 
-### ❌ НИКОГДА не делайте
+### NEVER do this
 
 ```python
-# 1. Бесполезные входы/выходы из функций
+# 1. Useless function entry/exit
 def process_order(order):
-    logger.debug("Entering process_order")  # ПЛОХО!
+    logger.debug("Entering process_order")  # BAD!
     result = do_work(order)
-    logger.debug("Exiting process_order")   # ПЛОХО!
+    logger.debug("Exiting process_order")   # BAD!
     return result
 
-# 2. Логирование каждой итерации цикла
+# 2. Logging every loop iteration
 for item in items:
-    logger.debug(f"Processing item {item.id}")  # ПЛОХО!
+    logger.debug(f"Processing item {item.id}")  # BAD!
     process(item)
 
-# 3. Тривиальные проверки без контекста
+# 3. Trivial checks without context
 if user is not None:
-    logger.debug("User exists")  # ПЛОХО! Очевидно и бесполезно
+    logger.debug("User exists")  # BAD! Obvious and useless
 
-# 4. Дублирование уже залогированной информации
+# 4. Duplicating already logged information
 logger.info("request_started", path="/api/users")
-# ... код ...
-logger.info("processing request", path="/api/users")  # ПЛОХО! path уже залогирован
+# ... code ...
+logger.info("processing request", path="/api/users")  # BAD! path already logged
 
-# 5. Очевидные сообщения
-logger.info("Starting to process request...")  # ПЛОХО!
-logger.info("About to call database...")       # ПЛОХО!
-logger.info("Going to validate input...")      # ПЛОХО!
+# 5. Obvious messages
+logger.info("Starting to process request...")  # BAD!
+logger.info("About to call database...")       # BAD!
+logger.info("Going to validate input...")      # BAD!
 
-# 6. Логирование успешных тривиальных проверок
+# 6. Logging successful trivial checks
 if len(name) > 0:
-    logger.debug("Name is not empty")  # ПЛОХО!
+    logger.debug("Name is not empty")  # BAD!
 
-# 7. Логирование содержимого больших объектов
-logger.info("User data", user=user.__dict__)  # ПЛОХО!
-logger.info("Response", body=response.json()) # ПЛОХО!
+# 7. Logging contents of large objects
+logger.info("User data", user=user.__dict__)  # BAD!
+logger.info("Response", body=response.json()) # BAD!
 ```
 
-### ✅ Вместо этого делайте
+### Do this instead
 
 ```python
-# 1. Логируйте значимые бизнес-события
+# 1. Log meaningful business events
 logger.info("order_created", order_id=order.id, user_id=user.id)
 
-# 2. Для циклов — логируйте итоги или пакеты
+# 2. For loops — log totals or batches
 logger.info("items_processed", count=len(items), duration_ms=elapsed)
 
-# 3. Логируйте решения с контекстом
+# 3. Log decisions with context
 if user is None:
     logger.warning("user_not_found", user_id=user_id)
     raise UserNotFoundError(user_id)
 
-# 4. Используйте request_id для связи логов
-# Middleware автоматически добавляет request_id
+# 4. Use request_id to link logs
+# Middleware automatically adds request_id
 
-# 5. Используйте стандартные события
+# 5. Use standard events
 logger.info("request_started", method="GET", path="/api/users")
 
-# 6. Логируйте только отклонения от нормы
+# 6. Log only deviations from normal
 if not is_valid:
     log_validation_errors(logger, errors, endpoint="/api/users")
 
-# 7. Логируйте только размер, не содержимое
+# 7. Log only size, not content
 logger.info("response_sent", response_size=len(body), status_code=200)
 ```
 
-### Критерии: когда логировать?
+### Criteria: when to log?
 
-| Вопрос | Да → Логировать | Нет → Не логировать |
-|--------|-----------------|---------------------|
-| AI-агент поймёт ЧТО произошло? | ✅ | ❌ |
-| AI-агент поймёт ПОЧЕМУ? | ✅ | ❌ |
-| Информация уникальна? | ✅ | ❌ |
-| Помогает в отладке? | ✅ | ❌ |
-| Влияет на бизнес-логику? | ✅ | ❌ |
+| Question | Yes → Log | No → Don't log |
+|----------|-----------|----------------|
+| Will an AI agent understand WHAT happened? | ✅ | ❌ |
+| Will an AI agent understand WHY? | ✅ | ❌ |
+| Is the information unique? | ✅ | ❌ |
+| Does it help with debugging? | ✅ | ❌ |
+| Does it affect business logic? | ✅ | ❌ |
 
-### Правило трёх вопросов
+### Three-question Rule
 
-Перед каждым `logger.*` спросите себя:
+Before each `logger.*` ask yourself:
 
-1. **Что нового это сообщение добавляет?**
-   - Если ничего → не логировать
+1. **What new does this message add?**
+   - If nothing → don't log
 
-2. **Кто будет это читать и зачем?**
-   - DEBUG: разработчик при отладке
-   - INFO: AI-агент для понимания flow
-   - WARNING/ERROR: on-call инженер для диагностики
+2. **Who will read this and why?**
+   - DEBUG: developer during debugging
+   - INFO: AI agent for understanding the flow
+   - WARNING/ERROR: on-call engineer for diagnostics
 
-3. **Можно ли восстановить эту информацию из других логов?**
-   - Если да → не дублировать
+3. **Can this information be recovered from other logs?**
+   - If yes → don't duplicate
 
 ---
 
-## Качественные ворота
+## Quality Gates
 
 ### LOGGING_READY
 
-- [ ] structlog настроен
-- [ ] Request ID middleware подключён
-- [ ] Logging middleware подключён
-- [ ] JSON формат в production
-- [ ] Все сервисы логируют запросы
-- [ ] Ошибки логируются с traceback
-- [ ] Нет логирования секретных данных
+- [ ] structlog configured
+- [ ] Request ID middleware connected
+- [ ] Logging middleware connected
+- [ ] JSON format in production
+- [ ] All services log requests
+- [ ] Errors are logged with traceback
+- [ ] No logging of secret data
 
 ---
 
 ## Log-Driven Design
 
-Для AI-агентного кодинга используйте расширенный подход Log-Driven Design.
+For AI-agent coding, use the extended Log-Driven Design approach.
 
-### Дополнительные компоненты
+### Additional Components
 
-| Компонент | Файл | Описание |
-|-----------|------|----------|
-| Хелперы логирования | `shared/utils/log_helpers.py` | `log_decision`, `log_state_change`, `log_db_operation`, `log_validation_errors`, `log_auth_context`, `log_rate_limit_status` |
-| State Machine | `shared/utils/state_machine.py` | Автоматическое логирование переходов состояний |
-| Полная трассировка | `shared/utils/request_id.py` | `correlation_id`, `causation_id` |
-| Telegram логирование | `bot/middlewares/logging.py` | `update_id`, FSM before/after, детальные Telegram ошибки |
+| Component | File | Description |
+|-----------|------|-------------|
+| Logging helpers | `shared/utils/log_helpers.py` | `log_decision`, `log_state_change`, `log_db_operation`, `log_validation_errors`, `log_auth_context`, `log_rate_limit_status` |
+| State Machine | `shared/utils/state_machine.py` | Automatic state transition logging |
+| Full tracing | `shared/utils/request_id.py` | `correlation_id`, `causation_id` |
+| Telegram logging | `bot/middlewares/logging.py` | `update_id`, FSM before/after, detailed Telegram errors |
 
-### Пример логирования решений
+### Decision Logging Example
 
 ```python
 from shared.utils.log_helpers import log_decision
@@ -523,7 +523,7 @@ if order.fraud_score > settings.fraud_threshold:
     raise FraudDetectedError(...)
 ```
 
-### Пример логирования ошибок валидации
+### Validation Error Logging Example
 
 ```python
 from pydantic import ValidationError
@@ -541,7 +541,7 @@ except ValidationError as e:
     raise HTTPException(status_code=422, detail=e.errors())
 ```
 
-### Пример логирования контекста авторизации
+### Auth Context Logging Example
 
 ```python
 from shared.utils.log_helpers import log_auth_context
@@ -557,16 +557,16 @@ def get_current_user(token: str = Depends(oauth2_scheme)):
     return user
 ```
 
-### Пример логирования rate limit
+### Rate Limit Logging Example
 
 ```python
 from shared.utils.log_helpers import log_rate_limit_status, log_rate_limit_exceeded
 
-# При приближении к лимиту (< 20%)
+# When approaching the limit (< 20%)
 if remaining < limit * 0.2:
     log_rate_limit_status(logger, limit=100, remaining=15, identifier=client_ip)
 
-# При превышении лимита
+# When limit is exceeded
 if remaining <= 0:
     log_rate_limit_exceeded(logger, limit=100, retry_after=60, identifier=client_ip)
     raise HTTPException(status_code=429, detail="Rate limit exceeded")
@@ -574,10 +574,10 @@ if remaining <= 0:
 
 ---
 
-## Источники
+## References
 
-| Документ | Описание |
-|----------|----------|
-| `knowledge/quality/logging/log-driven-design.md` | **Полное руководство Log-Driven Design** |
-| `knowledge/quality/logging/structured.md` | Структурированное логирование |
-| `knowledge/quality/logging/correlation.md` | Корреляция логов |
+| Document | Description |
+|----------|-------------|
+| `knowledge/quality/logging/log-driven-design.md` | **Full Log-Driven Design guide** |
+| `knowledge/quality/logging/structured.md` | Structured logging |
+| `knowledge/quality/logging/correlation.md` | Log correlation |

@@ -1,13 +1,13 @@
-# Базовая настройка Asyncio Worker
+# Asyncio Worker Basic Setup
 
-> **Назначение**: Настройка фонового сервиса на asyncio.
+> **Purpose**: Setting up a background service on asyncio.
 
 ---
 
-## Точка входа
+## Entry Point
 
 ```python
-"""Точка входа Background Worker."""
+"""Background Worker entry point."""
 
 import asyncio
 import logging
@@ -20,30 +20,30 @@ from {context}_worker.tasks import cleanup, notifications, sync
 
 
 async def main() -> None:
-    """Запустить воркер."""
+    """Start the worker."""
     setup_logging()
     logger = logging.getLogger(__name__)
 
     logger.info("Starting worker...")
 
-    # Создание планировщика
+    # Create scheduler
     scheduler = Scheduler()
 
-    # Регистрация задач
+    # Register tasks
     scheduler.register_task(
         cleanup.cleanup_old_orders,
-        interval_seconds=3600,  # каждый час
+        interval_seconds=3600,  # every hour
     )
     scheduler.register_task(
         notifications.send_reminders,
-        interval_seconds=300,  # каждые 5 минут
+        interval_seconds=300,  # every 5 minutes
     )
     scheduler.register_task(
         sync.sync_external_data,
-        interval_seconds=1800,  # каждые 30 минут
+        interval_seconds=1800,  # every 30 minutes
     )
 
-    # Обработка сигналов завершения
+    # Handle shutdown signals
     stop_event = asyncio.Event()
 
     def handle_signal():
@@ -54,7 +54,7 @@ async def main() -> None:
     for sig in (signal.SIGTERM, signal.SIGINT):
         loop.add_signal_handler(sig, handle_signal)
 
-    # Запуск планировщика
+    # Start scheduler
     try:
         await scheduler.start(stop_event)
     finally:
@@ -68,16 +68,16 @@ if __name__ == "__main__":
 
 ---
 
-## Конфигурация
+## Configuration
 
 ```python
-"""Конфигурация воркера."""
+"""Worker configuration."""
 
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    """Настройки Background Worker."""
+    """Background Worker settings."""
 
     service_name: str = "{Context} Worker"
 
@@ -85,11 +85,11 @@ class Settings(BaseSettings):
     business_api_url: str = "http://localhost:8000"
     data_api_url: str = "http://localhost:8001"
 
-    # Настройки
+    # Settings
     debug: bool = False
     log_level: str = "INFO"
 
-    # Интервалы (секунды)
+    # Intervals (seconds)
     cleanup_interval: int = 3600
     sync_interval: int = 1800
 
@@ -102,31 +102,31 @@ settings = Settings()
 
 ---
 
-## Структура проекта
+## Project Structure
 
 ```
 {context}_worker/
 ├── __init__.py
-├── main.py                  # Точка входа
+├── main.py                  # Entry point
 │
-├── tasks/                   # Задачи
+├── tasks/                   # Tasks
 │   ├── __init__.py
-│   ├── base.py             # Базовый класс задачи
-│   ├── cleanup.py          # Очистка данных
-│   ├── notifications.py    # Уведомления
-│   └── sync.py             # Синхронизация
+│   ├── base.py             # Base task class
+│   ├── cleanup.py          # Data cleanup
+│   ├── notifications.py    # Notifications
+│   └── sync.py             # Synchronization
 │
-├── scheduler/              # Планировщик
+├── scheduler/              # Scheduler
 │   ├── __init__.py
-│   └── scheduler.py        # Реализация планировщика
+│   └── scheduler.py        # Scheduler implementation
 │
-├── infrastructure/         # Внешние сервисы
+├── infrastructure/         # External services
 │   ├── __init__.py
 │   └── http/
 │       ├── __init__.py
 │       └── api_client.py
 │
-└── core/                   # Конфигурация
+└── core/                   # Configuration
     ├── __init__.py
     ├── config.py
     └── logging.py
@@ -134,10 +134,10 @@ settings = Settings()
 
 ---
 
-## Планировщик
+## Scheduler
 
 ```python
-"""Планировщик задач."""
+"""Task scheduler."""
 
 import asyncio
 import logging
@@ -147,7 +147,7 @@ logger = logging.getLogger(__name__)
 
 
 class ScheduledTask:
-    """Запланированная задача."""
+    """Scheduled task."""
 
     def __init__(
         self,
@@ -156,12 +156,12 @@ class ScheduledTask:
         name: str | None = None,
     ):
         """
-        Инициализация задачи.
+        Initialize task.
 
         Args:
-            func: Асинхронная функция задачи.
-            interval_seconds: Интервал выполнения.
-            name: Имя задачи.
+            func: Async task function.
+            interval_seconds: Execution interval.
+            name: Task name.
         """
         self.func = func
         self.interval = interval_seconds
@@ -169,10 +169,10 @@ class ScheduledTask:
 
 
 class Scheduler:
-    """Планировщик задач."""
+    """Task scheduler."""
 
     def __init__(self):
-        """Инициализация планировщика."""
+        """Initialize scheduler."""
         self.tasks: list[ScheduledTask] = []
         self._running_tasks: list[asyncio.Task] = []
 
@@ -183,12 +183,12 @@ class Scheduler:
         name: str | None = None,
     ) -> None:
         """
-        Зарегистрировать задачу.
+        Register a task.
 
         Args:
-            func: Асинхронная функция.
-            interval_seconds: Интервал выполнения.
-            name: Имя задачи.
+            func: Async function.
+            interval_seconds: Execution interval.
+            name: Task name.
         """
         task = ScheduledTask(func, interval_seconds, name)
         self.tasks.append(task)
@@ -200,11 +200,11 @@ class Scheduler:
         stop_event: asyncio.Event,
     ) -> None:
         """
-        Цикл выполнения задачи.
+        Task execution loop.
 
         Args:
-            task: Задача для выполнения.
-            stop_event: Событие остановки.
+            task: Task to execute.
+            stop_event: Stop event.
         """
         while not stop_event.is_set():
             try:
@@ -214,43 +214,43 @@ class Scheduler:
             except Exception as e:
                 logger.exception(f"Task failed: {task.name} - {e}")
 
-            # Ожидание с проверкой stop_event
+            # Wait with stop_event check
             try:
                 await asyncio.wait_for(
                     stop_event.wait(),
                     timeout=task.interval,
                 )
             except asyncio.TimeoutError:
-                pass  # Таймаут — нормально, продолжаем
+                pass  # Timeout is normal, continue
 
     async def start(self, stop_event: asyncio.Event) -> None:
         """
-        Запустить планировщик.
+        Start the scheduler.
 
         Args:
-            stop_event: Событие остановки.
+            stop_event: Stop event.
         """
         logger.info(f"Starting scheduler with {len(self.tasks)} tasks")
 
-        # Запуск всех задач
+        # Start all tasks
         for task in self.tasks:
             asyncio_task = asyncio.create_task(
                 self._run_task_loop(task, stop_event)
             )
             self._running_tasks.append(asyncio_task)
 
-        # Ожидание сигнала остановки
+        # Wait for stop signal
         await stop_event.wait()
 
     async def shutdown(self) -> None:
-        """Остановить планировщик."""
+        """Stop the scheduler."""
         logger.info("Shutting down scheduler...")
 
-        # Отмена всех задач
+        # Cancel all tasks
         for task in self._running_tasks:
             task.cancel()
 
-        # Ожидание завершения
+        # Wait for completion
         await asyncio.gather(*self._running_tasks, return_exceptions=True)
 
         logger.info("Scheduler stopped")
@@ -278,7 +278,7 @@ CMD ["python", "-m", "src.{context}_worker.main"]
 ## Healthcheck
 
 ```python
-"""Healthcheck для воркера."""
+"""Worker healthcheck."""
 
 import asyncio
 from aiohttp import web
@@ -286,10 +286,10 @@ from aiohttp import web
 
 async def run_health_server(port: int = 8080) -> None:
     """
-    Запустить HTTP сервер для healthcheck.
+    Start HTTP server for healthcheck.
 
     Args:
-        port: Порт сервера.
+        port: Server port.
     """
     async def health(request):
         return web.Response(text="OK")
@@ -304,17 +304,17 @@ async def run_health_server(port: int = 8080) -> None:
     await site.start()
 
 
-# В main.py добавить:
+# Add to main.py:
 # asyncio.create_task(run_health_server())
 ```
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Точка входа с asyncio.run()
-- [ ] Сигналы SIGTERM/SIGINT обрабатываются
-- [ ] Планировщик создан
-- [ ] Задачи зарегистрированы
-- [ ] Graceful shutdown настроен
-- [ ] Healthcheck endpoint есть
+- [ ] Entry point with asyncio.run()
+- [ ] SIGTERM/SIGINT signals handled
+- [ ] Scheduler created
+- [ ] Tasks registered
+- [ ] Graceful shutdown configured
+- [ ] Healthcheck endpoint present

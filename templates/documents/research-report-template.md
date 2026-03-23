@@ -1,8 +1,8 @@
 ---
-# === YAML Frontmatter (машиночитаемые метаданные) ===
+# === YAML Frontmatter (machine-readable metadata) ===
 feature_id: "{FID}"
 feature_name: "{slug}"
-title: "Research: {Название проекта}"
+title: "Research: {Project Name}"
 created: "{YYYY-MM-DD}"
 author: "AI (Researcher)"
 type: "research"
@@ -10,121 +10,121 @@ status: "RESEARCH_DONE"
 version: 1
 mode: "{CREATE|FEATURE}"
 
-# Ссылки на связанные артефакты
+# Links to related artifacts
 prd_ref: "prd/{YYYY-MM-DD}_{FID}_{slug}-prd.md"
 
-# Опционально
+# Optional
 related_features: []
-findings_count: 0                      # Количество ключевых находок
+findings_count: 0                      # Number of key findings
 ---
 
-# Research Report: {Название проекта}
+# Research Report: {Project Name}
 
 **Feature ID**: {FID}
-**Версия**: 1.0
-**Дата**: {YYYY-MM-DD}
-**Автор**: AI Agent (Исследователь)
+**Version**: 1.0
+**Date**: {YYYY-MM-DD}
+**Author**: AI Agent (Researcher)
 
 ---
 
-## 1. Контекст
+## 1. Context
 
-- **Ссылка на PRD**: `ai-docs/docs/_analysis/{name}-prd.md`
-- **Режим**: {CREATE или FEATURE}
-- **Цели исследования**: {Что нужно выяснить}
+- **PRD link**: `ai-docs/docs/_analysis/{name}-prd.md`
+- **Mode**: {CREATE or FEATURE}
+- **Research goals**: {What needs to be determined}
 
-## 2. Резюме требований
+## 2. Requirements Summary
 
-| ID | Тип | Краткое описание | Критичность |
-|----|-----|------------------|-------------|
-| FR-001 | FR | {Описание} | Must |
-| NF-001 | NF | {Описание} | High |
+| ID | Type | Brief Description | Criticality |
+|----|------|-------------------|-------------|
+| FR-001 | FR | {Description} | Must |
+| NF-001 | NF | {Description} | High |
 
-## 3. Анализ текущего состояния (FEATURE)
+## 3. Current State Analysis (FEATURE)
 
-> Заполняется, если проект уже содержит код / инфраструктуру.
+> Filled in if the project already contains code / infrastructure.
 
-### 3.1 Сервисы и ответственность
+### 3.1 Services and Responsibilities
 
-| Сервис | Назначение | Зависимости |
-|--------|-----------|-------------|
-| {service_name} | {описание} | {deps} |
+| Service | Purpose | Dependencies |
+|---------|---------|--------------|
+| {service_name} | {description} | {deps} |
 
-### 3.2 API / Контракты
+### 3.2 API / Contracts
 
-| Метод | Путь | Статус | Комментарий |
-|-------|------|--------|-------------|
-| GET | /api/v1/... | OK/Needs change | {заметки} |
+| Method | Path | Status | Comment |
+|--------|------|--------|---------|
+| GET | /api/v1/... | OK/Needs change | {notes} |
 
-### 3.3 Данные и хранилища
+### 3.3 Data and Storage
 
 - PostgreSQL: {schema/tables}
 - MongoDB: {collections}
-- Очереди / брокеры: {описание}
+- Queues / brokers: {description}
 
-### 3.4 Выявленные паттерны
+### 3.4 Identified Patterns
 
-- DDD/Hexagonal: {Да/Нет + где нарушено}
-- CQRS/Event Sourcing: {если есть}
-- Асинхронные воркеры: {кратко}
+- DDD/Hexagonal: {Yes/No + where violated}
+- CQRS/Event Sourcing: {if present}
+- Async workers: {brief}
 
-### 3.5 Ограничения и долги
+### 3.5 Constraints and Debt
 
 - {Constraint 1}
 - {Constraint 2}
 
-### 3.6 Анализ существующих тестов (FEATURE)
+### 3.6 Existing Tests Analysis (FEATURE)
 
-#### 3.6.1 Текущее состояние
+#### 3.6.1 Current State
 
-| Тип | Найдено | Покрытие | Путь |
-|-----|---------|----------|------|
-| Smoke | {кол-во} | {%} | services/{service}/tests/smoke/ |
-| Unit | {кол-во} | {%} | services/{service}/tests/unit/ |
-| Integration | {кол-во} | {%} | services/{service}/tests/integration/ |
-| E2E | {кол-во} | {%} | tests/e2e/ |
+| Type | Found | Coverage | Path |
+|------|-------|----------|------|
+| Smoke | {count} | {%} | services/{service}/tests/smoke/ |
+| Unit | {count} | {%} | services/{service}/tests/unit/ |
+| Integration | {count} | {%} | services/{service}/tests/integration/ |
+| E2E | {count} | {%} | tests/e2e/ |
 
-#### 3.6.2 Gaps (что нужно добавить)
+#### 3.6.2 Gaps (what needs to be added)
 
-На основе PRD секции 6.5:
+Based on PRD section 6.5:
 
-| TRQ | Требование | Текущее | Нужно | Gap |
-|-----|-----------|---------|-------|-----|
-| TRQ-001 | 100% endpoints smoke | {X}% | 100% | +{Y} тестов |
-| TRQ-002 | Контейнеры запускаются | {OK/Fail} | OK | {gap} |
-| TRQ-003 | Health checks 200 | {X}/{Y} | 100% | +{Y} тестов |
-| TRQ-004 | Базы данных доступны | {OK/Fail} | OK | {gap} |
-| TRQ-005 | Coverage ≥ {порог} | {X}% | {порог}% | +{Y} тестов |
-| TRQ-006 | Критические пайплайны | {X}/{Y} | 100% | +{Y} тестов |
-| TRQ-007 | Сквозные сценарии | {X}/{Y} | 100% | +{Y} тестов |
+| TRQ | Requirement | Current | Needed | Gap |
+|-----|-------------|---------|--------|-----|
+| TRQ-001 | 100% endpoints smoke | {X}% | 100% | +{Y} tests |
+| TRQ-002 | Containers start | {OK/Fail} | OK | {gap} |
+| TRQ-003 | Health checks 200 | {X}/{Y} | 100% | +{Y} tests |
+| TRQ-004 | Databases accessible | {OK/Fail} | OK | {gap} |
+| TRQ-005 | Coverage >= {threshold} | {X}% | {threshold}% | +{Y} tests |
+| TRQ-006 | Critical pipelines | {X}/{Y} | 100% | +{Y} tests |
+| TRQ-007 | End-to-end scenarios | {X}/{Y} | 100% | +{Y} tests |
 
-#### 3.6.3 Рекомендации
+#### 3.6.3 Recommendations
 
-- {Какие модули требуют тестов}
-- {Какие зависимости нужно мокировать}
-- {Какие пайплайны критичны для integration}
+- {Which modules need tests}
+- {Which dependencies need to be mocked}
+- {Which pipelines are critical for integration}
 
-## 4. Технологические выводы (CREATE)
+## 4. Technology Conclusions (CREATE)
 
-- Рекомендуемые сервисы: {api/bot/data/...}
-- БД и кэши: {PostgreSQL/MongoDB/Redis}
-- Протокол взаимодействия: {HTTP, gRPC запрещён}
+- Recommended services: {api/bot/data/...}
+- DBs and caches: {PostgreSQL/MongoDB/Redis}
+- Communication protocol: {HTTP, gRPC is prohibited}
 
-## 5. Рекомендации по интеграции
+## 5. Integration Recommendations
 
 - {Integration point 1}
 - {Integration point 2}
 
-## 6. Риски и предположения
+## 6. Risks and Assumptions
 
-- **Риск**: {Описание} → {Митигирующая мера}
-- **Предположение**: {Что должно быть истинно}
+- **Risk**: {Description} → {Mitigation measure}
+- **Assumption**: {What must be true}
 
-## 7. Следующие шаги
+## 7. Next Steps
 
-- [ ] Обновить `.pipeline-state.json` (`RESEARCH_DONE`)
-- [ ] Передать ссылку архитектору (`ai-docs/docs/research/{name}-research.md`)
+- [ ] Update `.pipeline-state.json` (`RESEARCH_DONE`)
+- [ ] Pass link to architect (`ai-docs/docs/research/{name}-research.md`)
 
 ---
 
-**Приложения**: ссылки на ветки, диаграммы, дополнительные материалы.
+**Appendices**: links to branches, diagrams, additional materials.

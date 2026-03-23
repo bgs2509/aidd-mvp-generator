@@ -1,279 +1,279 @@
-# Функция: Создание Review Report
+# Function: Review Report Creation
 
-> **Назначение**: Формирование финального отчёта код-ревью.
-
----
-
-## Цель
-
-Создать структурированный отчёт о результатах код-ревью,
-готовый для передачи на этап тестирования.
+> **Purpose**: Creating the final code review report.
 
 ---
 
-## Структура отчёта
+## Goal
+
+Create a structured code review report,
+ready for handoff to the testing stage.
+
+---
+
+## Report Structure
 
 ```markdown
-# Code Review Report: {Название проекта}
+# Code Review Report: {Project Name}
 
-**Версия**: 1.0
-**Дата**: {YYYY-MM-DD}
-**Ревьюер**: AI Agent (Ревьюер)
-**Статус**: PASSED / FAILED / PASSED_WITH_NOTES
+**Version**: 1.0
+**Date**: {YYYY-MM-DD}
+**Reviewer**: AI Agent (Reviewer)
+**Status**: PASSED / FAILED / PASSED_WITH_NOTES
 
 ---
 
-## 1. Обзор
+## 1. Overview
 
-### 1.1 Scope ревью
+### 1.1 Review Scope
 
-| Сервис | Файлов | Строк кода |
-|--------|--------|------------|
+| Service | Files | Lines of Code |
+|---------|-------|---------------|
 | {context}_api | {N} | {N} |
 | {context}_data | {N} | {N} |
 | {context}_bot | {N} | {N} |
 
-### 1.2 Критерии оценки
+### 1.2 Evaluation Criteria
 
-- Архитектурные принципы
-- Соответствие конвенциям
-- Качество кода
-- Покрытие тестами
-
----
-
-## 2. Архитектура
-
-### 2.1 HTTP-only доступ к данным
-
-**Статус**: ✓ PASSED / ✗ FAILED
-
-{Описание проверки и результатов}
-
-### 2.2 DDD структура
-
-**Статус**: ✓ PASSED / ✗ FAILED
-
-{Описание проверки и результатов}
-
-### 2.3 Разделение сервисов
-
-**Статус**: ✓ PASSED / ✗ FAILED
-
-{Описание проверки и результатов}
+- Architectural principles
+- Convention compliance
+- Code quality
+- Test coverage
 
 ---
 
-## 3. Конвенции
+## 2. Architecture
 
-### 3.1 Именование
+### 2.1 HTTP-only Data Access
 
-**Статус**: ✓ PASSED / ✗ FAILED
+**Status**: ✓ PASSED / ✗ FAILED
 
-{Описание проверки и результатов}
+{Check description and results}
+
+### 2.2 DDD Structure
+
+**Status**: ✓ PASSED / ✗ FAILED
+
+{Check description and results}
+
+### 2.3 Service Separation
+
+**Status**: ✓ PASSED / ✗ FAILED
+
+{Check description and results}
+
+---
+
+## 3. Conventions
+
+### 3.1 Naming
+
+**Status**: ✓ PASSED / ✗ FAILED
+
+{Check description and results}
 
 ### 3.2 Type Hints
 
-**Статус**: ✓ PASSED / ✗ FAILED
+**Status**: ✓ PASSED / ✗ FAILED
 
-{Описание проверки и результатов}
+{Check description and results}
 
 ### 3.3 Docstrings
 
-**Статус**: ✓ PASSED / ✗ FAILED
+**Status**: ✓ PASSED / ✗ FAILED
 
-{Описание проверки и результатов}
+{Check description and results}
 
 ---
 
-## 4. Качество кода
+## 4. Code Quality
 
 ### 4.1 DRY (Don't Repeat Yourself)
 
-**Статус**: ✓ PASSED / ✗ FAILED
+**Status**: ✓ PASSED / ✗ FAILED
 
-{Описание проверки и результатов}
+{Check description and results}
 
 ### 4.2 KISS (Keep It Simple)
 
-**Статус**: ✓ PASSED / ✗ FAILED
+**Status**: ✓ PASSED / ✗ FAILED
 
-{Описание проверки и результатов}
+{Check description and results}
 
 ### 4.3 YAGNI (You Aren't Gonna Need It)
 
-**Статус**: ✓ PASSED / ✗ FAILED
+**Status**: ✓ PASSED / ✗ FAILED
 
-{Описание проверки и результатов}
+{Check description and results}
 
 ---
 
-## 5. Автоматические проверки
+## 5. Automated Checks
 
-| Инструмент | Команда | Результат | Ошибок |
-|------------|---------|-----------|--------|
+| Tool | Command | Result | Errors |
+|------|---------|--------|--------|
 | Ruff Lint | `ruff check` | PASSED/FAILED | {N} |
 | Ruff Format | `ruff format --check` | PASSED/FAILED | {N} |
 | Mypy | `mypy` | PASSED/FAILED | {N} |
 
 ---
 
-## 6. Найденные проблемы
+## 6. Issues Found
 
-### 6.1 Критические (Blocker)
+### 6.1 Critical (Blocker)
 
-| # | Файл | Строка | Проблема | Рекомендация |
-|---|------|--------|----------|--------------|
-| — | — | — | Нет критических проблем | — |
+| # | File | Line | Issue | Recommendation |
+|---|------|------|-------|----------------|
+| — | — | — | No critical issues | — |
 
-### 6.2 Важные (Major)
+### 6.2 Major
 
-| # | Файл | Строка | Проблема | Рекомендация |
-|---|------|--------|----------|--------------|
-| 1 | {файл} | {строка} | {проблема} | {рекомендация} |
+| # | File | Line | Issue | Recommendation |
+|---|------|------|-------|----------------|
+| 1 | {file} | {line} | {issue} | {recommendation} |
 
-### 6.3 Незначительные (Minor)
+### 6.3 Minor
 
-| # | Файл | Строка | Проблема | Рекомендация |
-|---|------|--------|----------|--------------|
-| 1 | {файл} | {строка} | {проблема} | {рекомендация} |
-
----
-
-## 7. Рекомендации
-
-### 7.1 Обязательные изменения
-
-1. {Изменение 1}
-2. {Изменение 2}
-
-### 7.2 Опциональные улучшения
-
-1. {Улучшение 1}
-2. {Улучшение 2}
+| # | File | Line | Issue | Recommendation |
+|---|------|------|-------|----------------|
+| 1 | {file} | {line} | {issue} | {recommendation} |
 
 ---
 
-## 8. Трассировка требований
+## 7. Recommendations
 
-| Req ID | Реализовано | Файл | Комментарий |
-|--------|-------------|------|-------------|
+### 7.1 Required Changes
+
+1. {Change 1}
+2. {Change 2}
+
+### 7.2 Optional Improvements
+
+1. {Improvement 1}
+2. {Improvement 2}
+
+---
+
+## 8. Requirements Traceability
+
+| Req ID | Implemented | File | Comment |
+|--------|-------------|------|---------|
 | FR-001 | ✓ | api/v1/routes.py | — |
 | FR-002 | ✓ | api/v1/routes.py | — |
 
 ---
 
-## 9. Заключение
+## 9. Conclusion
 
-### Общий статус: {PASSED / FAILED / PASSED_WITH_NOTES}
+### Overall Status: {PASSED / FAILED / PASSED_WITH_NOTES}
 
-### Резюме
+### Summary
 
-{Краткое резюме результатов ревью}
+{Brief summary of review results}
 
-### Качественные ворота
+### Quality Gates
 
-- [ ] Архитектурные принципы соблюдены
-- [ ] Конвенции соблюдены
-- [ ] Нет критических проблем
-- [ ] Нет важных проблем (или они задокументированы)
-- [ ] Автоматические проверки проходят
+- [ ] Architectural principles are followed
+- [ ] Conventions are followed
+- [ ] No critical issues
+- [ ] No major issues (or they are documented)
+- [ ] Automated checks pass
 
 ---
 
-## 10. Следующие шаги
+## 10. Next Steps
 
-1. {Исправить найденные проблемы}
-2. {Повторный ревью (если FAILED)}
-3. {Перейти к тестированию (если PASSED)}
+1. {Fix found issues}
+2. {Re-review (if FAILED)}
+3. {Proceed to testing (if PASSED)}
 ```
 
 ---
 
-## Правила формирования отчёта
+## Report Formation Rules
 
-### 1. Статус ревью
+### 1. Review Status
 
 ```
 PASSED:
-- Нет критических проблем
-- Нет важных проблем
-- Все автоматические проверки проходят
+- No critical issues
+- No major issues
+- All automated checks pass
 
 PASSED_WITH_NOTES:
-- Нет критических проблем
-- Есть важные или незначительные проблемы
-- Не блокируют переход к тестированию
+- No critical issues
+- There are major or minor issues
+- They don't block the transition to testing
 
 FAILED:
-- Есть критические проблемы
-- Требуется исправление и повторный ревью
+- There are critical issues
+- Fixing and re-review required
 ```
 
-### 2. Классификация проблем
+### 2. Issue Classification
 
 ```
-Blocker (Критические):
-- Нарушение HTTP-only
-- Прямой доступ к БД из business сервиса
-- Event loop проблемы
-- Security уязвимости
+Blocker (Critical):
+- HTTP-only violation
+- Direct DB access from business service
+- Event loop issues
+- Security vulnerabilities
 
-Major (Важные):
-- Нарушение DDD структуры
-- Отсутствие type hints
-- Голый except
-- Дублирование кода
+Major:
+- DDD structure violation
+- Missing type hints
+- Bare except
+- Code duplication
 
-Minor (Незначительные):
-- Нарушение именования
-- Отсутствие docstring
-- Форматирование
-- Стилистические проблемы
+Minor:
+- Naming violations
+- Missing docstrings
+- Formatting
+- Stylistic issues
 ```
 
-### 3. Рекомендации
+### 3. Recommendations
 
 ```
-Обязательные:
-- Критические и важные проблемы
-- Должны быть исправлены до перехода на следующий этап
+Required:
+- Critical and major issues
+- Must be fixed before proceeding to the next stage
 
-Опциональные:
-- Незначительные проблемы
-- Улучшения качества
-- Не блокируют прогресс
+Optional:
+- Minor issues
+- Quality improvements
+- Don't block progress
 ```
 
 ---
 
-## Путь сохранения
+## Save Path
 
 ```
 ai-docs/docs/_validation/review-report.md
 
-Или с датой:
+Or with date:
 ai-docs/docs/_validation/{YYYY-MM-DD}-review-report.md
 ```
 
 ---
 
-## Качественные ворота: REVIEW_OK
+## Quality Gates: REVIEW_OK
 
-### Критерии прохождения
+### Passing Criteria
 
-- [ ] Статус ревью: PASSED или PASSED_WITH_NOTES
-- [ ] Нет критических проблем (Blocker)
-- [ ] Важные проблемы (Major) задокументированы
-- [ ] Автоматические проверки проходят
-- [ ] RTM обновлена (столбец Review)
+- [ ] Review status: PASSED or PASSED_WITH_NOTES
+- [ ] No critical issues (Blocker)
+- [ ] Major issues are documented
+- [ ] Automated checks pass
+- [ ] RTM updated (Review column)
 
 ---
 
-## Источники
+## Sources
 
-| Документ | Описание |
-|----------|----------|
-| `roles/reviewer/architecture-compliance.md` | Проверка архитектуры |
-| `roles/reviewer/convention-compliance.md` | Проверка конвенций |
-| `docs/reports/review-template.md` | Шаблон отчёта |
+| Document | Description |
+|----------|-------------|
+| `roles/reviewer/architecture-compliance.md` | Architecture check |
+| `roles/reviewer/convention-compliance.md` | Convention check |
+| `docs/reports/review-template.md` | Report template |

@@ -1,20 +1,20 @@
-# Pipeline State v2: Параллельные пайплайны
+# Pipeline State v2: Parallel Pipelines
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Note:** This document may contain outdated command references `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Current commands: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
-> **Версия**: 2.0
-> **Дата**: 2025-12-25
-
----
-
-## Обзор
-
-Pipeline State v2 поддерживает **параллельную разработку нескольких фич** через изоляцию состояния каждой фичи в отдельном пайплайне.
+> **Version**: 2.0
+> **Date**: 2025-12-25
 
 ---
 
-## Структура `.pipeline-state.json` v2
+## Overview
+
+Pipeline State v2 supports **parallel development of multiple features** through isolation of each feature's state in a separate pipeline.
+
+---
+
+## `.pipeline-state.json` v2 Structure
 
 ```json
 {
@@ -32,7 +32,7 @@ Pipeline State v2 поддерживает **параллельную разра
     "F042": {
       "branch": "feature/F042-oauth",
       "name": "oauth-auth",
-      "title": "OAuth авторизация",
+      "title": "OAuth authorization",
       "stage": "IMPLEMENT",
       "created": "2025-12-25",
       "gates": { ... },
@@ -52,108 +52,108 @@ Pipeline State v2 поддерживает **параллельную разра
 
 ---
 
-## Ключевые изменения v1 → v2
+## Key Changes v1 -> v2
 
-| Аспект | v1 | v2 |
+| Aspect | v1 | v2 |
 |--------|----|----|
-| Активные фичи | 1 (`current_feature`) | N (`active_pipelines`) |
-| Ворота | Общие (`gates`) | Изолированные (`active_pipelines[FID].gates`) |
-| Глобальные ворота | Смешаны с локальными | Отдельно (`global_gates`) |
-| Контекст фичи | Неявный | По git ветке |
+| Active features | 1 (`current_feature`) | N (`active_pipelines`) |
+| Gates | Shared (`gates`) | Isolated (`active_pipelines[FID].gates`) |
+| Global gates | Mixed with local | Separate (`global_gates`) |
+| Feature context | Implicit | By git branch |
 
 ---
 
-## Автомиграция
+## Automigration
 
-### При запуске любой slash-команды
+### When running any slash command
 
-AI-агент ОБЯЗАН проверить версию `.pipeline-state.json`:
+The AI agent MUST check the `.pipeline-state.json` version:
 
 ```python
-# Псевдокод проверки
+# Check pseudocode
 state = read_json(".pipeline-state.json")
 
 if state.get("version") != "2.0":
-    # Выполнить миграцию
+    # Perform migration
     run("python .aidd/scripts/migrate_pipeline_state.py")
-    # Или сообщить пользователю
-    print("⚠️ Требуется миграция. Выполните:")
+    # Or notify user
+    print("⚠️ Migration required. Run:")
     print("   python .aidd/scripts/migrate_pipeline_state.py")
 ```
 
-### Команда миграции
+### Migration Command
 
 ```bash
-# Показать план миграции
+# Show migration plan
 python .aidd/scripts/migrate_pipeline_state.py --dry-run
 
-# Выполнить миграцию
+# Perform migration
 python .aidd/scripts/migrate_pipeline_state.py
 ```
 
 ---
 
-## Определение контекста фичи
+## Feature Context Detection
 
-### Алгоритм
+### Algorithm
 
-1. **Проверить текущую git ветку**
+1. **Check current git branch**
    ```bash
    git rev-parse --abbrev-ref HEAD
-   # → feature/F042-oauth
+   # -> feature/F042-oauth
    ```
 
-2. **Найти FID в active_pipelines по branch**
+2. **Find FID in active_pipelines by branch**
    ```python
    for fid, pipeline in state["active_pipelines"].items():
        if pipeline["branch"] == current_branch:
-           return fid  # → "F042"
+           return fid  # -> "F042"
    ```
 
-3. **Если только одна активная фича** — использовать её
+3. **If only one active feature** -- use it
 
-4. **Если несколько фич и ветка не совпадает** — запросить у пользователя
+4. **If multiple features and branch doesn't match** -- ask the user
 
-### Пример для AI-агента
+### Example for AI Agent
 
 ```markdown
-При выполнении команды:
+When executing a command:
 
-1. Прочитать .pipeline-state.json
-2. Проверить версию (должна быть "2.0")
-3. Получить текущую git ветку: `git rev-parse --abbrev-ref HEAD`
-4. Найти FID по ветке в active_pipelines
-5. Использовать active_pipelines[FID].gates для проверки ворот
-6. Обновлять active_pipelines[FID] при прохождении этапов
+1. Read .pipeline-state.json
+2. Check version (must be "2.0")
+3. Get current git branch: `git rev-parse --abbrev-ref HEAD`
+4. Find FID by branch in active_pipelines
+5. Use active_pipelines[FID].gates for gate checks
+6. Update active_pipelines[FID] when passing stages
 ```
 
 ---
 
-## Работа с воротами
+## Working with Gates
 
-### Глобальные ворота
+### Global Gates
 
-Проверяются один раз на проект:
-- `BOOTSTRAP_READY` — окружение настроено
+Checked once per project:
+- `BOOTSTRAP_READY` -- environment is set up
 
-### Локальные ворота (для каждой фичи)
+### Local Gates (per feature)
 
 ```
-PRD_READY → RESEARCH_DONE → PLAN_APPROVED → IMPLEMENT_OK →
-→ REVIEW_OK → QA_PASSED → ALL_GATES_PASSED → DEPLOYED
+PRD_READY -> RESEARCH_DONE -> PLAN_APPROVED -> IMPLEMENT_OK ->
+-> REVIEW_OK -> QA_PASSED -> ALL_GATES_PASSED -> DEPLOYED
 ```
 
-### Проверка ворот
+### Gate Checking
 
 ```python
 def check_gate(fid: str, gate: str) -> bool:
     state = read_json(".pipeline-state.json")
 
-    # Глобальные ворота
+    # Global gates
     if gate == "BOOTSTRAP_READY":
         return state["global_gates"]["BOOTSTRAP_READY"]["passed"]
 
-    # Локальные ворота
+    # Local gates
     pipeline = state["active_pipelines"].get(fid)
     if not pipeline:
         return False
@@ -161,7 +161,7 @@ def check_gate(fid: str, gate: str) -> bool:
     return pipeline["gates"].get(gate, {}).get("passed", False)
 ```
 
-### Обновление ворот
+### Gate Updating
 
 ```python
 def pass_gate(fid: str, gate: str, artifact: str = None) -> None:
@@ -178,7 +178,7 @@ def pass_gate(fid: str, gate: str, artifact: str = None) -> None:
 
 ### Gate Aliases (v2.4+)
 
-Начиная с v2.4 фреймворк поддерживает **алиасы ворот** для унификации naming conventions:
+Starting with v2.4, the framework supports **gate aliases** for unified naming conventions:
 
 ```json
 {
@@ -193,29 +193,29 @@ def pass_gate(fid: str, gate: str, artifact: str = None) -> None:
 }
 ```
 
-**Как это работает:**
-- Старые имена (`PRD_READY`, `IMPLEMENT_OK`) остаются основными в структуре ворот
-- Новые имена (`ANALYSIS_READY`, `CODE_READY`) — алиасы, которые можно использовать в коде
-- AI-агент может проверять ворота по любому имени: `check_gate(fid, "PRD_READY")` или `check_gate(fid, "ANALYSIS_READY")`
+**How it works:**
+- Old names (`PRD_READY`, `IMPLEMENT_OK`) remain primary in the gate structure
+- New names (`ANALYSIS_READY`, `CODE_READY`) are aliases that can be used in code
+- The AI agent can check gates by either name: `check_gate(fid, "PRD_READY")` or `check_gate(fid, "ANALYSIS_READY")`
 
-**Пример расширенной проверки ворот:**
+**Extended gate checking example:**
 
 ```python
 def check_gate_with_alias(fid: str, gate: str) -> bool:
     state = read_json(".pipeline-state.json")
 
-    # Резолвим алиас → основное имя
+    # Resolve alias -> primary name
     gate_aliases = state.get("gate_aliases", {})
     reverse_aliases = {v: k for k, v in gate_aliases.items()}
 
-    # Если gate — это алиас, получить основное имя
+    # If gate is an alias, get primary name
     primary_gate = reverse_aliases.get(gate, gate)
 
-    # Глобальные ворота
+    # Global gates
     if primary_gate == "BOOTSTRAP_READY":
         return state["global_gates"]["BOOTSTRAP_READY"]["passed"]
 
-    # Локальные ворота
+    # Local gates
     pipeline = state["active_pipelines"].get(fid)
     if not pipeline:
         return False
@@ -223,13 +223,13 @@ def check_gate_with_alias(fid: str, gate: str) -> bool:
     return pipeline["gates"].get(primary_gate, {}).get("passed", False)
 ```
 
-**Статус:** Phase 1 (backward compatible) — оба варианта работают одновременно.
+**Status:** Phase 1 (backward compatible) -- both variants work simultaneously.
 
 ---
 
-## Жизненный цикл фичи
+## Feature Lifecycle
 
-### 1. Создание (`/aidd-analyze`)
+### 1. Creation (`/aidd-analyze`)
 
 ```python
 def create_feature(title: str) -> str:
@@ -241,7 +241,7 @@ def create_feature(title: str) -> str:
     slug = slugify(title)[:30]
     branch = f"feature/{fid}-{slug}"
 
-    # Создать git ветку
+    # Create git branch
     run(f"git checkout -b {branch}")
 
     state["active_pipelines"][fid] = {
@@ -258,14 +258,14 @@ def create_feature(title: str) -> str:
     return fid
 ```
 
-### 2. Прогресс по этапам
+### 2. Progress Through Stages
 
-При каждом успешном этапе:
-1. Обновить `active_pipelines[FID].stage`
-2. Отметить ворота как пройденные
-3. Записать путь к артефакту
+At each successful stage:
+1. Update `active_pipelines[FID].stage`
+2. Mark gates as passed
+3. Record artifact path
 
-### 3. Завершение (`/aidd-validate`)
+### 3. Completion (`/aidd-validate`)
 
 ```python
 def complete_feature(fid: str) -> None:
@@ -275,7 +275,7 @@ def complete_feature(fid: str) -> None:
     slug = pipeline["name"]
     today_str = today()
 
-    # Добавить completion report в artifacts
+    # Add completion report to artifacts
     completion_path = f"reports/{today_str}_{fid}_{slug}-completion.md"
     pipeline["artifacts"]["completion"] = completion_path
 
@@ -285,21 +285,21 @@ def complete_feature(fid: str) -> None:
         "status": "DEPLOYED",
         "created": pipeline["created"],
         "deployed": today_str,
-        "artifacts": pipeline["artifacts"],  # Включает completion
+        "artifacts": pipeline["artifacts"],  # Includes completion
         "services": pipeline.get("services", [])
     }
 
     write_json(".pipeline-state.json", state)
 ```
 
-### Структура features_registry
+### features_registry Structure
 
 ```json
 {
   "features_registry": {
     "F001": {
       "name": "table-booking",
-      "title": "Бронирование столиков",
+      "title": "Table booking",
       "status": "DEPLOYED",
       "created": "2024-12-23",
       "deployed": "2024-12-24",
@@ -315,58 +315,59 @@ def complete_feature(fid: str) -> None:
 }
 ```
 
-> **Completion Report**: Итоговый документ, содержащий summary всего что сделано,
-> ADR (архитектурные решения), scope changes и known limitations.
-> AI ОБЯЗАН читать этот документ при работе с deployed фичами.
+> **Completion Report**: The final document containing a summary of everything done,
+> ADR (architecture decisions), scope changes, and known limitations.
+> AI MUST read this document when working with deployed features.
 
 ---
 
-## Чек-лист для AI-агента
+## AI Agent Checklist
 
-При выполнении любой команды:
+When executing any command:
 
-- [ ] Проверить существование `.pipeline-state.json`
-- [ ] Проверить версию (мигрировать если v1)
-- [ ] Определить контекст фичи по git ветке
-- [ ] Проверить предусловия (ворота) для команды
-- [ ] Выполнить команду
-- [ ] Обновить ворота и артефакты в `active_pipelines[FID]`
-- [ ] Обновить `updated_at`
+- [ ] Check `.pipeline-state.json` existence
+- [ ] Check version (migrate if v1)
+- [ ] Determine feature context by git branch
+- [ ] Check preconditions (gates) for the command
+- [ ] Execute the command
+- [ ] Update gates and artifacts in `active_pipelines[FID]`
+- [ ] Update `updated_at`
 
 ---
 
-## Совместимость
+## Compatibility
 
 ### parallel_mode
 
-- `false` (по умолчанию v1) — последовательный режим, одна активная фича
-- `true` (рекомендуется v2) — параллельный режим, несколько активных фич
+- `false` (v1 default) -- sequential mode, one active feature
+- `true` (v2 recommended) -- parallel mode, multiple active features
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  ✅ РАЗРЕШЕНО: Начинать новую фичу без завершения предыдущей     │
+│  ✅ ALLOWED: Starting a new feature without completing           │
+│     the previous one                                             │
 ├─────────────────────────────────────────────────────────────────┤
-│  • parallel_mode: true (по умолчанию в v2)                       │
-│  • Нет ограничений на количество active_pipelines               │
-│  • Каждая фича в своей git ветке feature/{FID}-{slug}           │
-│  • Ворота изолированы в active_pipelines[FID].gates             │
+│  • parallel_mode: true (default in v2)                           │
+│  • No limit on active_pipelines count                            │
+│  • Each feature in its own git branch feature/{FID}-{slug}       │
+│  • Gates are isolated in active_pipelines[FID].gates             │
 │                                                                 │
-│  ⚠️  Ответственность разработчика:                               │
-│  • Отслеживать конфликты между фичами                           │
-│  • Избегать изменений одних файлов в разных фичах               │
-│  • Использовать git_helpers.py conflicts для проверки           │
+│  ⚠️  Developer responsibility:                                   │
+│  • Track conflicts between features                              │
+│  • Avoid changing the same files in different features           │
+│  • Use git_helpers.py conflicts for checking                     │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-При `parallel_mode: false`:
-- Допускается только один активный пайплайн
-- При попытке создать второй — предупреждение
-- Используется для проектов с строгой последовательностью
+With `parallel_mode: false`:
+- Only one active pipeline allowed
+- Warning when attempting to create a second one
+- Used for projects with strict sequencing
 
-### Backward compatibility (v1) поля
+### Backward compatibility (v1) fields
 
-Эти поля сохраняются для совместимости, но НЕ используются:
-- `current_feature` — заменён на `active_pipelines`
-- `current_stage` — заменён на `active_pipelines[FID].stage`
-- `gates` (корневой) — заменён на `global_gates` + `active_pipelines[FID].gates`
-- `artifacts` (корневой) — заменён на `active_pipelines[FID].artifacts`
+These fields are preserved for compatibility but NOT used:
+- `current_feature` -- replaced by `active_pipelines`
+- `current_stage` -- replaced by `active_pipelines[FID].stage`
+- `gates` (root) -- replaced by `global_gates` + `active_pipelines[FID].gates`
+- `artifacts` (root) -- replaced by `active_pipelines[FID].artifacts`

@@ -1,24 +1,24 @@
 ---
 allowed-tools: Read(*), Glob(*), Grep(*), Edit(**/*.md), Write(**/*.md), Bash(git :*), Bash(python3 :*)
-description: Создать план реализации новой фичи в существующем проекте
+description: Create implementation plan for a new feature in an existing project
 ---
 
-> ⚠️ **ENFORCEMENT**: Перед завершением этой команды AI ОБЯЗАН:
-> 1. Найти секцию "Чеклист ворот" в конце этого файла
-> 2. Создать TodoWrite со ВСЕМИ пунктами (особенно 🔴)
-> 3. Выполнить ВСЕ пункты и отметить completed
-> 4. Команда завершена ТОЛЬКО когда все 🔴 пункты ✅
+> ⚠️ **ENFORCEMENT**: Before completing this command, AI MUST:
+> 1. Find the "Gate Checklist" section at the end of this file
+> 2. Create TodoWrite with ALL items (especially 🔴)
+> 3. Complete ALL items and mark them completed
+> 4. Command is complete ONLY when all 🔴 items are ✅
 >
-> Правила: `.aidd/CLAUDE.md` → "Выполнение команд /aidd-*"
+> Rules: `.aidd/CLAUDE.md` → "Executing /aidd-* commands"
 
-# Команда: /aidd-plan-feature
+# Command: /aidd-plan-feature
 
-> Запускает Планировщика для планирования фичи (режим FEATURE).
-> **Pipeline State v2**: Поддержка параллельных пайплайнов.
+> Launches the Planner for feature planning (FEATURE mode).
+> **Pipeline State v2**: Parallel pipeline support.
 
 ---
 
-## Синтаксис
+## Syntax
 
 ```bash
 /aidd-plan-feature
@@ -26,173 +26,173 @@ description: Создать план реализации новой фичи в
 
 ---
 
-## Описание
+## Description
 
-Команда `/aidd-plan-feature` создаёт план реализации новой функции
-в существующем проекте. Учитывает текущую архитектуру и паттерны.
+The `/aidd-plan-feature` command creates an implementation plan for a new feature
+in an existing project. Takes into account the current architecture and patterns.
 
-> **VERIFY BEFORE ACT**: Перед созданием файлов/директорий проверьте их
-> существование (см. CLAUDE.md, раздел "Критические правила").
-
----
-
-## Агент
-
-**Планировщик** (`.claude/agents/planner.md`)
+> **VERIFY BEFORE ACT**: Before creating files/directories, check their
+> existence (see CLAUDE.md, "Critical Rules" section).
 
 ---
 
-## Порядок чтения файлов
+## Agent
 
-> **Принцип**: Сначала контекст ЦП, потом инструкции фреймворка.
-> **Подробнее**: [docs/initialization.md](../../docs/initialization.md)
+**Planner** (`.claude/agents/planner.md`)
 
-### Фаза 1: Контекст целевого проекта
+---
 
-| # | Файл | Условие | Зачем |
-|---|------|---------|-------|
-| 1 | `./CLAUDE.md` | Если существует | Специфика проекта |
-| 2 | `./.pipeline-state.json` | Обязательно | Режим, этап, ворота |
-| 3 | `./ai-docs/docs/_analysis/*.md` | Обязательно | Требования фичи |
-| 4 | `./ai-docs/docs/_plans/mvp/*.md` | Обязательно | Существующая архитектура |
-| 5 | `./services/` | Обязательно | Существующий код |
+## File Reading Order
 
-### Фаза 2: Автомиграция и предусловия
+> **Principle**: First TP context, then framework instructions.
+> **Details**: [docs/initialization.md](../../docs/initialization.md)
 
-> **Важно**: Перед выполнением команды проверить версию `.pipeline-state.json`
-> и выполнить миграцию v1 → v2 если требуется (см. `knowledge/pipeline/automigration.md`).
+### Phase 1: Target Project Context
 
-| Ворота | Проверка (v2) |
-|--------|---------------|
+| # | File | Condition | Purpose |
+|---|------|-----------|---------|
+| 1 | `./CLAUDE.md` | If exists | Project specifics |
+| 2 | `./.pipeline-state.json` | Required | Mode, stage, gates |
+| 3 | `./ai-docs/docs/_analysis/*.md` | Required | Feature requirements |
+| 4 | `./ai-docs/docs/_plans/mvp/*.md` | Required | Existing architecture |
+| 5 | `./services/` | Required | Existing code |
+
+### Phase 2: Auto-migration and Preconditions
+
+> **Important**: Before executing the command, check `.pipeline-state.json` version
+> and perform v1 → v2 migration if required (see `knowledge/pipeline/automigration.md`).
+
+| Gate | Check (v2) |
+|------|------------|
 | `mode` | `.pipeline-state.json → mode == "FEATURE"` |
 | `PRD_READY` | `active_pipelines[FID].gates.PRD_READY.passed == true` |
 | `RESEARCH_DONE` | `active_pipelines[FID].gates.RESEARCH_DONE.passed == true` |
 
-> **Примечание v2**: FID определяется по текущей git ветке.
+> **Note v2**: FID is determined by the current git branch.
 
-### Фаза 3: Инструкции фреймворка
+### Phase 3: Framework Instructions
 
-| # | Файл | Зачем |
-|---|------|-------|
-| 6 | `.aidd/CLAUDE.md` | Правила фреймворка |
-| 7 | `.aidd/workflow.md` | Процесс и ворота |
-| 8 | `.aidd/.claude/commands/feature-plan.md` | Этот файл |
-| 9 | `.aidd/.claude/agents/planner.md` | Инструкции роли |
-
-### Фаза 4: База знаний
-
-| # | Файл | Условие |
+| # | File | Purpose |
 |---|------|---------|
-| 10 | `.aidd/knowledge/architecture/*.md` | По необходимости |
+| 6 | `.aidd/CLAUDE.md` | Framework rules |
+| 7 | `.aidd/workflow.md` | Process and gates |
+| 8 | `.aidd/.claude/commands/feature-plan.md` | This file |
+| 9 | `.aidd/.claude/agents/planner.md` | Role instructions |
+
+### Phase 4: Knowledge Base
+
+| # | File | Condition |
+|---|------|-----------|
+| 10 | `.aidd/knowledge/architecture/*.md` | As needed |
 
 ---
 
-## Режимы
+## Modes
 
-Только **FEATURE** — для существующих проектов.
+Only **FEATURE** — for existing projects.
 
-Для нового проекта используйте `/aidd-plan`.
+For a new project, use `/aidd-plan`.
 
 ---
 
-## Предусловия
+## Preconditions
 
-| Ворота | Требование |
-|--------|------------|
-| `PRD_READY` | FEATURE_PRD документ существует |
-| `RESEARCH_DONE` | Код проанализирован |
+| Gate | Requirement |
+|------|-------------|
+| `PRD_READY` | FEATURE_PRD document exists |
+| `RESEARCH_DONE` | Code analyzed |
 
-### Алгоритм проверки (v2)
+### Verification Algorithm (v2)
 
 ```python
 def check_feature_plan_preconditions() -> tuple[str, dict] | None:
     """
-    Проверить предусловия для /feature-plan.
+    Check preconditions for /feature-plan.
 
-    v2: Определяем FID по git ветке, проверяем active_pipelines[fid].gates
+    v2: Determine FID by git branch, check active_pipelines[fid].gates
     """
-    # 1. Проверить и мигрировать state
-    state = ensure_v2_state()  # см. knowledge/pipeline/automigration.md
+    # 1. Check and migrate state
+    state = ensure_v2_state()  # see knowledge/pipeline/automigration.md
     if not state:
-        print("❌ Пайплайн не инициализирован → /aidd-analyze")
+        print("❌ Pipeline not initialized → /aidd-analyze")
         return None
 
-    # 2. Проверить режим
+    # 2. Check mode
     if state.get("mode") != "FEATURE":
-        print("⚠️  Режим CREATE — используйте /aidd-plan вместо /aidd-plan-feature")
+        print("⚠️  CREATE mode — use /aidd-plan instead of /aidd-plan-feature")
         return None
 
-    # 3. Определить FID по текущей git ветке
+    # 3. Determine FID by current git branch
     fid, pipeline = get_current_feature_context(state)
     if not fid:
-        print("❌ Не удалось определить контекст фичи")
+        print("❌ Could not determine feature context")
         return None
 
     gates = pipeline.get("gates", {})
 
-    # 4. Проверить PRD_READY
+    # 4. Check PRD_READY
     if not gates.get("PRD_READY", {}).get("passed"):
-        print(f"❌ Ворота PRD_READY не пройдены для {fid}")
-        print("   → Сначала выполните /aidd-analyze")
+        print(f"❌ PRD_READY gate not passed for {fid}")
+        print("   → First run /aidd-analyze")
         return None
 
-    # 5. Проверить RESEARCH_DONE
+    # 5. Check RESEARCH_DONE
     if not gates.get("RESEARCH_DONE", {}).get("passed"):
-        print(f"❌ Ворота RESEARCH_DONE не пройдены для {fid}")
-        print("   → Сначала выполните /aidd-research")
+        print(f"❌ RESEARCH_DONE gate not passed for {fid}")
+        print("   → First run /aidd-research")
         return None
 
-    print(f"✓ Фича {fid}: {pipeline.get('title')}")
+    print(f"✓ Feature {fid}: {pipeline.get('title')}")
     return (fid, pipeline)
 ```
 
 ---
 
-## Выходные артефакты (в целевом проекте)
+## Output Artifacts (in target project)
 
-| Артефакт | Путь (v2) | Путь (v3) |
+| Artifact | Path (v2) | Path (v3) |
 |----------|-----------|-----------|
-| План фичи | `ai-docs/docs/_plans/features/{YYYY-MM-DD}_{FID}_{slug}-plan.md` | `ai-docs/docs/_plans/features/{YYYY-MM-DD}_{FID}_{slug}.md` |
+| Feature Plan | `ai-docs/docs/_plans/features/{YYYY-MM-DD}_{FID}_{slug}-plan.md` | `ai-docs/docs/_plans/features/{YYYY-MM-DD}_{FID}_{slug}.md` |
 
-> **Примечание (v2.4+)**:
-> - **v2** (по умолчанию): Старая структура `plans/`, имя с дублированием `{name}-plan.md`
-> - **v3** (после миграции): Новая структура `_plans/features/`, имя без дублирования `{name}.md`
-> - Режим определяется из `.pipeline-state.json → naming_version`
+> **Note (v2.4+)**:
+> - **v2** (default): Old structure `plans/`, name with duplication `{name}-plan.md`
+> - **v3** (after migration): New structure `_plans/features/`, name without duplication `{name}.md`
+> - Mode determined from `.pipeline-state.json → naming_version`
 
-### Именование артефакта
+### Artifact Naming
 
-FID и slug берутся из `active_pipelines[FID]` в `.pipeline-state.json` (v2):
+FID and slug are taken from `active_pipelines[FID]` in `.pipeline-state.json` (v2):
 
 ```python
-# Получить данные из state (v2)
+# Get data from state (v2)
 fid, pipeline = get_current_feature_context(state)
 if not fid:
-    print("❌ Не удалось определить контекст фичи")
+    print("❌ Could not determine feature context")
     return None
 
 slug = pipeline["name"]  # email-notify
 date = datetime.now().strftime("%Y-%m-%d")  # 2024-12-23
 
-# Определить naming_version и структуру артефактов
+# Determine naming_version and artifact structure
 naming_version = state.get("naming_version", "v2")
 
 if naming_version == "v3":
     folder = "_plans/features"
-    filename = f"{date}_{fid}_{slug}.md"  # Без дублирования
+    filename = f"{date}_{fid}_{slug}.md"  # Without duplication
 else:
     folder = "plans"
-    filename = f"{date}_{fid}_{slug}-plan.md"  # С дублированием
+    filename = f"{date}_{fid}_{slug}-plan.md"  # With duplication
 
 artifact_path = f"{folder}/{filename}"
 # v2: plans/2024-12-23_F042_email-notify-plan.md
 # v3: _plans/features/2024-12-23_F042_email-notify.md
 ```
 
-### Обновление .pipeline-state.json
+### Updating .pipeline-state.json
 
-После создания плана обновить `active_pipelines[FID].artifacts` (v2):
+After creating the plan, update `active_pipelines[FID].artifacts` (v2):
 
-**Пример для v2 (по умолчанию)**:
+**Example for v2 (default)**:
 ```json
 {
   "naming_version": "v2",
@@ -200,7 +200,7 @@ artifact_path = f"{folder}/{filename}"
     "F042": {
       "branch": "feature/F042-email-notify",
       "name": "email-notify",
-      "title": "Email уведомления",
+      "title": "Email Notifications",
       "stage": "PLAN",
       "gates": {
         "PRD_READY": {"passed": true, "passed_at": "2024-12-23T10:00:00Z"},
@@ -217,7 +217,7 @@ artifact_path = f"{folder}/{filename}"
 }
 ```
 
-**Пример для v3 (после миграции)**:
+**Example for v3 (after migration)**:
 ```json
 {
   "naming_version": "v3",
@@ -235,130 +235,130 @@ artifact_path = f"{folder}/{filename}"
 
 ---
 
-## Качественные ворота
+## Quality Gates
 
 ### PLAN_APPROVED
 
-| Критерий | Описание |
-|----------|----------|
-| Интеграция | Точки интеграции определены |
-| Изменения | Необходимые изменения описаны |
-| Риски | Потенциальные риски учтены |
-| План тестирования | Раздел тестирования заполнен (smoke/unit/integration/e2e) |
-| **Утверждение** | План утверждён пользователем |
+| Criterion | Description |
+|-----------|-------------|
+| Integration | Integration points defined |
+| Changes | Required changes described |
+| Risks | Potential risks addressed |
+| Test plan | Testing section filled (smoke/unit/integration/e2e) |
+| **Approval** | Plan approved by user |
 
-**ВАЖНО**: Требуется явное подтверждение от пользователя!
+**IMPORTANT**: Explicit user confirmation required!
 
 ---
 
-## Примеры использования
+## Usage Examples
 
 ```bash
-# После /aidd-research (для фичи)
+# After /aidd-research (for a feature)
 /feature-plan
 ```
 
 ---
 
-## Отличия от /aidd-plan
+## Differences from /aidd-plan
 
-| Аспект | /aidd-plan (CREATE) | /aidd-plan-feature (FEATURE) |
+| Aspect | /aidd-plan (CREATE) | /aidd-plan-feature (FEATURE) |
 |--------|----------------|-------------------------|
-| Цель | Полная архитектура системы | План интеграции фичи |
-| Артефакт (v2) | `architecture/{name}-plan.md` | `plans/{feature}-plan.md` |
-| Артефакт (v3) | `_plans/mvp/{name}.md` | `_plans/features/{name}.md` |
-| Фокус | Компоненты с нуля | Точки расширения |
-| Изменения | Создание нового | Минимизация изменений |
+| Goal | Full system architecture | Feature integration plan |
+| Artifact (v2) | `architecture/{name}-plan.md` | `plans/{feature}-plan.md` |
+| Artifact (v3) | `_plans/mvp/{name}.md` | `_plans/features/{name}.md` |
+| Focus | Components from scratch | Extension points |
+| Changes | Creating new | Minimizing changes |
 
 ---
 
-## Шаблон плана фичи
+## Feature Plan Template
 
-План фичи должен содержать:
+The feature plan must contain:
 
 ```markdown
-# План фичи: {Название}
+# Feature Plan: {Name}
 
-## 1. Обзор
-- Краткое описание
-- Связь с существующим функционалом
+## 1. Overview
+- Brief description
+- Relation to existing functionality
 
-## 2. Анализ существующего кода
-- Затронутые сервисы
-- Точки интеграции
-- Существующие зависимости
+## 2. Existing Code Analysis
+- Affected services
+- Integration points
+- Existing dependencies
 
-## 3. План изменений
+## 3. Change Plan
 
-### 3.1 Новые компоненты
-| Компонент | Расположение | Описание |
+### 3.1 New Components
+| Component | Location | Description |
 
-### 3.2 Модификации существующего кода
-| Файл | Изменение | Причина |
+### 3.2 Modifications to Existing Code
+| File | Change | Reason |
 
-### 3.3 Новые зависимости
-| Зависимость | Версия | Назначение |
+### 3.3 New Dependencies
+| Dependency | Version | Purpose |
 
-## 4. API контракты (если есть)
+## 4. API Contracts (if any)
 
-## 5. Влияние на существующие тесты
+## 5. Impact on Existing Tests
 
-## 6. План интеграции
-| # | Шаг | Зависимости |
+## 6. Integration Plan
+| # | Step | Dependencies |
 
-## 7. Риски и митигация
-| Риск | Вероятность | Митигация |
+## 7. Risks and Mitigation
+| Risk | Probability | Mitigation |
 ```
 
 ---
 
-## Интеграционные соображения
+## Integration Considerations
 
-При создании плана фичи учитывать:
+When creating a feature plan, consider:
 
-### 1. Минимизация изменений
+### 1. Minimizing Changes
 ```
-✓ Добавить новый модуль
-✗ Переписывать существующий модуль
+✓ Add new module
+✗ Rewrite existing module
 
-✓ Расширить интерфейс
-✗ Менять сигнатуры существующих методов
+✓ Extend interface
+✗ Change signatures of existing methods
 
-✓ Добавить новый эндпоинт
-✗ Менять URL существующих эндпоинтов
+✓ Add new endpoint
+✗ Change URLs of existing endpoints
 ```
 
-### 2. Обратная совместимость
-- Существующие API должны работать без изменений
-- Новые поля должны быть опциональными
-- Миграции БД должны быть обратимыми
+### 2. Backward Compatibility
+- Existing APIs must work without changes
+- New fields must be optional
+- DB migrations must be reversible
 
-### 3. Тестирование
-- Существующие тесты не должны ломаться
-- Новые тесты изолированы от старых
-- Интеграционные тесты покрывают точки соединения
+### 3. Testing
+- Existing tests must not break
+- New tests are isolated from old ones
+- Integration tests cover connection points
 
 ---
 
-## Чеклист ворот PLAN_APPROVED
+## PLAN_APPROVED Gate Checklist
 
-> ⚠️ AI ОБЯЗАН создать TodoWrite с этими пунктами.
+> ⚠️ AI MUST create TodoWrite with these items.
 
-- [ ] 🔴 Feature Plan создан в правильной папке:
+- [ ] 🔴 Feature Plan created in correct folder:
   - v2: `ai-docs/docs/_plans/features/{feature}-plan.md`
   - v3: `ai-docs/docs/_plans/features/{feature}.md`
-- [ ] 🔴 Интеграция с существующим кодом описана
-- [ ] 🔴 План тестирования заполнен (smoke/unit/integration/e2e)
-- [ ] 🔴 **Пользователь утвердил план** ← КРИТИЧЕСКИ ВАЖНО
-- [ ] 🔴 `.pipeline-state.json` обновлён (gate: PLAN_APPROVED, artifact path соответствует naming_version)
-- [ ] 🟡 Breaking changes определены
-- [ ] 🟡 Миграции БД описаны (если применимо)
+- [ ] 🔴 Integration with existing code described
+- [ ] 🔴 Test plan filled (smoke/unit/integration/e2e)
+- [ ] 🔴 **User approved the plan** ← CRITICALLY IMPORTANT
+- [ ] 🔴 `.pipeline-state.json` updated (gate: PLAN_APPROVED, artifact path matches naming_version)
+- [ ] 🟡 Breaking changes identified
+- [ ] 🟡 DB migrations described (if applicable)
 
 ---
 
-## Следующий шаг
+## Next Step
 
-После прохождения ворот `PLAN_APPROVED`:
+After passing the `PLAN_APPROVED` gate:
 
 ```bash
 /aidd-code

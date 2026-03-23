@@ -1,85 +1,85 @@
-# Реестр фич проекта
+# Project Feature Registry
 
-> Автоматически обновляется при создании/завершении фич.
-> Последнее обновление: {YYYY-MM-DD}
+> Automatically updated when features are created/completed.
+> Last update: {YYYY-MM-DD}
 
 ---
 
-## Статистика
+## Statistics
 
-| Метрика | Значение |
-|---------|----------|
-| Всего фич | 0 |
+| Metric | Value |
+|--------|-------|
+| Total features | 0 |
 | Deployed | 0 |
 | In Progress | 0 |
 | Archived | 0 |
 
 ---
 
-## Активные фичи
+## Active Features
 
-| FID | Название | Статус | Дата | Сервисы | Артефакты |
-|-----|----------|--------|------|---------|-----------|
+| FID | Name | Status | Date | Services | Artifacts |
+|-----|------|--------|------|----------|-----------|
 | — | — | — | — | — | — |
 
 ---
 
-## Завершённые фичи
+## Completed Features
 
-| FID | Название | Deployed | Сервисы | Артефакты |
-|-----|----------|----------|---------|-----------|
+| FID | Name | Deployed | Services | Artifacts |
+|-----|------|----------|----------|-----------|
 | — | — | — | — | — |
 
 ---
 
-## Архивные фичи
+## Archived Features
 
-| FID | Название | Причина архивации | Дата |
-|-----|----------|-------------------|------|
+| FID | Name | Archive Reason | Date |
+|-----|------|----------------|------|
 | — | — | — | — |
 
 ---
 
-## Легенда статусов
+## Status Legend
 
-| Статус | Описание | Этап пайплайна |
-|--------|----------|----------------|
-| `IN_PROGRESS` | Фича в разработке | 1-4 |
-| `PLAN_APPROVED` | План утверждён | 3 |
-| `IMPLEMENTED` | Код написан | 4 |
-| `REVIEW_OK` | Код проверен | 5 |
-| `QA_PASSED` | Тесты пройдены | 6 |
-| `VALIDATED` | Все ворота пройдены | 7 |
-| `DEPLOYED` | В продакшене | 8 |
-| `ARCHIVED` | Отменена/устарела | — |
+| Status | Description | Pipeline Stage |
+|--------|-------------|----------------|
+| `IN_PROGRESS` | Feature in development | 1-4 |
+| `PLAN_APPROVED` | Plan approved | 3 |
+| `IMPLEMENTED` | Code written | 4 |
+| `REVIEW_OK` | Code reviewed | 5 |
+| `QA_PASSED` | Tests passed | 6 |
+| `VALIDATED` | All gates passed | 7 |
+| `DEPLOYED` | In production | 8 |
+| `ARCHIVED` | Cancelled/obsolete | — |
 
 ---
 
-## Как искать артефакты
+## How to Find Artifacts
 
-### По FID
+### By FID
 ```bash
-# Найти все артефакты фичи F002
+# Find all artifacts for feature F002
 find ai-docs/docs -name "*F002*"
 grep -r "feature_id: F002" ai-docs/docs/
 ```
 
-### По дате
+### By Date
 ```bash
-# Артефакты за декабрь 2024
+# Artifacts from December 2024
 ls ai-docs/docs/*/2024-12-*
 ```
 
-### По типу
+### By Type
 ```bash
-# Все PRD
+# All PRDs
 ls ai-docs/docs/_analysis/
 
-# Все планы
+# All plans
 ls ai-docs/docs/_plans/mvp/ ai-docs/docs/_plans/features/
 ```
 
 ---
 
-**Формат именования**: `{YYYY-MM-DD}_{FID}_{slug}-{type}.md`
-**Спецификация**: См. `.aidd/docs/artifact-naming.md`
+**Naming format**: `{YYYY-MM-DD}_{FID}_{slug}-{type}.md`
+**Specification**: See `.aidd/docs/artifact-naming.md`

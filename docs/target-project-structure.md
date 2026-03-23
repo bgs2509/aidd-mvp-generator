@@ -1,26 +1,26 @@
-# Структура целевого проекта
+# Target Project Structure
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Note:** This document may contain outdated commands `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Current commands: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
-> **Назначение**: Описание структуры проекта, который СОЗДАЁТСЯ генератором.
-> **ВАЖНО**: НЕ путать со структурой самого генератора (aidd-mvp-generator)!
+> **Purpose**: Description of the project structure CREATED by the generator.
+> **IMPORTANT**: Do NOT confuse with the generator itself (aidd-mvp-generator) structure!
 
 ---
 
-## Концептуальное разделение
+## Conceptual Separation
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                         ДВА РАЗНЫХ ПРОЕКТА                              │
+│                         TWO DIFFERENT PROJECTS                          │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
 │  aidd-mvp-generator/          {project-name}/                           │
 │  ─────────────────────        ─────────────────────                     │
-│  ФРЕЙМВОРК                    ПРИЛОЖЕНИЕ                                │
-│  (инструкции, шаблоны)        (создаётся генератором)                   │
+│  FRAMEWORK                    APPLICATION                               │
+│  (instructions, templates)    (created by generator)                    │
 │                                                                         │
-│  Содержит:                    Содержит:                                 │
+│  Contains:                    Contains:                                 │
 │  • CLAUDE.md                  • services/                               │
 │  • workflow.md                • ai-docs/docs/                           │
 │  • .claude/agents/            • docker-compose.yml                      │
@@ -32,34 +32,34 @@
 
 ---
 
-## Структура целевого проекта
+## Target Project Structure
 
 ```
 {project-name}/
 │
-├── .pipeline-state.json       ← Состояние пайплайна AIDD
-├── CHANGELOG.md               ← Журнал изменений проекта
+├── .pipeline-state.json       ← AIDD pipeline state
+├── CHANGELOG.md               ← Project changelog
 │
-├── ai-docs/                   ← Артефакты AI-агентов
+├── ai-docs/                   ← AI agent artifacts
 │   └── docs/
-│       ├── FEATURES.md        ← Реестр всех фич (индекс)
+│       ├── FEATURES.md        ← Feature registry (index)
 │       │
-│       ├── prd/               ← PRD документы
+│       ├── prd/               ← PRD documents
 │       │   └── {YYYY-MM-DD}_{FID}_{slug}-prd.md
 │       │
-│       ├── architecture/      ← Архитектурные планы (CREATE)
+│       ├── architecture/      ← Architecture plans (CREATE)
 │       │   └── {YYYY-MM-DD}_{FID}_{slug}-plan.md
 │       │
-│       ├── plans/             ← Планы фич (FEATURE)
+│       ├── plans/             ← Feature plans (FEATURE)
 │       │   └── {YYYY-MM-DD}_{FID}_{slug}-plan.md
 │       │
-│       ├── research/          ← Отчёты исследований
+│       ├── research/          ← Research reports
 │       │   └── {YYYY-MM-DD}_{FID}_{slug}-research.md
 │       │
 │       └── reports/           ← Completion Reports
 │           └── {YYYY-MM-DD}_{FID}_{slug}-completion.md
 │
-├── services/                  ← Код сервисов (DDD/Hexagonal)
+├── services/                  ← Service code (DDD/Hexagonal)
 │   ├── {name}_api/            ← Business API
 │   │   ├── api/
 │   │   ├── application/
@@ -78,50 +78,50 @@
 │   │   ├── Dockerfile
 │   │   └── pyproject.toml
 │   │
-│   ├── {name}_bot/            ← Telegram Bot (опционально)
+│   ├── {name}_bot/            ← Telegram Bot (optional)
 │   │   └── ...
 │   │
-│   └── {name}_worker/         ← Background Worker (опционально)
+│   └── {name}_worker/         ← Background Worker (optional)
 │       └── ...
 │
-├── docs/                      ← Публичная документация API
+├── docs/                      ← Public API documentation
 │   └── api/
 │       └── openapi.yaml
 │
-├── nginx/                     ← Конфигурация API Gateway
+├── nginx/                     ← API Gateway configuration
 │   ├── nginx.conf
 │   └── conf.d/
 │       └── api.conf
 │
-├── .claude/                   ← Локальные настройки Claude Code
-│   └── settings.local.json    ← Персональные permissions (НЕ в git!)
+├── .claude/                   ← Local Claude Code settings
+│   └── settings.local.json    ← Personal permissions (NOT in git!)
 │
-├── docker-compose.yml         ← Оркестрация контейнеров
-├── docker-compose.dev.yml     ← Для разработки
-├── Makefile                   ← Команды управления
-├── .env.example               ← Шаблон переменных окружения
+├── docker-compose.yml         ← Container orchestration
+├── docker-compose.dev.yml     ← For development
+├── Makefile                   ← Management commands
+├── .env.example               ← Environment variables template
 ├── .gitignore
-└── README.md                  ← Документация проекта
+└── README.md                  ← Project documentation
 ```
 
 ---
 
-## Таблица артефактов
+## Artifact Table
 
-> **Формат имени**: `{YYYY-MM-DD}_{FID}_{slug}-{type}.md`
-> Подробнее: [artifact-naming.md](artifact-naming.md)
+> **Name format**: `{YYYY-MM-DD}_{FID}_{slug}-{type}.md`
+> Details: [artifact-naming.md](artifact-naming.md)
 
-| Этап | Артефакт | Путь в целевом проекте |
-|------|----------|------------------------|
-| — | Реестр фич | `ai-docs/docs/FEATURES.md` |
-| 1. Идея | PRD | `ai-docs/docs/_analysis/{date}_{FID}_{slug}-prd.md` |
-| 2. Исследование | Отчёт исследования | `ai-docs/docs/research/{date}_{FID}_{slug}-research.md` |
-| 3. Архитектура (CREATE) | План | `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}-plan.md` |
-| 3. Архитектура (FEATURE) | План фичи | `ai-docs/docs/_plans/features/{date}_{FID}_{slug}-plan.md` |
-| 4. Реализация | Код | `services/*/` |
+| Stage | Artifact | Path in Target Project |
+|-------|----------|------------------------|
+| — | Feature registry | `ai-docs/docs/FEATURES.md` |
+| 1. Idea | PRD | `ai-docs/docs/_analysis/{date}_{FID}_{slug}-prd.md` |
+| 2. Research | Research report | `ai-docs/docs/research/{date}_{FID}_{slug}-research.md` |
+| 3. Architecture (CREATE) | Plan | `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}-plan.md` |
+| 3. Architecture (FEATURE) | Feature plan | `ai-docs/docs/_plans/features/{date}_{FID}_{slug}-plan.md` |
+| 4. Implementation | Code | `services/*/` |
 | 5. Quality & Deploy | Completion Report | `ai-docs/docs/_validation/{date}_{FID}_{slug}-completion.md` |
 
-### Примеры имён файлов
+### File Name Examples
 
 ```
 2024-12-23_F001_table-booking-prd.md
@@ -132,9 +132,9 @@
 
 ---
 
-## Состояние пайплайна
+## Pipeline State
 
-Файл `.pipeline-state.json` в корне целевого проекта:
+The `.pipeline-state.json` file in the Target Project root:
 
 ```json
 {
@@ -154,7 +154,7 @@
     "F002": {
       "branch": "feature/F002-email-notify",
       "name": "email-notify",
-      "title": "Email-уведомления о бронированиях",
+      "title": "Booking email notifications",
       "stage": "IMPLEMENT",
       "created": "2025-12-21",
       "gates": {
@@ -174,7 +174,7 @@
   "features_registry": {
     "F001": {
       "name": "table-booking",
-      "title": "Бронирование столиков",
+      "title": "Table booking",
       "status": "DEPLOYED",
       "created": "2025-12-20",
       "deployed": "2025-12-21",
@@ -190,75 +190,75 @@
 }
 ```
 
-### Структура `active_pipelines[FID]`
+### `active_pipelines[FID]` Structure
 
-| Поле | Тип | Описание |
-|------|-----|----------|
-| `branch` | string | Git-ветка фичи (feature/F001-name) |
-| `name` | string | slug для имён файлов (kebab-case) |
-| `title` | string | Человекочитаемое название |
-| `stage` | string | Текущий этап (IDEA, RESEARCH, PLAN, IMPLEMENT, ...) |
-| `created` | string | Дата создания (YYYY-MM-DD) |
-| `gates` | object | Ворота фичи (изолированы от других пайплайнов) |
-| `artifacts` | object | Карта артефактов (тип → путь) |
+| Field | Type | Description |
+|-------|------|-------------|
+| `branch` | string | Feature git branch (feature/F001-name) |
+| `name` | string | Slug for file names (kebab-case) |
+| `title` | string | Human-readable title |
+| `stage` | string | Current stage (IDEA, RESEARCH, PLAN, IMPLEMENT, ...) |
+| `created` | string | Creation date (YYYY-MM-DD) |
+| `gates` | object | Feature gates (isolated from other pipelines) |
+| `artifacts` | object | Artifact map (type → path) |
 
-### Жизненный цикл фичи (v2)
+### Feature Lifecycle (v2)
 
 ```
-1. /aidd-analyze создаёт active_pipelines[FID] с новым Feature ID
-2. Каждый этап обновляет gates и artifacts в active_pipelines[FID]
-3. /aidd-validate переносит фичу в features_registry (при DEPLOYED)
-4. Запись удаляется из active_pipelines
-5. Готово для следующей фичи (или параллельной разработки)
+1. /aidd-analyze creates active_pipelines[FID] with a new Feature ID
+2. Each stage updates gates and artifacts in active_pipelines[FID]
+3. /aidd-validate moves the feature to features_registry (upon DEPLOYED)
+4. Record is removed from active_pipelines
+5. Ready for the next feature (or parallel development)
 ```
 
 ---
 
-## Журнал изменений (CHANGELOG.md)
+## Changelog (CHANGELOG.md)
 
-Файл `CHANGELOG.md` в корне целевого проекта:
+The `CHANGELOG.md` file in the Target Project root:
 
-### Назначение
+### Purpose
 
-**Единая точка входа** для понимания истории проекта. Содержит:
-- Завершённые фичи (автоматически из Completion Reports)
-- Критические изменения между фичами (вручную от AI)
-- Хронология в обратном порядке (новые сверху)
+**Single entry point** for understanding project history. Contains:
+- Completed features (automatically from Completion Reports)
+- Critical changes between features (manually by AI)
+- Reverse chronological order (newest on top)
 
-### Структура
+### Structure
 
 ```markdown
 # Changelog
 
-> Автогенерируется AIDD-MVP Generator при `/aidd-validate` (DEPLOYED)
-> Ручные записи добавляются AI при критических изменениях
+> Auto-generated by AIDD-MVP Generator upon `/aidd-validate` (DEPLOYED)
+> Manual entries added by AI for critical changes
 
 ---
 
 ## [Unreleased]
 
-### Active Features (в разработке)
-- **F002** — Email-уведомления (stage: IMPLEMENT)
+### Active Features (in development)
+- **F002** — Email notifications (stage: IMPLEMENT)
 
 ### Recent Changes
 
-#### 2025-12-22 - Hotfix: SQL injection в User API
+#### 2025-12-22 - Hotfix: SQL injection in User API
 **Security**
-- `user_api/repository.py`: параметризованы SQL запросы
+- `user_api/repository.py`: parameterized SQL queries
 
 **Impact**: CRITICAL
 **Rollback**: `git revert abc123`
 
 ---
 
-## [F001] - 2025-12-21 — Бронирование столиков
+## [F001] - 2025-12-21 — Table Booking
 
 > **Status**: DEPLOYED
 > **Services**: `booking_api`, `booking_data`
 > **Completion Report**: [ai-docs/docs/reports/2025-12-21_F001_table-booking-completion.md]
 
 ### Added
-- Базовая функциональность бронирования
+- Basic booking functionality
 - Endpoints: POST /api/v1/bookings, GET /api/v1/bookings
 
 ### Architecture Decisions
@@ -266,52 +266,52 @@
 
 ---
 
-**Версия**: 1.0
-**Последнее обновление**: 2025-12-22
+**Version**: 1.0
+**Last update**: 2025-12-22
 ```
 
-### Автоматическое обновление
+### Automatic Updates
 
-| Событие | Действие |
-|---------|----------|
-| `/aidd-init` | Создаётся из шаблона (если нет истории) или генерируется из `features_registry` |
-| `/aidd-validate` → DEPLOYED | Автоматически добавляется секция фичи из Completion Report |
-| Критические изменения | AI вручную добавляет записи в `[Unreleased]` (см. CLAUDE.md ЦП) |
+| Event | Action |
+|-------|--------|
+| `/aidd-init` | Created from template (if no history) or generated from `features_registry` |
+| `/aidd-validate` → DEPLOYED | Feature section automatically added from Completion Report |
+| Critical changes | AI manually adds entries to `[Unreleased]` (see TP CLAUDE.md) |
 
-### Зачем AI читает CHANGELOG.md
+### Why AI Reads CHANGELOG.md
 
-**КРИТИЧНО**: AI ОБЯЗАН читать `CHANGELOG.md` ПЕРЕД началом работы (см. CLAUDE.md ЦП).
+**CRITICAL**: AI MUST read `CHANGELOG.md` BEFORE starting work (see TP CLAUDE.md).
 
-Это позволяет:
-- Понять контекст проекта за 30 секунд
-- Не дублировать функциональность
-- Учесть известные ограничения (Known Limitations)
-- Понять зависимости между фичами
-- Следовать архитектурным решениям (ADR)
+This allows:
+- Understanding project context in 30 seconds
+- Not duplicating functionality
+- Accounting for known limitations (Known Limitations)
+- Understanding dependencies between features
+- Following architectural decisions (ADR)
 
 ---
 
-## Настройки Claude Code (.claude/)
+## Claude Code Settings (.claude/)
 
-> **ВАЖНО**: Директория `.claude/` содержит локальные настройки Claude Code для целевого проекта.
+> **IMPORTANT**: The `.claude/` directory contains local Claude Code settings for the Target Project.
 
-### Два типа файлов настроек
+### Two Types of Settings Files
 
-| Файл | Расположение | В git? | Назначение |
-|------|--------------|--------|------------|
-| `settings.json` | `.aidd/.claude/settings.json` | Да (в submodule) | Общие permissions и hooks фреймворка |
-| `settings.local.json` | `./.claude/settings.local.json` | **Нет** | Персональные локальные permissions |
+| File | Location | In git? | Purpose |
+|------|----------|---------|---------|
+| `settings.json` | `.aidd/.claude/settings.json` | Yes (in submodule) | Shared framework permissions and hooks |
+| `settings.local.json` | `./.claude/settings.local.json` | **No** | Personal local permissions |
 
 ### settings.local.json
 
-Файл для персональных настроек разработчика, которые **НЕ должны коммититься в git**.
+File for personal developer settings that **MUST NOT be committed to git**.
 
-**Назначение**:
-- Дополнительные permissions для bash-команд (npm, cargo, poetry)
-- Доверенные домены для WebFetch (docs.python.org, etc.)
-- Локальные override настроек
+**Purpose**:
+- Additional bash command permissions (npm, cargo, poetry)
+- Trusted domains for WebFetch (docs.python.org, etc.)
+- Local setting overrides
 
-**Шаблон**:
+**Template**:
 ```json
 {
   "permissions": {
@@ -325,49 +325,49 @@
 }
 ```
 
-**Создание**:
+**Creation**:
 ```bash
-# Скопировать шаблон из фреймворка
+# Copy template from framework
 mkdir -p .claude
 cp .aidd/templates/project/.claude/settings.local.json.example .claude/settings.local.json
 ```
 
-> **Примечание**: Файл добавлен в `.gitignore` шаблона проекта.
+> **Note**: File is added to the project template's `.gitignore`.
 
 ---
 
-## Важные соглашения
+## Important Conventions
 
-### Формат имён артефактов
+### Artifact Name Format
 
 ```
 {YYYY-MM-DD}_{FID}_{slug}-{type}.md
 
-Где:
-- YYYY-MM-DD — дата создания
+Where:
+- YYYY-MM-DD — creation date
 - FID — Feature ID (F001, F002, ...)
-- slug — kebab-case название (≤30 символов)
-- type — тип артефакта
+- slug — kebab-case name (≤30 characters)
+- type — artifact type
 ```
 
-### Суффиксы типов
+### Type Suffixes
 
-| Тип | Суффикс | Пример |
-|-----|---------|--------|
+| Type | Suffix | Example |
+|------|--------|---------|
 | PRD | `-prd.md` | `2024-12-23_F001_table-booking-prd.md` |
-| План архитектуры | `-plan.md` | `2024-12-23_F001_table-booking-plan.md` |
-| План фичи | `-plan.md` | `2024-12-23_F042_email-notify-plan.md` |
-| Исследование | `-research.md` | `2024-12-23_F001_table-booking-research.md` |
+| Architecture plan | `-plan.md` | `2024-12-23_F001_table-booking-plan.md` |
+| Feature plan | `-plan.md` | `2024-12-23_F042_email-notify-plan.md` |
+| Research | `-research.md` | `2024-12-23_F001_table-booking-research.md` |
 | Completion Report | `-completion.md` | `2024-12-23_F001_table-booking-completion.md` |
 
-> Подробная спецификация: [artifact-naming.md](artifact-naming.md)
+> Detailed specification: [artifact-naming.md](artifact-naming.md)
 
-### Именование сервисов
+### Service Naming
 
 ```
-{контекст}_{домен}_{тип}
+{context}_{domain}_{type}
 
-Примеры:
+Examples:
 - booking_restaurant_api      ← Business API
 - booking_restaurant_data     ← Data API
 - booking_restaurant_bot      ← Telegram Bot
@@ -376,9 +376,9 @@ cp .aidd/templates/project/.claude/settings.local.json.example .claude/settings.
 
 ---
 
-## Bootstrap: Инициализация структуры
+## Bootstrap: Structure Initialization
 
-При первом запуске `/aidd-analyze` в пустой директории создаётся:
+On first `/aidd-analyze` run in an empty directory:
 
 ```bash
 mkdir -p ai-docs/docs/{prd,architecture,plans,reports,research}
@@ -387,14 +387,14 @@ echo '{"version":"2.0","project_name":"","mode":"CREATE","global_gates":{},"acti
 
 ---
 
-## См. также
+## See Also
 
-- [CLAUDE.md](../CLAUDE.md) — Структура генератора
-- [workflow.md](../workflow.md) — Процесс разработки
-- [conventions.md](../conventions.md) — Соглашения о коде
+- [CLAUDE.md](../CLAUDE.md) — Generator structure
+- [workflow.md](../workflow.md) — Development process
+- [conventions.md](../conventions.md) — Code conventions
 
 ---
 
-**Версия**: 2.0
-**Создан**: 2025-12-21
-**Обновлён**: 2025-12-23
+**Version**: 2.0
+**Created**: 2025-12-21
+**Updated**: 2025-12-23

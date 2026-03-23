@@ -1,19 +1,19 @@
-# {context}_data — MongoDB Data API сервис
+# {context}_data — MongoDB Data API Service
 
-> **Тип**: Data API (FastAPI + Motor)
-> **Назначение**: HTTP API для работы с MongoDB базой данных
-
----
-
-## Описание
-
-Data API сервис для работы с MongoDB.
-Предоставляет CRUD операции через HTTP API.
-Используется Business API сервисами по HTTP-only принципу.
+> **Type**: Data API (FastAPI + Motor)
+> **Purpose**: HTTP API for working with MongoDB database
 
 ---
 
-## Структура
+## Description
+
+Data API service for working with MongoDB.
+Provides CRUD operations via HTTP API.
+Used by Business API services following the HTTP-only principle.
+
+---
+
+## Structure
 
 ```
 {context}_data/
@@ -21,28 +21,28 @@ Data API сервис для работы с MongoDB.
 ├── requirements.txt
 ├── src/
 │   ├── __init__.py
-│   ├── main.py                 # Точка входа
+│   ├── main.py                 # Entry point
 │   ├── api/
 │   │   ├── __init__.py
 │   │   ├── v1/
 │   │   │   ├── __init__.py
 │   │   │   ├── router.py
-│   │   │   └── {domain}/       # CRUD роутер домена
+│   │   │   └── {domain}/       # Domain CRUD router
 │   │   └── dependencies.py
 │   ├── domain/
 │   │   ├── __init__.py
-│   │   └── models/             # Pydantic модели
+│   │   └── models/             # Pydantic models
 │   │       ├── __init__.py
-│   │       ├── base.py         # Базовая модель
-│   │       └── {domain}.py     # Модель домена
+│   │       ├── base.py         # Base model
+│   │       └── {domain}.py     # Domain model
 │   ├── repositories/
 │   │   ├── __init__.py
-│   │   ├── base.py             # Базовый репозиторий
+│   │   ├── base.py             # Base repository
 │   │   └── {domain}_repository.py
 │   └── core/
 │       ├── __init__.py
 │       ├── config.py
-│       ├── database.py         # Подключение к MongoDB
+│       ├── database.py         # MongoDB connection
 │       └── logging.py
 └── tests/
     ├── __init__.py
@@ -51,43 +51,43 @@ Data API сервис для работы с MongoDB.
 
 ---
 
-## Переменные для замены
+## Replacement Variables
 
-| Переменная | Описание | Пример |
-|------------|----------|--------|
-| `{context}` | Контекст проекта | `booking`, `analytics` |
-| `{domain}` | Домен сущности | `event`, `log`, `metric` |
-| `{Domain}` | Домен (PascalCase) | `Event`, `Log`, `Metric` |
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{context}` | Project context | `booking`, `analytics` |
+| `{domain}` | Entity domain | `event`, `log`, `metric` |
+| `{Domain}` | Domain (PascalCase) | `Event`, `Log`, `Metric` |
 
 ---
 
-## Быстрый старт
+## Quick Start
 
 ```bash
-# Установка зависимостей
+# Install dependencies
 pip install -r requirements.txt
 
-# Запуск в dev режиме
+# Run in dev mode
 uvicorn src.main:app --reload --port 8001
 
-# Запуск тестов
+# Run tests
 pytest tests/ -v
 ```
 
 ---
 
-## Конфигурация
+## Configuration
 
-Переменные окружения (`.env`):
+Environment variables (`.env`):
 
 ```bash
 # MongoDB
-# SECURITY: Замените YOUR_USER и YOUR_PASSWORD на реальные credentials!
-# Для локальной разработки без auth: mongodb://localhost:27017
+# SECURITY: Replace YOUR_USER and YOUR_PASSWORD with real credentials!
+# For local development without auth: mongodb://localhost:27017
 MONGODB_URL=mongodb://YOUR_USER:YOUR_PASSWORD@localhost:27017
 MONGODB_DATABASE={context}_db
 
-# Приложение
+# Application
 APP_ENV=development
 DEBUG=true
 LOG_LEVEL=INFO
@@ -95,7 +95,7 @@ LOG_LEVEL=INFO
 
 ---
 
-## Зависимости
+## Dependencies
 
 - FastAPI 0.100+
 - motor (async MongoDB driver)
@@ -104,10 +104,10 @@ LOG_LEVEL=INFO
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Заменить `{context}` на название проекта
-- [ ] Создать модели в `domain/models/`
-- [ ] Создать репозитории в `repositories/`
-- [ ] Настроить индексы в `core/database.py`
-- [ ] Добавить тесты
+- [ ] Replace `{context}` with the project name
+- [ ] Create models in `domain/models/`
+- [ ] Create repositories in `repositories/`
+- [ ] Configure indexes in `core/database.py`
+- [ ] Add tests

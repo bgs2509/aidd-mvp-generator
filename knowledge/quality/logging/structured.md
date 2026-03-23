@@ -1,10 +1,10 @@
-# Структурированное логирование
+# Structured Logging
 
-> **Назначение**: Настройка structlog для JSON логов.
+> **Purpose**: Setting up structlog for JSON logs.
 
 ---
 
-## Установка
+## Installation
 
 ```bash
 pip install structlog
@@ -12,10 +12,10 @@ pip install structlog
 
 ---
 
-## Базовая настройка
+## Basic Setup
 
 ```python
-"""Настройка structlog."""
+"""structlog setup."""
 
 import logging
 import structlog
@@ -27,13 +27,13 @@ def setup_logging(
     json_logs: bool = True,
 ) -> None:
     """
-    Настроить структурированное логирование.
+    Set up structured logging.
 
     Args:
-        log_level: Уровень логирования.
-        json_logs: Использовать JSON формат.
+        log_level: Log level.
+        json_logs: Use JSON format.
     """
-    # Общие процессоры
+    # Shared processors
     shared_processors: list[Processor] = [
         structlog.contextvars.merge_contextvars,
         structlog.processors.add_log_level,
@@ -64,35 +64,35 @@ def setup_logging(
     )
 
 
-# Получение логгера
+# Getting a logger
 logger = structlog.get_logger()
 ```
 
 ---
 
-## Использование
+## Usage
 
 ```python
-"""Примеры использования structlog."""
+"""structlog usage examples."""
 
 import structlog
 
 logger = structlog.get_logger()
 
 
-# Простое сообщение
+# Simple message
 logger.info("User created")
 
-# С контекстом
+# With context
 logger.info("User created", user_id="123", email="test@example.com")
 
-# Различные уровни
+# Different levels
 logger.debug("Debug message", data={"key": "value"})
 logger.info("Info message")
 logger.warning("Warning message", reason="something")
 logger.error("Error message", error_code=500)
 
-# Исключения
+# Exceptions
 try:
     raise ValueError("Something went wrong")
 except Exception:
@@ -101,10 +101,10 @@ except Exception:
 
 ---
 
-## Контекстные переменные
+## Context Variables
 
 ```python
-"""Контекстные переменные для логирования."""
+"""Context variables for logging."""
 
 import structlog
 from structlog.contextvars import bind_contextvars, clear_contextvars
@@ -113,37 +113,37 @@ logger = structlog.get_logger()
 
 
 async def process_request(request_id: str, user_id: str):
-    """Обработка запроса с контекстом."""
-    # Привязка контекста
+    """Request processing with context."""
+    # Bind context
     bind_contextvars(
         request_id=request_id,
         user_id=user_id,
     )
 
     try:
-        # Все логи будут содержать request_id и user_id
+        # All logs will contain request_id and user_id
         logger.info("Processing started")
 
         await do_something()
 
         logger.info("Processing completed")
     finally:
-        # Очистка контекста
+        # Clear context
         clear_contextvars()
 
 
 async def do_something():
-    """Вложенная функция."""
-    # Контекст сохраняется
-    logger.info("Doing something")  # Будет содержать request_id и user_id
+    """Nested function."""
+    # Context is preserved
+    logger.info("Doing something")  # Will contain request_id and user_id
 ```
 
 ---
 
-## Middleware FastAPI
+## FastAPI Middleware
 
 ```python
-"""Middleware для логирования запросов."""
+"""Request logging middleware."""
 
 import time
 import uuid
@@ -155,16 +155,16 @@ logger = structlog.get_logger()
 
 
 def setup_logging_middleware(app: FastAPI) -> None:
-    """Настроить middleware логирования."""
+    """Set up logging middleware."""
 
     @app.middleware("http")
     async def logging_middleware(request: Request, call_next):
-        """Middleware для логирования HTTP запросов."""
-        # Генерация request_id
+        """HTTP request logging middleware."""
+        # Generate request_id
         request_id = request.headers.get("X-Request-ID", str(uuid.uuid4()))
         request.state.request_id = request_id
 
-        # Привязка контекста
+        # Bind context
         bind_contextvars(
             request_id=request_id,
             method=request.method,
@@ -198,22 +198,22 @@ def setup_logging_middleware(app: FastAPI) -> None:
 
 ---
 
-## Интеграция с uvicorn
+## Integration with uvicorn
 
 ```python
-"""Интеграция с uvicorn."""
+"""Integration with uvicorn."""
 
 import logging
 import structlog
 
 
 def setup_uvicorn_logging():
-    """Настроить логирование uvicorn."""
-    # Отключение стандартных логов uvicorn
+    """Set up uvicorn logging."""
+    # Disable standard uvicorn logs
     logging.getLogger("uvicorn.access").handlers = []
     logging.getLogger("uvicorn.error").handlers = []
 
-    # Перенаправление в structlog
+    # Redirect to structlog
     structlog.configure(
         processors=[
             structlog.stdlib.filter_by_level,
@@ -230,10 +230,10 @@ def setup_uvicorn_logging():
 
 ---
 
-## Формат логов
+## Log Format
 
 ```json
-// Production JSON формат
+// Production JSON format
 {
   "timestamp": "2024-01-15T12:00:00.000000Z",
   "level": "info",
@@ -243,7 +243,7 @@ def setup_uvicorn_logging():
   "email": "test@example.com"
 }
 
-// При ошибке
+// On error
 {
   "timestamp": "2024-01-15T12:00:00.000000Z",
   "level": "error",
@@ -255,19 +255,19 @@ def setup_uvicorn_logging():
 
 ---
 
-## Конфигурация
+## Configuration
 
 ```python
-"""Конфигурация логирования."""
+"""Logging configuration."""
 
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    """Настройки приложения."""
+    """Application settings."""
 
     log_level: str = "INFO"
-    json_logs: bool = True  # False для dev
+    json_logs: bool = True  # False for dev
 
     class Config:
         env_file = ".env"
@@ -275,7 +275,7 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-# В main.py
+# In main.py
 setup_logging(
     log_level=settings.log_level,
     json_logs=settings.json_logs,
@@ -284,11 +284,11 @@ setup_logging(
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] structlog установлен
-- [ ] JSON формат для production
-- [ ] Console для development
-- [ ] Контекстные переменные используются
-- [ ] request_id добавляется
-- [ ] Middleware настроен
+- [ ] structlog installed
+- [ ] JSON format for production
+- [ ] Console for development
+- [ ] Context variables used
+- [ ] request_id added
+- [ ] Middleware configured

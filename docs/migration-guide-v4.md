@@ -1,41 +1,41 @@
 # Migration Guide: v3.x → v4.0
 
-> **Дата**: 2026-01-29
-> **Версия**: v4.0 (Immediate Deprecation)
+> **Date**: 2026-01-29
+> **Version**: v4.0 (Immediate Deprecation)
 
 ---
 
 ## Executive Summary
 
-В v4.0 фреймворк AIDD-MVP Generator полностью перешёл на унифицированную систему именования на базе 5 ключевых слов:
+In v4.0, the AIDD-MVP Generator framework has fully transitioned to a unified naming system based on 5 key words:
 
 **analyst, researcher, planner, coder, validator**
 
-Все legacy команды и агенты удалены.
+All legacy commands and agents have been removed.
 
 ---
 
-## Что изменилось
+## What Changed
 
-### Удалённые команды
+### Removed Commands
 
-| Legacy (УДАЛЕНО) | New (ОБЯЗАТЕЛЬНО) | Описание |
-|------------------|-------------------|----------|
-| `/aidd-idea` | `/aidd-analyze` | Анализ идеи → PRD |
-| `/aidd-feature-plan` | `/aidd-plan-feature` | Планирование фичи |
-| `/aidd-generate` | `/aidd-code` | Генерация кода |
+| Legacy (REMOVED) | New (REQUIRED) | Description |
+|-------------------|----------------|-------------|
+| `/aidd-idea` | `/aidd-analyze` | Idea analysis → PRD |
+| `/aidd-feature-plan` | `/aidd-plan-feature` | Feature planning |
+| `/aidd-generate` | `/aidd-code` | Code generation |
 | `/aidd-finalize` | `/aidd-validate` | Quality & Deploy |
 
-### Удалённые агенты
+### Removed Agents
 
-| Legacy (УДАЛЕНО) | New (ОБЯЗАТЕЛЬНО) |
-|------------------|-------------------|
+| Legacy (REMOVED) | New (REQUIRED) |
+|-------------------|----------------|
 | `planner.md` | `planner.md` |
 | `coder.md` | `coder.md` |
 
-### Изменения в артефактах
+### Artifact Changes
 
-**v3 теперь default**:
+**v3 is now default**:
 
 | v2 (deprecated) | v3 (default) |
 |-----------------|--------------|
@@ -47,67 +47,67 @@
 
 ---
 
-## Для существующих проектов
+## For Existing Projects
 
-### Вариант 1: Продолжить с v2 (deprecated)
+### Option 1: Continue with v2 (deprecated)
 
-Если вы хотите сохранить текущую структуру артефактов (prd/, architecture/, etc.):
+If you want to keep the current artifact structure (prd/, architecture/, etc.):
 
 ```bash
-# ТРЕБУЕТСЯ: Обновить команды на новые
-# Старые команды больше НЕ работают!
+# REQUIRED: Update to new commands
+# Old commands NO LONGER work!
 
-/aidd-idea        → /aidd-analyze       ❌ Command not found
-/aidd-generate    → /aidd-code          ❌ Command not found
-/aidd-finalize    → /aidd-validate      ❌ Command not found
-/aidd-feature-plan → /aidd-plan-feature ❌ Command not found
+/aidd-idea        → /aidd-analyze       Command not found
+/aidd-generate    → /aidd-code          Command not found
+/aidd-finalize    → /aidd-validate      Command not found
+/aidd-feature-plan → /aidd-plan-feature Command not found
 ```
 
-**Что нужно сделать**:
-1. Обновить все скрипты и документацию на новые команды
-2. Убедиться что `.pipeline-state.json` содержит `"naming_version": "v2"`
-3. Продолжить работу с новыми командами
+**What to do**:
+1. Update all scripts and documentation to new commands
+2. Ensure `.pipeline-state.json` contains `"naming_version": "v2"`
+3. Continue working with new commands
 
-**Ограничения**:
-- v2 структура **deprecated** (не рекомендуется для новых проектов)
-- Legacy команды **удалены** (невозможно вызвать)
-- Поддержка v2 будет убрана в будущих версиях
+**Limitations**:
+- v2 structure is **deprecated** (not recommended for new projects)
+- Legacy commands are **removed** (cannot be called)
+- v2 support will be removed in future versions
 
-### Вариант 2: Мигрировать на v3 (рекомендуется)
+### Option 2: Migrate to v3 (recommended)
 
-Для перехода на новую структуру артефактов (_analysis/, _plans/, etc.):
+To transition to the new artifact structure (_analysis/, _plans/, etc.):
 
 ```bash
-# Перейти в корень проекта
+# Navigate to project root
 cd your-project/
 
-# Запустить migration script
+# Run migration script
 python3 .aidd/scripts/migrate-naming-v3.py
 ```
 
-**Что делает скрипт**:
-1. Переименовывает папки артефактов:
+**What the script does**:
+1. Renames artifact folders:
    - `prd/` → `_analysis/`
    - `architecture/` → `_plans/mvp/`
    - `plans/` → `_plans/features/`
    - `reports/` → `_validation/`
    - `research/` → `_research/`
 
-2. Удаляет дублирование в именах файлов:
+2. Removes duplication in file names:
    - `{name}-prd.md` → `{name}.md`
    - `{name}-plan.md` → `{name}.md`
    - `{name}-completion.md` → `{name}.md`
 
-3. Обновляет `.pipeline-state.json`:
+3. Updates `.pipeline-state.json`:
    - `"naming_version": "v2"` → `"v3"`
-   - Обновляет пути артефактов в `active_pipelines` и `features_registry`
+   - Updates artifact paths in `active_pipelines` and `features_registry`
 
-4. (Опционально) Обновляет ссылки в markdown документах
+4. (Optional) Updates links in markdown documents
 
-**Пример**:
+**Example**:
 
 ```bash
-# До миграции
+# Before migration
 ai-docs/docs/
 ├── prd/
 │   └── 2026-01-15_F001_booking-prd.md
@@ -116,7 +116,7 @@ ai-docs/docs/
 └── reports/
     └── 2026-01-20_F001_booking-completion.md
 
-# После миграции
+# After migration
 ai-docs/docs/
 ├── _analysis/
 │   └── 2026-01-15_F001_booking.md
@@ -129,12 +129,12 @@ ai-docs/docs/
 
 ---
 
-## Для CI/CD скриптов
+## For CI/CD Scripts
 
-Если у вас есть скрипты автоматизации, обновите команды:
+If you have automation scripts, update the commands:
 
 ```bash
-# ❌ Старый скрипт (НЕ работает)
+# Old script (DOES NOT work)
 #!/bin/bash
 /aidd-idea "New feature"
 /aidd-research
@@ -142,7 +142,7 @@ ai-docs/docs/
 /aidd-generate
 /aidd-finalize
 
-# ✅ Новый скрипт (работает)
+# New script (works)
 #!/bin/bash
 /aidd-analyze "New feature"
 /aidd-research
@@ -153,24 +153,24 @@ ai-docs/docs/
 
 ---
 
-## Для новых проектов
+## For New Projects
 
-Новые проекты автоматически создаются с v3:
+New projects are automatically created with v3:
 
 ```bash
-# Создать новый проект
+# Create new project
 mkdir my-new-mvp && cd my-new-mvp
 git init
 git submodule add <framework-repo> .aidd
 
-# Запустить Claude Code
+# Launch Claude Code
 claude
 
-# Инициализировать проект
+# Initialize project
 /aidd-init
-# → naming_version = "v3" (по умолчанию)
+# → naming_version = "v3" (default)
 
-# Начать разработку (только новые команды!)
+# Start development (new commands only!)
 /aidd-analyze "Your MVP idea"
 /aidd-research
 /aidd-plan
@@ -180,108 +180,108 @@ claude
 
 ---
 
-## Breaking Changes в деталях
+## Breaking Changes in Detail
 
-### 1. Legacy команды удалены
+### 1. Legacy Commands Removed
 
-**Попытка вызова**:
+**Attempt to call**:
 ```bash
 /aidd-idea "test"
 # → Error: Command not found
 ```
 
-**Решение**: Используйте `/aidd-analyze`
+**Solution**: Use `/aidd-analyze`
 
-### 2. Legacy агенты удалены
+### 2. Legacy Agents Removed
 
-**Файлы удалены**:
+**Files removed**:
 - `.claude/agents/planner.md`
 - `.claude/agents/coder.md`
 
-**Заменены на**:
+**Replaced by**:
 - `.claude/agents/planner.md`
 - `.claude/agents/coder.md`
 
-### 3. Default naming_version изменён
+### 3. Default naming_version Changed
 
-**Было** (v3.x):
+**Was** (v3.x):
 ```json
 {
   "naming_version": "v2"  // default
 }
 ```
 
-**Стало** (v4.0):
+**Now** (v4.0):
 ```json
 {
   "naming_version": "v3"  // default
 }
 ```
 
-**Что это означает**:
-- Новые проекты создаются с v3
-- Существующие проекты с v2 продолжают работать (deprecated)
+**What this means**:
+- New projects are created with v3
+- Existing projects with v2 continue to work (deprecated)
 
 ---
 
 ## FAQ
 
-### Q: Мои старые команды не работают. Что делать?
+### Q: My old commands don't work. What to do?
 
-**A**: Обновите на новые команды (см. таблицу в начале документа). Legacy команды удалены в v4.0.
+**A**: Update to new commands (see the table at the beginning of the document). Legacy commands were removed in v4.0.
 
-### Q: Могу ли я продолжать использовать v2 структуру?
+### Q: Can I continue using the v2 structure?
 
-**A**: Да, но:
-1. Вам нужно использовать **только новые команды** (`/aidd-analyze`, `/aidd-code`, etc.)
-2. v2 структура **deprecated** и будет удалена в будущих версиях
-3. Рекомендуется мигрировать на v3
+**A**: Yes, but:
+1. You need to use **only new commands** (`/aidd-analyze`, `/aidd-code`, etc.)
+2. v2 structure is **deprecated** and will be removed in future versions
+3. Migrating to v3 is recommended
 
-### Q: Как мигрировать на v3?
+### Q: How to migrate to v3?
 
-**A**: Запустите `python3 .aidd/scripts/migrate-naming-v3.py` в корне проекта.
+**A**: Run `python3 .aidd/scripts/migrate-naming-v3.py` in the project root.
 
-### Q: Что если миграция сломает мой проект?
+### Q: What if migration breaks my project?
 
-**A**: Migration script создаёт backup. Если что-то пошло не так:
+**A**: The migration script creates a backup. If something went wrong:
 ```bash
-# Откатиться на предыдущий коммит
+# Roll back to previous commit
 git log --oneline | head -5
 git reset --hard <commit-before-migration>
 ```
 
-### Q: Нужно ли обновлять документацию в моём проекте?
+### Q: Do I need to update documentation in my project?
 
-**A**: Да, если вы используете legacy команды в README или других документах:
-- Замените `/aidd-idea` → `/aidd-analyze`
-- Замените `/aidd-generate` → `/aidd-code`
-- Замените `/aidd-finalize` → `/aidd-validate`
-- Замените `/aidd-feature-plan` → `/aidd-plan-feature`
+**A**: Yes, if you use legacy commands in README or other documents:
+- Replace `/aidd-idea` → `/aidd-analyze`
+- Replace `/aidd-generate` → `/aidd-code`
+- Replace `/aidd-finalize` → `/aidd-validate`
+- Replace `/aidd-feature-plan` → `/aidd-plan-feature`
 
-### Q: Что делать с CI/CD пайплайнами?
+### Q: What to do with CI/CD pipelines?
 
-**A**: Обновите скрипты на новые команды (см. раздел "Для CI/CD скриптов").
+**A**: Update scripts to new commands (see "For CI/CD Scripts" section).
 
 ---
 
-## Поддержка
+## Support
 
-Если у вас возникли проблемы с миграцией:
+If you encounter migration issues:
 
-1. **Проверьте CHANGELOG.md** — там описаны все изменения v4.0
-2. **Прочитайте этот гайд** — большинство проблем решаются здесь
-3. **Создайте issue** (если публичный репозиторий)
-4. **Откатитесь на v3.x** — если v4.0 критически сломал ваш проект
+1. **Check CHANGELOG.md** — all v4.0 changes are described there
+2. **Read this guide** — most issues are resolved here
+3. **Create an issue** (if public repository)
+4. **Roll back to v3.x** — if v4.0 critically broke your project
 
 ---
 
 ## Timeline
 
-- **2026-01-19**: Phase 2 завершена — Migration Mode активен
-- **2026-01-29**: v4.0 выпущен — Immediate Deprecation (legacy удалено)
+- **2026-01-19**: Phase 2 completed — Migration Mode active
+- **2026-01-29**: v4.0 released — Immediate Deprecation (legacy removed)
 
 ---
 
-**Версия документа**: 1.0
-**Обновлён**: 2026-01-29
-**Применяется к**: v4.0+
+**Document version**: 1.0
+**Updated**: 2026-01-29
+**Applies to**: v4.0+

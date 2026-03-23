@@ -1,83 +1,83 @@
-# Log-Driven Design для AI-агентного кодинга
+# Log-Driven Design for AI-Agent Coding
 
-> **Назначение**: Руководство по структурированному логированию для AI-агентов.
-
----
-
-## Философия
-
-Log-Driven Design — подход к логированию, при котором логи являются
-**первичным источником информации** для понимания поведения системы.
-
-AI-агент должен иметь возможность:
-1. Понять ЧТО произошло (событие)
-2. Понять ПОЧЕМУ это произошло (решение, причина)
-3. Восстановить последовательность событий (трассировка)
-4. Диагностировать проблемы (контекст ошибок)
+> **Purpose**: Guide to structured logging for AI agents.
 
 ---
 
-## 11 принципов (без Kafka)
+## Philosophy
 
-| # | Принцип | Файлы реализации |
+Log-Driven Design is an approach to logging where logs are
+the **primary source of information** for understanding system behavior.
+
+An AI agent should be able to:
+1. Understand WHAT happened (event)
+2. Understand WHY it happened (decision, reason)
+3. Reconstruct the sequence of events (tracing)
+4. Diagnose problems (error context)
+
+---
+
+## 11 Principles (without Kafka)
+
+| # | Principle | Implementation Files |
 |---|---------|-----------------|
-| 1 | Уровни логирования | `shared/utils/logger.py` |
-| 2 | Сквозная идентификация | `shared/utils/request_id.py` |
-| 3 | JSON-формат | `shared/utils/logger.py` |
-| 4 | Логирование решений | `shared/utils/log_helpers.py` |
+| 1 | Log levels | `shared/utils/logger.py` |
+| 2 | Cross-cutting identification | `shared/utils/request_id.py` |
+| 3 | JSON format | `shared/utils/logger.py` |
+| 4 | Decision logging | `shared/utils/log_helpers.py` |
 | 5 | State Machine | `shared/utils/state_machine.py` |
-| 6 | Входящие API | `middlewares/request_logging.py` |
-| 7 | Исходящие HTTP | `infrastructure/http/base_client.py` |
+| 6 | Incoming API | `middlewares/request_logging.py` |
+| 7 | Outgoing HTTP | `infrastructure/http/base_client.py` |
 | 8 | Telegram | `bot/middlewares/logging.py` |
 | 9 | Database | `repositories/base.py` |
-| 10 | Контекст при старте | `main.py` |
+| 10 | Startup context | `main.py` |
 | 11 | ContextVars | `shared/utils/request_id.py` |
 
 ---
 
-## Принцип 1: Уровни логирования
+## Principle 1: Log Levels
 
 ```
-DEBUG — Детальная отладочная информация
-  • Промежуточные значения вычислений
+DEBUG — Detailed debugging information
+  • Intermediate calculation values
   • Cache hit/miss
-  • Детали SQL запросов
+  • SQL query details
 
-INFO — Нормальное выполнение операций
-  • Начало/конец запроса
-  • Бизнес-операции (order_created, user_registered)
-  • Успешные переходы состояний
+INFO — Normal operation execution
+  • Request start/end
+  • Business operations (order_created, user_registered)
+  • Successful state transitions
 
-WARNING — Потенциальные проблемы
-  • Fallback на значения по умолчанию
-  • Retry операций
-  • Приближение к лимитам
-  • Медленные запросы
+WARNING — Potential problems
+  • Fallback to default values
+  • Operation retries
+  • Approaching limits
+  • Slow requests
 
-ERROR — Ошибки, требующие внимания
-  • Неуспешные операции
-  • Недоступность внешних сервисов
-  • Невалидные данные от внешних источников
+ERROR — Errors requiring attention
+  • Failed operations
+  • Unavailable external services
+  • Invalid data from external sources
 
-CRITICAL — Система неработоспособна
-  • Невозможно подключиться к БД
-  • Критические конфигурационные ошибки
+CRITICAL — System is inoperable
+  • Cannot connect to DB
+  • Critical configuration errors
 ```
 
 ---
 
-## Принцип 2: Сквозная идентификация
+## Principle 2: Cross-Cutting Identification
 
-### Четыре типа ID
+### Four ID Types
 
 ```
-request_id     — уникальный ID текущей операции в сервисе
-correlation_id — ID изначального запроса от клиента (не меняется)
-causation_id   — ID события, которое вызвало текущее действие
-user_id        — ID аутентифицированного пользователя (если есть)
+request_id     — unique ID of current operation in the service
+correlation_id — ID of the original client request (does not change)
+causation_id   — ID of the event that caused the current action
+user_id        — ID of the authenticated user (if any)
 ```
 
-### Использование
+### Usage
 
 ```python
 from shared.utils.request_id import (
@@ -88,19 +88,19 @@ from shared.utils.request_id import (
     get_user_id,
 )
 
-# В middleware при получении запроса:
+# In middleware when receiving a request:
 tracing = extract_tracing_from_headers(dict(request.headers))
 setup_tracing_context(**tracing)
 
-# После аутентификации пользователя:
-set_user_id(str(current_user.id))  # Добавляет user_id во все логи
+# After user authentication:
+set_user_id(str(current_user.id))  # Adds user_id to all logs
 
-# При исходящем вызове:
-headers = create_tracing_headers()  # Включает request_id, correlation_id, causation_id
+# On outgoing call:
+headers = create_tracing_headers()  # Includes request_id, correlation_id, causation_id
 response = await client.get("/api/v1/users", headers=headers)
 ```
 
-### HTTP заголовки
+### HTTP Headers
 
 ```
 X-Request-ID     — request_id
@@ -110,14 +110,14 @@ X-Causation-ID   — causation_id
 
 ---
 
-## Принцип 4: Логирование решений
+## Principle 4: Decision Logging
 
-AI-агент должен понимать ПОЧЕМУ код пошёл по определённому пути.
+An AI agent should understand WHY code took a particular path.
 
 ```python
 from shared.utils.log_helpers import log_decision
 
-# При принятии решения:
+# When making a decision:
 if order.fraud_score > settings.fraud_threshold:
     log_decision(
         logger,
@@ -145,26 +145,26 @@ log_decision(
 )
 ```
 
-### Типы решений
+### Decision Types
 
 ```
-ACCEPT   — Операция принята
-REJECT   — Операция отклонена
-RETRY    — Повторная попытка
-SKIP     — Пропуск операции
-FALLBACK — Использование запасного варианта
+ACCEPT   — Operation accepted
+REJECT   — Operation rejected
+RETRY    — Retry attempt
+SKIP     — Operation skipped
+FALLBACK — Using fallback option
 ```
 
 ---
 
-## Принцип 5: State Machine
+## Principle 5: State Machine
 
-Логирование переходов состояний сущностей.
+Logging entity state transitions.
 
 ```python
 from shared.utils.state_machine import LoggedStateMachine
 
-# Создание машины состояний для заказа
+# Create state machine for an order
 order_sm = LoggedStateMachine(
     entity_type="Order",
     entity_id=str(order.id),
@@ -180,11 +180,11 @@ order_sm = LoggedStateMachine(
     terminal_states={"DELIVERED", "CANCELLED"},
 )
 
-# Переход с автоматическим логированием
+# Transition with automatic logging
 order_sm.transition("CONFIRMED", reason="payment_received")
 ```
 
-### Лог перехода
+### Transition Log
 
 ```json
 {
@@ -201,9 +201,9 @@ order_sm.transition("CONFIRMED", reason="payment_received")
 
 ---
 
-## Принцип 6: Входящие API запросы
+## Principle 6: Incoming API Requests
 
-Middleware автоматически логирует все HTTP запросы.
+Middleware automatically logs all HTTP requests.
 
 ```python
 from src.middlewares import RequestLoggingMiddleware
@@ -214,72 +214,72 @@ app.add_middleware(
 )
 ```
 
-### Логируемые поля
+### Logged Fields
 
 ```
 request_started:
   • method, path
-  • query_params, path_params (извлекаются из роутинга)
+  • query_params, path_params (extracted from routing)
   • request_body_size
   • client_ip, user_agent
-  • api_version (из пути /api/v1/...)
+  • api_version (from path /api/v1/...)
 
 request_completed:
   • status_code
   • duration_ms
   • response_body_size
-  • auth_context (user_id, roles, permissions — если аутентифицирован)
-  • rate_limit_remaining, rate_limit_limit (из заголовков ответа)
-  • error_code, error_message (для 4xx/5xx ответов)
+  • auth_context (user_id, roles, permissions -- if authenticated)
+  • rate_limit_remaining, rate_limit_limit (from response headers)
+  • error_code, error_message (for 4xx/5xx responses)
 ```
 
-### Контекст аутентификации
+### Authentication Context
 
-Для логирования auth_context установите в auth dependency:
+To log auth_context, set it in the auth dependency:
 
 ```python
-# В auth dependency:
+# In auth dependency:
 request.state.auth_context = {
     "user_id": str(current_user.id),
     "roles": current_user.roles,
     "permissions": current_user.permissions,
 }
 
-# Middleware автоматически:
-# 1. Читает auth_context из request.state
-# 2. Устанавливает user_id в ContextVars
-# 3. Добавляет auth_context в лог request_completed
+# Middleware automatically:
+# 1. Reads auth_context from request.state
+# 2. Sets user_id in ContextVars
+# 3. Adds auth_context to request_completed log
 ```
 
-### Стандартные error_code
+### Standard error_code
 
 ```
-VALIDATION_ERROR      — 400 Bad Request (невалидные данные)
-AUTHENTICATION_ERROR  — 401 Unauthorized (не аутентифицирован)
-AUTHORIZATION_ERROR   — 403 Forbidden (нет прав)
-NOT_FOUND            — 404 Not Found (ресурс не найден)
-CONFLICT             — 409 Conflict (конфликт данных)
-RATE_LIMITED         — 429 Too Many Requests (превышен лимит)
+VALIDATION_ERROR      — 400 Bad Request (invalid data)
+AUTHENTICATION_ERROR  — 401 Unauthorized (not authenticated)
+AUTHORIZATION_ERROR   — 403 Forbidden (no permissions)
+NOT_FOUND            — 404 Not Found (resource not found)
+CONFLICT             — 409 Conflict (data conflict)
+RATE_LIMITED         — 429 Too Many Requests (rate limit exceeded)
 INTERNAL_ERROR       — 500 Internal Server Error
 SERVICE_UNAVAILABLE  — 503 Service Unavailable
-EXTERNAL_SERVICE_ERROR — ошибка внешнего сервиса
-DATABASE_ERROR       — ошибка БД
-TIMEOUT_ERROR        — таймаут
+EXTERNAL_SERVICE_ERROR — external service error
+DATABASE_ERROR       — DB error
+TIMEOUT_ERROR        — timeout
 ```
 
-Для кастомных error_code установите в exception handler:
+For custom error_code, set it in the exception handler:
 
 ```python
-# В exception handler:
+# In exception handler:
 request.state.error_code = "ORDER_ALREADY_CANCELLED"
 request.state.error_message = "Cannot process cancelled order"
 ```
 
 ---
 
-## Принцип 7: Исходящие HTTP вызовы
+## Principle 7: Outgoing HTTP Calls
 
-BaseHttpClient автоматически логирует все исходящие запросы.
+BaseHttpClient automatically logs all outgoing requests.
 
 ```python
 from shared.utils.log_helpers import (
@@ -317,14 +317,14 @@ except httpx.TimeoutException:
 
 ---
 
-## Принцип 9: Database операции
+## Principle 9: Database Operations
 
-BaseRepository автоматически логирует все операции с БД.
+BaseRepository automatically logs all DB operations.
 
 ```python
 from shared.utils.log_helpers import log_db_operation, log_slow_query
 
-# Автоматически в BaseRepository:
+# Automatically in BaseRepository:
 log_db_operation(
     logger,
     operation="get_by_id",
@@ -335,7 +335,7 @@ log_db_operation(
     entity_id="abc-123",
 )
 
-# При превышении порога:
+# When threshold exceeded:
 log_slow_query(
     logger,
     operation="get_all",
@@ -347,9 +347,9 @@ log_slow_query(
 
 ---
 
-## Принцип 10: Контекст при старте
+## Principle 10: Startup Context
 
-При запуске сервиса логируется полный контекст.
+Full context is logged at service startup.
 
 ```python
 from shared.utils.log_helpers import log_service_started
@@ -374,64 +374,64 @@ log_service_started(
 
 ---
 
-## Чек-лист Log-Driven Design
+## Log-Driven Design Checklist
 
-### Общее
+### General
 
-- [ ] Все логи в JSON формате (production)
-- [ ] Используются стандартные уровни логирования
-- [ ] Нет логирования секретных данных (пароли, токены)
-- [ ] Нет логирования PII без необходимости
+- [ ] All logs in JSON format (production)
+- [ ] Standard log levels used
+- [ ] No logging of secret data (passwords, tokens)
+- [ ] No logging of PII without necessity
 
-### Трассировка
+### Tracing
 
-- [ ] request_id генерируется на входе
-- [ ] correlation_id передаётся между сервисами
-- [ ] causation_id устанавливается для вызовов
-- [ ] user_id устанавливается после аутентификации
-- [ ] Все логи содержат request_id
+- [ ] request_id generated on entry
+- [ ] correlation_id passed between services
+- [ ] causation_id set for calls
+- [ ] user_id set after authentication
+- [ ] All logs contain request_id
 
 ### API
 
-- [ ] Входящие запросы логируются (request_started)
-- [ ] path_params извлекаются и логируются
-- [ ] Ответы логируются с duration_ms (request_completed)
-- [ ] auth_context логируется для аутентифицированных запросов
-- [ ] rate_limit_remaining и rate_limit_limit из заголовков
-- [ ] error_code и error_message для 4xx/5xx ответов
-- [ ] Ошибки логируются с контекстом
+- [ ] Incoming requests logged (request_started)
+- [ ] path_params extracted and logged
+- [ ] Responses logged with duration_ms (request_completed)
+- [ ] auth_context logged for authenticated requests
+- [ ] rate_limit_remaining and rate_limit_limit from headers
+- [ ] error_code and error_message for 4xx/5xx responses
+- [ ] Errors logged with context
 
-### Исходящие вызовы
+### Outgoing Calls
 
-- [ ] Все HTTP вызовы логируются
-- [ ] duration_ms замеряется
-- [ ] error_type и is_retryable для ошибок
+- [ ] All HTTP calls logged
+- [ ] duration_ms measured
+- [ ] error_type and is_retryable for errors
 
-### Бизнес-логика
+### Business Logic
 
-- [ ] Решения логируются с причиной
-- [ ] Переходы состояний логируются
-- [ ] evaluated_conditions для решений
+- [ ] Decisions logged with reason
+- [ ] State transitions logged
+- [ ] evaluated_conditions for decisions
 
 ### Database
 
-- [ ] CRUD операции логируются
-- [ ] duration_ms для всех запросов
-- [ ] Медленные запросы — WARNING
+- [ ] CRUD operations logged
+- [ ] duration_ms for all queries
+- [ ] Slow queries -- WARNING
 
-### Telegram (если применимо)
+### Telegram (if applicable)
 
 - [ ] update_type, chat_id, user_id
-- [ ] Команды и callback_data
-- [ ] FSM состояния
-- [ ] Ошибки Telegram API
+- [ ] Commands and callback_data
+- [ ] FSM states
+- [ ] Telegram API errors
 
 ---
 
-## Пример полной трассировки
+## Full Trace Example
 
 ```json
-// Business API — начало запроса (request_id: abc-123, correlation_id: abc-123)
+// Business API -- request start (request_id: abc-123, correlation_id: abc-123)
 {"event": "request_started", "request_id": "abc-123", "method": "POST", "path": "/api/v1/orders", "path_params": {}}
 {"event": "decision_made", "request_id": "abc-123", "user_id": "user-42", "decision": "ACCEPT", "reason": "all_checks_passed"}
 {"event": "external_call_started", "request_id": "abc-123", "service": "data-api", "operation": "create_order"}
@@ -441,27 +441,27 @@ log_service_started(
 {"event": "db_operation", "request_id": "def-456", "operation": "create", "table": "orders", "duration_ms": 15.3}
 {"event": "request_completed", "request_id": "def-456", "status_code": 201, "duration_ms": 20.1}
 
-// Business API — завершение запроса
+// Business API -- request completion
 {"event": "external_call_completed", "request_id": "abc-123", "service": "data-api", "status_code": 201, "duration_ms": 25.5}
 {"event": "state_changed", "request_id": "abc-123", "entity_type": "Order", "from_state": "PENDING", "to_state": "CONFIRMED"}
 {"event": "request_completed", "request_id": "abc-123", "user_id": "user-42", "status_code": 201, "duration_ms": 35.2, "auth_context": {"user_id": "user-42", "roles": ["customer"]}}
 
-// Пример ошибки с error_code
+// Error example with error_code
 {"event": "request_completed", "request_id": "xyz-789", "status_code": 404, "duration_ms": 5.1, "error_code": "NOT_FOUND", "error_message": "Order not found"}
 {"event": "request_completed", "request_id": "xyz-790", "status_code": 429, "duration_ms": 2.3, "error_code": "RATE_LIMITED", "rate_limit_remaining": 0, "rate_limit_limit": 100}
 ```
 
-AI-агент может по correlation_id восстановить всю цепочку вызовов и по user_id отследить все действия пользователя.
+An AI agent can use correlation_id to reconstruct the entire call chain and use user_id to track all user actions.
 
 ---
 
-## Источники
+## Sources
 
-| Файл | Описание |
+| File | Description |
 |------|----------|
-| `shared/utils/logger.py` | Настройка structlog |
-| `shared/utils/request_id.py` | Трассировка |
-| `shared/utils/log_helpers.py` | Хелперы логирования |
+| `shared/utils/logger.py` | structlog setup |
+| `shared/utils/request_id.py` | Tracing |
+| `shared/utils/log_helpers.py` | Logging helpers |
 | `shared/utils/state_machine.py` | State Machine |
-| `knowledge/quality/logging/structured.md` | Структурированные логи |
-| `knowledge/quality/logging/correlation.md` | Корреляция логов |
+| `knowledge/quality/logging/structured.md` | Structured logs |
+| `knowledge/quality/logging/correlation.md` | Log correlation |

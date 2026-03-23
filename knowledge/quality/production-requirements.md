@@ -1,30 +1,30 @@
-# Production Requirements для MVP
+# Production Requirements for MVP
 
-> **Назначение**: Чек-лист требований для production-ready MVP.
-> Объединяет все критерии готовности к деплою в один документ.
+> **Purpose**: Checklist of requirements for a production-ready MVP.
+> Combines all deployment readiness criteria into a single document.
 
 ---
 
-## Обзор
+## Overview
 
-Production-ready MVP должен соответствовать **Level 2** качества:
-- Стабильная работа под нагрузкой
-- Корректная обработка ошибок
-- Возможность мониторинга и отладки
-- Безопасность на базовом уровне
+A production-ready MVP must meet **Level 2** quality:
+- Stable operation under load
+- Correct error handling
+- Monitoring and debugging capability
+- Basic level of security
 
 ---
 
 ## 1. Health Checks
 
-### Требования
+### Requirements
 
-- [ ] Endpoint `/health` возвращает HTTP 200
-- [ ] Проверка подключения к БД
-- [ ] Проверка подключения к Redis (если используется)
-- [ ] Проверка внешних зависимостей
+- [ ] Endpoint `/health` returns HTTP 200
+- [ ] DB connection check
+- [ ] Redis connection check (if used)
+- [ ] External dependencies check
 
-### Пример реализации
+### Implementation Example
 
 ```python
 from fastapi import APIRouter, status
@@ -38,13 +38,13 @@ async def health_check(
     db: AsyncSession = Depends(get_db),
     redis: Redis = Depends(get_redis),
 ) -> JSONResponse:
-    """Проверка здоровья сервиса."""
+    """Service health check."""
     checks = {
         "status": "healthy",
         "checks": {}
     }
 
-    # Проверка БД
+    # DB check
     try:
         await db.execute(text("SELECT 1"))
         checks["checks"]["database"] = "ok"
@@ -52,7 +52,7 @@ async def health_check(
         checks["checks"]["database"] = f"error: {str(e)}"
         checks["status"] = "unhealthy"
 
-    # Проверка Redis
+    # Redis check
     try:
         await redis.ping()
         checks["checks"]["redis"] = "ok"
@@ -72,7 +72,7 @@ async def health_check(
 ### Kubernetes Probes
 
 ```yaml
-# В Deployment
+# In Deployment
 livenessProbe:
   httpGet:
     path: /health
@@ -92,15 +92,15 @@ readinessProbe:
 
 ## 2. Graceful Shutdown
 
-### Требования
+### Requirements
 
-- [ ] Обработка сигналов SIGTERM и SIGINT
-- [ ] Завершение текущих HTTP-запросов
-- [ ] Закрытие соединений с БД
-- [ ] Закрытие соединений с Redis
-- [ ] Таймаут на завершение (default: 30s)
+- [ ] SIGTERM and SIGINT signal handling
+- [ ] Completion of current HTTP requests
+- [ ] Closing DB connections
+- [ ] Closing Redis connections
+- [ ] Shutdown timeout (default: 30s)
 
-### Пример для FastAPI
+### FastAPI Example
 
 ```python
 import signal
@@ -112,7 +112,7 @@ from fastapi import FastAPI
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Управление жизненным циклом приложения."""
+    """Application lifecycle management."""
     # Startup
     await init_database()
     await init_redis()
@@ -127,7 +127,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 ```
 
-### Пример для AsyncIO Worker
+### AsyncIO Worker Example
 
 ```python
 import signal
@@ -135,13 +135,13 @@ import asyncio
 
 
 class GracefulShutdown:
-    """Обработчик graceful shutdown."""
+    """Graceful shutdown handler."""
 
     def __init__(self):
         self.shutdown_event = asyncio.Event()
 
     def setup(self):
-        """Настройка обработчиков сигналов."""
+        """Set up signal handlers."""
         loop = asyncio.get_event_loop()
         for sig in (signal.SIGTERM, signal.SIGINT):
             loop.add_signal_handler(
@@ -150,12 +150,12 @@ class GracefulShutdown:
             )
 
     async def _shutdown(self, sig: signal.Signals):
-        """Обработка сигнала завершения."""
-        print(f"Получен сигнал {sig.name}, завершаем...")
+        """Handle shutdown signal."""
+        print(f"Received signal {sig.name}, shutting down...")
         self.shutdown_event.set()
 
     async def wait(self):
-        """Ожидание сигнала завершения."""
+        """Wait for shutdown signal."""
         await self.shutdown_event.wait()
 ```
 
@@ -172,15 +172,15 @@ services:
 
 ## 3. Structured Logging
 
-### Требования
+### Requirements
 
-- [ ] JSON формат логов
-- [ ] Request ID для трейсинга
-- [ ] Уровни логирования: DEBUG, INFO, WARNING, ERROR
-- [ ] Контекстная информация (user_id, endpoint, etc.)
-- [ ] Не логировать sensitive данные (пароли, токены)
+- [ ] JSON log format
+- [ ] Request ID for tracing
+- [ ] Log levels: DEBUG, INFO, WARNING, ERROR
+- [ ] Contextual information (user_id, endpoint, etc.)
+- [ ] Do not log sensitive data (passwords, tokens)
 
-### Пример с structlog
+### Example with structlog
 
 ```python
 import structlog
@@ -188,7 +188,7 @@ from uuid import uuid4
 
 
 def setup_logging(json_logs: bool = True):
-    """Настройка структурированного логирования."""
+    """Set up structured logging."""
     processors = [
         structlog.contextvars.merge_contextvars,
         structlog.processors.add_log_level,
@@ -210,10 +210,10 @@ def setup_logging(json_logs: bool = True):
     )
 
 
-# Middleware для request_id
+# Middleware for request_id
 @app.middleware("http")
 async def add_request_id(request: Request, call_next):
-    """Добавление request_id к каждому запросу."""
+    """Add request_id to each request."""
     request_id = request.headers.get("X-Request-ID", str(uuid4()))
     structlog.contextvars.bind_contextvars(request_id=request_id)
 
@@ -223,7 +223,7 @@ async def add_request_id(request: Request, call_next):
     return response
 ```
 
-### Что НЕ логировать
+### What NOT to Log
 
 ```python
 SENSITIVE_FIELDS = {
@@ -237,7 +237,7 @@ SENSITIVE_FIELDS = {
 
 
 def sanitize_log_data(data: dict) -> dict:
-    """Удаление sensitive данных из логов."""
+    """Remove sensitive data from logs."""
     return {
         k: "***REDACTED***" if k.lower() in SENSITIVE_FIELDS else v
         for k, v in data.items()
@@ -248,14 +248,14 @@ def sanitize_log_data(data: dict) -> dict:
 
 ## 4. Error Handling
 
-### Требования
+### Requirements
 
-- [ ] Централизованная обработка исключений
-- [ ] Разные ответы для dev и prod (stack trace только в dev)
-- [ ] Логирование всех необработанных исключений
-- [ ] Стандартизированный формат ошибок
+- [ ] Centralized exception handling
+- [ ] Different responses for dev and prod (stack trace only in dev)
+- [ ] Logging of all unhandled exceptions
+- [ ] Standardized error format
 
-### Пример Exception Handler
+### Exception Handler Example
 
 ```python
 from fastapi import Request, status
@@ -264,7 +264,7 @@ from pydantic import BaseModel
 
 
 class ErrorResponse(BaseModel):
-    """Стандартный формат ошибки."""
+    """Standard error format."""
 
     error: str
     message: str
@@ -277,10 +277,10 @@ async def global_exception_handler(
     request: Request,
     exc: Exception
 ) -> JSONResponse:
-    """Глобальный обработчик исключений."""
+    """Global exception handler."""
     logger = structlog.get_logger()
 
-    # Логируем ошибку
+    # Log the error
     logger.error(
         "Unhandled exception",
         exc_type=type(exc).__name__,
@@ -288,14 +288,14 @@ async def global_exception_handler(
         path=request.url.path,
     )
 
-    # Формируем ответ
+    # Build response
     error_response = ErrorResponse(
         error="internal_server_error",
-        message="Внутренняя ошибка сервера",
+        message="Internal server error",
         request_id=request.headers.get("X-Request-ID"),
     )
 
-    # В dev-режиме добавляем детали
+    # In dev mode add details
     if settings.DEBUG:
         error_response.details = {
             "exception": type(exc).__name__,
@@ -308,11 +308,11 @@ async def global_exception_handler(
     )
 ```
 
-### Кастомные исключения
+### Custom Exceptions
 
 ```python
 class AppException(Exception):
-    """Базовое исключение приложения."""
+    """Base application exception."""
 
     def __init__(
         self,
@@ -327,11 +327,11 @@ class AppException(Exception):
 
 
 class NotFoundError(AppException):
-    """Ресурс не найден."""
+    """Resource not found."""
 
     def __init__(self, resource: str, resource_id: str):
         super().__init__(
-            message=f"{resource} с ID {resource_id} не найден",
+            message=f"{resource} with ID {resource_id} not found",
             error_code="not_found",
             status_code=404,
         )
@@ -341,15 +341,15 @@ class NotFoundError(AppException):
 
 ## 5. Configuration Management
 
-### Требования
+### Requirements
 
-- [ ] Все секреты через environment variables
-- [ ] Валидация конфига при старте приложения
-- [ ] Значения по умолчанию для опциональных параметров
-- [ ] Разделение конфигов: dev / staging / prod
-- [ ] Никаких секретов в коде или git
+- [ ] All secrets via environment variables
+- [ ] Config validation at application startup
+- [ ] Default values for optional parameters
+- [ ] Config separation: dev / staging / prod
+- [ ] No secrets in code or git
 
-### Пример с Pydantic Settings
+### Pydantic Settings Example
 
 ```python
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -357,7 +357,7 @@ from pydantic import Field, validator
 
 
 class Settings(BaseSettings):
-    """Настройки приложения."""
+    """Application settings."""
 
     model_config = SettingsConfigDict(
         env_file=".env",
@@ -365,21 +365,21 @@ class Settings(BaseSettings):
         case_sensitive=False,
     )
 
-    # Обязательные
+    # Required
     DATABASE_URL: str
     REDIS_URL: str
     SECRET_KEY: str = Field(..., min_length=32)
 
-    # Опциональные с defaults
+    # Optional with defaults
     DEBUG: bool = False
     LOG_LEVEL: str = "INFO"
     API_PREFIX: str = "/api/v1"
 
-    # Валидация
+    # Validation
     @validator("DATABASE_URL")
     def validate_database_url(cls, v: str) -> str:
         if not v.startswith(("postgresql://", "postgresql+asyncpg://")):
-            raise ValueError("DATABASE_URL должен быть PostgreSQL")
+            raise ValueError("DATABASE_URL must be PostgreSQL")
         return v
 
 
@@ -408,14 +408,14 @@ LOG_LEVEL=INFO
 
 ## 6. Security
 
-### Требования
+### Requirements
 
-- [ ] HTTPS only в production
-- [ ] CORS настроен (не `*` в production)
-- [ ] Rate limiting для публичных endpoints
-- [ ] Input validation через Pydantic
-- [ ] SQL injection защита (параметризованные запросы)
-- [ ] XSS защита (экранирование вывода)
+- [ ] HTTPS only in production
+- [ ] CORS configured (not `*` in production)
+- [ ] Rate limiting for public endpoints
+- [ ] Input validation via Pydantic
+- [ ] SQL injection protection (parameterized queries)
+- [ ] XSS protection (output escaping)
 
 ### CORS Configuration
 
@@ -454,7 +454,7 @@ app.state.limiter = limiter
 @app.get("/api/public")
 @limiter.limit("10/minute")
 async def public_endpoint(request: Request):
-    """Публичный endpoint с rate limiting."""
+    """Public endpoint with rate limiting."""
     return {"message": "ok"}
 ```
 
@@ -466,7 +466,7 @@ import re
 
 
 class UserCreate(BaseModel):
-    """Схема создания пользователя."""
+    """User creation schema."""
 
     email: str = Field(..., max_length=255)
     password: str = Field(..., min_length=8, max_length=128)
@@ -475,15 +475,15 @@ class UserCreate(BaseModel):
     def validate_email(cls, v: str) -> str:
         pattern = r"^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$"
         if not re.match(pattern, v):
-            raise ValueError("Некорректный email")
+            raise ValueError("Invalid email")
         return v.lower()
 
     @validator("password")
     def validate_password(cls, v: str) -> str:
         if not re.search(r"[A-Z]", v):
-            raise ValueError("Пароль должен содержать заглавную букву")
+            raise ValueError("Password must contain an uppercase letter")
         if not re.search(r"[0-9]", v):
-            raise ValueError("Пароль должен содержать цифру")
+            raise ValueError("Password must contain a digit")
         return v
 ```
 
@@ -491,12 +491,12 @@ class UserCreate(BaseModel):
 
 ## 7. Monitoring & Metrics
 
-### Требования
+### Requirements
 
-- [ ] Метрики запросов (count, latency, errors)
-- [ ] Метрики бизнес-логики (orders, users, etc.)
-- [ ] Алерты на критические ошибки
-- [ ] Dashboard для визуализации
+- [ ] Request metrics (count, latency, errors)
+- [ ] Business logic metrics (orders, users, etc.)
+- [ ] Alerts for critical errors
+- [ ] Dashboard for visualization
 
 ### Prometheus Metrics
 
@@ -504,7 +504,7 @@ class UserCreate(BaseModel):
 from prometheus_client import Counter, Histogram, generate_latest
 from fastapi import Response
 
-# Метрики
+# Metrics
 REQUEST_COUNT = Counter(
     "http_requests_total",
     "Total HTTP requests",
@@ -520,7 +520,7 @@ REQUEST_LATENCY = Histogram(
 
 @app.middleware("http")
 async def metrics_middleware(request: Request, call_next):
-    """Сбор метрик для каждого запроса."""
+    """Collect metrics for each request."""
     start_time = time.time()
 
     response = await call_next(request)
@@ -541,7 +541,7 @@ async def metrics_middleware(request: Request, call_next):
 
 @app.get("/metrics")
 async def metrics():
-    """Endpoint для Prometheus."""
+    """Endpoint for Prometheus."""
     return Response(
         content=generate_latest(),
         media_type="text/plain",
@@ -550,55 +550,55 @@ async def metrics():
 
 ---
 
-## 8. Чек-лист перед деплоем
+## 8. Pre-deployment Checklist
 
-### Инфраструктура
+### Infrastructure
 
-- [ ] Docker images собираются без ошибок
-- [ ] docker-compose up запускает все сервисы
-- [ ] Health checks проходят для всех сервисов
-- [ ] Volumes для персистентных данных настроены
+- [ ] Docker images build without errors
+- [ ] docker-compose up starts all services
+- [ ] Health checks pass for all services
+- [ ] Volumes for persistent data are configured
 
-### Код
+### Code
 
-- [ ] Все тесты проходят (`pytest`)
-- [ ] Coverage ≥75%
-- [ ] Линтер проходит (`ruff check`)
-- [ ] Type checker проходит (`mypy`)
-- [ ] Нет placeholder/FIXME в критичном коде
+- [ ] All tests pass (`pytest`)
+- [ ] Coverage >=75%
+- [ ] Linter passes (`ruff check`)
+- [ ] Type checker passes (`mypy`)
+- [ ] No placeholder/FIXME in critical code
 
-### Безопасность
+### Security
 
-- [ ] Секреты не в коде и не в git
-- [ ] .env.example актуален
-- [ ] CORS настроен для production
-- [ ] Rate limiting включён
+- [ ] Secrets not in code or git
+- [ ] .env.example is up to date
+- [ ] CORS configured for production
+- [ ] Rate limiting enabled
 
-### Логирование
+### Logging
 
-- [ ] JSON формат логов
-- [ ] Уровень логирования INFO или выше
-- [ ] Sensitive данные не логируются
+- [ ] JSON log format
+- [ ] Log level INFO or higher
+- [ ] Sensitive data not logged
 
-### Мониторинг
+### Monitoring
 
-- [ ] /health endpoint работает
-- [ ] /metrics endpoint работает (если нужен)
-- [ ] Алерты настроены
+- [ ] /health endpoint works
+- [ ] /metrics endpoint works (if needed)
+- [ ] Alerts configured
 
 ---
 
-## Связанные документы
+## Related Documents
 
-| Документ | Описание |
+| Document | Description |
 |----------|----------|
-| `knowledge/quality/logging/structured.md` | Настройка structlog |
+| `knowledge/quality/logging/structured.md` | structlog setup |
 | `knowledge/services/asyncio-workers/signal-handling.md` | Graceful shutdown |
-| `knowledge/services/fastapi/application-factory.md` | Паттерн Application Factory |
-| `knowledge/infrastructure/docker-compose.md` | Docker Compose конфигурация |
+| `knowledge/services/fastapi/application-factory.md` | Application Factory pattern |
+| `knowledge/infrastructure/docker-compose.md` | Docker Compose configuration |
 | `knowledge/infrastructure/ci-cd.md` | CI/CD pipeline |
 
 ---
 
-**Версия документа**: 1.0
-**Создан**: 2025-12-20
+**Document version**: 1.0
+**Created**: 2025-12-20

@@ -1,6 +1,6 @@
-# Настройка pytest
+# pytest Setup
 
-> **Назначение**: Базовая настройка pytest для проекта.
+> **Purpose**: Basic pytest setup for the project.
 
 ---
 
@@ -34,23 +34,23 @@ filterwarnings = [
 
 ---
 
-## Структура тестов
+## Test Structure
 
 ```
 tests/
 ├── __init__.py
-├── conftest.py              # Общие фикстуры
-├── unit/                    # Unit тесты
+├── conftest.py              # Shared fixtures
+├── unit/                    # Unit tests
 │   ├── __init__.py
-│   ├── conftest.py         # Фикстуры для unit
+│   ├── conftest.py         # Unit fixtures
 │   ├── test_user_service.py
 │   └── test_order_service.py
-├── integration/            # Integration тесты
+├── integration/            # Integration tests
 │   ├── __init__.py
-│   ├── conftest.py         # Фикстуры для integration
+│   ├── conftest.py         # Integration fixtures
 │   ├── test_user_api.py
 │   └── test_order_api.py
-└── e2e/                    # E2E тесты (опционально)
+└── e2e/                    # E2E tests (optional)
     ├── __init__.py
     └── test_user_flow.py
 ```
@@ -60,7 +60,7 @@ tests/
 ## conftest.py
 
 ```python
-"""Общие фикстуры."""
+"""Shared fixtures."""
 
 import pytest
 from unittest.mock import AsyncMock
@@ -74,26 +74,26 @@ from {context}_api.main import app
 
 @pytest.fixture
 def client() -> TestClient:
-    """Синхронный тест-клиент."""
+    """Synchronous test client."""
     return TestClient(app)
 
 
 @pytest.fixture
 async def async_client() -> AsyncClient:
-    """Асинхронный тест-клиент."""
+    """Async test client."""
     async with AsyncClient(app=app, base_url="http://test") as client:
         yield client
 
 
 @pytest.fixture
 def mock_http_client() -> AsyncMock:
-    """Мок HTTP клиента."""
+    """Mock HTTP client."""
     return AsyncMock(spec=httpx.AsyncClient)
 
 
 @pytest.fixture
 def anyio_backend() -> str:
-    """Бэкенд для anyio."""
+    """Backend for anyio."""
     return "asyncio"
 ```
 
@@ -124,43 +124,43 @@ anyio>=3.7.0
 
 ---
 
-## Команды запуска
+## Run Commands
 
 ```bash
-# Все тесты
+# All tests
 pytest
 
-# С покрытием
+# With coverage
 pytest --cov=src --cov-report=term --cov-report=html
 
-# Проверка порога покрытия
+# Check coverage threshold
 pytest --cov=src --cov-fail-under=75
 
-# Только unit тесты
+# Unit tests only
 pytest tests/unit -m unit
 
-# Только integration тесты
+# Integration tests only
 pytest tests/integration -m integration
 
-# Параллельный запуск
+# Parallel run
 pytest -n auto
 
-# Конкретный файл
+# Specific file
 pytest tests/unit/test_user_service.py
 
-# Конкретный тест
+# Specific test
 pytest tests/unit/test_user_service.py::TestUserService::test_create_user
 
-# Verbose с выводом print
+# Verbose with print output
 pytest -v -s
 ```
 
 ---
 
-## Базовый тест
+## Basic Test
 
 ```python
-"""Пример базового теста."""
+"""Basic test example."""
 
 import pytest
 from uuid import uuid4
@@ -170,12 +170,12 @@ from {context}_api.application.dtos.user_dtos import CreateUserDTO
 
 
 class TestUserService:
-    """Тесты UserService."""
+    """UserService tests."""
 
     @pytest.mark.unit
     @pytest.mark.asyncio
     async def test_create_user_success(self, mock_http_client):
-        """Успешное создание пользователя."""
+        """Successful user creation."""
         # Arrange
         mock_http_client.post.return_value = httpx.Response(
             201,
@@ -195,7 +195,7 @@ class TestUserService:
     @pytest.mark.unit
     @pytest.mark.asyncio
     async def test_get_user_not_found(self, mock_http_client):
-        """Пользователь не найден."""
+        """User not found."""
         # Arrange
         mock_http_client.get.return_value = httpx.Response(404)
         service = UserService(mock_http_client)
@@ -207,7 +207,7 @@ class TestUserService:
 
 ---
 
-## Coverage конфигурация
+## Coverage Configuration
 
 ```toml
 # pyproject.toml
@@ -240,29 +240,29 @@ show_missing = true
 ```makefile
 .PHONY: test test-unit test-integration test-cov
 
-# Все тесты
+# All tests
 test:
 	pytest
 
-# Unit тесты
+# Unit tests
 test-unit:
 	pytest tests/unit -m unit
 
-# Integration тесты
+# Integration tests
 test-integration:
 	pytest tests/integration -m integration
 
-# С покрытием
+# With coverage
 test-cov:
 	pytest --cov=src --cov-report=term --cov-report=html --cov-fail-under=75
 ```
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] pytest.ini или pyproject.toml настроен
-- [ ] Структура tests/ создана
-- [ ] conftest.py с базовыми фикстурами
-- [ ] Маркеры unit/integration определены
-- [ ] Coverage настроен с порогом 75%
+- [ ] pytest.ini or pyproject.toml configured
+- [ ] tests/ structure created
+- [ ] conftest.py with basic fixtures
+- [ ] unit/integration markers defined
+- [ ] Coverage configured with 75% threshold

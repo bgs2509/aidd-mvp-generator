@@ -1,13 +1,13 @@
-# Стратегии мокирования
+# Mocking Strategies
 
-> **Назначение**: Паттерны мокирования для изолированных тестов.
+> **Purpose**: Mocking patterns for isolated tests.
 
 ---
 
 ## AsyncMock
 
 ```python
-"""Мокирование асинхронных функций."""
+"""Mocking asynchronous functions."""
 
 import pytest
 from unittest.mock import AsyncMock, MagicMock
@@ -15,22 +15,22 @@ from unittest.mock import AsyncMock, MagicMock
 
 @pytest.fixture
 def mock_service() -> AsyncMock:
-    """Мок асинхронного сервиса."""
+    """Mock async service."""
     mock = AsyncMock()
 
-    # Настройка возвращаемых значений
+    # Set up return values
     mock.get_user.return_value = {"id": "123", "name": "Test"}
     mock.create_user.return_value = {"id": "456", "name": "New"}
 
-    # Настройка side_effect
-    mock.delete_user.side_effect = None  # Возвращает None
+    # Set up side_effect
+    mock.delete_user.side_effect = None  # Returns None
 
     return mock
 
 
 @pytest.mark.asyncio
 async def test_with_async_mock(mock_service):
-    """Тест с async mock."""
+    """Test with async mock."""
     result = await mock_service.get_user("123")
 
     assert result["name"] == "Test"
@@ -39,10 +39,10 @@ async def test_with_async_mock(mock_service):
 
 ---
 
-## Мокирование HTTP клиента
+## HTTP Client Mocking
 
 ```python
-"""Мокирование httpx."""
+"""Mocking httpx."""
 
 import pytest
 from unittest.mock import AsyncMock
@@ -51,22 +51,22 @@ import httpx
 
 @pytest.fixture
 def mock_http_client() -> AsyncMock:
-    """Мок httpx.AsyncClient."""
+    """Mock httpx.AsyncClient."""
     mock = AsyncMock(spec=httpx.AsyncClient)
 
-    # Успешный GET
+    # Successful GET
     mock.get.return_value = httpx.Response(
         200,
         json={"id": "123", "name": "Test"},
     )
 
-    # Успешный POST
+    # Successful POST
     mock.post.return_value = httpx.Response(
         201,
         json={"id": "456", "name": "Created"},
     )
 
-    # 404 для определённого вызова
+    # 404 for specific call
     async def get_side_effect(url, **kwargs):
         if "nonexistent" in url:
             return httpx.Response(404, json={"detail": "Not found"})
@@ -79,8 +79,8 @@ def mock_http_client() -> AsyncMock:
 
 @pytest.mark.asyncio
 async def test_http_client_mock(mock_http_client):
-    """Тест с мок HTTP клиентом."""
-    # Успешный запрос
+    """Test with mock HTTP client."""
+    # Successful request
     response = await mock_http_client.get("/api/v1/users/123")
     assert response.status_code == 200
 
@@ -91,10 +91,10 @@ async def test_http_client_mock(mock_http_client):
 
 ---
 
-## respx для HTTP мокирования
+## respx for HTTP Mocking
 
 ```python
-"""Мокирование с respx."""
+"""Mocking with respx."""
 
 import pytest
 import respx
@@ -103,7 +103,7 @@ import httpx
 
 @pytest.fixture
 def mock_data_api():
-    """Мок Data API с respx."""
+    """Mock Data API with respx."""
     with respx.mock(base_url="http://data-api:8001") as respx_mock:
         # GET user
         respx_mock.get("/api/v1/users/123").respond(
@@ -124,7 +124,7 @@ def mock_data_api():
 
 @pytest.mark.asyncio
 async def test_with_respx(mock_data_api):
-    """Тест с respx."""
+    """Test with respx."""
     async with httpx.AsyncClient(base_url="http://data-api:8001") as client:
         response = await client.get("/api/v1/users/123")
         assert response.json()["name"] == "Test"
@@ -135,10 +135,10 @@ async def test_with_respx(mock_data_api):
 
 ---
 
-## Мокирование зависимостей FastAPI
+## FastAPI Dependency Mocking
 
 ```python
-"""Мокирование DI в FastAPI."""
+"""Mocking DI in FastAPI."""
 
 import pytest
 from fastapi import FastAPI
@@ -151,7 +151,7 @@ from {context}_api.api.dependencies import get_user_service
 
 @pytest.fixture
 def mock_user_service() -> AsyncMock:
-    """Мок UserService."""
+    """Mock UserService."""
     mock = AsyncMock()
     mock.get_user.return_value = UserDTO(
         id="123",
@@ -163,7 +163,7 @@ def mock_user_service() -> AsyncMock:
 
 @pytest.fixture
 def app_with_mocks(mock_user_service) -> FastAPI:
-    """Приложение с подменёнными зависимостями."""
+    """Application with overridden dependencies."""
     app.dependency_overrides[get_user_service] = lambda: mock_user_service
     yield app
     app.dependency_overrides.clear()
@@ -171,7 +171,7 @@ def app_with_mocks(mock_user_service) -> FastAPI:
 
 @pytest.mark.asyncio
 async def test_with_dependency_mock(app_with_mocks):
-    """Тест с подменой зависимости."""
+    """Test with dependency override."""
     async with AsyncClient(app=app_with_mocks, base_url="http://test") as client:
         response = await client.get("/api/v1/users/123")
         assert response.status_code == 200
@@ -180,10 +180,10 @@ async def test_with_dependency_mock(app_with_mocks):
 
 ---
 
-## patch и monkeypatch
+## patch and monkeypatch
 
 ```python
-"""Использование patch и monkeypatch."""
+"""Using patch and monkeypatch."""
 
 import pytest
 from unittest.mock import patch, AsyncMock
@@ -192,36 +192,36 @@ from unittest.mock import patch, AsyncMock
 # unittest.mock.patch
 @pytest.mark.asyncio
 async def test_with_patch():
-    """Тест с patch."""
+    """Test with patch."""
     with patch(
         "{context}_api.infrastructure.http.data_api_client.DataApiClient.get_user",
         new_callable=AsyncMock,
         return_value={"id": "123", "name": "Test"},
     ):
-        # Код, использующий DataApiClient.get_user
+        # Code that uses DataApiClient.get_user
         pass
 
 
 # pytest monkeypatch
 def test_with_monkeypatch(monkeypatch):
-    """Тест с monkeypatch."""
-    # Переменные окружения
+    """Test with monkeypatch."""
+    # Environment variables
     monkeypatch.setenv("DEBUG", "true")
     monkeypatch.setenv("DATA_API_URL", "http://mock:8001")
 
-    # Атрибуты модуля
+    # Module attributes
     monkeypatch.setattr("module.attribute", "new_value")
 
-    # Удаление атрибута
+    # Remove attribute
     monkeypatch.delattr("module.attribute", raising=False)
 ```
 
 ---
 
-## Мокирование времени
+## Time Mocking
 
 ```python
-"""Мокирование datetime."""
+"""Mocking datetime."""
 
 import pytest
 from datetime import datetime
@@ -229,32 +229,32 @@ from unittest.mock import patch
 from freezegun import freeze_time
 
 
-# С freezegun
+# With freezegun
 @freeze_time("2024-01-15 12:00:00")
 def test_with_frozen_time():
-    """Тест с замороженным временем."""
+    """Test with frozen time."""
     assert datetime.now() == datetime(2024, 1, 15, 12, 0, 0)
 
 
-# С patch
+# With patch
 def test_with_patched_time():
-    """Тест с подменой времени."""
+    """Test with patched time."""
     fixed_time = datetime(2024, 1, 15, 12, 0, 0)
 
     with patch("module.datetime") as mock_datetime:
         mock_datetime.utcnow.return_value = fixed_time
         mock_datetime.side_effect = lambda *args, **kwargs: datetime(*args, **kwargs)
 
-        # Тест
+        # Test
         pass
 ```
 
 ---
 
-## Проверка вызовов
+## Call Verification
 
 ```python
-"""Проверка вызовов моков."""
+"""Mock call verification."""
 
 import pytest
 from unittest.mock import AsyncMock, call
@@ -262,39 +262,39 @@ from unittest.mock import AsyncMock, call
 
 @pytest.mark.asyncio
 async def test_mock_calls():
-    """Проверка вызовов."""
+    """Call verification."""
     mock = AsyncMock()
 
     await mock.method("arg1", key="value")
     await mock.method("arg2")
 
-    # Проверка количества вызовов
+    # Check call count
     assert mock.method.call_count == 2
 
-    # Проверка конкретного вызова
+    # Check specific call
     mock.method.assert_called_with("arg2")
     mock.method.assert_any_call("arg1", key="value")
 
-    # Проверка всех вызовов
+    # Check all calls
     mock.method.assert_has_calls([
         call("arg1", key="value"),
         call("arg2"),
     ])
 
-    # Проверка что вызван хотя бы раз
+    # Check called at least once
     mock.method.assert_called()
 
-    # Проверка что не вызван
+    # Check not called
     mock.other_method.assert_not_called()
 ```
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] AsyncMock для async функций
-- [ ] respx для HTTP клиентов
-- [ ] dependency_overrides для FastAPI
-- [ ] monkeypatch для env
-- [ ] freezegun для времени
-- [ ] assert_called для проверки вызовов
+- [ ] AsyncMock for async functions
+- [ ] respx for HTTP clients
+- [ ] dependency_overrides for FastAPI
+- [ ] monkeypatch for env
+- [ ] freezegun for time
+- [ ] assert_called for call verification

@@ -1,136 +1,136 @@
-# Функция: Верификация промпта
+# Function: Prompt Validation
 
-> **Назначение**: Проверка и уточнение идеи пользователя перед формированием PRD.
-
----
-
-## Цель
-
-Убедиться, что идея пользователя достаточно конкретна и полна
-для создания качественного PRD документа.
+> **Purpose**: Verifying and refining the user's idea before forming the PRD.
 
 ---
 
-## Критерии качественного промпта
+## Goal
 
-### Обязательные элементы
-
-| Элемент | Вопрос | Пример |
-|---------|--------|--------|
-| **Что** | Что должна делать система? | "Сервис бронирования столиков" |
-| **Кто** | Кто целевая аудитория? | "Посетители ресторанов" |
-| **Зачем** | Какую проблему решает? | "Упростить бронирование" |
-
-### Желательные элементы
-
-| Элемент | Вопрос | Пример |
-|---------|--------|--------|
-| **Как** | Какие основные сценарии? | "Поиск, просмотр, бронь" |
-| **Где** | Какие каналы/интерфейсы? | "API + Telegram бот" |
-| **Ограничения** | Что НЕ входит в scope? | "Без оплаты онлайн" |
+Ensure that the user's idea is specific and complete enough
+to create a quality PRD document.
 
 ---
 
-## Процесс верификации
+## Quality Prompt Criteria
 
-### Шаг 1: Анализ полноты
+### Required Elements
 
-```
-Прочитать идею пользователя.
+| Element | Question | Example |
+|---------|----------|---------|
+| **What** | What should the system do? | "Restaurant table booking service" |
+| **Who** | Who is the target audience? | "Restaurant visitors" |
+| **Why** | What problem does it solve? | "Simplify booking" |
 
-Проверить наличие:
-[ ] Описание функционала (ЧТО)
-[ ] Целевая аудитория (КТО)
-[ ] Ценность/проблема (ЗАЧЕМ)
-```
+### Desirable Elements
 
-### Шаг 2: Выявление пробелов
-
-```
-Если чего-то не хватает:
-→ Сформулировать уточняющие вопросы
-→ Задать их пользователю
-
-НЕ ДОДУМЫВАТЬ за пользователя критические детали!
-```
-
-### Шаг 3: Подтверждение понимания
-
-```
-Кратко изложить понимание идеи:
-"Я понял вашу идею так: [описание]. Это верно?"
-
-Дождаться подтверждения.
-```
+| Element | Question | Example |
+|---------|----------|---------|
+| **How** | What are the main scenarios? | "Search, browse, book" |
+| **Where** | What channels/interfaces? | "API + Telegram bot" |
+| **Constraints** | What is NOT in scope? | "No online payment" |
 
 ---
 
-## Уточняющие вопросы
+## Validation Process
 
-### Если неясен функционал
-
-```
-- Какие основные действия должен выполнять пользователь?
-- Какие данные система должна хранить?
-- Нужна ли интеграция с внешними сервисами?
-```
-
-### Если неясна аудитория
+### Step 1: Completeness Analysis
 
 ```
-- Кто будет пользоваться системой?
-- Есть ли разные типы пользователей (роли)?
-- Какой уровень технической грамотности у пользователей?
+Read the user's idea.
+
+Check for:
+[ ] Functionality description (WHAT)
+[ ] Target audience (WHO)
+[ ] Value/problem (WHY)
 ```
 
-### Если неясны ограничения
+### Step 2: Identifying Gaps
 
 ```
-- Что точно НЕ должно входить в MVP?
-- Есть ли технические ограничения?
-- Есть ли временные ограничения?
+If something is missing:
+→ Formulate clarifying questions
+→ Ask the user
+
+DO NOT make assumptions about critical details for the user!
+```
+
+### Step 3: Confirming Understanding
+
+```
+Briefly state your understanding of the idea:
+"I understood your idea as follows: [description]. Is this correct?"
+
+Wait for confirmation.
 ```
 
 ---
 
-## Примеры
+## Clarifying Questions
 
-### Хороший промпт (не требует уточнений)
-
-```
-"Создать сервис бронирования столиков в ресторанах.
-Пользователи могут искать рестораны по кухне и локации,
-смотреть свободные столики и бронировать на нужное время.
-Рестораны получают уведомления о бронях в Telegram.
-MVP без онлайн-оплаты."
-```
-
-### Промпт требующий уточнений
+### If the functionality is unclear
 
 ```
-"Нужен сервис для ресторанов"
+- What main actions should the user perform?
+- What data should the system store?
+- Is integration with external services needed?
+```
 
-Уточняющие вопросы:
-1. Что именно должен делать сервис? (бронирование, меню, доставка?)
-2. Кто пользователи? (посетители, рестораны, оба?)
-3. Нужен веб-интерфейс или Telegram бот?
+### If the audience is unclear
+
+```
+- Who will use the system?
+- Are there different types of users (roles)?
+- What is the users' technical proficiency level?
+```
+
+### If constraints are unclear
+
+```
+- What should definitely NOT be included in the MVP?
+- Are there technical constraints?
+- Are there time constraints?
 ```
 
 ---
 
-## Чек-лист верификации
+## Examples
 
-- [ ] Функционал понятен
-- [ ] Целевая аудитория определена
-- [ ] Основные сценарии ясны
-- [ ] Ограничения scope оговорены
-- [ ] Понимание подтверждено пользователем
+### Good prompt (no clarification needed)
+
+```
+"Create a restaurant table booking service.
+Users can search restaurants by cuisine and location,
+view available tables and book for a desired time.
+Restaurants receive booking notifications via Telegram.
+MVP without online payment."
+```
+
+### Prompt requiring clarification
+
+```
+"Need a service for restaurants"
+
+Clarifying questions:
+1. What exactly should the service do? (booking, menu, delivery?)
+2. Who are the users? (visitors, restaurants, both?)
+3. Is a web interface or Telegram bot needed?
+```
 
 ---
 
-## Источники
+## Validation Checklist
 
-| Документ | Описание |
-|----------|----------|
-| `.ai-framework/docs/guides/prompt-validation-guide.md` | Гайд по валидации |
-| `.ai-framework/docs/reference/maturity-levels.md` | Уровни зрелости |
+- [ ] Functionality is clear
+- [ ] Target audience is defined
+- [ ] Main scenarios are clear
+- [ ] Scope constraints are agreed upon
+- [ ] Understanding is confirmed by the user
+
+---
+
+## Sources
+
+| Document | Description |
+|----------|-------------|
+| `.ai-framework/docs/guides/prompt-validation-guide.md` | Validation guide |
+| `.ai-framework/docs/reference/maturity-levels.md` | Maturity levels |

@@ -1,13 +1,13 @@
-# Паттерны репозиториев
+# Repository Patterns
 
-> **Назначение**: Паттерны доступа к данным через репозитории.
+> **Purpose**: Data access patterns using repositories.
 
 ---
 
-## Базовый репозиторий
+## Base Repository
 
 ```python
-"""Базовый репозиторий."""
+"""Base repository."""
 
 from typing import Generic, TypeVar, Sequence
 from uuid import UUID
@@ -21,28 +21,28 @@ ModelType = TypeVar("ModelType", bound=Base)
 
 
 class BaseRepository(Generic[ModelType]):
-    """Базовый репозиторий для CRUD операций."""
+    """Base repository for CRUD operations."""
 
     def __init__(self, session: AsyncSession, model: type[ModelType]):
         """
-        Инициализация репозитория.
+        Initialize repository.
 
         Args:
-            session: Сессия SQLAlchemy.
-            model: Класс модели.
+            session: SQLAlchemy session.
+            model: Model class.
         """
         self.session = session
         self.model = model
 
     async def get_by_id(self, id: UUID) -> ModelType | None:
         """
-        Получить запись по ID.
+        Get record by ID.
 
         Args:
-            id: Идентификатор записи.
+            id: Record identifier.
 
         Returns:
-            Найденная запись или None.
+            Found record or None.
         """
         return await self.session.get(self.model, id)
 
@@ -52,14 +52,14 @@ class BaseRepository(Generic[ModelType]):
         limit: int = 100,
     ) -> Sequence[ModelType]:
         """
-        Получить все записи с пагинацией.
+        Get all records with pagination.
 
         Args:
-            offset: Смещение.
-            limit: Лимит записей.
+            offset: Offset.
+            limit: Record limit.
 
         Returns:
-            Список записей.
+            List of records.
         """
         query = select(self.model).offset(offset).limit(limit)
         result = await self.session.execute(query)
@@ -67,13 +67,13 @@ class BaseRepository(Generic[ModelType]):
 
     async def create(self, **kwargs) -> ModelType:
         """
-        Создать запись.
+        Create a record.
 
         Args:
-            **kwargs: Поля записи.
+            **kwargs: Record fields.
 
         Returns:
-            Созданная запись.
+            Created record.
         """
         instance = self.model(**kwargs)
         self.session.add(instance)
@@ -83,14 +83,14 @@ class BaseRepository(Generic[ModelType]):
 
     async def update(self, id: UUID, **kwargs) -> ModelType | None:
         """
-        Обновить запись.
+        Update a record.
 
         Args:
-            id: Идентификатор записи.
-            **kwargs: Поля для обновления.
+            id: Record identifier.
+            **kwargs: Fields to update.
 
         Returns:
-            Обновлённая запись или None.
+            Updated record or None.
         """
         instance = await self.get_by_id(id)
         if instance is None:
@@ -106,13 +106,13 @@ class BaseRepository(Generic[ModelType]):
 
     async def delete(self, id: UUID) -> bool:
         """
-        Удалить запись.
+        Delete a record.
 
         Args:
-            id: Идентификатор записи.
+            id: Record identifier.
 
         Returns:
-            True если удалено, False если не найдено.
+            True if deleted, False if not found.
         """
         instance = await self.get_by_id(id)
         if instance is None:
@@ -124,10 +124,10 @@ class BaseRepository(Generic[ModelType]):
 
     async def count(self) -> int:
         """
-        Подсчитать количество записей.
+        Count records.
 
         Returns:
-            Количество записей.
+            Number of records.
         """
         query = select(func.count()).select_from(self.model)
         result = await self.session.execute(query)
@@ -135,13 +135,13 @@ class BaseRepository(Generic[ModelType]):
 
     async def exists(self, id: UUID) -> bool:
         """
-        Проверить существование записи.
+        Check if record exists.
 
         Args:
-            id: Идентификатор записи.
+            id: Record identifier.
 
         Returns:
-            True если существует.
+            True if exists.
         """
         instance = await self.get_by_id(id)
         return instance is not None
@@ -149,10 +149,10 @@ class BaseRepository(Generic[ModelType]):
 
 ---
 
-## Репозиторий сущности
+## Entity Repository
 
 ```python
-"""Репозиторий пользователей."""
+"""User repository."""
 
 from typing import Sequence
 from uuid import UUID
@@ -165,26 +165,26 @@ from {context}_data.infrastructure.repositories.base import BaseRepository
 
 
 class UserRepository(BaseRepository[User]):
-    """Репозиторий для работы с пользователями."""
+    """Repository for working with users."""
 
     def __init__(self, session: AsyncSession):
         """
-        Инициализация репозитория.
+        Initialize repository.
 
         Args:
-            session: Сессия SQLAlchemy.
+            session: SQLAlchemy session.
         """
         super().__init__(session, User)
 
     async def get_by_email(self, email: str) -> User | None:
         """
-        Получить пользователя по email.
+        Get user by email.
 
         Args:
-            email: Email пользователя.
+            email: User email.
 
         Returns:
-            Найденный пользователь или None.
+            Found user or None.
         """
         query = select(User).where(User.email == email)
         result = await self.session.execute(query)
@@ -196,14 +196,14 @@ class UserRepository(BaseRepository[User]):
         limit: int = 100,
     ) -> Sequence[User]:
         """
-        Получить активных пользователей.
+        Get active users.
 
         Args:
-            offset: Смещение.
-            limit: Лимит записей.
+            offset: Offset.
+            limit: Record limit.
 
         Returns:
-            Список активных пользователей.
+            List of active users.
         """
         query = (
             select(User)
@@ -216,13 +216,13 @@ class UserRepository(BaseRepository[User]):
 
     async def search_by_name(self, name_query: str) -> Sequence[User]:
         """
-        Поиск пользователей по имени.
+        Search users by name.
 
         Args:
-            name_query: Поисковый запрос.
+            name_query: Search query.
 
         Returns:
-            Список найденных пользователей.
+            List of found users.
         """
         query = select(User).where(User.name.ilike(f"%{name_query}%"))
         result = await self.session.execute(query)
@@ -230,13 +230,13 @@ class UserRepository(BaseRepository[User]):
 
     async def deactivate(self, user_id: UUID) -> bool:
         """
-        Деактивировать пользователя.
+        Deactivate a user.
 
         Args:
-            user_id: ID пользователя.
+            user_id: User ID.
 
         Returns:
-            True если успешно.
+            True if successful.
         """
         user = await self.get_by_id(user_id)
         if user is None:
@@ -249,10 +249,10 @@ class UserRepository(BaseRepository[User]):
 
 ---
 
-## Репозиторий со связями
+## Repository with Relations
 
 ```python
-"""Репозиторий заказов со связями."""
+"""Order repository with relations."""
 
 from typing import Sequence
 from uuid import UUID
@@ -266,21 +266,21 @@ from {context}_data.infrastructure.repositories.base import BaseRepository
 
 
 class OrderRepository(BaseRepository[Order]):
-    """Репозиторий заказов."""
+    """Order repository."""
 
     def __init__(self, session: AsyncSession):
-        """Инициализация."""
+        """Initialize."""
         super().__init__(session, Order)
 
     async def get_with_items(self, order_id: UUID) -> Order | None:
         """
-        Получить заказ с товарами.
+        Get order with items.
 
         Args:
-            order_id: ID заказа.
+            order_id: Order ID.
 
         Returns:
-            Заказ с загруженными товарами.
+            Order with loaded items.
         """
         query = (
             select(Order)
@@ -297,15 +297,15 @@ class OrderRepository(BaseRepository[Order]):
         limit: int = 20,
     ) -> Sequence[Order]:
         """
-        Получить заказы пользователя.
+        Get user orders.
 
         Args:
-            user_id: ID пользователя.
-            offset: Смещение.
-            limit: Лимит.
+            user_id: User ID.
+            offset: Offset.
+            limit: Limit.
 
         Returns:
-            Список заказов.
+            List of orders.
         """
         query = (
             select(Order)
@@ -324,7 +324,7 @@ class OrderRepository(BaseRepository[Order]):
 ## Dependency Injection
 
 ```python
-"""Зависимости API."""
+"""API dependencies."""
 
 from fastapi import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -338,13 +338,13 @@ async def get_user_repository(
     session: AsyncSession = Depends(get_session),
 ) -> UserRepository:
     """
-    Получить репозиторий пользователей.
+    Get user repository.
 
     Args:
-        session: Сессия БД.
+        session: Database session.
 
     Returns:
-        Репозиторий пользователей.
+        User repository.
     """
     return UserRepository(session)
 
@@ -353,23 +353,23 @@ async def get_order_repository(
     session: AsyncSession = Depends(get_session),
 ) -> OrderRepository:
     """
-    Получить репозиторий заказов.
+    Get order repository.
 
     Args:
-        session: Сессия БД.
+        session: Database session.
 
     Returns:
-        Репозиторий заказов.
+        Order repository.
     """
     return OrderRepository(session)
 ```
 
 ---
 
-## Использование в роутах
+## Usage in Routes
 
 ```python
-"""Роуты пользователей."""
+"""User routes."""
 
 from uuid import UUID
 
@@ -387,8 +387,8 @@ async def create_user(
     data: UserCreate,
     repo: UserRepository = Depends(get_user_repository),
 ) -> UserResponse:
-    """Создать пользователя."""
-    # Проверка уникальности email
+    """Create a user."""
+    # Check email uniqueness
     existing = await repo.get_by_email(data.email)
     if existing:
         raise HTTPException(
@@ -405,7 +405,7 @@ async def get_user(
     user_id: UUID,
     repo: UserRepository = Depends(get_user_repository),
 ) -> UserResponse:
-    """Получить пользователя."""
+    """Get a user."""
     user = await repo.get_by_id(user_id)
     if user is None:
         raise HTTPException(
@@ -417,10 +417,10 @@ async def get_user(
 
 ---
 
-## Паттерн Unit of Work (опционально)
+## Unit of Work Pattern (optional)
 
 ```python
-"""Unit of Work для транзакций."""
+"""Unit of Work for transactions."""
 
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -429,30 +429,30 @@ from {context}_data.infrastructure.repositories.order_repository import OrderRep
 
 
 class UnitOfWork:
-    """Unit of Work для управления транзакциями."""
+    """Unit of Work for transaction management."""
 
     def __init__(self, session: AsyncSession):
-        """Инициализация."""
+        """Initialize."""
         self.session = session
         self.users = UserRepository(session)
         self.orders = OrderRepository(session)
 
     async def commit(self) -> None:
-        """Зафиксировать транзакцию."""
+        """Commit transaction."""
         await self.session.commit()
 
     async def rollback(self) -> None:
-        """Откатить транзакцию."""
+        """Rollback transaction."""
         await self.session.rollback()
 ```
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] BaseRepository реализован с CRUD
-- [ ] Репозитории сущностей наследуют BaseRepository
-- [ ] Сложные запросы в отдельных методах
-- [ ] selectinload для связей
-- [ ] DI через Depends
-- [ ] Транзакции управляются на уровне сессии
+- [ ] BaseRepository implemented with CRUD
+- [ ] Entity repositories inherit BaseRepository
+- [ ] Complex queries in separate methods
+- [ ] selectinload for relations
+- [ ] DI via Depends
+- [ ] Transactions managed at session level

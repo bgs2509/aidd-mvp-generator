@@ -1,13 +1,13 @@
-# Управление задачами Asyncio Worker
+# Asyncio Worker Task Management
 
-> **Назначение**: Паттерны создания и управления задачами.
+> **Purpose**: Task creation and management patterns.
 
 ---
 
-## Базовый класс задачи
+## Base Task Class
 
 ```python
-"""Базовый класс задачи."""
+"""Base task class."""
 
 import logging
 from abc import ABC, abstractmethod
@@ -17,14 +17,14 @@ import httpx
 
 
 class BaseTask(ABC):
-    """Базовый класс для фоновых задач."""
+    """Base class for background tasks."""
 
     def __init__(self, http_client: httpx.AsyncClient):
         """
-        Инициализация задачи.
+        Initialize task.
 
         Args:
-            http_client: HTTP клиент для API.
+            http_client: HTTP client for API.
         """
         self.http_client = http_client
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -32,20 +32,20 @@ class BaseTask(ABC):
     @property
     @abstractmethod
     def name(self) -> str:
-        """Имя задачи."""
+        """Task name."""
         pass
 
     @abstractmethod
     async def execute(self) -> Any:
-        """Выполнить задачу."""
+        """Execute task."""
         pass
 
     async def run(self) -> Any:
         """
-        Запустить задачу с логированием.
+        Run task with logging.
 
         Returns:
-            Результат выполнения.
+            Execution result.
         """
         self.logger.info(f"Starting task: {self.name}")
         try:
@@ -59,10 +59,10 @@ class BaseTask(ABC):
 
 ---
 
-## Пример задачи
+## Task Example
 
 ```python
-"""Задача очистки старых заказов."""
+"""Old orders cleanup task."""
 
 from datetime import datetime, timedelta
 
@@ -70,24 +70,24 @@ from {context}_worker.tasks.base import BaseTask
 
 
 class CleanupOldOrdersTask(BaseTask):
-    """Задача очистки старых заказов."""
+    """Old orders cleanup task."""
 
     @property
     def name(self) -> str:
-        """Имя задачи."""
+        """Task name."""
         return "cleanup_old_orders"
 
     async def execute(self) -> int:
         """
-        Очистить старые заказы.
+        Clean up old orders.
 
         Returns:
-            Количество удалённых заказов.
+            Number of deleted orders.
         """
-        # Дата для очистки (старше 30 дней)
+        # Cleanup date (older than 30 days)
         cutoff_date = datetime.utcnow() - timedelta(days=30)
 
-        # Вызов Data API
+        # Call Data API
         response = await self.http_client.delete(
             "/api/v1/orders/cleanup",
             params={"before": cutoff_date.isoformat()},
@@ -101,9 +101,9 @@ class CleanupOldOrdersTask(BaseTask):
         return deleted_count
 
 
-# Функция-обёртка для планировщика
+# Wrapper function for the scheduler
 async def cleanup_old_orders() -> int:
-    """Очистить старые заказы."""
+    """Clean up old orders."""
     async with httpx.AsyncClient(base_url=settings.data_api_url) as client:
         task = CleanupOldOrdersTask(client)
         return await task.run()
@@ -111,10 +111,10 @@ async def cleanup_old_orders() -> int:
 
 ---
 
-## Задача с ретраями
+## Task with Retries
 
 ```python
-"""Задача с повторными попытками."""
+"""Task with retry logic."""
 
 import asyncio
 from typing import TypeVar, Callable, Awaitable
@@ -129,19 +129,19 @@ async def retry_async(
     backoff: float = 2.0,
 ) -> T:
     """
-    Выполнить функцию с повторными попытками.
+    Execute function with retries.
 
     Args:
-        func: Асинхронная функция.
-        max_retries: Максимальное количество попыток.
-        delay: Начальная задержка.
-        backoff: Множитель задержки.
+        func: Async function.
+        max_retries: Maximum number of attempts.
+        delay: Initial delay.
+        backoff: Delay multiplier.
 
     Returns:
-        Результат функции.
+        Function result.
 
     Raises:
-        Exception: Если все попытки неудачны.
+        Exception: If all attempts fail.
     """
     last_exception = None
     current_delay = delay
@@ -159,26 +159,26 @@ async def retry_async(
 
 
 class SyncExternalDataTask(BaseTask):
-    """Задача синхронизации с внешним API."""
+    """External API synchronization task."""
 
     @property
     def name(self) -> str:
-        """Имя задачи."""
+        """Task name."""
         return "sync_external_data"
 
     async def execute(self) -> dict:
         """
-        Синхронизировать данные.
+        Synchronize data.
 
         Returns:
-            Статистика синхронизации.
+            Synchronization statistics.
         """
         async def do_sync():
             response = await self.http_client.post("/api/v1/sync")
             response.raise_for_status()
             return response.json()
 
-        # Выполнение с ретраями
+        # Execute with retries
         return await retry_async(
             do_sync,
             max_retries=3,
@@ -188,43 +188,43 @@ class SyncExternalDataTask(BaseTask):
 
 ---
 
-## Задача с транзакциями
+## Task with Batch Processing
 
 ```python
-"""Задача с пакетной обработкой."""
+"""Batch processing task."""
 
 from typing import List
 
 
 class ProcessOrdersTask(BaseTask):
-    """Задача обработки заказов."""
+    """Order processing task."""
 
     BATCH_SIZE = 100
 
     @property
     def name(self) -> str:
-        """Имя задачи."""
+        """Task name."""
         return "process_pending_orders"
 
     async def execute(self) -> dict:
         """
-        Обработать ожидающие заказы.
+        Process pending orders.
 
         Returns:
-            Статистика обработки.
+            Processing statistics.
         """
         processed = 0
         failed = 0
         offset = 0
 
         while True:
-            # Получить пакет заказов
+            # Get batch of orders
             orders = await self._get_pending_orders(offset)
 
             if not orders:
                 break
 
-            # Обработать каждый заказ
+            # Process each order
             for order in orders:
                 try:
                     await self._process_order(order)
@@ -238,7 +238,7 @@ class ProcessOrdersTask(BaseTask):
         return {"processed": processed, "failed": failed}
 
     async def _get_pending_orders(self, offset: int) -> List[dict]:
-        """Получить ожидающие заказы."""
+        """Get pending orders."""
         response = await self.http_client.get(
             "/api/v1/orders",
             params={
@@ -251,7 +251,7 @@ class ProcessOrdersTask(BaseTask):
         return response.json().get("items", [])
 
     async def _process_order(self, order: dict) -> None:
-        """Обработать один заказ."""
+        """Process a single order."""
         response = await self.http_client.post(
             f"/api/v1/orders/{order['id']}/process"
         )
@@ -260,34 +260,34 @@ class ProcessOrdersTask(BaseTask):
 
 ---
 
-## Задача уведомлений
+## Notification Task
 
 ```python
-"""Задача отправки уведомлений."""
+"""Notification sending task."""
 
 from datetime import datetime, timedelta
 
 
 class SendRemindersTask(BaseTask):
-    """Задача отправки напоминаний."""
+    """Reminder sending task."""
 
     @property
     def name(self) -> str:
-        """Имя задачи."""
+        """Task name."""
         return "send_reminders"
 
     async def execute(self) -> dict:
         """
-        Отправить напоминания.
+        Send reminders.
 
         Returns:
-            Статистика отправки.
+            Sending statistics.
         """
-        # Бронирования на ближайший час
+        # Bookings in the next hour
         start_time = datetime.utcnow()
         end_time = start_time + timedelta(hours=1)
 
-        # Получить бронирования
+        # Get bookings
         response = await self.http_client.get(
             "/api/v1/bookings/upcoming",
             params={
@@ -310,7 +310,7 @@ class SendRemindersTask(BaseTask):
         return {"sent": sent, "total": len(bookings)}
 
     async def _send_reminder(self, booking: dict) -> None:
-        """Отправить напоминание."""
+        """Send a reminder."""
         await self.http_client.post(
             f"/api/v1/bookings/{booking['id']}/remind"
         )
@@ -318,10 +318,10 @@ class SendRemindersTask(BaseTask):
 
 ---
 
-## Регистрация задач
+## Task Registration
 
 ```python
-"""Регистрация всех задач."""
+"""Register all tasks."""
 
 from {context}_worker.scheduler.scheduler import Scheduler
 from {context}_worker.tasks import cleanup, notifications, sync
@@ -330,26 +330,26 @@ from {context}_worker.core.config import settings
 
 def register_all_tasks(scheduler: Scheduler) -> None:
     """
-    Зарегистрировать все задачи.
+    Register all tasks.
 
     Args:
-        scheduler: Планировщик задач.
+        scheduler: Task scheduler.
     """
-    # Очистка — каждый час
+    # Cleanup — every hour
     scheduler.register_task(
         cleanup.cleanup_old_orders,
         interval_seconds=settings.cleanup_interval,
         name="cleanup_old_orders",
     )
 
-    # Напоминания — каждые 5 минут
+    # Reminders — every 5 minutes
     scheduler.register_task(
         notifications.send_reminders,
         interval_seconds=300,
         name="send_reminders",
     )
 
-    # Синхронизация — каждые 30 минут
+    # Synchronization — every 30 minutes
     scheduler.register_task(
         sync.sync_external_data,
         interval_seconds=settings.sync_interval,
@@ -359,10 +359,10 @@ def register_all_tasks(scheduler: Scheduler) -> None:
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Задачи наследуют BaseTask
-- [ ] Ретраи настроены для нестабильных операций
-- [ ] Пакетная обработка для больших данных
-- [ ] Логирование результатов
-- [ ] Обработка ошибок без падения воркера
+- [ ] Tasks inherit BaseTask
+- [ ] Retries configured for unstable operations
+- [ ] Batch processing for large data
+- [ ] Result logging
+- [ ] Error handling without crashing the worker

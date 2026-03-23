@@ -1,72 +1,72 @@
 # VPS Security Mode
 
-> **Назначение**: Режим "только чтение" для AI агентов при работе на production VPS.
+> **Purpose**: Read-only mode for AI agents when working on production VPS.
 
 ---
 
-## Что такое VPS Mode
+## What Is VPS Mode
 
-VPS Mode — специальный режим работы AI агента, при котором:
-- **Запрещены** любые модификации файлов
-- **Запрещены** опасные команды (rm, systemctl, docker exec)
-- **Разрешено** только чтение и анализ
+VPS Mode is a special AI agent operation mode where:
+- Any file modifications are **prohibited**
+- Dangerous commands (rm, systemctl, docker exec) are **prohibited**
+- Only reading and analysis are **allowed**
 
 ---
 
-## Когда использовать
+## When to Use
 
-| Ситуация | Режим |
+| Situation | Mode |
 |----------|-------|
-| Локальная разработка | Стандартный режим |
-| CI/CD pipeline | Стандартный режим |
+| Local development | Standard mode |
+| CI/CD pipeline | Standard mode |
 | **Production VPS** | **VPS Mode** |
 | **Staging VPS** | **VPS Mode** |
-| Debugging на сервере | **VPS Mode** |
+| Debugging on server | **VPS Mode** |
 
 ---
 
-## Автоопределение SSH
+## SSH Auto-detection
 
-AI агент автоматически определяет SSH-сессию по переменным окружения:
+The AI agent automatically detects SSH sessions via environment variables:
 
 ```bash
-# Признаки SSH-сессии (любой из):
-SSH_CONNECTION    # IP клиента и сервера
-SSH_CLIENT        # IP и порт клиента
-SSH_TTY           # TTY сессии
+# SSH session indicators (any of):
+SSH_CONNECTION    # Client and server IP
+SSH_CLIENT        # Client IP and port
+SSH_TTY           # Session TTY
 
-# Проверка:
+# Check:
 if [ -n "$SSH_CONNECTION" ] || [ -n "$SSH_CLIENT" ] || [ -n "$SSH_TTY" ]; then
-    echo "VPS Mode рекомендуется!"
+    echo "VPS Mode recommended!"
 fi
 ```
 
 ---
 
-## Как активировать
+## How to Activate
 
-### Способ 1: Использовать settings.vps.json
+### Method 1: Use settings.vps.json
 
 ```bash
-# Скопировать шаблон
+# Copy template
 cp .aidd/templates/project/.claude/settings.vps.json.example .claude/settings.json
 
-# Перезапустить Claude Code
+# Restart Claude Code
 claude
 ```
 
-### Способ 2: При инициализации
+### Method 2: During initialization
 
-Команда `/aidd-init` автоматически:
-1. Проверяет SSH-сессию
-2. Выводит предупреждение
-3. Предлагает активировать VPS Mode
+The `/aidd-init` command automatically:
+1. Checks for SSH session
+2. Displays a warning
+3. Suggests activating VPS Mode
 
 ---
 
-## Разрешённые операции в VPS Mode
+## Allowed Operations in VPS Mode
 
-### Чтение
+### Reading
 
 ```json
 {
@@ -78,7 +78,7 @@ claude
 }
 ```
 
-### Git (только чтение)
+### Git (read-only)
 
 ```json
 {
@@ -91,7 +91,7 @@ claude
 }
 ```
 
-### Docker (только логи и статус)
+### Docker (logs and status only)
 
 ```json
 {
@@ -103,7 +103,7 @@ claude
 }
 ```
 
-### Системные (только чтение)
+### System (read-only)
 
 ```json
 {
@@ -118,9 +118,9 @@ claude
 
 ---
 
-## Запрещённые операции в VPS Mode
+## Prohibited Operations in VPS Mode
 
-### Модификация файлов
+### File Modification
 
 ```json
 {
@@ -131,7 +131,7 @@ claude
 }
 ```
 
-### Опасные команды
+### Dangerous Commands
 
 ```json
 {
@@ -146,7 +146,7 @@ claude
 }
 ```
 
-### Git (модификация)
+### Git (modification)
 
 ```json
 {
@@ -159,7 +159,7 @@ claude
 }
 ```
 
-### Docker (модификация)
+### Docker (modification)
 
 ```json
 {
@@ -173,7 +173,7 @@ claude
 }
 ```
 
-### Системные (модификация)
+### System (modification)
 
 ```json
 {
@@ -188,62 +188,62 @@ claude
 
 ---
 
-## Сценарии использования
+## Usage Scenarios
 
-### Анализ логов
+### Log Analysis
 
 ```
-Пользователь: Проанализируй логи за последний час
+User: Analyze logs for the last hour
 
-AI агент:
+AI agent:
 1. docker logs --since 1h {service}
-2. Анализирует паттерны ошибок
-3. Выдаёт отчёт с рекомендациями
+2. Analyzes error patterns
+3. Provides a report with recommendations
 ```
 
-### Диагностика проблем
+### Problem Diagnostics
 
 ```
-Пользователь: Почему сервис не отвечает?
+User: Why is the service not responding?
 
-AI агент:
-1. docker ps — проверяет статус контейнеров
-2. docker logs — смотрит ошибки
-3. systemctl status — проверяет системные сервисы
-4. Выдаёт диагноз и план действий (для человека)
+AI agent:
+1. docker ps -- checks container status
+2. docker logs -- looks at errors
+3. systemctl status -- checks system services
+4. Provides diagnosis and action plan (for the human)
 ```
 
-### Code review на сервере
+### Code Review on Server
 
 ```
-Пользователь: Проверь конфигурацию nginx
+User: Check the nginx configuration
 
-AI агент:
+AI agent:
 1. Read nginx.conf
-2. Анализирует настройки
-3. Выдаёт замечания и рекомендации
+2. Analyzes settings
+3. Provides comments and recommendations
 ```
 
 ---
 
-## Важно
+## Important
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  VPS Mode = ТОЛЬКО АНАЛИЗ                                       │
+│  VPS Mode = ANALYSIS ONLY                                       │
 ├─────────────────────────────────────────────────────────────────┤
-│  • AI читает, анализирует, рекомендует                          │
-│  • Человек принимает решения и выполняет действия               │
-│  • Это защита от случайных модификаций production               │
+│  • AI reads, analyzes, recommends                               │
+│  • Human makes decisions and performs actions                    │
+│  • This protects against accidental production modifications    │
 └─────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Ссылки
+## References
 
-| Документ | Описание |
+| Document | Description |
 |----------|----------|
-| `templates/project/.claude/settings.vps.json.example` | Шаблон VPS settings |
-| `knowledge/security/secrets-management.md` | Управление секретами |
-| `knowledge/security/security-checklist.md` | Чек-лист безопасности |
+| `templates/project/.claude/settings.vps.json.example` | VPS settings template |
+| `knowledge/security/secrets-management.md` | Secrets management |
+| `knowledge/security/security-checklist.md` | Security checklist |

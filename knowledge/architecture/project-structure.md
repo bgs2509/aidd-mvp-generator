@@ -1,42 +1,42 @@
-# Структура проекта
+# Project Structure
 
-> **Назначение**: Стандартная структура проекта AIDD-MVP.
+> **Purpose**: Standard project structure for AIDD-MVP.
 
 ---
 
-## Корневая структура
+## Root Structure
 
 ```
 {project}/
-├── services/                    # Сервисы
+├── services/                    # Services
 │   ├── {context}_api/          # Business API
 │   ├── {context}_data/         # Data API
-│   ├── {context}_bot/          # Telegram Bot (опционально)
-│   └── {context}_worker/       # Background Worker (опционально)
+│   ├── {context}_bot/          # Telegram Bot (optional)
+│   └── {context}_worker/       # Background Worker (optional)
 │
-├── ai-docs/                     # Документы AI агентов
+├── ai-docs/                     # AI agent documents
 │   └── docs/
-│       ├── prd/                # PRD документы
-│       ├── architecture/       # Архитектурные решения
-│       ├── plans/              # Планы реализации
-│       ├── reports/            # Отчёты (review, qa, validation)
+│       ├── prd/                # PRD documents
+│       ├── architecture/       # Architecture decisions
+│       ├── plans/              # Implementation plans
+│       ├── reports/            # Reports (review, qa, validation)
 │       └── rtm.md              # Requirements Traceability Matrix
 │
-├── docs/                        # Документация проекта
-│   └── api/                    # API документация
+├── docs/                        # Project documentation
+│   └── api/                    # API documentation
 │
-├── docker-compose.yml           # Основная конфигурация
+├── docker-compose.yml           # Main configuration
 ├── docker-compose.dev.yml       # Dev overrides
-├── docker-compose.prod.yml      # Production конфигурация (Level 3+)
-├── .env.example                 # Пример переменных окружения
-├── Makefile                     # Команды разработки
-├── README.md                    # Документация проекта
-└── .gitignore                   # Игнорируемые файлы
+├── docker-compose.prod.yml      # Production configuration (Level 3+)
+├── .env.example                 # Environment variables example
+├── Makefile                     # Development commands
+├── README.md                    # Project documentation
+└── .gitignore                   # Ignored files
 ```
 
 ---
 
-## Структура Business API
+## Business API Structure
 
 ```
 services/{context}_api/
@@ -48,17 +48,17 @@ services/{context}_api/
 ├── src/
 │   └── {context}_api/
 │       ├── __init__.py
-│       ├── main.py              # Точка входа, фабрика приложения
+│       ├── main.py              # Entry point, application factory
 │       │
-│       ├── api/                 # Входящие адаптеры (HTTP)
+│       ├── api/                 # Incoming adapters (HTTP)
 │       │   ├── __init__.py
-│       │   ├── dependencies.py  # DI зависимости
+│       │   ├── dependencies.py  # DI dependencies
 │       │   └── v1/
 │       │       ├── __init__.py
-│       │       ├── router.py    # Главный роутер
+│       │       ├── router.py    # Main router
 │       │       └── {entity}_routes.py
 │       │
-│       ├── application/         # Слой приложения
+│       ├── application/         # Application layer
 │       │   ├── __init__.py
 │       │   ├── services/        # Application services
 │       │   │   ├── __init__.py
@@ -67,9 +67,9 @@ services/{context}_api/
 │       │       ├── __init__.py
 │       │       └── {entity}_dtos.py
 │       │
-│       ├── domain/              # Доменный слой (ядро)
+│       ├── domain/              # Domain layer (core)
 │       │   ├── __init__.py
-│       │   ├── entities/        # Доменные сущности
+│       │   ├── entities/        # Domain entities
 │       │   │   ├── __init__.py
 │       │   │   └── {entity}.py
 │       │   ├── value_objects/   # Value Objects
@@ -77,27 +77,27 @@ services/{context}_api/
 │       │   └── services/        # Domain services
 │       │       └── __init__.py
 │       │
-│       ├── infrastructure/      # Исходящие адаптеры
+│       ├── infrastructure/      # Outgoing adapters
 │       │   ├── __init__.py
-│       │   └── http/            # HTTP клиенты
+│       │   └── http/            # HTTP clients
 │       │       ├── __init__.py
 │       │       ├── base_client.py
 │       │       └── data_api_client.py
 │       │
-│       ├── schemas/             # Pydantic схемы
+│       ├── schemas/             # Pydantic schemas
 │       │   ├── __init__.py
 │       │   ├── base.py
 │       │   └── {entity}_schemas.py
 │       │
-│       └── core/                # Общие компоненты
+│       └── core/                # Shared components
 │           ├── __init__.py
-│           ├── config.py        # Конфигурация
-│           ├── logging.py       # Настройка логирования
-│           └── exceptions.py    # Кастомные исключения
+│           ├── config.py        # Configuration
+│           ├── logging.py       # Logging setup
+│           └── exceptions.py    # Custom exceptions
 │
 └── tests/
     ├── __init__.py
-    ├── conftest.py              # Фикстуры
+    ├── conftest.py              # Fixtures
     ├── unit/
     │   ├── __init__.py
     │   └── test_{entity}_service.py
@@ -108,7 +108,7 @@ services/{context}_api/
 
 ---
 
-## Структура Data API
+## Data API Structure
 
 ```
 services/{context}_data/
@@ -116,9 +116,9 @@ services/{context}_data/
 ├── requirements.txt
 ├── requirements-dev.txt
 ├── pyproject.toml
-├── alembic.ini                  # Конфигурация миграций
+├── alembic.ini                  # Migration configuration
 │
-├── migrations/                  # Alembic миграции
+├── migrations/                  # Alembic migrations
 │   ├── env.py
 │   ├── script.py.mako
 │   └── versions/
@@ -142,7 +142,7 @@ services/{context}_data/
 │       │   └── entities/
 │       │       ├── __init__.py
 │       │       ├── base.py      # SQLAlchemy Base
-│       │       └── {entity}.py  # ORM модели
+│       │       └── {entity}.py  # ORM models
 │       │
 │       ├── infrastructure/
 │       │   ├── __init__.py
@@ -176,7 +176,7 @@ services/{context}_data/
 
 ---
 
-## Структура Telegram Bot
+## Telegram Bot Structure
 
 ```
 services/{context}_bot/
@@ -190,18 +190,18 @@ services/{context}_bot/
 │       ├── __init__.py
 │       ├── main.py
 │       │
-│       ├── handlers/            # Обработчики сообщений
+│       ├── handlers/            # Message handlers
 │       │   ├── __init__.py
 │       │   ├── base.py
 │       │   ├── start.py
 │       │   └── {feature}_handlers.py
 │       │
-│       ├── keyboards/           # Клавиатуры
+│       ├── keyboards/           # Keyboards
 │       │   ├── __init__.py
 │       │   ├── base.py
 │       │   └── {feature}_keyboards.py
 │       │
-│       ├── states/              # FSM состояния
+│       ├── states/              # FSM states
 │       │   ├── __init__.py
 │       │   └── {feature}_states.py
 │       │
@@ -229,7 +229,7 @@ services/{context}_bot/
 
 ---
 
-## Структура Background Worker
+## Background Worker Structure
 
 ```
 services/{context}_worker/
@@ -243,12 +243,12 @@ services/{context}_worker/
 │       ├── __init__.py
 │       ├── main.py
 │       │
-│       ├── tasks/               # Обработчики задач
+│       ├── tasks/               # Task handlers
 │       │   ├── __init__.py
 │       │   ├── base.py
 │       │   └── {task_name}_task.py
 │       │
-│       ├── scheduler/           # Планировщик
+│       ├── scheduler/           # Scheduler
 │       │   ├── __init__.py
 │       │   └── scheduler.py
 │       │
@@ -272,12 +272,12 @@ services/{context}_worker/
 
 ---
 
-## Ключевые файлы
+## Key Files
 
 ### main.py (Business API)
 
 ```python
-"""Точка входа Business API."""
+"""Business API entry point."""
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
@@ -308,7 +308,7 @@ app = create_app()
 ### config.py
 
 ```python
-"""Конфигурация сервиса."""
+"""Service configuration."""
 
 from pydantic_settings import BaseSettings
 

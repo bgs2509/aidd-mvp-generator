@@ -1,6 +1,6 @@
-# Шаблоны записей в CHANGELOG.md
+# CHANGELOG.md Entry Templates
 
-## Шаблон 1: Завершённая фича (DEPLOYED) — автоматическая генерация
+## Template 1: Completed Feature (DEPLOYED) — automatic generation
 
 ```markdown
 ## [{{FID}}] - {{DEPLOYED_DATE}} — {{TITLE}}
@@ -45,75 +45,75 @@
 ---
 ```
 
-## Шаблон 2: Критическое изменение (ручное добавление AI)
+## Template 2: Critical Change (manual AI entry)
 
-### Вариант A: Breaking Change
+### Variant A: Breaking Change
 
 ```markdown
-### YYYY-MM-DD - Breaking Change: Краткое описание (до 80 символов)
+### YYYY-MM-DD - Breaking Change: Brief description (up to 80 characters)
 
 **Changed**
-- Конкретное изменение 1
-- Конкретное изменение 2
+- Specific change 1
+- Specific change 2
 
 **Impact**: HIGH
-**Migration Guide**: [docs/migrations/название.md]
-**Affected**: Описание кто затронут (клиенты API, сервисы и т.д.)
+**Migration Guide**: [docs/migrations/name.md]
+**Affected**: Description of who is affected (API clients, services, etc.)
 **Commit**: <commit-hash>
 **Details**: Issue #N, PR #M
 
 ---
 ```
 
-### Вариант B: Security Fix
+### Variant B: Security Fix
 
 ```markdown
-### YYYY-MM-DD - Security Fix: Краткое описание уязвимости
+### YYYY-MM-DD - Security Fix: Brief vulnerability description
 
 **Security**
-- Конкретное исправление 1
-- Конкретное исправление 2
+- Specific fix 1
+- Specific fix 2
 
 **Impact**: CRITICAL
 **Severity**: HIGH (CVSSv3: X.X)
 **Affected Services**: `service_name_1`, `service_name_2`
-**Affected Versions**: <= FID или <= версия
+**Affected Versions**: <= FID or <= version
 **Rollback**: `git revert <commit-hash>`
-**Details**: Issue #N, Commit <hash>, CVE-YYYY-NNNNN (если есть)
+**Details**: Issue #N, Commit <hash>, CVE-YYYY-NNNNN (if applicable)
 
 ---
 ```
 
-### Вариант C: Hotfix
+### Variant C: Hotfix
 
 ```markdown
-### YYYY-MM-DD - Hotfix: Краткое описание проблемы
+### YYYY-MM-DD - Hotfix: Brief problem description
 
 **Fixed**
-- Конкретное исправление 1
-- Конкретное исправление 2
+- Specific fix 1
+- Specific fix 2
 
 **Impact**: CRITICAL
 **Affected Services**: `service_name_1`, `service_name_2`
 **Rollback**: `git revert <commit-hash>`
-**Root Cause**: Краткое описание причины
+**Root Cause**: Brief description of the root cause
 **Details**: Issue #N, Commit <hash>
 
 ---
 ```
 
-### Вариант D: Database Migration
+### Variant D: Database Migration
 
 ```markdown
-### YYYY-MM-DD - Database Migration: Краткое описание
+### YYYY-MM-DD - Database Migration: Brief description
 
 **Changed**
-- База данных: добавлена таблица `table_name`
-- База данных: добавлен индекс на `column_name`
+- Database: added table `table_name`
+- Database: added index on `column_name`
 
 **Impact**: MEDIUM
-**Migration Script**: `migrations/YYYYMMDD_название.sql`
-**Rollback Script**: `migrations/YYYYMMDD_название_rollback.sql`
+**Migration Script**: `migrations/YYYYMMDD_name.sql`
+**Rollback Script**: `migrations/YYYYMMDD_name_rollback.sql`
 **Affected Services**: `service_name_data`
 **Downtime Required**: Yes/No
 **Details**: Commit <hash>
@@ -121,17 +121,17 @@
 ---
 ```
 
-### Вариант E: Dependency Update
+### Variant E: Dependency Update
 
 ```markdown
 ### YYYY-MM-DD - Dependency Update: package-name X.Y.Z → A.B.C
 
 **Changed**
-- Обновлена зависимость `package-name`: X.Y.Z → A.B.C
-- [Опционально] Адаптирован код под новое API
+- Updated dependency `package-name`: X.Y.Z → A.B.C
+- [Optional] Adapted code for new API
 
 **Impact**: LOW/MEDIUM/HIGH
-**Breaking Changes**: Yes/No (описать если есть)
+**Breaking Changes**: Yes/No (describe if any)
 **Changelog Link**: https://github.com/org/package/releases/tag/vA.B.C
 **Affected Services**: `service_name_1`, `service_name_2`
 **Details**: Commit <hash>
@@ -139,53 +139,53 @@
 ---
 ```
 
-### Вариант F: Configuration Change
+### Variant F: Configuration Change
 
 ```markdown
-### YYYY-MM-DD - Configuration: Описание изменения конфигурации
+### YYYY-MM-DD - Configuration: Description of configuration change
 
 **Changed**
-- Добавлена env-переменная `NEW_VAR_NAME`
-- Изменено значение по умолчанию `EXISTING_VAR`: old → new
+- Added env variable `NEW_VAR_NAME`
+- Changed default value of `EXISTING_VAR`: old → new
 
 **Impact**: MEDIUM
 **Required Env Vars**: `NEW_VAR_NAME=default_value`
-**Default Values**: См. `.env.example`
+**Default Values**: See `.env.example`
 **Affected Services**: `service_name_1`, `service_name_2`
-**Migration**: Обновить `.env` файл в продакшене
+**Migration**: Update `.env` file in production
 **Details**: Commit <hash>
 
 ---
 ```
 
-### Вариант G: Refactoring (значительный)
+### Variant G: Refactoring (significant)
 
 ```markdown
-### YYYY-MM-DD - Refactoring: Краткое описание рефакторинга
+### YYYY-MM-DD - Refactoring: Brief refactoring description
 
 **Changed**
-- Переименован модуль `old_name` → `new_name`
-- Изменена структура директорий: `old/path` → `new/path`
+- Renamed module `old_name` → `new_name`
+- Changed directory structure: `old/path` → `new/path`
 
 **Impact**: MEDIUM
-**Affected Files**: Список ключевых затронутых файлов
-**Migration**: [docs/refactoring/название.md] (если нужна)
-**Breaking**: Yes/No (для внутренних импортов)
+**Affected Files**: List of key affected files
+**Migration**: [docs/refactoring/name.md] (if needed)
+**Breaking**: Yes/No (for internal imports)
 **Details**: Commit <hash>
 
 ---
 ```
 
-## Критерии выбора шаблона
+## Template Selection Criteria
 
-| Тип изменения | Шаблон | Impact | Обязательность |
-|---------------|--------|--------|----------------|
-| Ломает обратную совместимость | Breaking Change | HIGH/CRITICAL | MUST |
-| Исправление уязвимости | Security Fix | CRITICAL | MUST |
-| Критический баг в продакшене | Hotfix | CRITICAL | MUST |
-| Изменение схемы БД | Database Migration | MEDIUM/HIGH | MUST |
-| Обновление зависимости (major/minor) | Dependency Update | MEDIUM | MUST |
-| Новые/изменённые env-переменные | Configuration Change | MEDIUM | MUST |
-| Переименование модулей/структуры | Refactoring | MEDIUM | SHOULD |
-| Обычный bugfix | — | LOW | OPTIONAL |
-| Документация | — | LOW | OPTIONAL |
+| Change Type | Template | Impact | Required |
+|-------------|----------|--------|----------|
+| Breaks backward compatibility | Breaking Change | HIGH/CRITICAL | MUST |
+| Vulnerability fix | Security Fix | CRITICAL | MUST |
+| Critical production bug | Hotfix | CRITICAL | MUST |
+| DB schema change | Database Migration | MEDIUM/HIGH | MUST |
+| Dependency update (major/minor) | Dependency Update | MEDIUM | MUST |
+| New/changed env variables | Configuration Change | MEDIUM | MUST |
+| Module/structure renaming | Refactoring | MEDIUM | SHOULD |
+| Regular bugfix | — | LOW | OPTIONAL |
+| Documentation | — | LOW | OPTIONAL |

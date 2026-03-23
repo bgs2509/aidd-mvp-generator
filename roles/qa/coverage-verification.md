@@ -1,56 +1,56 @@
-# Функция: Верификация coverage
+# Function: Coverage Verification
 
-> **Назначение**: Проверка покрытия кода тестами и требований.
-
----
-
-## Цель
-
-Верифицировать, что покрытие кода и требований
-соответствует стандартам Level 2 (MVP).
+> **Purpose**: Verifying code and requirements test coverage.
 
 ---
 
-## Типы покрытия
+## Goal
 
-### 1. Code Coverage (покрытие кода)
+Verify that code and requirements coverage
+meets Level 2 (MVP) standards.
+
+---
+
+## Coverage Types
+
+### 1. Code Coverage
 
 ```
-Метрика: Процент исполненных строк кода при тестах.
+Metric: Percentage of code lines executed during tests.
 
-Требование Level 2: ≥75%
+Level 2 requirement: ≥75%
 
-Инструменты:
+Tools:
 - pytest-cov
 - coverage.py
 ```
 
-### 2. Requirements Coverage (покрытие требований)
+### 2. Requirements Coverage
 
 ```
-Метрика: Процент требований, покрытых тестами.
+Metric: Percentage of requirements covered by tests.
 
-Требование: 100% для Must, ≥80% для Should
+Requirement: 100% for Must, ≥80% for Should
 
-Инструмент:
+Tool:
 - RTM (Requirements Traceability Matrix)
 ```
 
 ---
 
-## Процесс верификации
+## Verification Process
 
-### Шаг 1: Измерение Code Coverage
+### Step 1: Measuring Code Coverage
 
 ```bash
-# Запуск тестов с измерением покрытия
+# Run tests with coverage measurement
 pytest --cov=src --cov-report=term --cov-report=html --cov-report=xml
 
-# Проверка минимального порога
+# Check minimum threshold
 pytest --cov=src --cov-fail-under=75
 ```
 
-### Шаг 2: Анализ отчёта о покрытии
+### Step 2: Analyzing the Coverage Report
 
 ```
 ---------- coverage: platform linux, python 3.11.x ----------
@@ -65,141 +65,141 @@ src/booking_api/infrastructure/http/       40     10    75%
 TOTAL                                     190     23    88%
 ```
 
-### Шаг 3: Идентификация непокрытого кода
+### Step 3: Identifying Uncovered Code
 
 ```bash
-# Просмотр непокрытых строк
+# View uncovered lines
 coverage report --show-missing
 
-# HTML отчёт с подсветкой
+# HTML report with highlighting
 coverage html
-# Открыть htmlcov/index.html
+# Open htmlcov/index.html
 ```
 
-### Шаг 4: Обновление RTM
+### Step 4: Updating RTM
 
 ```markdown
 ## Requirements Traceability Matrix
 
-| Req ID | Описание | Реализация | Тест | Статус |
-|--------|----------|------------|------|--------|
-| FR-001 | Создание ресторана | api/v1/routes.py:45 | test_create_restaurant | ✓ |
-| FR-002 | Список ресторанов | api/v1/routes.py:60 | test_list_restaurants | ✓ |
-| FR-003 | Поиск ресторана | api/v1/routes.py:75 | test_search_restaurant | ✓ |
-| NF-001 | Время отклика <500ms | — | test_response_time | ✓ |
+| Req ID | Description | Implementation | Test | Status |
+|--------|-------------|----------------|------|--------|
+| FR-001 | Restaurant creation | api/v1/routes.py:45 | test_create_restaurant | ✓ |
+| FR-002 | Restaurant list | api/v1/routes.py:60 | test_list_restaurants | ✓ |
+| FR-003 | Restaurant search | api/v1/routes.py:75 | test_search_restaurant | ✓ |
+| NF-001 | Response time <500ms | — | test_response_time | ✓ |
 | NF-003 | Coverage ≥75% | — | CI check | ✓ |
 ```
 
 ---
 
-## Анализ результатов
+## Results Analysis
 
 ### Code Coverage
 
 ```markdown
-### Анализ покрытия кода
+### Code Coverage Analysis
 
-| Сервис | Покрытие | Статус | Комментарий |
-|--------|----------|--------|-------------|
-| {context}_api | 88% | ✓ PASSED | Выше порога |
-| {context}_data | 92% | ✓ PASSED | Выше порога |
-| {context}_bot | 72% | ✗ FAILED | Ниже порога (75%) |
-| **Общее** | **84%** | **✓ PASSED** | — |
+| Service | Coverage | Status | Comment |
+|---------|----------|--------|---------|
+| {context}_api | 88% | ✓ PASSED | Above threshold |
+| {context}_data | 92% | ✓ PASSED | Above threshold |
+| {context}_bot | 72% | ✗ FAILED | Below threshold (75%) |
+| **Overall** | **84%** | **✓ PASSED** | — |
 
-### Непокрытые области
+### Uncovered Areas
 
-| Файл | Строки | Причина | Действие |
-|------|--------|---------|----------|
-| http_client.py | 45-52 | Error handling | Добавить тесты |
-| handlers.py | 80-95 | Edge cases | Добавить тесты |
+| File | Lines | Reason | Action |
+|------|-------|--------|--------|
+| http_client.py | 45-52 | Error handling | Add tests |
+| handlers.py | 80-95 | Edge cases | Add tests |
 ```
 
 ### Requirements Coverage
 
 ```markdown
-### Анализ покрытия требований
+### Requirements Coverage Analysis
 
-| Приоритет | Всего | Покрыто | Процент | Статус |
-|-----------|-------|---------|---------|--------|
+| Priority | Total | Covered | Percentage | Status |
+|----------|-------|---------|------------|--------|
 | Must | 10 | 10 | 100% | ✓ PASSED |
 | Should | 5 | 4 | 80% | ✓ PASSED |
-| Could | 3 | 2 | 67% | — (не требуется) |
-| **Итого** | **18** | **16** | **89%** | — |
+| Could | 3 | 2 | 67% | — (not required) |
+| **Total** | **18** | **16** | **89%** | — |
 
-### Непокрытые требования
+### Uncovered Requirements
 
-| Req ID | Описание | Причина | Действие |
-|--------|----------|---------|----------|
-| UI-003 | Анимация кнопок | Сложно тестировать | Ручное тестирование |
-| FR-008 | Экспорт отчётов | Не реализовано | Отложено |
+| Req ID | Description | Reason | Action |
+|--------|-------------|--------|--------|
+| UI-003 | Button animation | Hard to test | Manual testing |
+| FR-008 | Report export | Not implemented | Deferred |
 ```
 
 ---
 
-## Критерии прохождения
+## Passing Criteria
 
 ### Code Coverage
 
 ```
 Level 2 (MVP):
-✓ Общее покрытие ≥75%
-✓ Критические модули ≥80%
-✓ Нет файлов с 0% покрытием
+✓ Overall coverage ≥75%
+✓ Critical modules ≥80%
+✓ No files with 0% coverage
 
-Исключения:
+Exceptions:
 - __init__.py
-- Конфигурационные файлы
-- Абстрактные классы
+- Configuration files
+- Abstract classes
 ```
 
 ### Requirements Coverage
 
 ```
-✓ 100% Must требований покрыто тестами
-✓ ≥80% Should требований покрыто
-✓ Could — по возможности
-✓ RTM актуальна
+✓ 100% of Must requirements covered by tests
+✓ ≥80% of Should requirements covered
+✓ Could — when possible
+✓ RTM is up to date
 ```
 
 ---
 
-## Улучшение покрытия
+## Improving Coverage
 
-### Приоритизация
+### Prioritization
 
 ```
-1. Критические пути (создание, удаление)
-2. Бизнес-логика
-3. Обработка ошибок
+1. Critical paths (create, delete)
+2. Business logic
+3. Error handling
 4. Edge cases
 ```
 
-### Типичные области для улучшения
+### Typical Areas for Improvement
 
 ```python
-# 1. Обработка ошибок
+# 1. Error handling
 try:
     result = await api_client.get_entity(id)
-except DataApiError:  # ← Добавить тест
+except DataApiError:  # ← Add test
     raise NotFoundError()
 
-# 2. Граничные случаи
-if items and len(items) > 0:  # ← Добавить тест для пустого списка
+# 2. Edge cases
+if items and len(items) > 0:  # ← Add test for empty list
     process(items)
 
-# 3. Негативные сценарии
-if not is_valid(data):  # ← Добавить тест с невалидными данными
+# 3. Negative scenarios
+if not is_valid(data):  # ← Add test with invalid data
     raise ValidationError()
 ```
 
-### Пример тестов для улучшения покрытия
+### Example Tests for Improving Coverage
 
 ```python
 # test_error_handling.py
 
 @pytest.mark.asyncio
 async def test_get_entity_data_api_error():
-    """Тест обработки ошибки Data API."""
+    """Test for Data API error handling."""
     mock_client = AsyncMock()
     mock_client.get_entity.side_effect = DataApiError("Connection failed")
 
@@ -211,7 +211,7 @@ async def test_get_entity_data_api_error():
 
 @pytest.mark.asyncio
 async def test_empty_list():
-    """Тест обработки пустого списка."""
+    """Test for empty list handling."""
     mock_client = AsyncMock()
     mock_client.list_entities.return_value = {"items": [], "total": 0}
 
@@ -224,40 +224,40 @@ async def test_empty_list():
 
 ---
 
-## Результат верификации
+## Verification Result
 
 ```markdown
-## Верификация покрытия
+## Coverage Verification
 
-### Статус: PASSED / FAILED
+### Status: PASSED / FAILED
 
 ### Code Coverage
 
-| Метрика | Значение | Порог | Статус |
-|---------|----------|-------|--------|
-| Общее покрытие | 84% | 75% | ✓ |
-| Критические модули | 90% | 80% | ✓ |
-| Файлы с 0% | 0 | 0 | ✓ |
+| Metric | Value | Threshold | Status |
+|--------|-------|-----------|--------|
+| Overall coverage | 84% | 75% | ✓ |
+| Critical modules | 90% | 80% | ✓ |
+| Files with 0% | 0 | 0 | ✓ |
 
 ### Requirements Coverage
 
-| Метрика | Значение | Порог | Статус |
-|---------|----------|-------|--------|
-| Must требования | 100% | 100% | ✓ |
-| Should требования | 80% | 80% | ✓ |
-| Общее покрытие | 89% | — | — |
+| Metric | Value | Threshold | Status |
+|--------|-------|-----------|--------|
+| Must requirements | 100% | 100% | ✓ |
+| Should requirements | 80% | 80% | ✓ |
+| Overall coverage | 89% | — | — |
 
-### Рекомендации
+### Recommendations
 
-1. {Рекомендация по улучшению}
-2. {Области для дополнительных тестов}
+1. {Coverage improvement recommendation}
+2. {Areas for additional tests}
 ```
 
 ---
 
-## Источники
+## Sources
 
-| Документ | Описание |
-|----------|----------|
-| `docs/rtm-template.md` | Шаблон RTM |
-| `workflow.md` | Требования Level 2 |
+| Document | Description |
+|----------|-------------|
+| `docs/rtm-template.md` | RTM Template |
+| `workflow.md` | Level 2 requirements |

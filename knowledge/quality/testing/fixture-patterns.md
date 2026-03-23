@@ -1,13 +1,13 @@
-# Паттерны фикстур pytest
+# pytest Fixture Patterns
 
-> **Назначение**: Эффективное использование фикстур.
+> **Purpose**: Effective use of fixtures.
 
 ---
 
-## Базовые фикстуры
+## Basic Fixtures
 
 ```python
-"""Базовые фикстуры."""
+"""Basic fixtures."""
 
 import pytest
 from uuid import uuid4
@@ -16,19 +16,19 @@ from datetime import datetime
 
 @pytest.fixture
 def user_id() -> str:
-    """Фиксированный UUID пользователя."""
+    """Fixed user UUID."""
     return str(uuid4())
 
 
 @pytest.fixture
 def current_time() -> datetime:
-    """Текущее время."""
+    """Current time."""
     return datetime.utcnow()
 
 
 @pytest.fixture
 def sample_user_data() -> dict:
-    """Пример данных пользователя."""
+    """Sample user data."""
     return {
         "name": "Test User",
         "email": "test@example.com",
@@ -38,72 +38,72 @@ def sample_user_data() -> dict:
 
 ---
 
-## Фикстуры с параметрами
+## Parameterized Fixtures
 
 ```python
-"""Параметризованные фикстуры."""
+"""Parameterized fixtures."""
 
 import pytest
 
 
 @pytest.fixture(params=["active", "inactive", "blocked"])
 def user_status(request) -> str:
-    """Различные статусы пользователя."""
+    """Various user statuses."""
     return request.param
 
 
 @pytest.fixture(params=[1, 10, 100])
 def page_size(request) -> int:
-    """Различные размеры страницы."""
+    """Various page sizes."""
     return request.param
 
 
-# Тест будет запущен для каждого значения
+# Test will run for each value
 def test_user_with_status(user_status):
-    """Тест для каждого статуса."""
+    """Test for each status."""
     assert user_status in ["active", "inactive", "blocked"]
 ```
 
 ---
 
-## Фикстуры с scope
+## Fixtures with Scope
 
 ```python
-"""Фикстуры с разным scope."""
+"""Fixtures with different scopes."""
 
 import pytest
 
 
 @pytest.fixture(scope="session")
 def database_url() -> str:
-    """URL базы данных (один на сессию)."""
+    """Database URL (one per session)."""
     return "postgresql://test:test@localhost/test_db"
 
 
 @pytest.fixture(scope="module")
 def test_data() -> dict:
-    """Тестовые данные (один на модуль)."""
+    """Test data (one per module)."""
     return {"key": "value"}
 
 
 @pytest.fixture(scope="function")
 def temp_user() -> dict:
-    """Временный пользователь (для каждого теста)."""
+    """Temporary user (for each test)."""
     return {"id": str(uuid4()), "name": "Temp"}
 
 
 @pytest.fixture(scope="class")
 def shared_state() -> dict:
-    """Общее состояние для класса тестов."""
+    """Shared state for test class."""
     return {}
 ```
 
 ---
 
-## Фикстуры моков
+## Mock Fixtures
 
 ```python
-"""Фикстуры для моков."""
+"""Mock fixtures."""
 
 import pytest
 from unittest.mock import AsyncMock, MagicMock, patch
@@ -111,10 +111,10 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 @pytest.fixture
 def mock_data_client() -> AsyncMock:
-    """Мок Data API клиента."""
+    """Mock Data API client."""
     mock = AsyncMock()
 
-    # Настройка возвращаемых значений
+    # Set up return values
     mock.get_user.return_value = {
         "id": "123",
         "name": "Test",
@@ -131,7 +131,7 @@ def mock_data_client() -> AsyncMock:
 
 @pytest.fixture
 def mock_redis() -> AsyncMock:
-    """Мок Redis клиента."""
+    """Mock Redis client."""
     mock = AsyncMock()
     mock.get.return_value = None
     mock.set.return_value = True
@@ -141,7 +141,7 @@ def mock_redis() -> AsyncMock:
 
 @pytest.fixture
 def mock_settings(monkeypatch):
-    """Мок настроек."""
+    """Mock settings."""
     monkeypatch.setenv("DEBUG", "true")
     monkeypatch.setenv("LOG_LEVEL", "DEBUG")
     monkeypatch.setenv("DATA_API_URL", "http://mock-api:8001")
@@ -149,10 +149,10 @@ def mock_settings(monkeypatch):
 
 ---
 
-## Фикстуры HTTP клиента
+## HTTP Client Fixtures
 
 ```python
-"""Фикстуры для HTTP тестирования."""
+"""HTTP testing fixtures."""
 
 import pytest
 from httpx import AsyncClient
@@ -163,30 +163,30 @@ from {context}_api.main import create_app
 
 @pytest.fixture
 def app() -> FastAPI:
-    """Тестовое приложение."""
+    """Test application."""
     return create_app()
 
 
 @pytest.fixture
 async def client(app: FastAPI) -> AsyncClient:
-    """Асинхронный HTTP клиент."""
+    """Async HTTP client."""
     async with AsyncClient(app=app, base_url="http://test") as client:
         yield client
 
 
 @pytest.fixture
 async def authenticated_client(client: AsyncClient) -> AsyncClient:
-    """Клиент с аутентификацией."""
+    """Client with authentication."""
     client.headers["Authorization"] = "Bearer test-token"
     return client
 ```
 
 ---
 
-## Фикстуры базы данных
+## Database Fixtures
 
 ```python
-"""Фикстуры для БД."""
+"""Database fixtures."""
 
 import pytest
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
@@ -197,7 +197,7 @@ from {context}_data.domain.entities.base import Base
 
 @pytest.fixture(scope="session")
 def engine():
-    """Движок БД для тестов."""
+    """DB engine for tests."""
     return create_async_engine(
         "postgresql+asyncpg://test:test@localhost:5432/test_db",
         echo=True,
@@ -206,7 +206,7 @@ def engine():
 
 @pytest.fixture(scope="function")
 async def db_session(engine) -> AsyncSession:
-    """Сессия БД с откатом после теста."""
+    """DB session with rollback after test."""
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
@@ -224,10 +224,10 @@ async def db_session(engine) -> AsyncSession:
 
 ---
 
-## Фабрики
+## Factories
 
 ```python
-"""Фабрики для создания тестовых данных."""
+"""Factories for creating test data."""
 
 import pytest
 from uuid import uuid4
@@ -235,11 +235,11 @@ from datetime import datetime
 
 
 class UserFactory:
-    """Фабрика пользователей."""
+    """User factory."""
 
     @staticmethod
     def create(**kwargs) -> dict:
-        """Создать пользователя."""
+        """Create a user."""
         defaults = {
             "id": str(uuid4()),
             "name": "Test User",
@@ -252,11 +252,11 @@ class UserFactory:
 
 
 class OrderFactory:
-    """Фабрика заказов."""
+    """Order factory."""
 
     @staticmethod
     def create(user_id: str = None, **kwargs) -> dict:
-        """Создать заказ."""
+        """Create an order."""
         defaults = {
             "id": str(uuid4()),
             "user_id": user_id or str(uuid4()),
@@ -271,19 +271,19 @@ class OrderFactory:
 
 @pytest.fixture
 def user_factory() -> type[UserFactory]:
-    """Фабрика пользователей."""
+    """User factory."""
     return UserFactory
 
 
 @pytest.fixture
 def order_factory() -> type[OrderFactory]:
-    """Фабрика заказов."""
+    """Order factory."""
     return OrderFactory
 
 
-# Использование
+# Usage
 def test_with_factory(user_factory, order_factory):
-    """Тест с фабриками."""
+    """Test with factories."""
     user = user_factory.create(name="Custom Name")
     order = order_factory.create(user_id=user["id"])
 
@@ -292,34 +292,34 @@ def test_with_factory(user_factory, order_factory):
 
 ---
 
-## autouse фикстуры
+## autouse Fixtures
 
 ```python
-"""Автоматические фикстуры."""
+"""Automatic fixtures."""
 
 import pytest
 
 
 @pytest.fixture(autouse=True)
 def reset_database(db_session):
-    """Автоматический сброс БД перед каждым тестом."""
+    """Automatic DB reset before each test."""
     yield
-    # Cleanup после теста
+    # Cleanup after test
 
 
 @pytest.fixture(autouse=True)
 def clear_cache(mock_redis):
-    """Автоматическая очистка кэша."""
+    """Automatic cache clearing."""
     mock_redis.flushall()
     yield
 ```
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Базовые фикстуры в conftest.py
-- [ ] Моки для внешних сервисов
-- [ ] Фабрики для тестовых данных
-- [ ] Scope выбран правильно
-- [ ] autouse для cleanup
+- [ ] Basic fixtures in conftest.py
+- [ ] Mocks for external services
+- [ ] Factories for test data
+- [ ] Scope chosen correctly
+- [ ] autouse for cleanup

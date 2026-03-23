@@ -1,13 +1,13 @@
-# Middleware Aiogram
+# Aiogram Middleware
 
-> **Назначение**: Настройка middleware для бота.
+> **Purpose**: Setting up middleware for the bot.
 
 ---
 
-## Базовый middleware
+## Basic Middleware
 
 ```python
-"""Базовый middleware."""
+"""Basic middleware."""
 
 from typing import Any, Awaitable, Callable, Dict
 
@@ -16,7 +16,7 @@ from aiogram.types import TelegramObject
 
 
 class LoggingMiddleware(BaseMiddleware):
-    """Middleware для логирования."""
+    """Logging middleware."""
 
     async def __call__(
         self,
@@ -25,26 +25,26 @@ class LoggingMiddleware(BaseMiddleware):
         data: Dict[str, Any],
     ) -> Any:
         """
-        Выполнить middleware.
+        Execute middleware.
 
         Args:
-            handler: Следующий обработчик.
-            event: Telegram событие.
-            data: Данные контекста.
+            handler: Next handler.
+            event: Telegram event.
+            data: Context data.
 
         Returns:
-            Результат обработчика.
+            Handler result.
         """
         import logging
         logger = logging.getLogger(__name__)
 
-        # До обработки
+        # Before handling
         logger.info(f"Received: {type(event).__name__}")
 
-        # Вызов обработчика
+        # Call handler
         result = await handler(event, data)
 
-        # После обработки
+        # After handling
         logger.info(f"Handled: {type(event).__name__}")
 
         return result
@@ -52,10 +52,10 @@ class LoggingMiddleware(BaseMiddleware):
 
 ---
 
-## Middleware аутентификации
+## Authentication Middleware
 
 ```python
-"""Middleware проверки пользователя."""
+"""User verification middleware."""
 
 from typing import Any, Awaitable, Callable, Dict
 
@@ -66,7 +66,7 @@ from {context}_bot.infrastructure.http.business_api_client import BusinessApiCli
 
 
 class AuthMiddleware(BaseMiddleware):
-    """Middleware для проверки и регистрации пользователя."""
+    """Middleware for user verification and registration."""
 
     async def __call__(
         self,
@@ -75,27 +75,27 @@ class AuthMiddleware(BaseMiddleware):
         data: Dict[str, Any],
     ) -> Any:
         """
-        Проверить пользователя.
+        Verify user.
 
         Args:
-            handler: Следующий обработчик.
-            event: Сообщение.
-            data: Данные контекста.
+            handler: Next handler.
+            event: Message.
+            data: Context data.
 
         Returns:
-            Результат обработчика.
+            Handler result.
         """
         api_client: BusinessApiClient = data["api_client"]
         telegram_id = event.from_user.id
 
-        # Получить или создать пользователя
+        # Get or create user
         user = await api_client.get_or_create_user(
             telegram_id=telegram_id,
             username=event.from_user.username,
             first_name=event.from_user.first_name,
         )
 
-        # Добавить пользователя в контекст
+        # Add user to context
         data["user"] = user
 
         return await handler(event, data)
@@ -103,10 +103,10 @@ class AuthMiddleware(BaseMiddleware):
 
 ---
 
-## Middleware throttling
+## Throttling Middleware
 
 ```python
-"""Middleware для ограничения частоты запросов."""
+"""Rate limiting middleware."""
 
 from typing import Any, Awaitable, Callable, Dict
 from datetime import datetime, timedelta
@@ -116,14 +116,14 @@ from aiogram.types import Message
 
 
 class ThrottlingMiddleware(BaseMiddleware):
-    """Middleware для throttling."""
+    """Throttling middleware."""
 
     def __init__(self, rate_limit: float = 0.5):
         """
-        Инициализация middleware.
+        Initialize middleware.
 
         Args:
-            rate_limit: Минимальный интервал между сообщениями (секунды).
+            rate_limit: Minimum interval between messages (seconds).
         """
         self.rate_limit = rate_limit
         self.users: Dict[int, datetime] = {}
@@ -135,27 +135,27 @@ class ThrottlingMiddleware(BaseMiddleware):
         data: Dict[str, Any],
     ) -> Any:
         """
-        Проверить rate limit.
+        Check rate limit.
 
         Args:
-            handler: Следующий обработчик.
-            event: Сообщение.
-            data: Данные контекста.
+            handler: Next handler.
+            event: Message.
+            data: Context data.
 
         Returns:
-            Результат обработчика или None.
+            Handler result or None.
         """
         user_id = event.from_user.id
         now = datetime.now()
 
-        # Проверить время последнего сообщения
+        # Check last message time
         if user_id in self.users:
             last_time = self.users[user_id]
             if (now - last_time).total_seconds() < self.rate_limit:
-                # Игнорировать сообщение
+                # Ignore message
                 return None
 
-        # Обновить время
+        # Update time
         self.users[user_id] = now
 
         return await handler(event, data)
@@ -163,10 +163,10 @@ class ThrottlingMiddleware(BaseMiddleware):
 
 ---
 
-## Middleware метрик
+## Metrics Middleware
 
 ```python
-"""Middleware для сбора метрик."""
+"""Metrics collection middleware."""
 
 import time
 from typing import Any, Awaitable, Callable, Dict
@@ -176,10 +176,10 @@ from aiogram.types import TelegramObject
 
 
 class MetricsMiddleware(BaseMiddleware):
-    """Middleware для сбора метрик."""
+    """Metrics collection middleware."""
 
     def __init__(self):
-        """Инициализация middleware."""
+        """Initialize middleware."""
         self.request_count = 0
         self.total_time = 0.0
 
@@ -190,15 +190,15 @@ class MetricsMiddleware(BaseMiddleware):
         data: Dict[str, Any],
     ) -> Any:
         """
-        Собрать метрики.
+        Collect metrics.
 
         Args:
-            handler: Следующий обработчик.
-            event: Telegram событие.
-            data: Данные контекста.
+            handler: Next handler.
+            event: Telegram event.
+            data: Context data.
 
         Returns:
-            Результат обработчика.
+            Handler result.
         """
         start_time = time.perf_counter()
 
@@ -213,10 +213,10 @@ class MetricsMiddleware(BaseMiddleware):
 
 ---
 
-## Middleware обработки ошибок
+## Error Handling Middleware
 
 ```python
-"""Middleware для обработки ошибок."""
+"""Error handling middleware."""
 
 import logging
 from typing import Any, Awaitable, Callable, Dict
@@ -226,10 +226,10 @@ from aiogram.types import Message
 
 
 class ErrorHandlerMiddleware(BaseMiddleware):
-    """Middleware для обработки ошибок."""
+    """Error handling middleware."""
 
     def __init__(self):
-        """Инициализация middleware."""
+        """Initialize middleware."""
         self.logger = logging.getLogger(__name__)
 
     async def __call__(
@@ -239,24 +239,24 @@ class ErrorHandlerMiddleware(BaseMiddleware):
         data: Dict[str, Any],
     ) -> Any:
         """
-        Обработать ошибки.
+        Handle errors.
 
         Args:
-            handler: Следующий обработчик.
-            event: Сообщение.
-            data: Данные контекста.
+            handler: Next handler.
+            event: Message.
+            data: Context data.
 
         Returns:
-            Результат обработчика.
+            Handler result.
         """
         try:
             return await handler(event, data)
         except Exception as e:
             self.logger.exception(f"Error handling message: {e}")
 
-            # Отправить сообщение об ошибке пользователю
+            # Send error message to user
             await event.answer(
-                "Произошла ошибка. Попробуйте позже."
+                "An error occurred. Please try again later."
             )
 
             return None
@@ -264,10 +264,10 @@ class ErrorHandlerMiddleware(BaseMiddleware):
 
 ---
 
-## Регистрация middleware
+## Middleware Registration
 
 ```python
-"""Регистрация middleware."""
+"""Middleware registration."""
 
 from aiogram import Dispatcher
 
@@ -278,19 +278,19 @@ from {context}_bot.middlewares.throttling import ThrottlingMiddleware
 
 def setup_middlewares(dp: Dispatcher) -> None:
     """
-    Настроить middleware.
+    Set up middleware.
 
     Args:
-        dp: Диспетчер.
+        dp: Dispatcher.
     """
-    # Outer middleware (выполняется первым)
+    # Outer middleware (executed first)
     dp.message.outer_middleware(LoggingMiddleware())
 
-    # Middleware (выполняется для всех сообщений)
+    # Middleware (executed for all messages)
     dp.message.middleware(ThrottlingMiddleware(rate_limit=0.5))
     dp.message.middleware(AuthMiddleware())
 
-    # Для callback query
+    # For callback queries
     dp.callback_query.middleware(AuthMiddleware())
 
 
@@ -301,42 +301,42 @@ setup_middlewares(dp)
 
 ---
 
-## Порядок выполнения
+## Execution Order
 
 ```
-Запрос
-    │
-    ▼
+Request
+    |
+    v
 LoggingMiddleware (outer)
-    │
-    ▼
+    |
+    v
 ThrottlingMiddleware
-    │
-    ▼
+    |
+    v
 AuthMiddleware
-    │
-    ▼
+    |
+    v
 Handler
-    │
-    ▼
-AuthMiddleware (после)
-    │
-    ▼
-ThrottlingMiddleware (после)
-    │
-    ▼
-LoggingMiddleware (после)
-    │
-    ▼
-Ответ
+    |
+    v
+AuthMiddleware (after)
+    |
+    v
+ThrottlingMiddleware (after)
+    |
+    v
+LoggingMiddleware (after)
+    |
+    v
+Response
 ```
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Логирование настроено
-- [ ] Throttling добавлен
-- [ ] Ошибки обрабатываются
-- [ ] Пользователь проверяется
-- [ ] Middleware зарегистрированы в правильном порядке
+- [ ] Logging configured
+- [ ] Throttling added
+- [ ] Errors handled
+- [ ] User verified
+- [ ] Middleware registered in correct order

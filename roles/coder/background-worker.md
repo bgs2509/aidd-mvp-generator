@@ -1,42 +1,42 @@
-# Функция: Stage 4.4 — Background Worker
+# Function: Stage 4.4 — Background Worker
 
-> **Назначение**: Создание фонового воркера для асинхронных задач.
-
----
-
-## Цель
-
-Создать Background Worker для выполнения фоновых и
-периодических задач, не блокируя основные сервисы.
+> **Purpose**: Creating a background worker for asynchronous tasks.
 
 ---
 
-## Когда применяется
+## Goal
+
+Create a Background Worker to execute background and
+periodic tasks without blocking the main services.
+
+---
+
+## When to Apply
 
 ```
-if "фоновая" in FR or "периодически" in FR or "по расписанию" in FR:
-    → Создать Background Worker сервис
+if "background" in FR or "periodically" in FR or "scheduled" in FR:
+    → Create Background Worker service
 else:
-    → Пропустить этот этап
+    → Skip this stage
 ```
 
 ---
 
-## Архитектурный принцип
+## Architectural Principle
 
 ```
-ПРАВИЛО: Worker использует Business API для бизнес-операций,
-         а не обращается к БД напрямую.
+RULE: Worker uses the Business API for business operations,
+      and does not access the database directly.
 
 Scheduler ──▶ Task Handler ──HTTP──▶ Business API
 
-Worker содержит логику планирования и выполнения задач,
-но бизнес-логика находится в Business API.
+Worker contains scheduling and task execution logic,
+but business logic resides in the Business API.
 ```
 
 ---
 
-## Структура Background Worker
+## Background Worker Structure
 
 ```
 services/{context}_worker/
@@ -73,12 +73,12 @@ services/{context}_worker/
 
 ---
 
-## Компоненты
+## Components
 
 ### 1. main.py
 
 ```python
-"""Точка входа Background Worker."""
+"""Background Worker entry point."""
 
 import asyncio
 import logging
@@ -93,10 +93,10 @@ from {context}_worker.tasks import register_tasks
 
 
 class Worker:
-    """Background Worker приложение."""
+    """Background Worker application."""
 
     def __init__(self):
-        """Инициализация воркера."""
+        """Initialize the worker."""
         self.logger = logging.getLogger(__name__)
         self.running = False
         self.tasks: Set[asyncio.Task] = set()
@@ -104,26 +104,26 @@ class Worker:
         self.api_client: BusinessApiClient | None = None
 
     async def start(self):
-        """Запуск воркера."""
+        """Start the worker."""
         setup_logging()
-        self.logger.info("Worker запускается...")
+        self.logger.info("Worker is starting...")
 
-        # Инициализация клиентов
+        # Initialize clients
         self.api_client = BusinessApiClient(settings.business_api_url)
 
-        # Инициализация планировщика
+        # Initialize scheduler
         self.scheduler = TaskScheduler(self.api_client)
         register_tasks(self.scheduler)
 
-        # Запуск
+        # Start
         self.running = True
         await self.scheduler.start()
 
-        self.logger.info("Worker запущен")
+        self.logger.info("Worker started")
 
     async def stop(self):
-        """Остановка воркера."""
-        self.logger.info("Worker останавливается...")
+        """Stop the worker."""
+        self.logger.info("Worker is stopping...")
         self.running = False
 
         if self.scheduler:
@@ -132,22 +132,22 @@ class Worker:
         if self.api_client:
             await self.api_client.close()
 
-        # Отмена всех задач
+        # Cancel all tasks
         for task in self.tasks:
             task.cancel()
 
         if self.tasks:
             await asyncio.gather(*self.tasks, return_exceptions=True)
 
-        self.logger.info("Worker остановлен")
+        self.logger.info("Worker stopped")
 
 
 async def main():
-    """Главная функция."""
+    """Main function."""
     worker = Worker()
     loop = asyncio.get_event_loop()
 
-    # Обработка сигналов
+    # Signal handling
     def signal_handler():
         asyncio.create_task(worker.stop())
 
@@ -156,7 +156,7 @@ async def main():
 
     try:
         await worker.start()
-        # Ожидание остановки
+        # Wait for stop
         while worker.running:
             await asyncio.sleep(1)
     finally:
@@ -170,13 +170,13 @@ if __name__ == "__main__":
 ### 2. Config (core/config.py)
 
 ```python
-"""Конфигурация воркера."""
+"""Worker configuration."""
 
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    """Настройки воркера."""
+    """Worker settings."""
 
     # Business API
     business_api_url: str = "http://localhost:8000"
@@ -184,7 +184,7 @@ class Settings(BaseSettings):
     # Scheduler
     task_interval_seconds: int = 60
 
-    # Общие
+    # General
     debug: bool = False
     log_level: str = "INFO"
 
@@ -199,7 +199,7 @@ settings = Settings()
 ### 3. Scheduler (scheduler/scheduler.py)
 
 ```python
-"""Планировщик задач."""
+"""Task scheduler."""
 
 import asyncio
 import logging
@@ -210,10 +210,10 @@ from {context}_worker.infrastructure.http.business_api_client import BusinessApi
 
 
 class TaskScheduler:
-    """Планировщик периодических задач."""
+    """Periodic task scheduler."""
 
     def __init__(self, api_client: BusinessApiClient):
-        """Инициализация планировщика."""
+        """Initialize the scheduler."""
         self.logger = logging.getLogger(__name__)
         self.api_client = api_client
         self.tasks: Dict[str, Dict[str, Any]] = {}
@@ -227,7 +227,7 @@ class TaskScheduler:
         interval_seconds: int,
         run_on_start: bool = False,
     ):
-        """Зарегистрировать периодическую задачу."""
+        """Register a periodic task."""
         self.tasks[name] = {
             "handler": handler,
             "interval": interval_seconds,
@@ -235,13 +235,13 @@ class TaskScheduler:
             "last_run": None,
         }
         self.logger.info(
-            f"Задача '{name}' зарегистрирована "
-            f"(интервал: {interval_seconds}с)"
+            f"Task '{name}' registered "
+            f"(interval: {interval_seconds}s)"
         )
 
     async def start(self):
-        """Запустить планировщик."""
-        self.logger.info("Планировщик запускается...")
+        """Start the scheduler."""
+        self.logger.info("Scheduler is starting...")
         self._stop_event.clear()
 
         for name, task_info in self.tasks.items():
@@ -252,8 +252,8 @@ class TaskScheduler:
             task.add_done_callback(self._running_tasks.discard)
 
     async def stop(self):
-        """Остановить планировщик."""
-        self.logger.info("Планировщик останавливается...")
+        """Stop the scheduler."""
+        self.logger.info("Scheduler is stopping...")
         self._stop_event.set()
 
         for task in self._running_tasks:
@@ -270,11 +270,11 @@ class TaskScheduler:
         name: str,
         task_info: Dict[str, Any],
     ):
-        """Запуск периодической задачи."""
+        """Run a periodic task."""
         handler = task_info["handler"]
         interval = task_info["interval"]
 
-        # Запуск при старте
+        # Run on start
         if task_info["run_on_start"]:
             await self._execute_task(name, handler)
 
@@ -284,7 +284,7 @@ class TaskScheduler:
                     self._stop_event.wait(),
                     timeout=interval,
                 )
-                break  # Получен сигнал остановки
+                break  # Stop signal received
             except asyncio.TimeoutError:
                 await self._execute_task(name, handler)
 
@@ -293,24 +293,24 @@ class TaskScheduler:
         name: str,
         handler: Callable[[BusinessApiClient], Awaitable[None]],
     ):
-        """Выполнить задачу."""
-        self.logger.info(f"Выполняется задача: {name}")
+        """Execute a task."""
+        self.logger.info(f"Executing task: {name}")
         start_time = datetime.now()
 
         try:
             await handler(self.api_client)
             duration = (datetime.now() - start_time).total_seconds()
             self.logger.info(
-                f"Задача '{name}' выполнена за {duration:.2f}с"
+                f"Task '{name}' completed in {duration:.2f}s"
             )
         except Exception as e:
-            self.logger.exception(f"Ошибка в задаче '{name}': {e}")
+            self.logger.exception(f"Error in task '{name}': {e}")
 ```
 
 ### 4. Base Task (tasks/base.py)
 
 ```python
-"""Базовый класс для задач."""
+"""Base class for tasks."""
 
 from abc import ABC, abstractmethod
 import logging
@@ -319,91 +319,91 @@ from {context}_worker.infrastructure.http.business_api_client import BusinessApi
 
 
 class BaseTask(ABC):
-    """Базовый класс задачи."""
+    """Base task class."""
 
     name: str = "base_task"
     interval_seconds: int = 60
     run_on_start: bool = False
 
     def __init__(self):
-        """Инициализация задачи."""
+        """Initialize the task."""
         self.logger = logging.getLogger(self.__class__.__name__)
 
     @abstractmethod
     async def execute(self, api_client: BusinessApiClient) -> None:
-        """Выполнить задачу."""
+        """Execute the task."""
         pass
 
     async def __call__(self, api_client: BusinessApiClient) -> None:
-        """Вызов задачи."""
+        """Call the task."""
         await self.execute(api_client)
 ```
 
-### 5. Пример задачи (tasks/{task_name}_task.py)
+### 5. Task Example (tasks/{task_name}_task.py)
 
 ```python
-"""Задача очистки устаревших данных."""
+"""Stale data cleanup task."""
 
 from {context}_worker.tasks.base import BaseTask
 from {context}_worker.infrastructure.http.business_api_client import BusinessApiClient
 
 
 class CleanupTask(BaseTask):
-    """Задача периодической очистки."""
+    """Periodic cleanup task."""
 
     name = "cleanup"
-    interval_seconds = 3600  # 1 час
+    interval_seconds = 3600  # 1 hour
     run_on_start = False
 
     async def execute(self, api_client: BusinessApiClient) -> None:
-        """Выполнить очистку."""
-        self.logger.info("Запуск очистки устаревших данных...")
+        """Execute cleanup."""
+        self.logger.info("Starting stale data cleanup...")
 
         try:
-            # Вызов Business API для очистки
+            # Call Business API for cleanup
             result = await api_client.cleanup_expired()
-            self.logger.info(f"Очищено записей: {result.get('deleted', 0)}")
+            self.logger.info(f"Records cleaned: {result.get('deleted', 0)}")
 
         except Exception as e:
-            self.logger.error(f"Ошибка очистки: {e}")
+            self.logger.error(f"Cleanup error: {e}")
             raise
 
 
 class NotificationTask(BaseTask):
-    """Задача отправки уведомлений."""
+    """Notification sending task."""
 
     name = "notifications"
-    interval_seconds = 300  # 5 минут
+    interval_seconds = 300  # 5 minutes
     run_on_start = True
 
     async def execute(self, api_client: BusinessApiClient) -> None:
-        """Отправить уведомления."""
-        self.logger.info("Проверка и отправка уведомлений...")
+        """Send notifications."""
+        self.logger.info("Checking and sending notifications...")
 
         try:
-            # Получить ожидающие уведомления
+            # Get pending notifications
             pending = await api_client.get_pending_notifications()
 
             for notification in pending.get("items", []):
                 await api_client.send_notification(notification["id"])
-                self.logger.info(f"Отправлено уведомление: {notification['id']}")
+                self.logger.info(f"Notification sent: {notification['id']}")
 
         except Exception as e:
-            self.logger.error(f"Ошибка отправки уведомлений: {e}")
+            self.logger.error(f"Notification sending error: {e}")
             raise
 ```
 
-### 6. Регистрация задач (tasks/__init__.py)
+### 6. Task Registration (tasks/__init__.py)
 
 ```python
-"""Регистрация задач."""
+"""Task registration."""
 
 from {context}_worker.scheduler.scheduler import TaskScheduler
 from {context}_worker.tasks.cleanup_task import CleanupTask, NotificationTask
 
 
 def register_tasks(scheduler: TaskScheduler):
-    """Зарегистрировать все задачи."""
+    """Register all tasks."""
     tasks = [
         CleanupTask(),
         NotificationTask(),
@@ -421,7 +421,7 @@ def register_tasks(scheduler: TaskScheduler):
 ### 7. HTTP Client (infrastructure/http/)
 
 ```python
-"""HTTP клиент для Business API."""
+"""HTTP client for Business API."""
 
 from typing import Any
 
@@ -429,37 +429,37 @@ import httpx
 
 
 class BusinessApiClient:
-    """Клиент для взаимодействия с Business API."""
+    """Client for interacting with the Business API."""
 
     def __init__(self, base_url: str):
-        """Инициализация клиента."""
+        """Initialize the client."""
         self.base_url = base_url.rstrip("/")
         self._client: httpx.AsyncClient | None = None
 
     @property
     def client(self) -> httpx.AsyncClient:
-        """Получить HTTP клиент."""
+        """Get the HTTP client."""
         if self._client is None:
             self._client = httpx.AsyncClient(
                 base_url=self.base_url,
-                timeout=60.0,  # Больше таймаут для фоновых задач
+                timeout=60.0,  # Longer timeout for background tasks
             )
         return self._client
 
     async def close(self):
-        """Закрыть соединение."""
+        """Close the connection."""
         if self._client:
             await self._client.aclose()
             self._client = None
 
     async def cleanup_expired(self) -> dict[str, Any]:
-        """Вызвать очистку устаревших данных."""
+        """Call expired data cleanup."""
         response = await self.client.post("/api/v1/admin/cleanup")
         response.raise_for_status()
         return response.json()
 
     async def get_pending_notifications(self) -> dict[str, Any]:
-        """Получить ожидающие уведомления."""
+        """Get pending notifications."""
         response = await self.client.get(
             "/api/v1/notifications",
             params={"status": "pending"},
@@ -468,7 +468,7 @@ class BusinessApiClient:
         return response.json()
 
     async def send_notification(self, notification_id: str) -> dict[str, Any]:
-        """Отправить уведомление."""
+        """Send a notification."""
         response = await self.client.post(
             f"/api/v1/notifications/{notification_id}/send"
         )
@@ -478,7 +478,7 @@ class BusinessApiClient:
 
 ---
 
-## Шаблон для использования
+## Template to Use
 
 ```
 templates/services/asyncio_worker/
@@ -486,43 +486,43 @@ templates/services/asyncio_worker/
 
 ---
 
-## Порядок создания
+## Creation Order
 
 ```
-1. Создать структуру директорий
-2. Создать Dockerfile
-3. Создать requirements.txt
-4. Создать core/config.py, logging.py
-5. Создать infrastructure/http/business_api_client.py
-6. Создать scheduler/scheduler.py
-7. Создать tasks/base.py
-8. Создать tasks/{task_name}_task.py
-9. Создать tasks/__init__.py
-10. Создать main.py
+1. Create directory structure
+2. Create Dockerfile
+3. Create requirements.txt
+4. Create core/config.py, logging.py
+5. Create infrastructure/http/business_api_client.py
+6. Create scheduler/scheduler.py
+7. Create tasks/base.py
+8. Create tasks/{task_name}_task.py
+9. Create tasks/__init__.py
+10. Create main.py
 ```
 
 ---
 
-## Качественные ворота
+## Quality Gates
 
 ### WORKER_READY
 
-- [ ] Структура проекта создана по шаблону
-- [ ] HTTP клиент для Business API создан
-- [ ] Scheduler настроен
-- [ ] Задачи зарегистрированы
-- [ ] Signal handlers настроены
-- [ ] Dockerfile создан
-- [ ] `docker-compose up {context}-worker` запускается
-- [ ] Задачи выполняются по расписанию
+- [ ] Project structure created from template
+- [ ] HTTP client for Business API created
+- [ ] Scheduler configured
+- [ ] Tasks registered
+- [ ] Signal handlers configured
+- [ ] Dockerfile created
+- [ ] `docker-compose up {context}-worker` starts successfully
+- [ ] Tasks execute on schedule
 
 ---
 
-## Источники
+## References
 
-| Документ | Описание |
-|----------|----------|
-| `knowledge/services/asyncio-workers/basic-setup.md` | Базовая настройка |
-| `knowledge/services/asyncio-workers/task-management.md` | Управление задачами |
-| `knowledge/services/asyncio-workers/signal-handling.md` | Обработка сигналов |
-| `templates/services/asyncio_worker/` | Шаблон сервиса |
+| Document | Description |
+|----------|-------------|
+| `knowledge/services/asyncio-workers/basic-setup.md` | Basic setup |
+| `knowledge/services/asyncio-workers/task-management.md` | Task management |
+| `knowledge/services/asyncio-workers/signal-handling.md` | Signal handling |
+| `templates/services/asyncio_worker/` | Service template |

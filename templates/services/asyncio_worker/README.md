@@ -1,18 +1,18 @@
-# {context}_worker — Background Worker сервис
+# {context}_worker — Background Worker Service
 
-> **Тип**: Background Worker (asyncio)
-> **Назначение**: Фоновые задачи и периодические операции
-
----
-
-## Описание
-
-Background Worker на asyncio для выполнения фоновых задач.
-Поддерживает периодические задачи и graceful shutdown.
+> **Type**: Background Worker (asyncio)
+> **Purpose**: Background tasks and periodic operations
 
 ---
 
-## Структура
+## Description
+
+Background Worker on asyncio for executing background tasks.
+Supports periodic tasks and graceful shutdown.
+
+---
+
+## Structure
 
 ```
 {context}_worker/
@@ -20,20 +20,20 @@ Background Worker на asyncio для выполнения фоновых зад
 ├── requirements.txt
 ├── src/
 │   ├── __init__.py
-│   ├── main.py                 # Точка входа
-│   ├── tasks/                  # Задачи
+│   ├── main.py                 # Entry point
+│   ├── tasks/                  # Tasks
 │   │   ├── __init__.py
-│   │   ├── base.py             # Базовый класс задачи
-│   │   └── {domain}_tasks.py   # Задачи домена
+│   │   ├── base.py             # Base task class
+│   │   └── {domain}_tasks.py   # Domain tasks
 │   ├── infrastructure/
 │   │   ├── __init__.py
 │   │   └── http/
-│   │       └── api_client.py   # Клиент Business API
+│   │       └── api_client.py   # Business API client
 │   └── core/
 │       ├── __init__.py
-│       ├── config.py           # Конфигурация
-│       ├── logging.py          # Настройка логирования
-│       └── scheduler.py        # Планировщик задач
+│       ├── config.py           # Configuration
+│       ├── logging.py          # Logging setup
+│       └── scheduler.py        # Task scheduler
 └── tests/
     ├── __init__.py
     └── conftest.py
@@ -41,49 +41,49 @@ Background Worker на asyncio для выполнения фоновых зад
 
 ---
 
-## Переменные для замены
+## Replacement Variables
 
-| Переменная | Описание | Пример |
-|------------|----------|--------|
-| `{context}` | Контекст проекта | `booking`, `ecommerce` |
-| `{domain}` | Домен задачи | `notification`, `sync` |
+| Variable | Description | Example |
+|----------|-------------|---------|
+| `{context}` | Project context | `booking`, `ecommerce` |
+| `{domain}` | Task domain | `notification`, `sync` |
 
 ---
 
-## Быстрый старт
+## Quick Start
 
 ```bash
-# Установка зависимостей
+# Install dependencies
 pip install -r requirements.txt
 
-# Запуск воркера
+# Run worker
 python -m src.main
 
-# Запуск тестов
+# Run tests
 pytest tests/ -v
 ```
 
 ---
 
-## Конфигурация
+## Configuration
 
-Переменные окружения (`.env`):
+Environment variables (`.env`):
 
 ```bash
 # Business API
 BUSINESS_API_URL=http://business-api:8000
 BUSINESS_API_TIMEOUT=30
 
-# Задачи
+# Tasks
 TASK_INTERVAL_SECONDS=60
 
-# Логирование
+# Logging
 LOG_LEVEL=INFO
 ```
 
 ---
 
-## Зависимости
+## Dependencies
 
 - httpx
 - pydantic-settings
@@ -91,10 +91,10 @@ LOG_LEVEL=INFO
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Заменить `{context}` на название проекта
-- [ ] Реализовать задачи в `tasks/`
-- [ ] Настроить интервалы выполнения
-- [ ] Добавить graceful shutdown
-- [ ] Добавить тесты
+- [ ] Replace `{context}` with the project name
+- [ ] Implement tasks in `tasks/`
+- [ ] Configure execution intervals
+- [ ] Add graceful shutdown
+- [ ] Add tests

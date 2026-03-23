@@ -1,20 +1,20 @@
-# Автомиграция Pipeline State
+# Pipeline State Automigration
 
-> **Для AI-агентов**: Этот документ содержит инструкции по автоматической миграции `.pipeline-state.json`.
-
----
-
-## Когда выполнять
-
-**ПРИ ЗАПУСКЕ ЛЮБОЙ SLASH-КОМАНДЫ** (кроме `/aidd-init`):
-
-1. Прочитать `.pipeline-state.json`
-2. Проверить поле `version`
-3. Если `version != "2.0"` — выполнить миграцию
+> **For AI agents**: This document contains instructions for automatic `.pipeline-state.json` migration.
 
 ---
 
-## Алгоритм проверки
+## When to Execute
+
+**WHEN RUNNING ANY SLASH COMMAND** (except `/aidd-init`):
+
+1. Read `.pipeline-state.json`
+2. Check the `version` field
+3. If `version != "2.0"` -- perform migration
+
+---
+
+## Check Algorithm
 
 ```python
 import json
@@ -22,10 +22,10 @@ from pathlib import Path
 
 def check_and_migrate() -> dict | None:
     """
-    Проверить версию state и мигрировать если нужно.
+    Check state version and migrate if needed.
 
     Returns:
-        Состояние в формате v2 или None если файл не найден
+        State in v2 format or None if file not found
     """
     state_path = Path(".pipeline-state.json")
 
@@ -35,10 +35,10 @@ def check_and_migrate() -> dict | None:
     state = json.loads(state_path.read_text())
 
     if state.get("version") != "2.0":
-        print("⚠️  Обнаружен .pipeline-state.json v1.0")
-        print("    Выполняется автоматическая миграция...")
+        print("⚠️  Detected .pipeline-state.json v1.0")
+        print("    Performing automatic migration...")
 
-        # Вызвать скрипт миграции
+        # Call migration script
         import subprocess
         result = subprocess.run(
             ["python", ".aidd/scripts/migrate_pipeline_state.py"],
@@ -47,11 +47,11 @@ def check_and_migrate() -> dict | None:
         )
 
         if result.returncode == 0:
-            print("    ✓ Миграция завершена")
-            # Перечитать обновлённый файл
+            print("    ✓ Migration completed")
+            # Re-read updated file
             state = json.loads(state_path.read_text())
         else:
-            print("    ❌ Ошибка миграции:")
+            print("    ❌ Migration error:")
             print(result.stderr)
             return None
 
@@ -60,109 +60,109 @@ def check_and_migrate() -> dict | None:
 
 ---
 
-## Для AI-агента (текстовая инструкция)
+## For AI Agent (Text Instructions)
 
-### Шаг 1: Проверка версии
+### Step 1: Version Check
 
 ```bash
-# Прочитать файл и проверить версию
+# Read file and check version
 cat .pipeline-state.json | grep '"version"'
 ```
 
-Ожидаемый результат: `"version": "2.0"`
+Expected result: `"version": "2.0"`
 
-### Шаг 2: Миграция (если версия != 2.0)
+### Step 2: Migration (if version != 2.0)
 
 ```bash
-# Показать план миграции
+# Show migration plan
 python .aidd/scripts/migrate_pipeline_state.py --dry-run
 
-# Выполнить миграцию
+# Perform migration
 python .aidd/scripts/migrate_pipeline_state.py
 ```
 
-### Шаг 3: Продолжить выполнение команды
+### Step 3: Continue Command Execution
 
-После успешной миграции продолжить выполнение запрошенной команды.
-
----
-
-## Что делает миграция
-
-1. **Создаёт резервную копию**: `.pipeline-state.json.v1.backup`
-
-2. **Переносит глобальные ворота**:
-   ```
-   gates.BOOTSTRAP_READY → global_gates.BOOTSTRAP_READY
-   ```
-
-3. **Создаёт active_pipelines** (если есть активная работа):
-   - Переносит `current_feature` в `active_pipelines[FID]`
-   - Переносит локальные ворота в `active_pipelines[FID].gates`
-   - Определяет ветку по текущей git branch
-
-4. **Сохраняет features_registry** без изменений
-
-5. **Устанавливает version**: `"2.0"`
+After successful migration, continue executing the requested command.
 
 ---
 
-## Пример вывода миграции
+## What the Migration Does
+
+1. **Creates a backup**: `.pipeline-state.json.v1.backup`
+
+2. **Moves global gates**:
+   ```
+   gates.BOOTSTRAP_READY -> global_gates.BOOTSTRAP_READY
+   ```
+
+3. **Creates active_pipelines** (if there is active work):
+   - Moves `current_feature` to `active_pipelines[FID]`
+   - Moves local gates to `active_pipelines[FID].gates`
+   - Determines branch by current git branch
+
+4. **Preserves features_registry** without changes
+
+5. **Sets version**: `"2.0"`
+
+---
+
+## Migration Output Example
 
 ```
-Обнаружена версия: 1.0
-Требуется миграция на v2.0
+Detected version: 1.0
+Migration to v2.0 required
 
 ============================================================
-ПЛАН МИГРАЦИИ
+MIGRATION PLAN
 ============================================================
 
-Структурные изменения:
-  • gates → global_gates (только BOOTSTRAP_READY)
-  • Локальные ворота → active_pipelines[FID].gates
-  • current_feature → active_pipelines
-  • Добавлено: parallel_mode, version 2.0
+Structural changes:
+  • gates -> global_gates (only BOOTSTRAP_READY)
+  • Local gates -> active_pipelines[FID].gates
+  • current_feature -> active_pipelines
+  • Added: parallel_mode, version 2.0
 
-Активные пайплайны после миграции:
-  F001: OAuth авторизация
-       Ветка: feature/F001-oauth
-       Этап: IMPLEMENT
-       Ворота: PRD_READY, RESEARCH_DONE, PLAN_APPROVED
+Active pipelines after migration:
+  F001: OAuth authorization
+       Branch: feature/F001-oauth
+       Stage: IMPLEMENT
+       Gates: PRD_READY, RESEARCH_DONE, PLAN_APPROVED
 
 next_feature_id: 2
 
-✓ Создана резервная копия: .pipeline-state.json.v1.backup
-✓ Сохранено: .pipeline-state.json
+✓ Backup created: .pipeline-state.json.v1.backup
+✓ Saved: .pipeline-state.json
 
 ============================================================
-МИГРАЦИЯ ЗАВЕРШЕНА
+MIGRATION COMPLETED
 ============================================================
 ```
 
 ---
 
-## Обработка ошибок
+## Error Handling
 
-### Файл не найден
-
-```
-Файл .pipeline-state.json не найден
-```
-
-**Действие**: Продолжить выполнение команды (команда сама создаст файл если нужно).
-
-### Невалидный JSON
+### File Not Found
 
 ```
-Ошибка чтения JSON: ...
+File .pipeline-state.json not found
 ```
 
-**Действие**: Сообщить пользователю об ошибке, предложить проверить файл вручную.
+**Action**: Continue command execution (the command will create the file itself if needed).
 
-### Уже v2.0
+### Invalid JSON
 
 ```
-✓ Файл уже в формате v2.0, миграция не требуется
+JSON reading error: ...
 ```
 
-**Действие**: Продолжить выполнение команды.
+**Action**: Notify the user about the error, suggest checking the file manually.
+
+### Already v2.0
+
+```
+✓ File is already in v2.0 format, no migration needed
+```
+
+**Action**: Continue command execution.

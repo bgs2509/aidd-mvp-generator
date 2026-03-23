@@ -1,150 +1,150 @@
-# Инфраструктура {project_name} MVP
+# {project_name} MVP Infrastructure
 
-Шаблоны инфраструктуры для развёртывания MVP проекта.
+Infrastructure templates for deploying an MVP project.
 
-## Структура
+## Structure
 
 ```
 infrastructure/
 ├── docker-compose/
-│   ├── docker-compose.yml        # Базовая конфигурация
+│   ├── docker-compose.yml        # Base configuration
 │   ├── docker-compose.dev.yml    # Development overrides
 │   ├── docker-compose.prod.yml   # Production overrides
-│   └── .env.example              # Шаблон переменных окружения
+│   └── .env.example              # Environment variables template
 ├── nginx/
-│   ├── nginx.conf                # Конфигурация Nginx
-│   └── Dockerfile                # Dockerfile для Nginx
-├── Makefile                      # Команды управления
-└── README.md                     # Этот файл
+│   ├── nginx.conf                # Nginx configuration
+│   └── Dockerfile                # Dockerfile for Nginx
+├── Makefile                      # Management commands
+└── README.md                     # This file
 ```
 
-## Быстрый старт
+## Quick Start
 
-### 1. Подготовка окружения
+### 1. Prepare the Environment
 
 ```bash
-# Копируем переменные окружения
+# Copy environment variables
 cp docker-compose/.env.example .env
 
-# Редактируем .env
+# Edit .env
 nano .env
 ```
 
-### 2. Запуск в development режиме
+### 2. Start in Development Mode
 
 ```bash
-# Запуск всех сервисов
+# Start all services
 make dev
 
-# Или напрямую через docker compose
+# Or directly via docker compose
 docker compose -f docker-compose.yml -f docker-compose.dev.yml up -d
 ```
 
-### 3. Проверка
+### 3. Verify
 
 ```bash
-# Статус контейнеров
+# Container status
 make ps
 
-# Логи
+# Logs
 make logs
 
 # Health check
 curl http://localhost:8000/health
 ```
 
-## Окружения
+## Environments
 
 ### Development
 
 ```bash
-make dev                # Запуск с hot reload
+make dev                # Start with hot reload
 make dev-tools          # + pgAdmin, Redis Commander
-make logs               # Просмотр логов
+make logs               # View logs
 ```
 
-**Особенности:**
-- Hot reload через volume mounts
-- Debug режим включён
-- Все порты открыты
-- Доступны dev-инструменты
+**Features:**
+- Hot reload via volume mounts
+- Debug mode enabled
+- All ports exposed
+- Dev tools available
 
 ### Production
 
 ```bash
-make prod               # Запуск production
-make prod-build         # Пересборка и запуск
+make prod               # Start production
+make prod-build         # Rebuild and start
 ```
 
-**Особенности:**
-- Nginx reverse proxy с SSL
-- Ограничения ресурсов (CPU, память)
+**Features:**
+- Nginx reverse proxy with SSL
+- Resource limits (CPU, memory)
 - Rate limiting
 - Security headers
-- Закрытые внутренние порты
+- Internal ports closed
 
-## Сервисы
+## Services
 
-| Сервис | Dev Port | Prod Port | Описание |
-|--------|----------|-----------|----------|
+| Service | Dev Port | Prod Port | Description |
+|---------|----------|-----------|-------------|
 | API | 8000 | 443 (nginx) | Business API |
 | Data API | 8001 | internal | Data API |
-| PostgreSQL | 5432 | internal | База данных |
-| Redis | 6379 | internal | Кэш/очереди |
+| PostgreSQL | 5432 | internal | Database |
+| Redis | 6379 | internal | Cache/queues |
 | pgAdmin | 5050 | — | Dev tool |
 
-## Команды Makefile
+## Makefile Commands
 
 ```bash
-# Справка
+# Help
 make help
 
 # Development
-make dev            # Запуск dev
-make dev-build      # Пересборка dev
-make logs           # Логи
+make dev            # Start dev
+make dev-build      # Rebuild dev
+make logs           # Logs
 
-# Тестирование
-make test           # Все тесты
-make test-unit      # Unit тесты
-make test-cov       # С coverage
+# Testing
+make test           # All tests
+make test-unit      # Unit tests
+make test-cov       # With coverage
 
-# Линтинг
-make lint           # Проверка
-make lint-fix       # Автоисправление
-make format         # Форматирование
+# Linting
+make lint           # Check
+make lint-fix       # Auto-fix
+make format         # Format
 
-# База данных
-make db-migrate     # Применить миграции
+# Database
+make db-migrate     # Apply migrations
 make db-shell       # PostgreSQL CLI
-make db-backup      # Бэкап
+make db-backup      # Backup
 
-# Очистка
-make clean          # Временные файлы
-make clean-docker   # Docker ресурсы
+# Cleanup
+make clean          # Temporary files
+make clean-docker   # Docker resources
 ```
 
 ## CI/CD
 
-CI/CD в шаблонах не создаётся автоматически. Настройте под свой инструмент при необходимости.
+CI/CD is not created automatically in templates. Configure it for your tool as needed.
 
-### CI (рекомендуемый набор)
+### CI (recommended set)
 
 1. **Lint** — ruff, mypy
-2. **Unit Tests** — pytest с coverage
-3. **Integration Tests** — с PostgreSQL, Redis
+2. **Unit Tests** — pytest with coverage
+3. **Integration Tests** — with PostgreSQL, Redis
 4. **Security Scan** — bandit, safety
 5. **Build** — Docker images
 
-### CD (опционально)
+### CD (optional)
 
 1. **Build & Push** — registry
-2. **Deploy Staging** — автоматически (если есть)
-3. **Deploy Production** — после approval
-4. **Smoke Tests** — проверка здоровья
-5. **Rollback** — сценарий отката
+2. **Deploy Staging** — automatically (if available)
+3. **Deploy Production** — after approval
+4. **Smoke Tests** — health check
+5. **Rollback** — rollback scenario
 
-### Секреты для CI/CD (пример)
+### CI/CD Secrets (example)
 
 ```
 STAGING_HOST
@@ -155,22 +155,22 @@ PRODUCTION_HOST
 PRODUCTION_USER
 PRODUCTION_SSH_KEY
 
-CODECOV_TOKEN         # Токен Codecov (опционально)
+CODECOV_TOKEN         # Codecov token (optional)
 ```
 
 ## Nginx
 
-### SSL сертификаты
+### SSL Certificates
 
 **Development:**
-- Самоподписанный сертификат генерируется автоматически
+- Self-signed certificate is generated automatically
 
 **Production:**
 ```bash
-# Let's Encrypt с certbot
+# Let's Encrypt with certbot
 certbot certonly --webroot -w /var/www/html -d your-domain.com
 
-# Копируем сертификаты
+# Copy certificates
 cp /etc/letsencrypt/live/your-domain.com/fullchain.pem nginx/ssl/cert.pem
 cp /etc/letsencrypt/live/your-domain.com/privkey.pem nginx/ssl/key.pem
 ```
@@ -180,24 +180,24 @@ cp /etc/letsencrypt/live/your-domain.com/privkey.pem nginx/ssl/key.pem
 - API: 10 req/s (burst 20)
 - Auth: 5 req/min (burst 5)
 
-## Мониторинг
+## Monitoring
 
 ### Health Checks
 
-Все сервисы имеют `/health` endpoint:
+All services have a `/health` endpoint:
 
 ```bash
 curl http://localhost:8000/health
 # {"status": "healthy", "timestamp": "..."}
 ```
 
-### Логи
+### Logs
 
 ```bash
-# Все сервисы
+# All services
 docker compose logs -f
 
-# Конкретный сервис
+# Specific service
 docker compose logs -f {context}-api
 
 # Nginx access logs
@@ -206,44 +206,44 @@ docker compose exec nginx tail -f /var/log/nginx/access.log
 
 ## Troubleshooting
 
-### Контейнер не запускается
+### Container Won't Start
 
 ```bash
-# Проверить логи
+# Check logs
 docker compose logs {service_name}
 
-# Проверить статус
+# Check status
 docker compose ps
 
-# Перезапустить
+# Restart
 docker compose restart {service_name}
 ```
 
-### База данных недоступна
+### Database Unavailable
 
 ```bash
-# Проверить PostgreSQL
+# Check PostgreSQL
 docker compose exec postgres pg_isready
 
-# Проверить подключение
+# Check connection
 make db-shell
 ```
 
-### Порт занят
+### Port Already in Use
 
 ```bash
-# Найти процесс
+# Find the process
 lsof -i :8000
 
-# Изменить порт в .env
+# Change port in .env
 API_PORT=8080
 ```
 
-## Переменные окружения
+## Environment Variables
 
-Смотрите `.env.example` для полного списка.
+See `.env.example` for the full list.
 
-**Обязательные для production:**
-- `POSTGRES_PASSWORD` — пароль БД
-- `JWT_SECRET_KEY` — секрет JWT (min 32 chars)
-- `TELEGRAM_BOT_TOKEN` — токен бота (если используется)
+**Required for production:**
+- `POSTGRES_PASSWORD` — DB password
+- `JWT_SECRET_KEY` — JWT secret (min 32 chars)
+- `TELEGRAM_BOT_TOKEN` — bot token (if used)

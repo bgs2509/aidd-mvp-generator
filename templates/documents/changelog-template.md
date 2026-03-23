@@ -1,26 +1,26 @@
 # Changelog
 
-> **Автогенерируется** AIDD-MVP Generator при `/aidd-validate` (DEPLOYED)
-> **Ручные записи** (между фичами) добавляются AI при критических изменениях
+> **Auto-generated** by AIDD-MVP Generator on `/aidd-validate` (DEPLOYED)
+> **Manual entries** (between features) are added by AI for critical changes
 >
-> Этот журнал отражает историю развития проекта через Feature-Driven подход.
-> Каждая секция = Фича (Feature ID) + критические изменения между фичами.
+> This log reflects the project's development history through a Feature-Driven approach.
+> Each section = Feature (Feature ID) + critical changes between features.
 
-Формат основан на [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
+Format based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ---
 
 ## [Unreleased]
 
-### Active Features (в разработке)
+### Active Features (in development)
 
-_Нет активных фич_
+_No active features_
 
 ### Recent Changes
 
-_Нет изменений с момента последнего релиза_
+_No changes since the last release_
 
 ---
 
-**Версия**: 0.1.0
-**Последнее обновление**: {{CREATED_DATE}}
+**Version**: 0.1.0
+**Last updated**: {{CREATED_DATE}}

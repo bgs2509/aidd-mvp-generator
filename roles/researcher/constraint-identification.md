@@ -1,68 +1,68 @@
-# Функция: Выявление ограничений
+# Function: Constraint Identification
 
-> **Назначение**: Определение технических и архитектурных ограничений.
-
----
-
-## Цель
-
-Выявить ограничения, которые нужно учесть при проектировании
-и реализации новой функциональности.
-
-**Артефакт**: каждое ограничение фиксируется в разделе
-`Constraints` отчёта `ai-docs/docs/research/{name}-research.md`
-с описанием влияния на дальнейшие этапы.
+> **Purpose**: Identifying technical and architectural constraints.
 
 ---
 
-## Типы ограничений
+## Goal
 
-### Технические ограничения
+Identify constraints that must be considered during design
+and implementation of new functionality.
 
-| Категория | Что проверять |
-|-----------|---------------|
-| Python версия | `python --version`, pyproject.toml |
-| Зависимости | requirements.txt, совместимость |
-| Async/Sync | Стиль кода (async everywhere?) |
-| Event Loop | Владение event loop |
-
-### Архитектурные ограничения
-
-| Категория | Что проверять |
-|-----------|---------------|
-| HTTP-only | Можно ли добавить прямой доступ к БД? (Нет!) |
-| Сервисы | Сколько сервисов? Как общаются? |
-| API версии | Есть ли v1, v2? Нужна ли новая версия? |
-
-### Инфраструктурные ограничения
-
-| Категория | Что проверять |
-|-----------|---------------|
-| Docker | Используется ли Docker? |
-| Порты | Какие порты заняты? |
-| БД | PostgreSQL? MongoDB? Обе? |
-| Redis | Используется ли? Для чего? |
+**Artifact**: each constraint is recorded in the
+`Constraints` section of the report `ai-docs/docs/research/{name}-research.md`
+with a description of the impact on subsequent stages.
 
 ---
 
-## Процесс выявления
+## Types of Constraints
 
-### 1. Python и зависимости
+### Technical Constraints
+
+| Category | What to check |
+|----------|---------------|
+| Python version | `python --version`, pyproject.toml |
+| Dependencies | requirements.txt, compatibility |
+| Async/Sync | Code style (async everywhere?) |
+| Event Loop | Event loop ownership |
+
+### Architectural Constraints
+
+| Category | What to check |
+|----------|---------------|
+| HTTP-only | Can direct DB access be added? (No!) |
+| Services | How many services? How do they communicate? |
+| API versions | Are there v1, v2? Is a new version needed? |
+
+### Infrastructure Constraints
+
+| Category | What to check |
+|----------|---------------|
+| Docker | Is Docker used? |
+| Ports | Which ports are occupied? |
+| DB | PostgreSQL? MongoDB? Both? |
+| Redis | Is it used? For what? |
+
+---
+
+## Identification Process
+
+### 1. Python and Dependencies
 
 ```bash
-# Версия Python
+# Python version
 Read: pyproject.toml (python_requires)
 Read: Dockerfile (FROM python:X.X)
 
-# Зависимости
+# Dependencies
 Read: requirements.txt
 Read: requirements-dev.txt
 ```
 
-**Вопросы**:
-- Совместима ли новая функция с текущими зависимостями?
-- Нужны ли новые библиотеки?
-- Нет ли конфликтов версий?
+**Questions**:
+- Is the new feature compatible with current dependencies?
+- Are new libraries needed?
+- Are there version conflicts?
 
 ### 2. Async vs Sync
 
@@ -72,7 +72,7 @@ Grep: "await "
 Grep: "asyncio"
 ```
 
-**Правило**: Если проект async — новый код тоже должен быть async.
+**Rule**: If the project is async — new code must also be async.
 
 ### 3. Event Loop
 
@@ -83,70 +83,70 @@ Grep: "FastAPI"
 Grep: "Dispatcher"
 ```
 
-**Правило**: Каждый сервис владеет ОДНИМ event loop.
+**Rule**: Each service owns ONE event loop.
 
-### 4. Доступ к данным
+### 4. Data Access
 
 ```bash
-# Проверить HTTP-only
-Grep: "from sqlalchemy" (в бизнес-слое — ПЛОХО)
-Grep: "httpx" (в бизнес-слое — ХОРОШО)
+# Check HTTP-only
+Grep: "from sqlalchemy" (in business layer — BAD)
+Grep: "httpx" (in business layer — GOOD)
 Grep: "DataApiClient"
 ```
 
-**Правило**: Бизнес-сервисы НЕ обращаются к БД напрямую.
+**Rule**: Business services DO NOT access the DB directly.
 
-### 5. Инфраструктура
+### 5. Infrastructure
 
 ```bash
 Read: docker-compose.yml
 Read: docker-compose.dev.yml
 ```
 
-**Вопросы**:
-- Какие сервисы запущены?
-- Какие порты заняты?
-- Какие volumes используются?
+**Questions**:
+- Which services are running?
+- Which ports are occupied?
+- Which volumes are used?
 
 ---
 
-## Результат анализа
+## Analysis Result
 
 ```markdown
-## Технические ограничения
+## Technical Constraints
 
-| Ограничение | Значение | Влияние на фичу |
-|-------------|----------|-----------------|
-| Python | 3.11+ | Можно использовать новый синтаксис |
-| Async | Да | Весь новый код async |
-| FastAPI | 0.100+ | Использовать Annotated DI |
+| Constraint | Value | Impact on Feature |
+|------------|-------|-------------------|
+| Python | 3.11+ | Can use new syntax |
+| Async | Yes | All new code is async |
+| FastAPI | 0.100+ | Use Annotated DI |
 
-## Архитектурные ограничения
+## Architectural Constraints
 
-| Ограничение | Описание |
-|-------------|----------|
-| HTTP-only | Новая функция должна использовать HTTP клиент |
-| DDD | Соблюдать слоистую структуру |
+| Constraint | Description |
+|------------|-------------|
+| HTTP-only | New feature must use HTTP client |
+| DDD | Follow layered structure |
 
-## Инфраструктурные ограничения
+## Infrastructure Constraints
 
-| Ресурс | Статус |
-|--------|--------|
-| Порт 8000 | Занят (business-api) |
-| Порт 8001 | Занят (data-api) |
-| Порт 8002 | Свободен |
+| Resource | Status |
+|----------|--------|
+| Port 8000 | Occupied (business-api) |
+| Port 8001 | Occupied (data-api) |
+| Port 8002 | Available |
 
-## Рекомендации
+## Recommendations
 
-1. {Рекомендация по интеграции}
-2. {Потенциальный риск}
+1. {Integration recommendation}
+2. {Potential risk}
 ```
 
 ---
 
-## Источники
+## Sources
 
-| Документ | Описание |
-|----------|----------|
-| `.ai-framework/docs/reference/tech_stack.md` | Технологический стек |
+| Document | Description |
+|----------|-------------|
+| `.ai-framework/docs/reference/tech_stack.md` | Technology stack |
 | `.ai-framework/docs/atomic/architecture/event-loop-management.md` | Event Loop |

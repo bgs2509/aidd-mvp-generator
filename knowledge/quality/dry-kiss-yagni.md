@@ -1,19 +1,19 @@
-# Принципы DRY/KISS/YAGNI
+# DRY/KISS/YAGNI Principles
 
-> **Назначение**: Руководство по применению базовых принципов разработки.
+> **Purpose**: Guide to applying fundamental development principles.
 
 ---
 
-## DRY — Don't Repeat Yourself
+## DRY -- Don't Repeat Yourself
 
-### Суть
+### Essence
 
-Каждая часть знания должна иметь единственное, однозначное представление в системе.
+Every piece of knowledge must have a single, unambiguous representation in the system.
 
-### Примеры
+### Examples
 
 ```python
-# ❌ ПЛОХО: Дублирование логики
+# ❌ BAD: Duplicated logic
 class UserService:
     async def create_user(self, data):
         if len(data.email) < 5 or "@" not in data.email:
@@ -26,9 +26,9 @@ class UserService:
         ...
 
 
-# ✅ ХОРОШО: Вынесение в общую функцию
+# ✅ GOOD: Extracted to a shared function
 def validate_email(email: str) -> None:
-    """Валидировать email."""
+    """Validate email."""
     if len(email) < 5 or "@" not in email:
         raise ValidationError("Invalid email")
 
@@ -43,25 +43,25 @@ class UserService:
         ...
 ```
 
-### Исключения
+### Exceptions
 
-DRY НЕ означает, что нужно абстрагировать всё:
-- Похожий код с разной бизнес-логикой — это нормально
-- Случайное сходство — не дублирование
-- Преждевременная абстракция хуже дублирования
+DRY does NOT mean you should abstract everything:
+- Similar code with different business logic is fine
+- Accidental similarity is not duplication
+- Premature abstraction is worse than duplication
 
 ---
 
-## KISS — Keep It Simple, Stupid
+## KISS -- Keep It Simple, Stupid
 
-### Суть
+### Essence
 
-Простые решения предпочтительнее сложных. Сложность должна быть обоснована.
+Simple solutions are preferred over complex ones. Complexity must be justified.
 
-### Примеры
+### Examples
 
 ```python
-# ❌ ПЛОХО: Переусложнение
+# ❌ BAD: Over-engineering
 class UserFactory:
     @staticmethod
     def create_user_builder():
@@ -82,38 +82,38 @@ class UserBuilder:
     def build(self):
         return User(**self._user)
 
-# Использование
+# Usage
 user = UserFactory.create_user_builder() \
     .with_name("John") \
     .with_email("john@example.com") \
     .build()
 
 
-# ✅ ХОРОШО: Простое решение
+# ✅ GOOD: Simple solution
 user = User(name="John", email="john@example.com")
 ```
 
-### Рекомендации
+### Recommendations
 
-- Выбирайте самое простое решение, которое работает
-- Если код требует комментариев — он слишком сложный
-- Явное лучше неявного
-- Плоское лучше вложенного
+- Choose the simplest solution that works
+- If code requires comments -- it's too complex
+- Explicit is better than implicit
+- Flat is better than nested
 
 ---
 
-## YAGNI — You Ain't Gonna Need It
+## YAGNI -- You Ain't Gonna Need It
 
-### Суть
+### Essence
 
-Не добавляйте функциональность, пока она не понадобится.
+Don't add functionality until it is needed.
 
-### Примеры
+### Examples
 
 ```python
-# ❌ ПЛОХО: Преждевременная универсальность
+# ❌ BAD: Premature universality
 class DataExporter:
-    """Экспортер данных в разные форматы."""
+    """Data exporter to different formats."""
 
     def export(self, data, format: str = "json"):
         if format == "json":
@@ -126,99 +126,99 @@ class DataExporter:
             return self._to_yaml(data)
         elif format == "excel":
             return self._to_excel(data)
-        # 5 форматов, используется только JSON
+        # 5 formats, only JSON is used
 
 
-# ✅ ХОРОШО: Только то, что нужно сейчас
+# ✅ GOOD: Only what is needed now
 class DataExporter:
-    """Экспортер данных в JSON."""
+    """Data exporter to JSON."""
 
     def export(self, data) -> str:
-        """Экспортировать в JSON."""
+        """Export to JSON."""
         return json.dumps(data)
 ```
 
-### Рекомендации
+### Recommendations
 
-- Реализуйте только текущие требования
-- Не проектируйте "на будущее"
-- Добавить функцию позже проще, чем поддерживать лишнюю
-- Feature flags — исключение, они нужны для управления релизами
-
----
-
-## Применение в MVP
-
-### Что допустимо в MVP
-
-```
-✓ Простые решения без абстракций
-✓ Прямые вызовы без "умных" паттернов
-✓ Минимальная конфигурируемость
-✓ Hardcoded значения для констант
-✓ Отсутствие плагинной архитектуры
-```
-
-### Что недопустимо в MVP
-
-```
-✗ Универсальные фреймворки "для всего"
-✗ Абстракции ради абстракций
-✗ Паттерны без необходимости
-✗ Преждевременная оптимизация
-✗ "Красивая" архитектура без бизнес-ценности
-```
+- Implement only current requirements
+- Don't design "for the future"
+- Adding a feature later is easier than maintaining an unnecessary one
+- Feature flags are an exception -- they are needed for release management
 
 ---
 
-## Баланс принципов
+## Application in MVP
+
+### What Is Acceptable in MVP
 
 ```
-Дублирование     ◄─────────────────────► Абстракция
-(копи-паст)                              (DRY)
-         │                                    │
-         │         ОПТИМУМ                   │
-         │            ↓                       │
-         │    2-3 повторения →               │
-         │    рассмотреть абстракцию         │
-         └────────────────────────────────────┘
+✓ Simple solutions without abstractions
+✓ Direct calls without "smart" patterns
+✓ Minimal configurability
+✓ Hardcoded values for constants
+✓ Absence of plugin architecture
+```
 
+### What Is Not Acceptable in MVP
 
-Простота         ◄─────────────────────► Расширяемость
-(KISS)                                   (архитектура)
-         │                                    │
-         │         ОПТИМУМ                   │
-         │            ↓                       │
-         │    Простое решение,              │
-         │    готовое к изменению           │
-         └────────────────────────────────────┘
-
-
-Минимализм       ◄─────────────────────► Функциональность
-(YAGNI)                                  (фичи)
-         │                                    │
-         │         ОПТИМУМ                   │
-         │            ↓                       │
-         │    Только необходимое            │
-         │    для текущего этапа            │
-         └────────────────────────────────────┘
+```
+✗ Universal frameworks "for everything"
+✗ Abstractions for the sake of abstractions
+✗ Patterns without necessity
+✗ Premature optimization
+✗ "Beautiful" architecture without business value
 ```
 
 ---
 
-## Чек-лист при ревью
+## Balancing Principles
+
+```
+Duplication       <--------------------> Abstraction
+(copy-paste)                              (DRY)
+         |                                    |
+         |         OPTIMUM                   |
+         |            ↓                       |
+         |    2-3 repetitions ->             |
+         |    consider abstraction           |
+         └────────────────────────────────────┘
+
+
+Simplicity        <--------------------> Extensibility
+(KISS)                                   (architecture)
+         |                                    |
+         |         OPTIMUM                   |
+         |            ↓                       |
+         |    Simple solution,              |
+         |    ready for change              |
+         └────────────────────────────────────┘
+
+
+Minimalism        <--------------------> Functionality
+(YAGNI)                                  (features)
+         |                                    |
+         |         OPTIMUM                   |
+         |            ↓                       |
+         |    Only what is necessary        |
+         |    for the current stage         |
+         └────────────────────────────────────┘
+```
+
+---
+
+## Review Checklist
 
 **DRY:**
-- [ ] Нет копи-паста бизнес-логики?
-- [ ] Общие функции вынесены в утилиты?
-- [ ] Но не создано лишних абстракций?
+- [ ] No copy-paste of business logic?
+- [ ] Shared functions extracted to utilities?
+- [ ] But no unnecessary abstractions created?
 
 **KISS:**
-- [ ] Решение максимально простое?
-- [ ] Код читается без комментариев?
-- [ ] Нет overengineering?
+- [ ] Solution is as simple as possible?
+- [ ] Code is readable without comments?
+- [ ] No overengineering?
 
 **YAGNI:**
-- [ ] Реализовано только необходимое?
-- [ ] Нет "на будущее" функций?
-- [ ] Нет мёртвого кода?
+- [ ] Only the necessary is implemented?
+- [ ] No "for the future" functions?
+- [ ] No dead code?

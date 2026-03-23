@@ -1,10 +1,10 @@
 # Testcontainers
 
-> **Назначение**: Использование Testcontainers для integration тестов.
+> **Purpose**: Using Testcontainers for integration tests.
 
 ---
 
-## Установка
+## Installation
 
 ```bash
 pip install testcontainers[postgres,redis]
@@ -12,10 +12,10 @@ pip install testcontainers[postgres,redis]
 
 ---
 
-## PostgreSQL контейнер
+## PostgreSQL Container
 
 ```python
-"""Фикстуры с PostgreSQL контейнером."""
+"""Fixtures with PostgreSQL container."""
 
 import pytest
 from testcontainers.postgres import PostgresContainer
@@ -27,31 +27,31 @@ from {context}_data.domain.entities.base import Base
 
 @pytest.fixture(scope="session")
 def postgres_container():
-    """PostgreSQL контейнер для тестов."""
+    """PostgreSQL container for tests."""
     with PostgresContainer("postgres:15-alpine") as postgres:
         yield postgres
 
 
 @pytest.fixture(scope="session")
 def database_url(postgres_container) -> str:
-    """URL базы данных."""
-    # Преобразуем sync URL в async
+    """Database URL."""
+    # Convert sync URL to async
     sync_url = postgres_container.get_connection_url()
     return sync_url.replace("postgresql://", "postgresql+asyncpg://")
 
 
 @pytest.fixture(scope="session")
 async def engine(database_url):
-    """Движок SQLAlchemy."""
+    """SQLAlchemy engine."""
     engine = create_async_engine(database_url, echo=True)
 
-    # Создание таблиц
+    # Create tables
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
 
     yield engine
 
-    # Удаление таблиц
+    # Drop tables
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.drop_all)
 
@@ -60,7 +60,7 @@ async def engine(database_url):
 
 @pytest.fixture
 async def db_session(engine) -> AsyncSession:
-    """Сессия БД с откатом."""
+    """DB session with rollback."""
     async_session = sessionmaker(
         engine,
         class_=AsyncSession,
@@ -74,10 +74,10 @@ async def db_session(engine) -> AsyncSession:
 
 ---
 
-## Redis контейнер
+## Redis Container
 
 ```python
-"""Фикстуры с Redis контейнером."""
+"""Fixtures with Redis container."""
 
 import pytest
 from testcontainers.redis import RedisContainer
@@ -86,14 +86,14 @@ import redis.asyncio as redis
 
 @pytest.fixture(scope="session")
 def redis_container():
-    """Redis контейнер для тестов."""
+    """Redis container for tests."""
     with RedisContainer("redis:7-alpine") as redis_cont:
         yield redis_cont
 
 
 @pytest.fixture(scope="session")
 def redis_url(redis_container) -> str:
-    """URL Redis."""
+    """Redis URL."""
     host = redis_container.get_container_host_ip()
     port = redis_container.get_exposed_port(6379)
     return f"redis://{host}:{port}/0"
@@ -101,7 +101,7 @@ def redis_url(redis_container) -> str:
 
 @pytest.fixture
 async def redis_client(redis_url) -> redis.Redis:
-    """Клиент Redis."""
+    """Redis client."""
     client = redis.from_url(redis_url)
     yield client
     await client.flushall()
@@ -110,10 +110,10 @@ async def redis_client(redis_url) -> redis.Redis:
 
 ---
 
-## Полный стек
+## Full Stack
 
 ```python
-"""Фикстуры полного стека."""
+"""Full stack fixtures."""
 
 import pytest
 from testcontainers.postgres import PostgresContainer
@@ -126,7 +126,7 @@ from {context}_api.core.config import settings
 
 @pytest.fixture(scope="session")
 def containers():
-    """Все контейнеры."""
+    """All containers."""
     postgres = PostgresContainer("postgres:15-alpine")
     redis = RedisContainer("redis:7-alpine")
 
@@ -144,7 +144,7 @@ def containers():
 
 @pytest.fixture(scope="session")
 def test_settings(containers):
-    """Настройки для тестов."""
+    """Test settings."""
     postgres = containers["postgres"]
     redis = containers["redis"]
 
@@ -158,8 +158,8 @@ def test_settings(containers):
 
 @pytest.fixture(scope="session")
 def app(test_settings):
-    """Приложение с тестовыми настройками."""
-    # Подмена настроек
+    """Application with test settings."""
+    # Override settings
     settings.database_url = test_settings["database_url"]
     settings.redis_url = test_settings["redis_url"]
 
@@ -168,17 +168,17 @@ def app(test_settings):
 
 @pytest.fixture
 async def client(app) -> AsyncClient:
-    """Тест-клиент."""
+    """Test client."""
     async with AsyncClient(app=app, base_url="http://test") as client:
         yield client
 ```
 
 ---
 
-## Integration тесты
+## Integration Tests
 
 ```python
-"""Integration тесты с реальной БД."""
+"""Integration tests with real DB."""
 
 import pytest
 from uuid import uuid4
@@ -186,12 +186,12 @@ from uuid import uuid4
 
 @pytest.mark.integration
 class TestUserIntegration:
-    """Integration тесты пользователей."""
+    """User integration tests."""
 
     @pytest.mark.asyncio
     async def test_create_and_get_user(self, client):
-        """Создание и получение пользователя."""
-        # Создание
+        """Create and get a user."""
+        # Create
         create_response = await client.post(
             "/api/v1/users",
             json={"name": "Test", "email": f"test_{uuid4().hex[:8]}@example.com"},
@@ -199,14 +199,14 @@ class TestUserIntegration:
         assert create_response.status_code == 201
         user_id = create_response.json()["id"]
 
-        # Получение
+        # Get
         get_response = await client.get(f"/api/v1/users/{user_id}")
         assert get_response.status_code == 200
         assert get_response.json()["name"] == "Test"
 
     @pytest.mark.asyncio
     async def test_user_crud_flow(self, client):
-        """Полный CRUD flow."""
+        """Full CRUD flow."""
         # Create
         response = await client.post(
             "/api/v1/users",
@@ -236,47 +236,47 @@ class TestUserIntegration:
 
 ---
 
-## conftest.py для integration
+## conftest.py for integration
 
 ```python
-"""conftest.py для integration тестов."""
+"""conftest.py for integration tests."""
 
 # tests/integration/conftest.py
 
 import pytest
 
-# Маркер для всех тестов в директории
+# Marker for all tests in directory
 pytestmark = pytest.mark.integration
 
 
 @pytest.fixture(scope="module")
 def anyio_backend():
-    """Бэкенд для anyio."""
+    """Backend for anyio."""
     return "asyncio"
 ```
 
 ---
 
-## Запуск
+## Running
 
 ```bash
-# Только integration тесты
+# Integration tests only
 pytest tests/integration -m integration
 
-# С verbose
+# With verbose
 pytest tests/integration -v -s
 
-# Конкретный файл
+# Specific file
 pytest tests/integration/test_user_api.py
 ```
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] testcontainers установлен
-- [ ] PostgresContainer настроен
-- [ ] RedisContainer настроен
-- [ ] scope="session" для контейнеров
-- [ ] Cleanup после тестов
-- [ ] Маркер @pytest.mark.integration
+- [ ] testcontainers installed
+- [ ] PostgresContainer configured
+- [ ] RedisContainer configured
+- [ ] scope="session" for containers
+- [ ] Cleanup after tests
+- [ ] @pytest.mark.integration marker

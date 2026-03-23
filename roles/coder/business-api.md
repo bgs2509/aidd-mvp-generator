@@ -1,31 +1,31 @@
-# Функция: Stage 4.3 — Business API
+# Function: Stage 4.3 — Business API
 
-> **Назначение**: Создание бизнес-логики и REST API.
-
----
-
-## Цель
-
-Создать Business API сервис, который содержит бизнес-логику
-и предоставляет REST API для внешних клиентов.
+> **Purpose**: Creating business logic and REST API.
 
 ---
 
-## Архитектурный принцип
+## Goal
+
+Create a Business API service that contains business logic
+and provides a REST API for external clients.
+
+---
+
+## Architectural Principle
 
 ```
-ПРАВИЛО: Business API содержит бизнес-логику,
-         но НЕ обращается к БД напрямую.
+RULE: Business API contains business logic,
+      but NEVER accesses the database directly.
 
 Client ──HTTP──▶ Business API ──HTTP──▶ Data API ──SQL──▶ PostgreSQL
 
-Для доступа к данным Business API использует HTTP клиент
-для вызова Data API.
+To access data, Business API uses an HTTP client
+to call the Data API.
 ```
 
 ---
 
-## Структура Business API
+## Business API Structure
 
 ```
 services/{context}_api/
@@ -83,12 +83,12 @@ services/{context}_api/
 
 ---
 
-## Компоненты
+## Components
 
 ### 1. main.py
 
 ```python
-"""Точка входа Business API сервиса."""
+"""Business API service entry point."""
 
 from contextlib import asynccontextmanager
 
@@ -102,19 +102,19 @@ from {context}_api.infrastructure.http.data_api_client import DataApiClient
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Управление жизненным циклом приложения."""
-    # Инициализация
+    """Application lifecycle management."""
+    # Initialization
     setup_logging()
     app.state.data_client = DataApiClient(settings.data_api_url)
 
     yield
 
-    # Очистка
+    # Cleanup
     await app.state.data_client.close()
 
 
 def create_app() -> FastAPI:
-    """Фабрика приложения."""
+    """Application factory."""
     app = FastAPI(
         title=f"{settings.service_name} API",
         version="1.0.0",
@@ -132,7 +132,7 @@ app = create_app()
 ### 2. HTTP Client (infrastructure/http/)
 
 ```python
-"""HTTP клиент для Data API."""
+"""HTTP client for Data API."""
 
 from typing import Any
 from uuid import UUID
@@ -143,16 +143,16 @@ from {context}_api.core.exceptions import DataApiError
 
 
 class DataApiClient:
-    """Клиент для взаимодействия с Data API."""
+    """Client for interacting with the Data API."""
 
     def __init__(self, base_url: str):
-        """Инициализация клиента."""
+        """Initialize the client."""
         self.base_url = base_url.rstrip("/")
         self._client: httpx.AsyncClient | None = None
 
     @property
     def client(self) -> httpx.AsyncClient:
-        """Получить HTTP клиент."""
+        """Get the HTTP client."""
         if self._client is None:
             self._client = httpx.AsyncClient(
                 base_url=self.base_url,
@@ -161,7 +161,7 @@ class DataApiClient:
         return self._client
 
     async def close(self):
-        """Закрыть соединение."""
+        """Close the connection."""
         if self._client:
             await self._client.aclose()
             self._client = None
@@ -172,7 +172,7 @@ class DataApiClient:
         path: str,
         **kwargs,
     ) -> dict[str, Any]:
-        """Выполнить HTTP запрос."""
+        """Execute an HTTP request."""
         try:
             response = await self.client.request(method, path, **kwargs)
             response.raise_for_status()
@@ -190,14 +190,14 @@ class DataApiClient:
         except httpx.RequestError as e:
             raise DataApiError(f"Data API connection error: {e}")
 
-    # CRUD методы для {Entity}
+    # CRUD methods for {Entity}
 
     async def create_{entity}(self, data: dict) -> dict:
-        """Создать {entity}."""
+        """Create {entity}."""
         return await self._request("POST", "/api/v1/{entities}", json=data)
 
     async def get_{entity}(self, {entity}_id: UUID) -> dict | None:
-        """Получить {entity} по ID."""
+        """Get {entity} by ID."""
         try:
             return await self._request("GET", f"/api/v1/{entities}/{{{entity}_id}}")
         except DataApiError as e:
@@ -210,7 +210,7 @@ class DataApiClient:
         page: int = 1,
         page_size: int = 20,
     ) -> dict:
-        """Получить список {entities}."""
+        """Get list of {entities}."""
         return await self._request(
             "GET",
             "/api/v1/{entities}",
@@ -218,7 +218,7 @@ class DataApiClient:
         )
 
     async def update_{entity}(self, {entity}_id: UUID, data: dict) -> dict | None:
-        """Обновить {entity}."""
+        """Update {entity}."""
         try:
             return await self._request(
                 "PUT",
@@ -231,7 +231,7 @@ class DataApiClient:
             raise
 
     async def delete_{entity}(self, {entity}_id: UUID) -> bool:
-        """Удалить {entity}."""
+        """Delete {entity}."""
         try:
             await self._request("DELETE", f"/api/v1/{entities}/{{{entity}_id}}")
             return True
@@ -244,7 +244,7 @@ class DataApiClient:
 ### 3. Application Service (application/services/)
 
 ```python
-"""Сервис для {Entity}."""
+"""Service for {Entity}."""
 
 from uuid import UUID
 
@@ -259,30 +259,30 @@ from {context}_api.infrastructure.http.data_api_client import DataApiClient
 
 
 class {Entity}Service:
-    """Сервис бизнес-логики для {Entity}."""
+    """Business logic service for {Entity}."""
 
     def __init__(self, data_client: DataApiClient):
-        """Инициализация сервиса."""
+        """Initialize the service."""
         self.data_client = data_client
 
     async def create_{entity}(self, dto: Create{Entity}DTO) -> {Entity}DTO:
         """
-        Создать новый {entity}.
+        Create a new {entity}.
 
-        Бизнес-правила:
-        - {Правило 1}
-        - {Правило 2}
+        Business rules:
+        - {Rule 1}
+        - {Rule 2}
         """
-        # Валидация бизнес-правил
+        # Validate business rules
         await self._validate_creation(dto)
 
-        # Создание через Data API
+        # Create via Data API
         result = await self.data_client.create_{entity}(dto.model_dump())
 
         return {Entity}DTO.model_validate(result)
 
     async def get_{entity}(self, {entity}_id: UUID) -> {Entity}DTO:
-        """Получить {entity} по ID."""
+        """Get {entity} by ID."""
         result = await self.data_client.get_{entity}({entity}_id)
 
         if result is None:
@@ -295,7 +295,7 @@ class {Entity}Service:
         page: int = 1,
         page_size: int = 20,
     ) -> {Entity}ListDTO:
-        """Получить список {entities}."""
+        """Get list of {entities}."""
         result = await self.data_client.list_{entities}(
             page=page,
             page_size=page_size,
@@ -308,16 +308,16 @@ class {Entity}Service:
         {entity}_id: UUID,
         dto: Update{Entity}DTO,
     ) -> {Entity}DTO:
-        """Обновить {entity}."""
-        # Проверка существования
+        """Update {entity}."""
+        # Check existence
         existing = await self.data_client.get_{entity}({entity}_id)
         if existing is None:
             raise NotFoundError(f"{Entity} with id {{{entity}_id}} not found")
 
-        # Валидация бизнес-правил
+        # Validate business rules
         await self._validate_update(existing, dto)
 
-        # Обновление через Data API
+        # Update via Data API
         result = await self.data_client.update_{entity}(
             {entity}_id,
             dto.model_dump(exclude_unset=True),
@@ -326,15 +326,15 @@ class {Entity}Service:
         return {Entity}DTO.model_validate(result)
 
     async def delete_{entity}(self, {entity}_id: UUID) -> None:
-        """Удалить {entity}."""
+        """Delete {entity}."""
         deleted = await self.data_client.delete_{entity}({entity}_id)
 
         if not deleted:
             raise NotFoundError(f"{Entity} with id {{{entity}_id}} not found")
 
     async def _validate_creation(self, dto: Create{Entity}DTO) -> None:
-        """Валидация бизнес-правил при создании."""
-        # Реализовать бизнес-правила
+        """Validate business rules on creation."""
+        # Implement business rules
         pass
 
     async def _validate_update(
@@ -342,15 +342,15 @@ class {Entity}Service:
         existing: dict,
         dto: Update{Entity}DTO,
     ) -> None:
-        """Валидация бизнес-правил при обновлении."""
-        # Реализовать бизнес-правила
+        """Validate business rules on update."""
+        # Implement business rules
         pass
 ```
 
 ### 4. API Routes (api/v1/)
 
 ```python
-"""API роуты для {Entity}."""
+"""API routes for {Entity}."""
 
 from uuid import UUID
 
@@ -374,7 +374,7 @@ async def create_{entity}(
     request: {Entity}CreateRequest,
     service: {Entity}Service = Depends(get_{entity}_service),
 ):
-    """Создать {entity}."""
+    """Create {entity}."""
     try:
         result = await service.create_{entity}(request.to_dto())
         return {Entity}Response.from_dto(result)
@@ -391,7 +391,7 @@ async def list_{entities}(
     page_size: int = 20,
     service: {Entity}Service = Depends(get_{entity}_service),
 ):
-    """Получить список {entities}."""
+    """Get list of {entities}."""
     result = await service.list_{entities}(page=page, page_size=page_size)
     return {Entity}ListResponse.from_dto(result)
 
@@ -401,7 +401,7 @@ async def get_{entity}(
     {entity}_id: UUID,
     service: {Entity}Service = Depends(get_{entity}_service),
 ):
-    """Получить {entity} по ID."""
+    """Get {entity} by ID."""
     try:
         result = await service.get_{entity}({entity}_id)
         return {Entity}Response.from_dto(result)
@@ -418,7 +418,7 @@ async def update_{entity}(
     request: {Entity}UpdateRequest,
     service: {Entity}Service = Depends(get_{entity}_service),
 ):
-    """Обновить {entity}."""
+    """Update {entity}."""
     try:
         result = await service.update_{entity}({entity}_id, request.to_dto())
         return {Entity}Response.from_dto(result)
@@ -439,7 +439,7 @@ async def delete_{entity}(
     {entity}_id: UUID,
     service: {Entity}Service = Depends(get_{entity}_service),
 ):
-    """Удалить {entity}."""
+    """Delete {entity}."""
     try:
         await service.delete_{entity}({entity}_id)
     except NotFoundError:
@@ -451,7 +451,7 @@ async def delete_{entity}(
 
 ---
 
-## Шаблон для использования
+## Template to Use
 
 ```
 templates/services/fastapi_business_api/
@@ -459,46 +459,46 @@ templates/services/fastapi_business_api/
 
 ---
 
-## Порядок создания
+## Creation Order
 
 ```
-1. Создать структуру директорий
-2. Создать Dockerfile
-3. Создать requirements.txt
-4. Создать core/config.py, logging.py, exceptions.py
-5. Создать infrastructure/http/base_client.py
-6. Создать infrastructure/http/data_api_client.py
-7. Создать application/dtos/{entity}_dtos.py
-8. Создать application/services/{entity}_service.py
-9. Создать schemas/{entity}_schemas.py
-10. Создать api/dependencies.py
-11. Создать api/v1/{entity}_routes.py
-12. Создать api/v1/router.py
-13. Создать main.py
+1. Create directory structure
+2. Create Dockerfile
+3. Create requirements.txt
+4. Create core/config.py, logging.py, exceptions.py
+5. Create infrastructure/http/base_client.py
+6. Create infrastructure/http/data_api_client.py
+7. Create application/dtos/{entity}_dtos.py
+8. Create application/services/{entity}_service.py
+9. Create schemas/{entity}_schemas.py
+10. Create api/dependencies.py
+11. Create api/v1/{entity}_routes.py
+12. Create api/v1/router.py
+13. Create main.py
 ```
 
 ---
 
-## Качественные ворота
+## Quality Gates
 
 ### BUSINESS_API_READY
 
-- [ ] Структура проекта создана по шаблону
-- [ ] HTTP клиент для Data API создан
-- [ ] Application services созданы
-- [ ] API эндпоинты созданы
-- [ ] Dockerfile создан
-- [ ] `docker-compose up {context}-api` запускается
-- [ ] Health check проходит: `GET /api/v1/health`
-- [ ] Все FR из PRD покрыты эндпоинтами
+- [ ] Project structure created from template
+- [ ] HTTP client for Data API created
+- [ ] Application services created
+- [ ] API endpoints created
+- [ ] Dockerfile created
+- [ ] `docker-compose up {context}-api` starts successfully
+- [ ] Health check passes: `GET /api/v1/health`
+- [ ] All FRs from PRD are covered by endpoints
 
 ---
 
-## Источники
+## References
 
-| Документ | Описание |
-|----------|----------|
-| `knowledge/services/fastapi/application-factory.md` | Фабрика приложения |
-| `knowledge/services/fastapi/routing-patterns.md` | Паттерны роутинга |
-| `knowledge/integrations/http/client-patterns.md` | HTTP клиенты |
-| `templates/services/fastapi_business_api/` | Шаблон сервиса |
+| Document | Description |
+|----------|-------------|
+| `knowledge/services/fastapi/application-factory.md` | Application factory |
+| `knowledge/services/fastapi/routing-patterns.md` | Routing patterns |
+| `knowledge/integrations/http/client-patterns.md` | HTTP clients |
+| `templates/services/fastapi_business_api/` | Service template |

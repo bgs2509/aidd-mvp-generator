@@ -1,62 +1,62 @@
-# HTTP-only доступ к данным
+# HTTP-only Data Access
 
-> **Назначение**: Принцип изоляции доступа к данным через HTTP.
-
----
-
-## Принцип
-
-```
-ПРАВИЛО: Бизнес-сервисы НИКОГДА не обращаются к базе данных напрямую.
-         Доступ к данным только через HTTP вызовы к Data API.
-
-Business Service ──HTTP──▶ Data API ──SQL──▶ Database
-```
+> **Purpose**: The principle of isolating data access through HTTP.
 
 ---
 
-## Почему HTTP-only?
-
-### 1. Изоляция
+## Principle
 
 ```
-✓ Чёткие границы между сервисами
-✓ Каждый сервис можно развивать независимо
-✓ Изменения в БД не влияют на бизнес-сервисы
-```
+RULE: Business services NEVER access the database directly.
+      Data access only through HTTP calls to Data API.
 
-### 2. Масштабирование
-
-```
-✓ Data API можно масштабировать отдельно
-✓ Можно добавить кэширование в Data API
-✓ Business API не нужен connection pool к БД
-```
-
-### 3. Безопасность
-
-```
-✓ Единая точка доступа к данным
-✓ Валидация на уровне Data API
-✓ Аудит всех операций с данными
-```
-
-### 4. Тестирование
-
-```
-✓ Легко мокировать HTTP клиент
-✓ Независимые тесты для каждого сервиса
-✓ Integration тесты через HTTP
+Business Service --HTTP--> Data API --SQL--> Database
 ```
 
 ---
 
-## Архитектура
+## Why HTTP-only?
 
-### Data API (единственный с доступом к БД)
+### 1. Isolation
+
+```
+✓ Clear boundaries between services
+✓ Each service can evolve independently
+✓ DB changes do not affect business services
+```
+
+### 2. Scaling
+
+```
+✓ Data API can be scaled separately
+✓ Caching can be added to Data API
+✓ Business API does not need a DB connection pool
+```
+
+### 3. Security
+
+```
+✓ Single point of data access
+✓ Validation at Data API level
+✓ Audit of all data operations
+```
+
+### 4. Testing
+
+```
+✓ Easy to mock HTTP client
+✓ Independent tests for each service
+✓ Integration tests via HTTP
+```
+
+---
+
+## Architecture
+
+### Data API (the only one with DB access)
 
 ```python
-"""Data API — сервис доступа к данным."""
+"""Data API -- data access service."""
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends
@@ -69,7 +69,7 @@ async def create_order(
     data: OrderCreate,
     session: AsyncSession = Depends(get_session),
 ):
-    """Создать заказ в БД."""
+    """Create an order in DB."""
     repo = OrderRepository(session)
     order = await repo.create(**data.model_dump())
     return order
@@ -80,7 +80,7 @@ async def get_order(
     order_id: UUID,
     session: AsyncSession = Depends(get_session),
 ):
-    """Получить заказ из БД."""
+    """Get an order from DB."""
     repo = OrderRepository(session)
     order = await repo.get_by_id(order_id)
     if not order:
@@ -88,29 +88,29 @@ async def get_order(
     return order
 ```
 
-### Business API (использует HTTP клиент)
+### Business API (uses HTTP client)
 
 ```python
-"""Business API — бизнес-логика через HTTP."""
+"""Business API -- business logic via HTTP."""
 
 from infrastructure.http import DataApiClient
 
 
 class OrderService:
-    """Сервис заказов."""
+    """Order service."""
 
     def __init__(self, data_client: DataApiClient):
         self.data_client = data_client
 
     async def create_order(self, data: CreateOrderDTO) -> OrderDTO:
-        """Создать заказ с бизнес-логикой."""
-        # Бизнес-валидация
+        """Create an order with business logic."""
+        # Business validation
         await self._validate_business_rules(data)
 
-        # Расчёт итогов
+        # Calculate totals
         total = await self._calculate_total(data.items)
 
-        # Сохранение через Data API (HTTP!)
+        # Save via Data API (HTTP!)
         result = await self.data_client.create_order({
             "customer_id": data.customer_id,
             "items": [item.model_dump() for item in data.items],
@@ -120,16 +120,16 @@ class OrderService:
         return OrderDTO.model_validate(result)
 ```
 
-### HTTP клиент
+### HTTP Client
 
 ```python
-"""HTTP клиент для Data API."""
+"""HTTP client for Data API."""
 
 import httpx
 
 
 class DataApiClient:
-    """Клиент для взаимодействия с Data API."""
+    """Client for interacting with Data API."""
 
     def __init__(self, base_url: str):
         self.base_url = base_url
@@ -145,13 +145,13 @@ class DataApiClient:
         return self._client
 
     async def create_order(self, data: dict) -> dict:
-        """Создать заказ через Data API."""
+        """Create an order via Data API."""
         response = await self.client.post("/api/v1/orders", json=data)
         response.raise_for_status()
         return response.json()
 
     async def get_order(self, order_id: UUID) -> dict | None:
-        """Получить заказ через Data API."""
+        """Get an order via Data API."""
         response = await self.client.get(f"/api/v1/orders/{order_id}")
         if response.status_code == 404:
             return None
@@ -161,12 +161,12 @@ class DataApiClient:
 
 ---
 
-## Что НЕЛЬЗЯ делать
+## What NOT to Do
 
-### ❌ Импорт SQLAlchemy в Business API
+### Do NOT import SQLAlchemy in Business API
 
 ```python
-# ПЛОХО! SQLAlchemy в бизнес-сервисе
+# BAD! SQLAlchemy in business service
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -176,23 +176,23 @@ class OrderService:
 
     async def create_order(self, data):
         order = Order(**data)
-        self.session.add(order)  # ❌ Прямой доступ к БД
+        self.session.add(order)  # ❌ Direct DB access
         await self.session.commit()
 ```
 
-### ❌ Connection string в Business API
+### Do NOT use connection string in Business API
 
 ```python
-# ПЛОХО! DATABASE_URL в бизнес-сервисе
+# BAD! DATABASE_URL in business service
 DATABASE_URL = "postgresql://..."  # ❌
 
 engine = create_async_engine(DATABASE_URL)  # ❌
 ```
 
-### ❌ Прямые SQL запросы
+### Do NOT use direct SQL queries
 
 ```python
-# ПЛОХО! SQL в бизнес-коде
+# BAD! SQL in business code
 result = await connection.execute(
     "SELECT * FROM orders WHERE id = :id",  # ❌
     {"id": order_id}
@@ -201,12 +201,12 @@ result = await connection.execute(
 
 ---
 
-## Что НУЖНО делать
+## What to Do
 
-### ✓ HTTP клиент для Data API
+### Use HTTP client for Data API
 
 ```python
-# ХОРОШО! HTTP клиент
+# GOOD! HTTP client
 from infrastructure.http import DataApiClient
 
 class OrderService:
@@ -218,10 +218,10 @@ class OrderService:
         return result
 ```
 
-### ✓ DATA_API_URL вместо DATABASE_URL
+### Use DATA_API_URL instead of DATABASE_URL
 
 ```python
-# ХОРОШО! URL Data API
+# GOOD! Data API URL
 DATA_API_URL = "http://localhost:8001"  # ✓
 
 data_client = DataApiClient(DATA_API_URL)  # ✓
@@ -229,30 +229,30 @@ data_client = DataApiClient(DATA_API_URL)  # ✓
 
 ---
 
-## Проверка соблюдения
+## Compliance Verification
 
 ```bash
-# Поиск нарушений в Business API
+# Search for violations in Business API
 
-# SQLAlchemy импорты
+# SQLAlchemy imports
 grep -r "from sqlalchemy" services/{context}_api/
 
-# Прямые подключения к БД
+# Direct DB connections
 grep -r "DATABASE_URL" services/{context}_api/
 grep -r "create_engine" services/{context}_api/
 
-# Если найдено — НАРУШЕНИЕ!
+# If found — VIOLATION!
 ```
 
 ---
 
-## Обработка ошибок
+## Error Handling
 
 ```python
-"""Обработка ошибок HTTP клиента."""
+"""HTTP client error handling."""
 
 class DataApiError(Exception):
-    """Ошибка Data API."""
+    """Data API error."""
 
     def __init__(self, message: str, status_code: int | None = None):
         super().__init__(message)
@@ -276,9 +276,9 @@ class DataApiClient:
 
 ---
 
-## Связанные документы
+## Related Documents
 
-| Документ | Описание |
+| Document | Description |
 |----------|----------|
-| `improved-hybrid.md` | Общая архитектура |
-| `../integrations/http/client-patterns.md` | Паттерны HTTP клиентов |
+| `improved-hybrid.md` | Overall architecture |
+| `../integrations/http/client-patterns.md` | HTTP client patterns |

@@ -1,13 +1,13 @@
-# Внедрение зависимостей FastAPI
+# FastAPI Dependency Injection
 
-> **Назначение**: Паттерны DI в FastAPI.
+> **Purpose**: DI patterns in FastAPI.
 
 ---
 
-## Базовая структура
+## Basic Structure
 
 ```python
-"""Зависимости API."""
+"""API dependencies."""
 
 from fastapi import Depends, Request
 
@@ -17,13 +17,13 @@ from {context}_api.infrastructure.http.data_api_client import DataApiClient
 
 def get_http_client(request: Request) -> DataApiClient:
     """
-    Получить HTTP клиент из состояния приложения.
+    Get HTTP client from application state.
 
     Args:
-        request: HTTP запрос.
+        request: HTTP request.
 
     Returns:
-        Настроенный HTTP клиент.
+        Configured HTTP client.
     """
     return DataApiClient(request.app.state.http_client)
 
@@ -32,13 +32,13 @@ def get_user_service(
     data_client: DataApiClient = Depends(get_http_client),
 ) -> UserService:
     """
-    Создать сервис пользователей.
+    Create user service.
 
     Args:
-        data_client: HTTP клиент для Data API.
+        data_client: HTTP client for Data API.
 
     Returns:
-        Экземпляр сервиса.
+        Service instance.
     """
     return UserService(data_client)
 
@@ -47,41 +47,41 @@ def get_order_service(
     data_client: DataApiClient = Depends(get_http_client),
 ) -> OrderService:
     """
-    Создать сервис заказов.
+    Create order service.
 
     Args:
-        data_client: HTTP клиент для Data API.
+        data_client: HTTP client for Data API.
 
     Returns:
-        Экземпляр сервиса.
+        Service instance.
     """
     return OrderService(data_client)
 ```
 
 ---
 
-## Граф зависимостей
+## Dependency Graph
 
 ```
 Request
-    │
-    ▼
+    |
+    v
 get_http_client()
-    │
-    ├───────────────────┬───────────────────┐
-    ▼                   ▼                   ▼
+    |
+    +-------------------+-------------------+
+    v                   v                   v
 get_user_service() get_order_service() get_restaurant_service()
-    │                   │                   │
-    ▼                   ▼                   ▼
+    |                   |                   |
+    v                   v                   v
 UserRoutes          OrderRoutes         RestaurantRoutes
 ```
 
 ---
 
-## Request-scoped зависимости
+## Request-scoped Dependencies
 
 ```python
-"""Зависимости с временем жизни запроса."""
+"""Request-scoped dependencies."""
 
 from contextlib import asynccontextmanager
 from fastapi import Depends, Request
@@ -89,13 +89,13 @@ from fastapi import Depends, Request
 
 async def get_request_id(request: Request) -> str:
     """
-    Получить ID запроса.
+    Get request ID.
 
     Args:
-        request: HTTP запрос.
+        request: HTTP request.
 
     Returns:
-        ID запроса.
+        Request ID.
     """
     return getattr(request.state, "request_id", "unknown")
 
@@ -105,17 +105,17 @@ async def get_current_user(
     user_service: UserService = Depends(get_user_service),
 ) -> User:
     """
-    Получить текущего пользователя из токена.
+    Get current user from token.
 
     Args:
-        request: HTTP запрос.
-        user_service: Сервис пользователей.
+        request: HTTP request.
+        user_service: User service.
 
     Returns:
-        Текущий пользователь.
+        Current user.
 
     Raises:
-        HTTPException: Если токен невалидный.
+        HTTPException: If token is invalid.
     """
     token = request.headers.get("Authorization")
     if not token:
@@ -127,16 +127,16 @@ async def get_current_user(
 
 ---
 
-## Параметризованные зависимости
+## Parameterized Dependencies
 
 ```python
-"""Зависимости с параметрами."""
+"""Dependencies with parameters."""
 
 from functools import lru_cache
 
 
 class PaginationParams:
-    """Параметры пагинации."""
+    """Pagination parameters."""
 
     def __init__(
         self,
@@ -145,12 +145,12 @@ class PaginationParams:
         max_page_size: int = 100,
     ):
         """
-        Инициализация параметров.
+        Initialize parameters.
 
         Args:
-            page: Номер страницы.
-            page_size: Размер страницы.
-            max_page_size: Максимальный размер.
+            page: Page number.
+            page_size: Page size.
+            max_page_size: Maximum page size.
         """
         self.page = max(1, page)
         self.page_size = min(page_size, max_page_size)
@@ -162,24 +162,24 @@ def pagination_params(
     page_size: int = 20,
 ) -> PaginationParams:
     """
-    Создать параметры пагинации.
+    Create pagination parameters.
 
     Args:
-        page: Номер страницы.
-        page_size: Размер страницы.
+        page: Page number.
+        page_size: Page size.
 
     Returns:
-        Параметры пагинации.
+        Pagination parameters.
     """
     return PaginationParams(page=page, page_size=page_size)
 
 
-# Использование
+# Usage
 @router.get("")
 async def list_items(
     pagination: PaginationParams = Depends(pagination_params),
 ):
-    """Список с пагинацией."""
+    """List with pagination."""
     return await service.list(
         offset=pagination.offset,
         limit=pagination.page_size,
@@ -188,21 +188,21 @@ async def list_items(
 
 ---
 
-## Фабрика зависимостей
+## Dependency Factory
 
 ```python
-"""Фабрика для создания зависимостей с параметрами."""
+"""Factory for creating dependencies with parameters."""
 
 def get_service_with_config(service_class, config_key: str):
     """
-    Создать фабрику сервиса с конфигурацией.
+    Create service factory with configuration.
 
     Args:
-        service_class: Класс сервиса.
-        config_key: Ключ конфигурации.
+        service_class: Service class.
+        config_key: Configuration key.
 
     Returns:
-        Функция-зависимость.
+        Dependency function.
     """
     def dependency(
         data_client: DataApiClient = Depends(get_http_client),
@@ -213,16 +213,16 @@ def get_service_with_config(service_class, config_key: str):
     return dependency
 
 
-# Использование
+# Usage
 get_order_service = get_service_with_config(OrderService, "orders")
 ```
 
 ---
 
-## Кэширование зависимостей
+## Dependency Caching
 
 ```python
-"""Кэширование на уровне приложения."""
+"""Application-level caching."""
 
 from functools import lru_cache
 
@@ -230,38 +230,38 @@ from functools import lru_cache
 @lru_cache
 def get_settings():
     """
-    Получить настройки (кэшируется).
+    Get settings (cached).
 
     Returns:
-        Объект настроек.
+        Settings object.
     """
     return Settings()
 
 
-# Использование в роутах
+# Usage in routes
 @router.get("/info")
 async def get_info(
     settings = Depends(get_settings),
 ):
-    """Информация о сервисе."""
+    """Service information."""
     return {"service": settings.service_name}
 ```
 
 ---
 
-## Антипаттерны
+## Anti-patterns
 
 ```python
-# ❌ ПЛОХО: Создание клиента в каждом запросе
+# BAD: Creating client on every request
 def get_client():
-    return httpx.AsyncClient()  # Утечка ресурсов!
+    return httpx.AsyncClient()  # Resource leak!
 
-# ✅ ХОРОШО: Использование состояния приложения
+# GOOD: Using application state
 def get_client(request: Request):
     return request.app.state.http_client
 
 
-# ❌ ПЛОХО: Глобальные переменные
+# BAD: Global variables
 _service = None
 
 def get_service():
@@ -270,7 +270,7 @@ def get_service():
         _service = MyService()
     return _service
 
-# ✅ ХОРОШО: Depends цепочка
+# GOOD: Depends chain
 def get_service(client = Depends(get_client)):
     return MyService(client)
 ```

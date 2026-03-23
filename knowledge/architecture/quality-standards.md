@@ -1,74 +1,74 @@
-# Стандарты качества
+# Quality Standards
 
-> **Назначение**: Требования к качеству кода по уровням зрелости.
+> **Purpose**: Code quality requirements by maturity level.
 
 ---
 
-## Level 2 (MVP) — Основной уровень
+## Level 2 (MVP) — Primary Level
 
-### Обязательные требования
+### Mandatory Requirements
 
-| Категория | Требование | Порог |
+| Category | Requirement | Threshold |
 |-----------|------------|-------|
-| Покрытие тестами | Code coverage | ≥75% |
-| Тестирование | Unit тесты | Обязательно |
-| Тестирование | Integration тесты | Обязательно |
-| Линтинг | Ruff check | 0 ошибок |
-| Форматирование | Ruff format | Соответствует |
-| Типизация | Type hints | Все функции |
-| Документация | Docstrings | Все публичные |
-| CI | Pipeline | Настроен |
+| Test Coverage | Code coverage | >=75% |
+| Testing | Unit tests | Required |
+| Testing | Integration tests | Required |
+| Linting | Ruff check | 0 errors |
+| Formatting | Ruff format | Compliant |
+| Typing | Type hints | All functions |
+| Documentation | Docstrings | All public |
+| CI | Pipeline | Configured |
 
-### Метрики производительности
+### Performance Metrics
 
-| Метрика | Порог |
+| Metric | Threshold |
 |---------|-------|
-| Время отклика API | <500ms (p95) |
-| Доступность | 99% |
+| API response time | <500ms (p95) |
+| Availability | 99% |
 
 ---
 
-## Покрытие тестами
+## Test Coverage
 
-### Что должно быть покрыто
+### What Should Be Covered
 
 ```
-✓ Application Services (бизнес-логика)
+✓ Application Services (business logic)
 ✓ Domain Services
 ✓ Repositories
-✓ API эндпоинты
-✓ HTTP клиенты
-✓ Валидация схем
-✓ Обработка ошибок
+✓ API endpoints
+✓ HTTP clients
+✓ Schema validation
+✓ Error handling
 ```
 
-### Что можно исключить
+### What Can Be Excluded
 
 ```
 - __init__.py
-- Конфигурационные файлы
-- Абстрактные базовые классы
-- Простые getters/setters
+- Configuration files
+- Abstract base classes
+- Simple getters/setters
 ```
 
-### Измерение покрытия
+### Measuring Coverage
 
 ```bash
-# Запуск с измерением
+# Run with measurement
 pytest --cov=src --cov-report=term --cov-report=html
 
-# Проверка порога
+# Check threshold
 pytest --cov=src --cov-fail-under=75
 ```
 
 ---
 
-## Типы тестов
+## Test Types
 
-### Unit тесты
+### Unit Tests
 
 ```python
-"""Unit тесты — изолированные, с моками."""
+"""Unit tests -- isolated, with mocks."""
 
 import pytest
 from unittest.mock import AsyncMock
@@ -93,10 +93,10 @@ class TestUserService:
         mock_client.create_user.assert_called_once()
 ```
 
-### Integration тесты
+### Integration Tests
 
 ```python
-"""Integration тесты — с реальными зависимостями."""
+"""Integration tests -- with real dependencies."""
 
 import pytest
 from httpx import AsyncClient
@@ -118,9 +118,9 @@ class TestUserAPI:
 
 ---
 
-## Линтинг и форматирование
+## Linting and Formatting
 
-### Ruff конфигурация
+### Ruff Configuration
 
 ```toml
 # pyproject.toml
@@ -147,52 +147,52 @@ ignore = [
 known-first-party = ["booking_api"]
 ```
 
-### Команды
+### Commands
 
 ```bash
-# Проверка
+# Check
 ruff check src tests
 
-# Автоисправление
+# Auto-fix
 ruff check --fix src tests
 
-# Форматирование
+# Format
 ruff format src tests
 ```
 
 ---
 
-## Типизация
+## Typing
 
-### Требования
+### Requirements
 
 ```python
-# Все функции должны иметь type hints
+# All functions must have type hints
 
-# ХОРОШО
+# GOOD
 async def create_user(data: CreateUserDTO) -> UserDTO:
-    """Создать пользователя."""
+    """Create a user."""
     pass
 
-# ПЛОХО
-async def create_user(data):  # Нет типов!
+# BAD
+async def create_user(data):  # No types!
     pass
 ```
 
-### Современные типы (Python 3.10+)
+### Modern Types (Python 3.10+)
 
 ```python
-# Использовать встроенные типы
-users: list[User] = []           # НЕ List[User]
-settings: dict[str, str] = {}    # НЕ Dict[str, str]
-name: str | None = None          # НЕ Optional[str]
+# Use built-in types
+users: list[User] = []           # NOT List[User]
+settings: dict[str, str] = {}    # NOT Dict[str, str]
+name: str | None = None          # NOT Optional[str]
 
-# Union для нескольких типов
+# Union for multiple types
 result: User | None = None
 value: int | str = 0
 ```
 
-### Mypy конфигурация
+### Mypy Configuration
 
 ```toml
 # pyproject.toml
@@ -211,9 +211,9 @@ disallow_untyped_defs = false
 
 ---
 
-## Документация
+## Documentation
 
-### Docstrings (Google стиль)
+### Docstrings (Google Style)
 
 ```python
 def create_order(
@@ -222,22 +222,22 @@ def create_order(
     discount: Decimal | None = None,
 ) -> Order:
     """
-    Создать новый заказ.
+    Create a new order.
 
-    Создаёт заказ с указанными товарами и опционально
-    применяет скидку.
+    Creates an order with the specified items and optionally
+    applies a discount.
 
     Args:
-        customer_id: ID покупателя.
-        items: Список товаров в заказе.
-        discount: Размер скидки (опционально).
+        customer_id: Customer ID.
+        items: List of items in the order.
+        discount: Discount amount (optional).
 
     Returns:
-        Созданный объект заказа.
+        The created order object.
 
     Raises:
-        ValidationError: Если список товаров пуст.
-        NotFoundError: Если покупатель не найден.
+        ValidationError: If the item list is empty.
+        NotFoundError: If the customer is not found.
 
     Example:
         >>> order = create_order(
@@ -247,18 +247,18 @@ def create_order(
     """
 ```
 
-### Классы
+### Classes
 
 ```python
 class OrderService:
     """
-    Сервис для работы с заказами.
+    Service for working with orders.
 
-    Предоставляет методы для создания, получения и управления
-    заказами через Data API.
+    Provides methods for creating, retrieving, and managing
+    orders through Data API.
 
     Attributes:
-        data_client: HTTP клиент для Data API.
+        data_client: HTTP client for Data API.
 
     Example:
         >>> service = OrderService(data_client)
@@ -267,10 +267,10 @@ class OrderService:
 
     def __init__(self, data_client: DataApiClient):
         """
-        Инициализация сервиса.
+        Initialize service.
 
         Args:
-            data_client: HTTP клиент для Data API.
+            data_client: HTTP client for Data API.
         """
         self.data_client = data_client
 ```
@@ -279,7 +279,7 @@ class OrderService:
 
 ## CI Pipeline
 
-### Минимальный набор проверок
+### Minimum Set of Checks
 
 ```bash
 pip install -r requirements.txt -r requirements-dev.txt
@@ -291,12 +291,12 @@ pytest --cov=src --cov-fail-under=75
 
 ---
 
-## Чек-лист качества
+## Quality Checklist
 
-- [ ] Coverage ≥75%
-- [ ] Все тесты проходят
-- [ ] Ruff check: 0 ошибок
-- [ ] Ruff format: соответствует
-- [ ] Все функции типизированы
-- [ ] Все публичные элементы документированы
-- [ ] CI pipeline настроен и проходит
+- [ ] Coverage >=75%
+- [ ] All tests pass
+- [ ] Ruff check: 0 errors
+- [ ] Ruff format: compliant
+- [ ] All functions are typed
+- [ ] All public elements are documented
+- [ ] CI pipeline is configured and passes

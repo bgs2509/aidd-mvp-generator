@@ -1,13 +1,13 @@
-# Обработка сигналов Asyncio Worker
+# Asyncio Worker Signal Handling
 
-> **Назначение**: Graceful shutdown и обработка системных сигналов.
+> **Purpose**: Graceful shutdown and system signal handling.
 
 ---
 
-## Базовая обработка сигналов
+## Basic Signal Handling
 
 ```python
-"""Обработка сигналов завершения."""
+"""Shutdown signal handling."""
 
 import asyncio
 import signal
@@ -17,43 +17,43 @@ logger = logging.getLogger(__name__)
 
 
 async def main() -> None:
-    """Главная функция с обработкой сигналов."""
-    # Событие для остановки
+    """Main function with signal handling."""
+    # Stop event
     stop_event = asyncio.Event()
 
-    # Обработчик сигналов
+    # Signal handler
     def handle_signal(sig: signal.Signals) -> None:
         logger.info(f"Received signal: {sig.name}")
         stop_event.set()
 
-    # Регистрация обработчиков
+    # Register handlers
     loop = asyncio.get_running_loop()
     for sig in (signal.SIGTERM, signal.SIGINT):
         loop.add_signal_handler(sig, handle_signal, sig)
 
     try:
-        # Запуск основной логики
+        # Start main logic
         await run_worker(stop_event)
     finally:
-        # Очистка обработчиков
+        # Clean up handlers
         for sig in (signal.SIGTERM, signal.SIGINT):
             loop.remove_signal_handler(sig)
 
 
 async def run_worker(stop_event: asyncio.Event) -> None:
     """
-    Запустить воркер.
+    Start the worker.
 
     Args:
-        stop_event: Событие остановки.
+        stop_event: Stop event.
     """
     logger.info("Worker started")
 
     while not stop_event.is_set():
-        # Выполнение работы
+        # Do work
         await do_work()
 
-        # Ожидание с возможностью прерывания
+        # Wait with interruption capability
         try:
             await asyncio.wait_for(stop_event.wait(), timeout=10.0)
         except asyncio.TimeoutError:
@@ -64,10 +64,10 @@ async def run_worker(stop_event: asyncio.Event) -> None:
 
 ---
 
-## Graceful shutdown с таймаутом
+## Graceful Shutdown with Timeout
 
 ```python
-"""Graceful shutdown с таймаутом."""
+"""Graceful shutdown with timeout."""
 
 import asyncio
 import signal
@@ -78,14 +78,14 @@ logger = logging.getLogger(__name__)
 
 
 class GracefulShutdown:
-    """Менеджер graceful shutdown."""
+    """Graceful shutdown manager."""
 
     def __init__(self, shutdown_timeout: float = 30.0):
         """
-        Инициализация.
+        Initialize.
 
         Args:
-            shutdown_timeout: Таймаут завершения (секунды).
+            shutdown_timeout: Shutdown timeout (seconds).
         """
         self.shutdown_timeout = shutdown_timeout
         self.stop_event = asyncio.Event()
@@ -93,26 +93,26 @@ class GracefulShutdown:
 
     def register_task(self, task: asyncio.Task) -> None:
         """
-        Зарегистрировать задачу.
+        Register a task.
 
         Args:
-            task: Asyncio задача.
+            task: Asyncio task.
         """
         self.running_tasks.add(task)
         task.add_done_callback(self.running_tasks.discard)
 
     async def shutdown(self) -> None:
-        """Выполнить graceful shutdown."""
+        """Perform graceful shutdown."""
         logger.info("Initiating shutdown...")
 
-        # Сигнализировать остановку
+        # Signal stop
         self.stop_event.set()
 
         if not self.running_tasks:
             logger.info("No running tasks")
             return
 
-        # Ожидание завершения задач с таймаутом
+        # Wait for task completion with timeout
         logger.info(f"Waiting for {len(self.running_tasks)} tasks...")
 
         done, pending = await asyncio.wait(
@@ -120,7 +120,7 @@ class GracefulShutdown:
             timeout=self.shutdown_timeout,
         )
 
-        # Принудительная отмена оставшихся
+        # Force cancel remaining tasks
         if pending:
             logger.warning(f"Cancelling {len(pending)} tasks")
             for task in pending:
@@ -132,7 +132,7 @@ class GracefulShutdown:
 
 
 async def main() -> None:
-    """Главная функция."""
+    """Main function."""
     shutdown_manager = GracefulShutdown(shutdown_timeout=30.0)
 
     def handle_signal() -> None:
@@ -142,23 +142,23 @@ async def main() -> None:
     for sig in (signal.SIGTERM, signal.SIGINT):
         loop.add_signal_handler(sig, handle_signal)
 
-    # Запуск задач
+    # Start tasks
     task1 = asyncio.create_task(worker_loop(shutdown_manager.stop_event))
     shutdown_manager.register_task(task1)
 
     task2 = asyncio.create_task(another_worker(shutdown_manager.stop_event))
     shutdown_manager.register_task(task2)
 
-    # Ожидание завершения
+    # Wait for completion
     await asyncio.gather(task1, task2, return_exceptions=True)
 ```
 
 ---
 
-## Контекстный менеджер
+## Context Manager
 
 ```python
-"""Контекстный менеджер для shutdown."""
+"""Context manager for shutdown."""
 
 import asyncio
 import signal
@@ -172,10 +172,10 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def graceful_shutdown_context() -> AsyncIterator[asyncio.Event]:
     """
-    Контекстный менеджер для graceful shutdown.
+    Context manager for graceful shutdown.
 
     Yields:
-        Событие остановки.
+        Stop event.
     """
     stop_event = asyncio.Event()
     loop = asyncio.get_running_loop()
@@ -184,22 +184,22 @@ async def graceful_shutdown_context() -> AsyncIterator[asyncio.Event]:
         logger.info("Shutdown requested")
         stop_event.set()
 
-    # Регистрация
+    # Register
     for sig in (signal.SIGTERM, signal.SIGINT):
         loop.add_signal_handler(sig, handle_signal)
 
     try:
         yield stop_event
     finally:
-        # Очистка
+        # Cleanup
         for sig in (signal.SIGTERM, signal.SIGINT):
             loop.remove_signal_handler(sig)
         logger.info("Signal handlers removed")
 
 
-# Использование
+# Usage
 async def main() -> None:
-    """Главная функция."""
+    """Main function."""
     async with graceful_shutdown_context() as stop_event:
         scheduler = Scheduler()
         scheduler.register_task(my_task, interval_seconds=60)
@@ -210,10 +210,10 @@ async def main() -> None:
 
 ---
 
-## Обработка в Docker
+## Docker Handling
 
 ```python
-"""Особенности работы в Docker."""
+"""Docker-specific considerations."""
 
 import os
 import asyncio
@@ -224,12 +224,12 @@ logger = logging.getLogger(__name__)
 
 
 def is_docker() -> bool:
-    """Проверить, запущены ли в Docker."""
+    """Check if running inside Docker."""
     return os.path.exists("/.dockerenv")
 
 
 async def main() -> None:
-    """Главная функция с учётом Docker."""
+    """Main function with Docker awareness."""
     stop_event = asyncio.Event()
 
     def handle_signal(sig_name: str) -> None:
@@ -238,13 +238,13 @@ async def main() -> None:
 
     loop = asyncio.get_running_loop()
 
-    # SIGTERM важен для Docker
+    # SIGTERM is important for Docker
     loop.add_signal_handler(
         signal.SIGTERM,
         lambda: handle_signal("SIGTERM"),
     )
 
-    # SIGINT для локальной разработки (Ctrl+C)
+    # SIGINT for local development (Ctrl+C)
     if not is_docker():
         loop.add_signal_handler(
             signal.SIGINT,
@@ -268,10 +268,10 @@ async def main() -> None:
 
 ---
 
-## Сохранение состояния при shutdown
+## State Persistence on Shutdown
 
 ```python
-"""Сохранение состояния при shutdown."""
+"""State persistence on shutdown."""
 
 import asyncio
 import json
@@ -282,17 +282,17 @@ logger = logging.getLogger(__name__)
 
 
 class StatefulWorker:
-    """Воркер с сохранением состояния."""
+    """Worker with state persistence."""
 
     STATE_FILE = Path("/tmp/worker_state.json")
 
     def __init__(self):
-        """Инициализация."""
+        """Initialize."""
         self.state = {"processed_count": 0, "last_id": None}
         self._load_state()
 
     def _load_state(self) -> None:
-        """Загрузить состояние из файла."""
+        """Load state from file."""
         if self.STATE_FILE.exists():
             try:
                 self.state = json.loads(self.STATE_FILE.read_text())
@@ -301,7 +301,7 @@ class StatefulWorker:
                 logger.error(f"Failed to load state: {e}")
 
     async def save_state(self) -> None:
-        """Сохранить состояние в файл."""
+        """Save state to file."""
         try:
             self.STATE_FILE.write_text(json.dumps(self.state))
             logger.info(f"Saved state: {self.state}")
@@ -310,10 +310,10 @@ class StatefulWorker:
 
     async def run(self, stop_event: asyncio.Event) -> None:
         """
-        Запустить воркер.
+        Start the worker.
 
         Args:
-            stop_event: Событие остановки.
+            stop_event: Stop event.
         """
         try:
             while not stop_event.is_set():
@@ -324,33 +324,33 @@ class StatefulWorker:
                 except asyncio.TimeoutError:
                     continue
         finally:
-            # Сохранить состояние при завершении
+            # Save state on shutdown
             await self.save_state()
 
     async def _process_batch(self) -> None:
-        """Обработать пакет данных."""
-        # Обработка...
+        """Process a batch of data."""
+        # Processing...
         self.state["processed_count"] += 1
 ```
 
 ---
 
-## Сигналы Linux
+## Linux Signals
 
-| Сигнал | Номер | Описание | Docker |
-|--------|-------|----------|--------|
-| SIGTERM | 15 | Запрос завершения | docker stop |
-| SIGINT | 2 | Прерывание (Ctrl+C) | docker attach |
-| SIGKILL | 9 | Принудительное завершение | docker kill |
-| SIGHUP | 1 | Перезагрузка конфигурации | — |
+| Signal | Number | Description | Docker |
+|--------|--------|-------------|--------|
+| SIGTERM | 15 | Termination request | docker stop |
+| SIGINT | 2 | Interrupt (Ctrl+C) | docker attach |
+| SIGKILL | 9 | Force termination | docker kill |
+| SIGHUP | 1 | Configuration reload | — |
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] SIGTERM обрабатывается
-- [ ] SIGINT обрабатывается (для dev)
-- [ ] Таймаут shutdown настроен
-- [ ] Задачи отменяются gracefully
-- [ ] Состояние сохраняется при shutdown
-- [ ] Логирование shutdown событий
+- [ ] SIGTERM handled
+- [ ] SIGINT handled (for dev)
+- [ ] Shutdown timeout configured
+- [ ] Tasks cancelled gracefully
+- [ ] State persisted on shutdown
+- [ ] Shutdown events logged

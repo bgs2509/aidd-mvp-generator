@@ -1,113 +1,113 @@
 # Docker Security Best Practices
 
-> **Назначение**: Правила безопасности Docker для проектов AIDD-MVP.
+> **Purpose**: Docker security rules for AIDD-MVP projects.
 
 ---
 
 ## Dockerfile Security
 
-### 1. Pinned SHA для образов
+### 1. Pinned SHA for Images
 
-> **Проблема**: Теги вроде `python:3.11-slim` могут указывать на разные образы со временем.
-> Это нарушает reproducibility и может привнести уязвимости.
+> **Problem**: Tags like `python:3.11-slim` can point to different images over time.
+> This breaks reproducibility and can introduce vulnerabilities.
 
-#### Рекомендация
+#### Recommendation
 
 ```dockerfile
-# Development: используйте тег для удобства
+# Development: use tag for convenience
 FROM python:3.11-slim
 
-# Production: используйте pinned SHA для reproducible builds
+# Production: use pinned SHA for reproducible builds
 # docker pull python:3.11-slim && docker inspect --format='{{index .RepoDigests 0}}' python:3.11-slim
 FROM python:3.11-slim@sha256:abc123def456...
 ```
 
-#### Получение SHA
+#### Getting SHA
 
 ```bash
-# Получить SHA для образа
+# Get SHA for an image
 docker pull python:3.11-slim
 docker inspect --format='{{index .RepoDigests 0}}' python:3.11-slim
-# Вывод: python@sha256:abc123def456...
+# Output: python@sha256:abc123def456...
 ```
 
 ---
 
-### 2. ENTRYPOINT + CMD паттерн
+### 2. ENTRYPOINT + CMD Pattern
 
-> **Проблема**: Только CMD позволяет полностью переопределить команду запуска,
-> что может быть небезопасно.
+> **Problem**: Using only CMD allows completely overriding the startup command,
+> which can be insecure.
 
-#### Рекомендация
+#### Recommendation
 
 ```dockerfile
-# Было: только CMD (можно переопределить всё)
+# Before: CMD only (everything can be overridden)
 CMD ["python", "-m", "uvicorn", "src.main:app", "--host", "0.0.0.0", "--port", "8000"]
 
-# Стало: ENTRYPOINT + CMD (можно переопределить только аргументы)
+# After: ENTRYPOINT + CMD (only arguments can be overridden)
 ENTRYPOINT ["python", "-m", "uvicorn"]
 CMD ["src.main:app", "--host", "0.0.0.0", "--port", "8000"]
 ```
 
-#### Преимущества
+#### Advantages
 
-| Аспект | Только CMD | ENTRYPOINT + CMD |
+| Aspect | CMD Only | ENTRYPOINT + CMD |
 |--------|-----------|------------------|
-| Переопределение | Полное | Только аргументы |
-| Безопасность | Можно запустить любую команду | Фиксированная точка входа |
-| Гибкость | Максимальная | Контролируемая |
+| Override | Full | Arguments only |
+| Security | Any command can be run | Fixed entry point |
+| Flexibility | Maximum | Controlled |
 
 ---
 
-### 3. Non-root пользователь
+### 3. Non-root User
 
-> **Проблема**: Запуск от root внутри контейнера создаёт риски эскалации привилегий.
+> **Problem**: Running as root inside the container creates privilege escalation risks.
 
-#### Рекомендация
+#### Recommendation
 
 ```dockerfile
-# Создание непривилегированного пользователя
+# Create non-privileged user
 RUN groupadd --gid 1000 appgroup \
     && useradd --uid 1000 --gid appgroup --shell /bin/bash appuser
 
-# Копирование файлов с правильным владельцем
+# Copy files with correct ownership
 COPY --chown=appuser:appgroup src/ ./src/
 
-# Переключение на непривилегированного пользователя
+# Switch to non-privileged user
 USER appuser
 ```
 
 ---
 
-### 4. Multi-stage builds
+### 4. Multi-stage Builds
 
-> **Проблема**: Build-зависимости (компиляторы, dev-библиотеки) увеличивают
-> поверхность атаки и размер образа.
+> **Problem**: Build dependencies (compilers, dev libraries) increase
+> the attack surface and image size.
 
-#### Рекомендация
+#### Recommendation
 
 ```dockerfile
-# === Этап сборки ===
+# === Build stage ===
 FROM python:3.11-slim as builder
 
 WORKDIR /app
 
-# Установка build-зависимостей
+# Install build dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Сборка wheels
+# Build wheels
 COPY requirements.txt .
 RUN pip wheel --no-cache-dir --no-deps --wheel-dir /app/wheels -r requirements.txt
 
 
-# === Финальный образ ===
+# === Final image ===
 FROM python:3.11-slim
 
 WORKDIR /app
 
-# Только runtime-зависимости, никаких build tools
+# Only runtime dependencies, no build tools
 COPY --from=builder /app/wheels /wheels
 RUN pip install --no-cache-dir /wheels/* \
     && rm -rf /wheels
@@ -123,7 +123,7 @@ USER appuser
 
 ### 1. security_opt: no-new-privileges
 
-> **Назначение**: Запрещает процессам внутри контейнера получать новые привилегии.
+> **Purpose**: Prevents processes inside the container from gaining new privileges.
 
 ```yaml
 services:
@@ -132,15 +132,15 @@ services:
       - no-new-privileges:true
 ```
 
-**Что это предотвращает**:
-- Использование setuid/setgid бинарников
-- Эскалацию привилегий через уязвимости
+**What this prevents**:
+- Use of setuid/setgid binaries
+- Privilege escalation through vulnerabilities
 
 ---
 
 ### 2. cap_drop: ALL
 
-> **Назначение**: Удаляет все Linux capabilities по умолчанию.
+> **Purpose**: Removes all default Linux capabilities.
 
 ```yaml
 services:
@@ -149,20 +149,20 @@ services:
       - ALL
 ```
 
-**Удаляемые capabilities**:
-- `NET_RAW` (raw сокеты, ARP spoofing)
-- `SYS_ADMIN` (mount, namespace манипуляции)
-- `CHOWN`, `DAC_OVERRIDE` (обход файловых прав)
+**Removed capabilities**:
+- `NET_RAW` (raw sockets, ARP spoofing)
+- `SYS_ADMIN` (mount, namespace manipulation)
+- `CHOWN`, `DAC_OVERRIDE` (file permission bypass)
 
-**Исключения**:
-- PostgreSQL требует некоторые capabilities, поэтому для него `cap_drop` не применяется
-- Nginx требует `NET_BIND_SERVICE` для портов 80/443
+**Exceptions**:
+- PostgreSQL requires some capabilities, so `cap_drop` is not applied to it
+- Nginx requires `NET_BIND_SERVICE` for ports 80/443
 
 ---
 
-### 3. cap_add: минимальные привилегии
+### 3. cap_add: Minimal Privileges
 
-> **Назначение**: Добавляет только необходимые capabilities после `cap_drop: ALL`.
+> **Purpose**: Adds only necessary capabilities after `cap_drop: ALL`.
 
 ```yaml
 services:
@@ -170,14 +170,14 @@ services:
     cap_drop:
       - ALL
     cap_add:
-      - NET_BIND_SERVICE  # Для привязки к портам < 1024
+      - NET_BIND_SERVICE  # For binding to ports < 1024
 ```
 
 ---
 
 ### 4. read_only: true
 
-> **Назначение**: Монтирует корневую файловую систему контейнера только для чтения.
+> **Purpose**: Mounts the container's root filesystem as read-only.
 
 ```yaml
 services:
@@ -187,21 +187,21 @@ services:
       - /tmp:size=64M,mode=1777
 ```
 
-**Что это предотвращает**:
-- Модификацию системных файлов атакующим
-- Запись вредоносного кода на диск
-- Persistence после компрометации
+**What this prevents**:
+- System file modification by an attacker
+- Writing malicious code to disk
+- Persistence after compromise
 
-**Требует tmpfs для**:
-- `/tmp` — временные файлы
-- `/var/cache/nginx` — кэш Nginx
-- `/run` — PID файлы и сокеты
+**Requires tmpfs for**:
+- `/tmp` -- temporary files
+- `/var/cache/nginx` -- Nginx cache
+- `/run` -- PID files and sockets
 
 ---
 
-### 5. tmpfs: временная память
+### 5. tmpfs: In-memory Directory
 
-> **Назначение**: Монтирует директорию в памяти (RAM).
+> **Purpose**: Mounts a directory in memory (RAM).
 
 ```yaml
 services:
@@ -213,50 +213,50 @@ services:
       - /run:size=16M
 ```
 
-**Параметры**:
-- `size` — максимальный размер в памяти
-- `mode=1777` — sticky bit для /tmp (все могут писать, но удалять только свои файлы)
+**Parameters**:
+- `size` -- maximum size in memory
+- `mode=1777` -- sticky bit for /tmp (everyone can write, but only delete their own files)
 
 ---
 
-### 6. Переменные окружения с обязательными значениями
+### 6. Environment Variables with Required Values
 
-> **Назначение**: Контейнер не запустится без критических переменных.
+> **Purpose**: Container will not start without critical variables.
 
 ```yaml
 services:
   postgres:
     environment:
-      # Контейнер НЕ запустится без этих переменных
+      # Container will NOT start without these variables
       - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:?POSTGRES_PASSWORD required}
       - POSTGRES_USER=${POSTGRES_USER:?POSTGRES_USER required}
 ```
 
-**Синтаксис**:
-- `${VAR:?message}` — ошибка если VAR не задана или пустая
-- `${VAR:-default}` — default если VAR не задана (НЕ использовать для секретов!)
+**Syntax**:
+- `${VAR:?message}` -- error if VAR is not set or empty
+- `${VAR:-default}` -- default if VAR is not set (DO NOT use for secrets!)
 
 ---
 
-### 7. Закрытие портов в production
+### 7. Closing Ports in Production
 
-> **Назначение**: Сервисы доступны только через reverse proxy.
+> **Purpose**: Services are accessible only through reverse proxy.
 
 ```yaml
 # docker-compose.prod.yml
 services:
   postgres:
-    ports: []  # Закрываем внешний доступ
+    ports: []  # Close external access
 
   redis:
-    ports: []  # Закрываем внешний доступ
+    ports: []  # Close external access
 ```
 
 ---
 
 ## Resource Limits
 
-### Production конфигурация
+### Production Configuration
 
 ```yaml
 services:
@@ -271,14 +271,14 @@ services:
           memory: 256M
 ```
 
-**Что это предотвращает**:
-- DoS через исчерпание ресурсов
-- Влияние одного контейнера на другие
-- OOM kill хоста
+**What this prevents**:
+- DoS through resource exhaustion
+- One container affecting others
+- Host OOM kill
 
 ---
 
-## Полный пример
+## Full Example
 
 ### docker-compose.yml (development)
 
@@ -293,7 +293,7 @@ services:
   postgres:
     security_opt:
       - no-new-privileges:true
-    # Без cap_drop — PostgreSQL требует capabilities
+    # No cap_drop -- PostgreSQL requires capabilities
 ```
 
 ### docker-compose.prod.yml (production)
@@ -334,8 +334,8 @@ services:
       replicas: 2
 
   postgres:
-    # Без read_only — требует запись в /var/lib/postgresql/data
-    ports: []  # Закрыт внешний доступ
+    # No read_only -- requires write to /var/lib/postgresql/data
+    ports: []  # External access closed
     deploy:
       resources:
         limits:
@@ -345,32 +345,32 @@ services:
 
 ---
 
-## Чек-лист
+## Checklist
 
 ### Dockerfile
 
-- [ ] Pinned SHA для production образов
-- [ ] ENTRYPOINT + CMD паттерн
-- [ ] Non-root пользователь (USER appuser)
+- [ ] Pinned SHA for production images
+- [ ] ENTRYPOINT + CMD pattern
+- [ ] Non-root user (USER appuser)
 - [ ] Multi-stage builds
-- [ ] Минимальный финальный образ (без build tools)
+- [ ] Minimal final image (no build tools)
 
 ### Docker Compose
 
-- [ ] `security_opt: - no-new-privileges:true` для всех сервисов
-- [ ] `cap_drop: - ALL` для stateless сервисов
-- [ ] `read_only: true` + `tmpfs` для stateless сервисов
-- [ ] `${VAR:?required}` для обязательных переменных
-- [ ] `ports: []` для БД в production
-- [ ] Resource limits в production
+- [ ] `security_opt: - no-new-privileges:true` for all services
+- [ ] `cap_drop: - ALL` for stateless services
+- [ ] `read_only: true` + `tmpfs` for stateless services
+- [ ] `${VAR:?required}` for required variables
+- [ ] `ports: []` for databases in production
+- [ ] Resource limits in production
 
 ---
 
-## Ссылки
+## References
 
-| Документ | Описание |
+| Document | Description |
 |----------|----------|
-| `knowledge/security/security-checklist.md` | Полный чек-лист безопасности |
-| `knowledge/security/vps-mode.md` | VPS режим для production |
-| `templates/infrastructure/docker-compose/` | Шаблоны Docker Compose |
-| `templates/services/*/Dockerfile` | Шаблоны Dockerfile |
+| `knowledge/security/security-checklist.md` | Full security checklist |
+| `knowledge/security/vps-mode.md` | VPS mode for production |
+| `templates/infrastructure/docker-compose/` | Docker Compose templates |
+| `templates/services/*/Dockerfile` | Dockerfile templates |

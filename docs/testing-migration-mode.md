@@ -1,15 +1,15 @@
 # Testing Migration Mode (v2.4)
 
-**Примечание:** В этом документе встречаются устаревшие команды `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Актуальные команды: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
+**Note:** This document may contain outdated commands `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`. Current commands: `/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`.
 
 
-> **Цель**: Протестировать работу migration mode и убедиться что оба варианта команд (v2 и v3) работают корректно.
+> **Goal**: Test the migration mode operation and ensure both command variants (v2 and v3) work correctly.
 
 ---
 
-## Тест 1: Новый проект с v2 (default)
+## Test 1: New Project with v2 (default)
 
-### Шаг 1: Создание проекта
+### Step 1: Create Project
 
 ```bash
 mkdir test-v2-project
@@ -18,61 +18,61 @@ git init
 git submodule add https://github.com/your-org/aidd-mvp-generator.git .aidd
 ```
 
-### Шаг 2: Инициализация
+### Step 2: Initialization
 
 ```bash
 claude
 /aidd-init
 ```
 
-**Ожидаемый результат**:
-- Создан `.pipeline-state.json` с `naming_version: "v2"`
-- Созданы папки: `ai-docs/docs/_analysis/`, `ai-docs/docs/research/`, `ai-docs/docs/_plans/mvp/`, `ai-docs/docs/_validation/`
+**Expected result**:
+- `.pipeline-state.json` created with `naming_version: "v2"`
+- Folders created: `ai-docs/docs/_analysis/`, `ai-docs/docs/research/`, `ai-docs/docs/_plans/mvp/`, `ai-docs/docs/_validation/`
 
-### Шаг 3: Выполнение команд (старые названия)
+### Step 3: Execute commands (old names)
 
 ```bash
-/aidd-analyze "Тестовый проект для бронирования"
+/aidd-analyze "Test project for booking"
 /aidd-research
 /aidd-plan
 ```
 
-**Ожидаемый результат**:
-- ✅ `ai-docs/docs/_analysis/{date}_{FID}_{slug}-prd.md` создан
-- ✅ `ai-docs/docs/research/{date}_{FID}_{slug}-research.md` создан
-- ✅ `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}-plan.md` создан
-- Имена файлов содержат дублирование (`-prd`, `-research`, `-plan`)
+**Expected result**:
+- `ai-docs/docs/_analysis/{date}_{FID}_{slug}-prd.md` created
+- `ai-docs/docs/research/{date}_{FID}_{slug}-research.md` created
+- `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}-plan.md` created
+- File names contain duplication (`-prd`, `-research`, `-plan`)
 
-### Шаг 4: Выполнение команд (новые названия)
+### Step 4: Execute commands (new names)
 
 ```bash
-# Создать новую фичу
+# Create a new feature
 git checkout -b feature/F002-test
-/aidd-analyze "Добавить уведомления"
+/aidd-analyze "Add notifications"
 /aidd-research
 /aidd-plan-feature
 ```
 
-**Ожидаемый результат**:
-- ✅ Новые команды работают
-- ✅ Артефакты создаются в тех же папках (v2)
-- ✅ `prd/{date}_F002_{slug}-prd.md` создан
-- ✅ `plans/{date}_F002_{slug}-plan.md` создан
+**Expected result**:
+- New commands work
+- Artifacts created in the same folders (v2)
+- `prd/{date}_F002_{slug}-prd.md` created
+- `plans/{date}_F002_{slug}-plan.md` created
 
-### Чеклист Теста 1
+### Test 1 Checklist
 
-- [ ] `.pipeline-state.json` содержит `naming_version: "v2"`
-- [ ] Папки v2 созданы (`prd/`, `research/`, `architecture/`, `plans/`, `reports/`)
-- [ ] Старые команды работают (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`)
-- [ ] Новые команды работают (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`)
-- [ ] Артефакты в правильных папках (v2)
-- [ ] Имена файлов с дублированием (`-prd.md`, `-plan.md`)
+- [ ] `.pipeline-state.json` contains `naming_version: "v2"`
+- [ ] v2 folders created (`prd/`, `research/`, `architecture/`, `plans/`, `reports/`)
+- [ ] Old commands work (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`)
+- [ ] New commands work (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`)
+- [ ] Artifacts in correct folders (v2)
+- [ ] File names with duplication (`-prd.md`, `-plan.md`)
 
 ---
 
-## Тест 2: Новый проект с v3
+## Test 2: New Project with v3
 
-### Шаг 1: Создание проекта
+### Step 1: Create Project
 
 ```bash
 mkdir test-v3-project
@@ -81,14 +81,14 @@ git init
 git submodule add https://github.com/your-org/aidd-mvp-generator.git .aidd
 ```
 
-### Шаг 2: Инициализация с v3
+### Step 2: Initialization with v3
 
 ```bash
 claude
 /aidd-init
 ```
 
-**Действие**: При инициализации вручную отредактировать `.pipeline-state.json`:
+**Action**: During initialization, manually edit `.pipeline-state.json`:
 
 ```json
 {
@@ -97,319 +97,319 @@ claude
 }
 ```
 
-Или использовать скрипт (если добавлена поддержка флага):
+Or use the script (if flag support is added):
 ```bash
 /aidd-init --naming-version=v3
 ```
 
-**Ожидаемый результат**:
-- Создан `.pipeline-state.json` с `naming_version: "v3"`
-- Созданы папки: `ai-docs/docs/_analysis/`, `ai-docs/docs/_research/`, `ai-docs/docs/_plans/mvp/`, `ai-docs/docs/_plans/features/`, `ai-docs/docs/_validation/`
+**Expected result**:
+- `.pipeline-state.json` created with `naming_version: "v3"`
+- Folders created: `ai-docs/docs/_analysis/`, `ai-docs/docs/_research/`, `ai-docs/docs/_plans/mvp/`, `ai-docs/docs/_plans/features/`, `ai-docs/docs/_validation/`
 
-### Шаг 3: Выполнение команд (новые названия)
+### Step 3: Execute commands (new names)
 
 ```bash
-/aidd-analyze "Тестовый проект для бронирования"
+/aidd-analyze "Test project for booking"
 /aidd-research
 /aidd-plan
 ```
 
-**Ожидаемый результат**:
-- ✅ `ai-docs/docs/_analysis/{date}_{FID}_{slug}.md` создан
-- ✅ `ai-docs/docs/_research/{date}_{FID}_{slug}.md` создан
-- ✅ `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}.md` создан
-- Имена файлов БЕЗ дублирования (нет `-prd`, `-research`, `-plan`)
+**Expected result**:
+- `ai-docs/docs/_analysis/{date}_{FID}_{slug}.md` created
+- `ai-docs/docs/_research/{date}_{FID}_{slug}.md` created
+- `ai-docs/docs/_plans/mvp/{date}_{FID}_{slug}.md` created
+- File names WITHOUT duplication (no `-prd`, `-research`, `-plan`)
 
-### Шаг 4: Выполнение команд (старые названия)
+### Step 4: Execute commands (old names)
 
 ```bash
-# Создать новую фичу
+# Create a new feature
 git checkout -b feature/F002-test
-/aidd-analyze "Добавить уведомления"
+/aidd-analyze "Add notifications"
 /aidd-research
 /aidd-plan-feature
 ```
 
-**Ожидаемый результат**:
-- ✅ Старые команды работают
-- ✅ Артефакты создаются в новых папках (v3)
-- ✅ `_analysis/{date}_F002_{slug}.md` создан
-- ✅ `_plans/features/{date}_F002_{slug}.md` создан
+**Expected result**:
+- Old commands work
+- Artifacts created in new folders (v3)
+- `_analysis/{date}_F002_{slug}.md` created
+- `_plans/features/{date}_F002_{slug}.md` created
 
-### Чеклист Теста 2
+### Test 2 Checklist
 
-- [ ] `.pipeline-state.json` содержит `naming_version: "v3"`
-- [ ] Папки v3 созданы (`_analysis/`, `_research/`, `_plans/mvp/`, `_plans/features/`, `_validation/`)
-- [ ] Новые команды работают (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`)
-- [ ] Старые команды работают (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`)
-- [ ] Артефакты в правильных папках (v3)
-- [ ] Имена файлов без дублирования (`.md` вместо `-prd.md`)
+- [ ] `.pipeline-state.json` contains `naming_version: "v3"`
+- [ ] v3 folders created (`_analysis/`, `_research/`, `_plans/mvp/`, `_plans/features/`, `_validation/`)
+- [ ] New commands work (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`)
+- [ ] Old commands work (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`)
+- [ ] Artifacts in correct folders (v3)
+- [ ] File names without duplication (`.md` instead of `-prd.md`)
 
 ---
 
-## Тест 3: Миграция v2 → v3
+## Test 3: Migration v2 → v3
 
-### Предусловие
+### Precondition
 
-Выполнен **Тест 1** и создан проект с v2.
+**Test 1** completed and a v2 project created.
 
-### Шаг 1: Проверка перед миграцией
+### Step 1: Pre-migration check
 
 ```bash
 cd test-v2-project
 
-# Проверить структуру
+# Check structure
 ls -la ai-docs/docs/
-# Должны быть: prd/, research/, architecture/, plans/, reports/
+# Should be: prd/, research/, architecture/, plans/, reports/
 
-# Проверить naming_version
+# Check naming_version
 cat .pipeline-state.json | grep naming_version
-# Должно быть: "naming_version": "v2"
+# Should be: "naming_version": "v2"
 
-# Проверить имена файлов
+# Check file names
 ls ai-docs/docs/_analysis/
-# Должны быть файлы с дублированием: *-prd.md
+# Should be files with duplication: *-prd.md
 ```
 
-### Шаг 2: Запуск миграции
+### Step 2: Run migration
 
 ```bash
 python3 .aidd/scripts/migrate-naming-v3.py
 ```
 
-**Ожидаемый вывод**:
+**Expected output**:
 ```
-🔄 Migration v2 → v3 started...
+Migration v2 → v3 started...
 
-📁 Step 1: Renaming folders...
-  ✓ prd/ → _analysis/
-  ✓ research/ → _research/
-  ✓ architecture/ → _plans/mvp/
-  ✓ plans/ → _plans/features/
-  ✓ reports/ → _validation/
+Step 1: Renaming folders...
+  Renamed prd/ → _analysis/
+  Renamed research/ → _research/
+  Renamed architecture/ → _plans/mvp/
+  Renamed plans/ → _plans/features/
+  Renamed reports/ → _validation/
 
-📝 Step 2: Renaming files (removing duplication)...
-  ✓ Renamed 5 files in _analysis/
-  ✓ Renamed 3 files in _research/
-  ✓ Renamed 2 files in _plans/mvp/
-  ✓ Renamed 1 file in _plans/features/
+Step 2: Renaming files (removing duplication)...
+  Renamed 5 files in _analysis/
+  Renamed 3 files in _research/
+  Renamed 2 files in _plans/mvp/
+  Renamed 1 file in _plans/features/
 
-🔧 Step 3: Updating .pipeline-state.json...
-  ✓ Set naming_version: "v3"
-  ✓ Updated artifact paths in active_pipelines
-  ✓ Updated artifact paths in features_registry
+Step 3: Updating .pipeline-state.json...
+  Set naming_version: "v3"
+  Updated artifact paths in active_pipelines
+  Updated artifact paths in features_registry
 
-🔗 Step 4: Updating references in documents...
-  ✓ Updated 12 references
+Step 4: Updating references in documents...
+  Updated 12 references
 
-✅ Migration complete!
+Migration complete!
 ```
 
-### Шаг 3: Проверка после миграции
+### Step 3: Post-migration check
 
 ```bash
-# Проверить структуру
+# Check structure
 ls -la ai-docs/docs/
-# Должны быть: _analysis/, _research/, _plans/, _validation/
+# Should be: _analysis/, _research/, _plans/, _validation/
 
-# Проверить naming_version
+# Check naming_version
 cat .pipeline-state.json | grep naming_version
-# Должно быть: "naming_version": "v3"
+# Should be: "naming_version": "v3"
 
-# Проверить имена файлов
+# Check file names
 ls ai-docs/docs/_analysis/
-# Должны быть файлы без дублирования: *.md (не *-prd.md)
+# Should be files without duplication: *.md (not *-prd.md)
 
-# Проверить содержимое .pipeline-state.json
+# Check .pipeline-state.json content
 cat .pipeline-state.json | jq '.active_pipelines[].artifacts'
-# Пути должны быть обновлены на v3 (_analysis/, _plans/, etc.)
+# Paths should be updated to v3 (_analysis/, _plans/, etc.)
 ```
 
-### Шаг 4: Проверка работы команд после миграции
+### Step 4: Verify commands work after migration
 
 ```bash
-# Создать новую фичу
+# Create a new feature
 git checkout -b feature/F003-test-after-migration
-/aidd-analyze "Тест после миграции"
+/aidd-analyze "Test after migration"
 /aidd-research
 ```
 
-**Ожидаемый результат**:
-- ✅ Команды работают
-- ✅ Артефакты создаются в новых папках (v3)
-- ✅ `_analysis/{date}_F003_{slug}.md` создан
-- ✅ `_research/{date}_F003_{slug}.md` создан
+**Expected result**:
+- Commands work
+- Artifacts created in new folders (v3)
+- `_analysis/{date}_F003_{slug}.md` created
+- `_research/{date}_F003_{slug}.md` created
 
-### Чеклист Теста 3
+### Test 3 Checklist
 
-- [ ] Миграционный скрипт выполнен без ошибок
-- [ ] Папки переименованы: `prd/` → `_analysis/`, `architecture/` → `_plans/mvp/`, etc.
-- [ ] Файлы переименованы: `{name}-prd.md` → `{name}.md`
-- [ ] `.pipeline-state.json` обновлён: `naming_version: "v3"`
-- [ ] Artifact paths в `.pipeline-state.json` обновлены
-- [ ] Команды работают после миграции
-- [ ] Новые артефакты создаются в v3 папках
+- [ ] Migration script executed without errors
+- [ ] Folders renamed: `prd/` → `_analysis/`, `architecture/` → `_plans/mvp/`, etc.
+- [ ] Files renamed: `{name}-prd.md` → `{name}.md`
+- [ ] `.pipeline-state.json` updated: `naming_version: "v3"`
+- [ ] Artifact paths in `.pipeline-state.json` updated
+- [ ] Commands work after migration
+- [ ] New artifacts created in v3 folders
 
 ---
 
-## Тест 4: Backward Compatibility (смешанное использование)
+## Test 4: Backward Compatibility (mixed usage)
 
-### Цель
+### Goal
 
-Убедиться что можно использовать старые и новые команды вперемешку.
+Ensure that old and new commands can be used interchangeably.
 
-### Сценарий
+### Scenario
 
 ```bash
-cd test-v2-project  # или test-v3-project
+cd test-v2-project  # or test-v3-project
 
-# Использовать старую команду
-/aidd-analyze "Фича 1"
+# Use old command
+/aidd-analyze "Feature 1"
 
-# Использовать новую команду
+# Use new command
 /aidd-research
 
-# Использовать старую команду
+# Use old command
 /aidd-plan-feature
 
-# Использовать новую команду
+# Use new command
 /aidd-code
 
-# Использовать старую команду
+# Use old command
 /aidd-validate
 ```
 
-**Ожидаемый результат**:
-- ✅ Все команды работают
-- ✅ Артефакты создаются корректно
-- ✅ Ворота проходятся правильно
-- ✅ Нет ошибок или предупреждений
+**Expected result**:
+- All commands work
+- Artifacts created correctly
+- Gates pass correctly
+- No errors or warnings
 
-### Чеклист Теста 4
+### Test 4 Checklist
 
-- [ ] Старые команды работают в любом порядке
-- [ ] Новые команды работают в любом порядке
-- [ ] Смешанное использование работает
-- [ ] Нет конфликтов между командами
-- [ ] Артефакты корректны
+- [ ] Old commands work in any order
+- [ ] New commands work in any order
+- [ ] Mixed usage works
+- [ ] No conflicts between commands
+- [ ] Artifacts are correct
 
 ---
 
-## Тест 5: Edge Cases
+## Test 5: Edge Cases
 
-### Тест 5.1: Отсутствие naming_version
+### Test 5.1: Missing naming_version
 
-**Сценарий**: Удалить `naming_version` из `.pipeline-state.json`
+**Scenario**: Remove `naming_version` from `.pipeline-state.json`
 
 ```bash
-# Отредактировать .pipeline-state.json, удалить поле naming_version
-/aidd-analyze "Тест без naming_version"
+# Edit .pipeline-state.json, remove naming_version field
+/aidd-analyze "Test without naming_version"
 ```
 
-**Ожидаемый результат**:
-- ✅ Команда использует v2 по умолчанию (fallback)
-- ✅ Артефакты создаются в `prd/` (v2)
-- ✅ Нет ошибок
+**Expected result**:
+- Command uses v2 by default (fallback)
+- Artifacts created in `prd/` (v2)
+- No errors
 
-### Тест 5.2: Некорректное значение naming_version
+### Test 5.2: Invalid naming_version value
 
-**Сценарий**: Установить `naming_version: "v99"`
+**Scenario**: Set `naming_version: "v99"`
 
 ```bash
-# Отредактировать .pipeline-state.json
+# Edit .pipeline-state.json
 {
   "naming_version": "v99",
   ...
 }
 
-/aidd-analyze "Тест с некорректной версией"
+/aidd-analyze "Test with invalid version"
 ```
 
-**Ожидаемый результат**:
-- ✅ Команда использует v2 по умолчанию (fallback)
-- ✅ Или показывает ошибку с инструкциями
-- ✅ Система не падает
+**Expected result**:
+- Command uses v2 by default (fallback)
+- Or shows an error with instructions
+- System doesn't crash
 
-### Чеклист Теста 5
+### Test 5 Checklist
 
-- [ ] Отсутствие `naming_version` обрабатывается (fallback to v2)
-- [ ] Некорректное значение обрабатывается
-- [ ] Нет критических ошибок
-- [ ] Система продолжает работать
-
----
-
-## Итоговый чеклист
-
-### Функциональность
-
-- [ ] ✅ Тест 1: v2 проект работает
-- [ ] ✅ Тест 2: v3 проект работает
-- [ ] ✅ Тест 3: Миграция v2 → v3 работает
-- [ ] ✅ Тест 4: Backward compatibility работает
-- [ ] ✅ Тест 5: Edge cases обработаны
-
-### Команды
-
-- [ ] Все старые команды работают (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`)
-- [ ] Все новые команды работают (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`)
-- [ ] Смешанное использование работает
-
-### Артефакты
-
-- [ ] v2 артефакты создаются в правильных папках (`prd/`, `architecture/`, etc.)
-- [ ] v3 артефакты создаются в правильных папках (`_analysis/`, `_plans/`, etc.)
-- [ ] v2 имена файлов с дублированием (`-prd.md`, `-plan.md`)
-- [ ] v3 имена файлов без дублирования (`.md`)
-
-### Миграция
-
-- [ ] Скрипт миграции работает без ошибок
-- [ ] Папки переименованы корректно
-- [ ] Файлы переименованы корректно
-- [ ] `.pipeline-state.json` обновлён корректно
-- [ ] Команды работают после миграции
+- [ ] Missing `naming_version` handled (fallback to v2)
+- [ ] Invalid value handled
+- [ ] No critical errors
+- [ ] System continues working
 
 ---
 
-## Отчёт о тестировании
+## Final Checklist
 
-После прохождения всех тестов заполните отчёт:
+### Functionality
+
+- [ ] Test 1: v2 project works
+- [ ] Test 2: v3 project works
+- [ ] Test 3: Migration v2 → v3 works
+- [ ] Test 4: Backward compatibility works
+- [ ] Test 5: Edge cases handled
+
+### Commands
+
+- [ ] All old commands work (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`)
+- [ ] All new commands work (`/aidd-analyze`, `/aidd-code`, `/aidd-validate`, `/aidd-plan-feature`)
+- [ ] Mixed usage works
+
+### Artifacts
+
+- [ ] v2 artifacts created in correct folders (`prd/`, `architecture/`, etc.)
+- [ ] v3 artifacts created in correct folders (`_analysis/`, `_plans/`, etc.)
+- [ ] v2 file names with duplication (`-prd.md`, `-plan.md`)
+- [ ] v3 file names without duplication (`.md`)
+
+### Migration
+
+- [ ] Migration script works without errors
+- [ ] Folders renamed correctly
+- [ ] Files renamed correctly
+- [ ] `.pipeline-state.json` updated correctly
+- [ ] Commands work after migration
+
+---
+
+## Testing Report
+
+After passing all tests, fill in the report:
 
 ```markdown
 # Migration Mode Testing Report
 
-**Дата**: YYYY-MM-DD
-**Тестировщик**: [Имя]
-**Версия фреймворка**: v2.4.0
+**Date**: YYYY-MM-DD
+**Tester**: [Name]
+**Framework version**: v2.4.0
 
-## Результаты
+## Results
 
-- [ ] Тест 1: v2 проект - ✅ PASSED / ❌ FAILED
-- [ ] Тест 2: v3 проект - ✅ PASSED / ❌ FAILED
-- [ ] Тест 3: Миграция - ✅ PASSED / ❌ FAILED
-- [ ] Тест 4: Backward compat - ✅ PASSED / ❌ FAILED
-- [ ] Тест 5: Edge cases - ✅ PASSED / ❌ FAILED
+- [ ] Test 1: v2 project - PASSED / FAILED
+- [ ] Test 2: v3 project - PASSED / FAILED
+- [ ] Test 3: Migration - PASSED / FAILED
+- [ ] Test 4: Backward compat - PASSED / FAILED
+- [ ] Test 5: Edge cases - PASSED / FAILED
 
-## Найденные проблемы
+## Issues Found
 
-1. [Описание проблемы]
-   - Критичность: HIGH / MEDIUM / LOW
-   - Шаги воспроизведения: ...
-   - Ожидаемое поведение: ...
-   - Фактическое поведение: ...
+1. [Issue description]
+   - Severity: HIGH / MEDIUM / LOW
+   - Reproduction steps: ...
+   - Expected behavior: ...
+   - Actual behavior: ...
 
-## Рекомендации
+## Recommendations
 
-[Ваши рекомендации]
+[Your recommendations]
 
-## Заключение
+## Conclusion
 
-✅ Migration mode готов к production
-❌ Требуются доработки
+Migration mode is ready for production
+Improvements required
 ```
 
 ---
 
-**Версия документа**: 1.0
-**Дата создания**: 2026-01-19
+**Document version**: 1.0
+**Created**: 2026-01-19

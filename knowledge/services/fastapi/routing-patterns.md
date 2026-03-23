@@ -1,28 +1,28 @@
-# Паттерны маршрутизации FastAPI
+# FastAPI Routing Patterns
 
-> **Назначение**: Организация роутеров и эндпоинтов.
+> **Purpose**: Organizing routers and endpoints.
 
 ---
 
-## Структура роутеров
+## Router Structure
 
 ```
 api/
 ├── __init__.py
-├── dependencies.py      # Общие зависимости
+├── dependencies.py      # Shared dependencies
 └── v1/
     ├── __init__.py
-    ├── router.py        # Главный роутер v1
-    ├── user_routes.py   # Роуты пользователей
-    └── order_routes.py  # Роуты заказов
+    ├── router.py        # Main v1 router
+    ├── user_routes.py   # User routes
+    └── order_routes.py  # Order routes
 ```
 
 ---
 
-## Главный роутер
+## Main Router
 
 ```python
-"""Главный роутер API v1."""
+"""Main API v1 router."""
 
 from fastapi import APIRouter
 
@@ -30,7 +30,7 @@ from {context}_api.api.v1 import user_routes, order_routes
 
 api_router = APIRouter()
 
-# Подключение роутеров сущностей
+# Include entity routers
 api_router.include_router(
     user_routes.router,
     prefix="/users",
@@ -46,10 +46,10 @@ api_router.include_router(
 
 ---
 
-## Роутер сущности
+## Entity Router
 
 ```python
-"""Роуты пользователей."""
+"""User routes."""
 
 from uuid import UUID
 
@@ -71,21 +71,21 @@ router = APIRouter()
     "",
     response_model=UserResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="Создать пользователя",
+    summary="Create user",
 )
 async def create_user(
     data: UserCreate,
     service: UserService = Depends(get_user_service),
 ) -> UserResponse:
     """
-    Создать нового пользователя.
+    Create a new user.
 
     Args:
-        data: Данные для создания.
-        service: Сервис пользователей.
+        data: Creation data.
+        service: User service.
 
     Returns:
-        Созданный пользователь.
+        Created user.
     """
     return await service.create_user(data)
 
@@ -93,24 +93,24 @@ async def create_user(
 @router.get(
     "/{user_id}",
     response_model=UserResponse,
-    summary="Получить пользователя",
+    summary="Get user",
 )
 async def get_user(
     user_id: UUID,
     service: UserService = Depends(get_user_service),
 ) -> UserResponse:
     """
-    Получить пользователя по ID.
+    Get user by ID.
 
     Args:
-        user_id: ID пользователя.
-        service: Сервис пользователей.
+        user_id: User ID.
+        service: User service.
 
     Returns:
-        Данные пользователя.
+        User data.
 
     Raises:
-        HTTPException: Если пользователь не найден.
+        HTTPException: If user not found.
     """
     user = await service.get_user(user_id)
     if user is None:
@@ -124,7 +124,7 @@ async def get_user(
 @router.get(
     "",
     response_model=UserListResponse,
-    summary="Список пользователей",
+    summary="List users",
 )
 async def list_users(
     page: int = 1,
@@ -132,15 +132,15 @@ async def list_users(
     service: UserService = Depends(get_user_service),
 ) -> UserListResponse:
     """
-    Получить список пользователей с пагинацией.
+    Get paginated user list.
 
     Args:
-        page: Номер страницы.
-        page_size: Размер страницы.
-        service: Сервис пользователей.
+        page: Page number.
+        page_size: Page size.
+        service: User service.
 
     Returns:
-        Список пользователей.
+        User list.
     """
     return await service.list_users(page=page, page_size=page_size)
 
@@ -148,7 +148,7 @@ async def list_users(
 @router.put(
     "/{user_id}",
     response_model=UserResponse,
-    summary="Обновить пользователя",
+    summary="Update user",
 )
 async def update_user(
     user_id: UUID,
@@ -156,15 +156,15 @@ async def update_user(
     service: UserService = Depends(get_user_service),
 ) -> UserResponse:
     """
-    Обновить данные пользователя.
+    Update user data.
 
     Args:
-        user_id: ID пользователя.
-        data: Данные для обновления.
-        service: Сервис пользователей.
+        user_id: User ID.
+        data: Update data.
+        service: User service.
 
     Returns:
-        Обновлённый пользователь.
+        Updated user.
     """
     return await service.update_user(user_id, data)
 
@@ -172,56 +172,56 @@ async def update_user(
 @router.delete(
     "/{user_id}",
     status_code=status.HTTP_204_NO_CONTENT,
-    summary="Удалить пользователя",
+    summary="Delete user",
 )
 async def delete_user(
     user_id: UUID,
     service: UserService = Depends(get_user_service),
 ) -> None:
     """
-    Удалить пользователя.
+    Delete a user.
 
     Args:
-        user_id: ID пользователя.
-        service: Сервис пользователей.
+        user_id: User ID.
+        service: User service.
     """
     await service.delete_user(user_id)
 ```
 
 ---
 
-## Именование путей
+## Path Naming
 
 ```
-CRUD операции:
-POST   /api/v1/{entities}           → Создать
-GET    /api/v1/{entities}           → Список
-GET    /api/v1/{entities}/{id}      → Получить
-PUT    /api/v1/{entities}/{id}      → Обновить
-DELETE /api/v1/{entities}/{id}      → Удалить
+CRUD operations:
+POST   /api/v1/{entities}           → Create
+GET    /api/v1/{entities}           → List
+GET    /api/v1/{entities}/{id}      → Get
+PUT    /api/v1/{entities}/{id}      → Update
+DELETE /api/v1/{entities}/{id}      → Delete
 
-Вложенные ресурсы:
-GET    /api/v1/users/{id}/orders    → Заказы пользователя
+Nested resources:
+GET    /api/v1/users/{id}/orders    → User orders
 
-Действия:
-POST   /api/v1/orders/{id}/cancel   → Отменить заказ
-POST   /api/v1/orders/{id}/confirm  → Подтвердить заказ
+Actions:
+POST   /api/v1/orders/{id}/cancel   → Cancel order
+POST   /api/v1/orders/{id}/confirm  → Confirm order
 ```
 
 ---
 
-## Правила
+## Rules
 
-| Элемент | Формат | Пример |
-|---------|--------|--------|
-| Путь | kebab-case, мн.ч. | `/user-profiles` |
-| Path параметр | snake_case | `{user_id}` |
-| Query параметр | snake_case | `?page_size=20` |
-| Тег | lowercase | `users` |
+| Element | Format | Example |
+|---------|--------|---------|
+| Path | kebab-case, plural | `/user-profiles` |
+| Path parameter | snake_case | `{user_id}` |
+| Query parameter | snake_case | `?page_size=20` |
+| Tag | lowercase | `users` |
 
 ---
 
-## Версионирование
+## Versioning
 
 ```python
 # api/v1/router.py

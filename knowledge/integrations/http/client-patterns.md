@@ -1,13 +1,13 @@
-# Паттерны HTTP клиентов
+# HTTP Client Patterns
 
-> **Назначение**: Общие паттерны для HTTP клиентов.
+> **Purpose**: Common patterns for HTTP clients.
 
 ---
 
-## Базовый клиент
+## Base Client
 
 ```python
-"""Базовый HTTP клиент."""
+"""Base HTTP client."""
 
 from typing import Any, TypeVar
 import logging
@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 
 
 class BaseHttpClient:
-    """Базовый класс для HTTP клиентов."""
+    """Base class for HTTP clients."""
 
     def __init__(
         self,
@@ -30,12 +30,12 @@ class BaseHttpClient:
         service_name: str = "external",
     ):
         """
-        Инициализация клиента.
+        Initialize client.
 
         Args:
-            client: HTTP клиент.
-            base_url: Базовый URL сервиса.
-            service_name: Имя сервиса для логов.
+            client: HTTP client.
+            base_url: Service base URL.
+            service_name: Service name for logs.
         """
         self.client = client
         self.base_url = base_url.rstrip("/")
@@ -48,18 +48,18 @@ class BaseHttpClient:
         **kwargs,
     ) -> dict[str, Any] | list | None:
         """
-        Выполнить HTTP запрос.
+        Execute HTTP request.
 
         Args:
-            method: HTTP метод (GET, POST, PUT, DELETE).
-            path: Путь API.
-            **kwargs: Дополнительные параметры httpx.
+            method: HTTP method (GET, POST, PUT, DELETE).
+            path: API path.
+            **kwargs: Additional httpx parameters.
 
         Returns:
-            Ответ API в формате JSON.
+            API response in JSON format.
 
         Raises:
-            ExternalServiceError: При ошибке сервиса.
+            ExternalServiceError: On service error.
         """
         url = f"{self.base_url}{path}"
 
@@ -89,13 +89,13 @@ class BaseHttpClient:
 
     def _handle_error(self, response: httpx.Response) -> None:
         """
-        Обработать ошибку ответа.
+        Handle response error.
 
         Args:
-            response: HTTP ответ.
+            response: HTTP response.
 
         Raises:
-            ExternalServiceError: Всегда.
+            ExternalServiceError: Always.
         """
         try:
             error_detail = response.json().get("detail", response.text)
@@ -108,35 +108,35 @@ class BaseHttpClient:
             status_code=response.status_code,
         )
 
-    # Удобные методы
+    # Convenience methods
 
     async def get(self, path: str, **kwargs) -> dict | list | None:
-        """GET запрос."""
+        """GET request."""
         return await self._request("GET", path, **kwargs)
 
     async def post(self, path: str, **kwargs) -> dict | None:
-        """POST запрос."""
+        """POST request."""
         return await self._request("POST", path, **kwargs)
 
     async def put(self, path: str, **kwargs) -> dict | None:
-        """PUT запрос."""
+        """PUT request."""
         return await self._request("PUT", path, **kwargs)
 
     async def patch(self, path: str, **kwargs) -> dict | None:
-        """PATCH запрос."""
+        """PATCH request."""
         return await self._request("PATCH", path, **kwargs)
 
     async def delete(self, path: str, **kwargs) -> None:
-        """DELETE запрос."""
+        """DELETE request."""
         await self._request("DELETE", path, **kwargs)
 ```
 
 ---
 
-## Клиент с retry
+## Client with Retry
 
 ```python
-"""HTTP клиент с повторными попытками."""
+"""HTTP client with retries."""
 
 import asyncio
 from typing import Any
@@ -148,7 +148,7 @@ logger = logging.getLogger(__name__)
 
 
 class RetryableHttpClient(BaseHttpClient):
-    """HTTP клиент с автоматическими retry."""
+    """HTTP client with automatic retries."""
 
     def __init__(
         self,
@@ -159,14 +159,14 @@ class RetryableHttpClient(BaseHttpClient):
         retry_statuses: tuple[int, ...] = (502, 503, 504),
     ):
         """
-        Инициализация.
+        Initialize.
 
         Args:
-            client: HTTP клиент.
-            base_url: Базовый URL.
-            max_retries: Максимум попыток.
-            retry_delay: Задержка между попытками.
-            retry_statuses: Статусы для retry.
+            client: HTTP client.
+            base_url: Base URL.
+            max_retries: Maximum attempts.
+            retry_delay: Delay between attempts.
+            retry_statuses: Statuses to retry on.
         """
         super().__init__(client, base_url)
         self.max_retries = max_retries
@@ -179,7 +179,7 @@ class RetryableHttpClient(BaseHttpClient):
         path: str,
         **kwargs,
     ) -> dict[str, Any] | list | None:
-        """Запрос с retry."""
+        """Request with retry."""
         last_exception = None
         delay = self.retry_delay
 
@@ -225,10 +225,10 @@ class RetryableHttpClient(BaseHttpClient):
 
 ---
 
-## Клиент с circuit breaker
+## Client with Circuit Breaker
 
 ```python
-"""HTTP клиент с circuit breaker."""
+"""HTTP client with circuit breaker."""
 
 import asyncio
 from datetime import datetime, timedelta
@@ -238,15 +238,15 @@ import httpx
 
 
 class CircuitState(Enum):
-    """Состояния circuit breaker."""
+    """Circuit breaker states."""
 
-    CLOSED = "closed"      # Нормальная работа
-    OPEN = "open"          # Отказ, запросы блокируются
-    HALF_OPEN = "half_open"  # Тестовый режим
+    CLOSED = "closed"      # Normal operation
+    OPEN = "open"          # Failure, requests blocked
+    HALF_OPEN = "half_open"  # Test mode
 
 
 class CircuitBreaker:
-    """Circuit breaker для защиты от каскадных отказов."""
+    """Circuit breaker for cascading failure protection."""
 
     def __init__(
         self,
@@ -254,11 +254,11 @@ class CircuitBreaker:
         recovery_timeout: float = 30.0,
     ):
         """
-        Инициализация.
+        Initialize.
 
         Args:
-            failure_threshold: Порог отказов.
-            recovery_timeout: Время восстановления (сек).
+            failure_threshold: Failure threshold.
+            recovery_timeout: Recovery time (sec).
         """
         self.failure_threshold = failure_threshold
         self.recovery_timeout = recovery_timeout
@@ -267,12 +267,12 @@ class CircuitBreaker:
         self.last_failure_time: datetime | None = None
 
     def record_success(self) -> None:
-        """Записать успешный запрос."""
+        """Record successful request."""
         self.failure_count = 0
         self.state = CircuitState.CLOSED
 
     def record_failure(self) -> None:
-        """Записать неудачный запрос."""
+        """Record failed request."""
         self.failure_count += 1
         self.last_failure_time = datetime.now()
 
@@ -280,7 +280,7 @@ class CircuitBreaker:
             self.state = CircuitState.OPEN
 
     def can_execute(self) -> bool:
-        """Проверить, можно ли выполнить запрос."""
+        """Check if request can be executed."""
         if self.state == CircuitState.CLOSED:
             return True
 
@@ -293,7 +293,7 @@ class CircuitBreaker:
         return True  # HALF_OPEN
 
     def _recovery_time_passed(self) -> bool:
-        """Проверить, прошло ли время восстановления."""
+        """Check if recovery time has passed."""
         if self.last_failure_time is None:
             return True
 
@@ -303,7 +303,7 @@ class CircuitBreaker:
 
 
 class CircuitBreakerClient(BaseHttpClient):
-    """HTTP клиент с circuit breaker."""
+    """HTTP client with circuit breaker."""
 
     def __init__(
         self,
@@ -311,12 +311,12 @@ class CircuitBreakerClient(BaseHttpClient):
         base_url: str,
         service_name: str = "external",
     ):
-        """Инициализация."""
+        """Initialize."""
         super().__init__(client, base_url, service_name)
         self.circuit = CircuitBreaker()
 
     async def _request(self, method: str, path: str, **kwargs):
-        """Запрос с circuit breaker."""
+        """Request with circuit breaker."""
         if not self.circuit.can_execute():
             raise ExternalServiceError(
                 service=self.service_name,
@@ -334,10 +334,10 @@ class CircuitBreakerClient(BaseHttpClient):
 
 ---
 
-## Создание клиента
+## Client Creation
 
 ```python
-"""Создание HTTP клиента."""
+"""HTTP client creation."""
 
 import httpx
 
@@ -349,14 +349,14 @@ def create_http_client(
     timeout: float = 30.0,
 ) -> httpx.AsyncClient:
     """
-    Создать HTTP клиент.
+    Create HTTP client.
 
     Args:
-        base_url: Базовый URL.
-        timeout: Таймаут запроса.
+        base_url: Base URL.
+        timeout: Request timeout.
 
     Returns:
-        Настроенный HTTP клиент.
+        Configured HTTP client.
     """
     return httpx.AsyncClient(
         base_url=base_url,
@@ -369,10 +369,10 @@ def create_http_client(
     )
 
 
-# В lifespan
+# In lifespan
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Жизненный цикл."""
+    """Lifecycle."""
     app.state.http_client = create_http_client(
         base_url=settings.data_api_url,
     )
@@ -384,10 +384,10 @@ async def lifespan(app: FastAPI):
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] Базовый клиент с обработкой ошибок
-- [ ] Retry для нестабильных соединений
-- [ ] Circuit breaker для защиты
-- [ ] Таймауты настроены
-- [ ] Логирование запросов
+- [ ] Base client with error handling
+- [ ] Retry for unstable connections
+- [ ] Circuit breaker for protection
+- [ ] Timeouts configured
+- [ ] Request logging

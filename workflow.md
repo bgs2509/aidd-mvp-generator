@@ -1,17 +1,17 @@
-# workflow.md — Процесс разработки AIDD-MVP
+# workflow.md — AIDD-MVP Development Process
 
-> **Назначение**: Описание 6-этапного процесса разработки MVP (этапы 0-5).
-> AI-агент ОБЯЗАН следовать этому процессу и проходить качественные ворота.
+> **Purpose**: Description of the 6-stage MVP development process (stages 0-5).
+> AI agent MUST follow this process and pass through quality gates.
 >
-> **Философия**: Артефакты = Память. Не полагаемся на память чата.
+> **Philosophy**: Artifacts = Memory. Do not rely on chat memory.
 
 ---
 
-## Обзор процесса
+## Process Overview
 
-AIDD-MVP Generator использует 6-этапный конвейер разработки (Этапы 0-5)
-с обязательными качественными воротами между этапами. Переход на следующий
-этап возможен ТОЛЬКО после прохождения ворот текущего этапа.
+AIDD-MVP Generator uses a 6-stage development pipeline (Stages 0-5)
+with mandatory quality gates between stages. Transition to the next
+stage is ONLY possible after passing the current stage's gates.
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -19,14 +19,14 @@ AIDD-MVP Generator использует 6-этапный конвейер раз
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
 │  ┌───────────┐                                                               │
-│  │ BOOTSTRAP │  Этап 0: Инициализация целевого проекта                      │
+│  │ BOOTSTRAP │  Stage 0: Target Project Initialization                      │
 │  │/aidd-init │  ─────────────────────────────────────────────────────────── │
 │  └─────┬─────┘                                                               │
 │        │ BOOTSTRAP_READY                                                     │
 │        ▼                                                                     │
 │  ┌─────────┐    ┌─────────┐    ┌─────────┐    ┌──────────────┐             │
-│  │  ИДЕЯ   │───▶│ИССЛЕДО- │───▶│АРХИТЕК- │───▶│   РЕАЛИЗА-   │             │
-│  │         │    │ ВАНИЕ   │    │  ТУРА   │    │     ЦИЯ       │             │
+│  │  IDEA   │───▶│RESEARCH │───▶│ARCHITEC-│───▶│IMPLEMENTA-   │             │
+│  │         │    │         │    │  TURE   │    │    TION       │             │
 │  └────┬────┘    └────┬────┘    └────┬────┘    └──────┬───────┘             │
 │       │              │              │                 │                     │
 │  ┌────▼────┐    ┌────▼────┐    ┌────▼────┐    ┌──────▼───────┐             │
@@ -34,8 +34,8 @@ AIDD-MVP Generator использует 6-этапный конвейер раз
 │  │         │    │  RESEARCH_DONE  │    │APPROVED │    │     IMPLEMENT_OK      │             │
 │  └─────────┘    └─────────┘    └─────────┘    └──────────────┘             │
 │                                      ⚠️                                      │
-│                              Требует подтверждения                           │
-│                                пользователя!                                 │
+│                                Requires user                                │
+│                                confirmation!                                 │
 │                                                                              │
 │                                     ▼                                        │
 │  ┌───────────────────────────────────────────────────────────────┐          │
@@ -48,90 +48,90 @@ AIDD-MVP Generator использует 6-этапный конвейер раз
 │  │                                 PASSED                        │          │
 │  └───────────────────────────────────────────────────────────────┘          │
 │                                                                              │
-│  Артефакт: 1 Completion Report (вместо 4 файлов)                            │
+│  Artifact: 1 Completion Report (instead of 4 files)                         │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## Два режима работы
+## Two Operating Modes
 
-### CREATE — Создание нового MVP
+### CREATE — Creating a New MVP
 
-Полный 6-этапный процесс (этапы 0-5) для создания проекта с нуля.
-
-```bash
-/aidd-analyze "Создать сервис бронирования столиков в ресторанах"
-```
-
-### FEATURE — Добавление функционала
-
-Адаптированный процесс для добавления фичи в существующий проект.
+Full 6-stage process (stages 0-5) for creating a project from scratch.
 
 ```bash
-/aidd-analyze "Добавить систему уведомлений по email"
+/aidd-analyze "Create a restaurant table booking service"
 ```
 
-**Отличия режима FEATURE**:
-- Этап 2 (Исследование) — анализ существующего кода
-- Этап 3 (Архитектура) — `/aidd-plan-feature` вместо `/aidd-plan`
-- Интеграция с существующими компонентами
+### FEATURE — Adding Functionality
+
+Adapted process for adding a feature to an existing project.
+
+```bash
+/aidd-analyze "Add email notification system"
+```
+
+**FEATURE mode differences**:
+- Stage 2 (Research) — analysis of existing code
+- Stage 3 (Architecture) — `/aidd-plan-feature` instead of `/aidd-plan`
+- Integration with existing components
 
 ---
 
-## Bootstrap: Инициализация целевого проекта
+## Bootstrap: Target Project Initialization
 
-> **ВАЖНО**: Артефакты создаются в ЦЕЛЕВОМ ПРОЕКТЕ, не в генераторе!
-> Фреймворк должен быть подключен как Git Submodule в `.aidd/`
+> **IMPORTANT**: Artifacts are created in the TARGET PROJECT, not in the generator!
+> The framework must be connected as a Git Submodule in `.aidd/`
 >
-> **Полный алгоритм инициализации**: [docs/initialization.md](docs/initialization.md)
+> **Full initialization algorithm**: [docs/initialization.md](docs/initialization.md)
 
-### Принцип инициализации
+### Initialization Principle
 
 ```
 ┌─────────────────────────────────────────────────────────────────────┐
-│  Сначала понять ГДЕ мы (контекст ЦП),                               │
-│  потом КАК действовать (инструкции фреймворка)                      │
+│  First understand WHERE we are (TP context),                         │
+│  then HOW to act (framework instructions)                           │
 ├─────────────────────────────────────────────────────────────────────┤
-│  ФАЗА 1: ./CLAUDE.md → ./.pipeline-state.json → ./ai-docs/docs/     │
-│  ФАЗА 2: Проверка предусловий (ворот)                               │
-│  ФАЗА 3: .aidd/CLAUDE.md → .aidd/workflow.md → команда → роль       │
-│  ФАЗА 4: Шаблоны (если артефакт не существует)                      │
+│  PHASE 1: ./CLAUDE.md → ./.pipeline-state.json → ./ai-docs/docs/    │
+│  PHASE 2: Precondition check (gates)                                 │
+│  PHASE 3: .aidd/CLAUDE.md → .aidd/workflow.md → command → role       │
+│  PHASE 4: Templates (if artifact does not exist)                     │
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
-### Предварительные условия
+### Prerequisites
 
-Перед запуском `/aidd-analyze` фреймворк должен быть подключен:
+Before running `/aidd-analyze`, the framework must be connected:
 
 ```bash
-# Если фреймворк ещё не подключен
+# If the framework is not yet connected
 git submodule add https://github.com/your-org/aidd-mvp-generator.git .aidd
 git submodule update --init --recursive
 ```
 
-### Автоматическая инициализация при `/aidd-analyze`
+### Automatic Initialization with `/aidd-analyze`
 
-При первом запуске `/aidd-analyze` AI-агент выполняет:
+On the first run of `/aidd-analyze`, the AI agent performs:
 
-> **VERIFY BEFORE ACT**: Перед созданием проверяем существование директорий.
+> **VERIFY BEFORE ACT**: Before creating, we verify directory existence.
 
 ```bash
-# 1. VERIFY: Проверить существующую структуру артефактов
+# 1. VERIFY: Check existing artifact structure
 if [ -d "ai-docs/docs" ]; then
     existing_count=$(ls -d ai-docs/docs/*/ 2>/dev/null | wc -l)
-    echo "✓ Структура ai-docs/docs/ уже существует ($existing_count директорий)"
+    echo "✓ ai-docs/docs/ structure already exists ($existing_count directories)"
 fi
 
-# 2. ACT: Создать только недостающие директории
+# 2. ACT: Create only missing directories
 mkdir -p "ai-docs/docs/_analysis"
 mkdir -p "ai-docs/docs/_research"
 mkdir -p "ai-docs/docs/_plans/mvp"
 mkdir -p "ai-docs/docs/_plans/features"
 mkdir -p "ai-docs/docs/_validation"
 
-# 2. Инициализация состояния пайплайна (v2 формат)
+# 2. Initialize pipeline state (v2 format)
 cat > .pipeline-state.json << 'EOF'
 {
   "version": "2.0",
@@ -147,132 +147,132 @@ cat > .pipeline-state.json << 'EOF'
 EOF
 ```
 
-### Определение режима
+### Mode Detection
 
-| Признак | Режим |
-|---------|-------|
-| Есть `services/` или `docker-compose.yml` | **FEATURE** |
-| Пустая директория или нет признаков проекта | **CREATE** |
+| Indicator | Mode |
+|-----------|------|
+| `services/` or `docker-compose.yml` exists | **FEATURE** |
+| Empty directory or no project indicators | **CREATE** |
 
-#### Алгоритм определения режима (P-006)
+#### Mode Detection Algorithm (P-006)
 
 ```python
 def detect_mode() -> str:
     """
-    Точный алгоритм определения режима работы.
+    Exact mode detection algorithm.
 
     Returns:
-        'CREATE' или 'FEATURE'
+        'CREATE' or 'FEATURE'
     """
-    # 1. Проверить .pipeline-state.json (приоритет)
+    # 1. Check .pipeline-state.json (priority)
     if Path(".pipeline-state.json").exists():
         state = read_json(".pipeline-state.json")
         return state.get("mode", "CREATE")
 
-    # 2. Признаки существующего проекта
+    # 2. Existing project indicators
     project_markers = [
-        "services/",           # Сгенерированные сервисы
-        "docker-compose.yml",  # Инфраструктура
+        "services/",           # Generated services
+        "docker-compose.yml",  # Infrastructure
         "docker-compose.yaml",
-        "ai-docs/docs/",       # Артефакты AIDD
-        "Makefile",            # Сборка
+        "ai-docs/docs/",       # AIDD Artifacts
+        "Makefile",            # Build
     ]
 
     for marker in project_markers:
         if Path(marker).exists():
             return "FEATURE"
 
-    # 3. Дополнительная проверка — наличие Python кода
+    # 3. Additional check — presence of Python code
     python_files = list(Path(".").glob("**/*.py"))
-    if len(python_files) > 5:  # Больше 5 файлов — вероятно проект
+    if len(python_files) > 5:  # More than 5 files — likely a project
         return "FEATURE"
 
     return "CREATE"
 ```
 
-**Важно**: Режим можно переопределить явно:
+**Important**: The mode can be explicitly overridden:
 ```bash
-/aidd-analyze --mode=FEATURE "Добавить фичу"
+/aidd-analyze --mode=FEATURE "Add a feature"
 ```
 
 ---
 
-## Этапы процесса
+## Process Stages
 
-### Этап 0: Bootstrap (Инициализация)
+### Stage 0: Bootstrap (Initialization)
 
-| Параметр | Значение |
-|----------|----------|
-| **Команда** | `/aidd-init` (ручной) или авто с `/aidd-analyze` |
-| **Агент** | — (системный) |
-| **Вход** | Пустая директория с git и .aidd/ |
-| **Выход** | Структура ЦП, `.pipeline-state.json`, `CLAUDE.md` |
-| **Ворота** | `BOOTSTRAP_READY` |
+| Parameter | Value |
+|-----------|-------|
+| **Command** | `/aidd-init` (manual) or auto with `/aidd-analyze` |
+| **Agent** | — (system) |
+| **Input** | Empty directory with git and .aidd/ |
+| **Output** | TP structure, `.pipeline-state.json`, `CLAUDE.md` |
+| **Gate** | `BOOTSTRAP_READY` |
 
-**Критерии прохождения ворот BOOTSTRAP_READY**:
-- [ ] Git репозиторий инициализирован
-- [ ] Фреймворк `.aidd/` подключен (submodule)
-- [ ] Python версия >= 3.11
-- [ ] Docker установлен
-- [ ] Структура `ai-docs/docs/` создана
-- [ ] `.pipeline-state.json` инициализирован
+**BOOTSTRAP_READY gate passing criteria**:
+- [ ] Git repository initialized
+- [ ] Framework `.aidd/` connected (submodule)
+- [ ] Python version >= 3.11
+- [ ] Docker installed
+- [ ] `ai-docs/docs/` structure created
+- [ ] `.pipeline-state.json` initialized
 
-**Проверки окружения**:
+**Environment checks**:
 ```bash
-# 1. Git репозиторий
+# 1. Git repository
 git rev-parse --git-dir
 
-# 2. Фреймворк подключен
+# 2. Framework connected
 test -f .aidd/CLAUDE.md
 
-# 3. Python версия
+# 3. Python version
 python3 --version  # >= 3.11
 
 # 4. Docker
 docker --version
 ```
 
-**Действия при инициализации**:
+**Initialization actions**:
 
-> **VERIFY BEFORE ACT**: Перед созданием проверяем существование.
+> **VERIFY BEFORE ACT**: Before creating, we verify existence.
 
 ```bash
-# 1. VERIFY + ACT: Создать только недостающие директории
+# 1. VERIFY + ACT: Create only missing directories
 mkdir -p "ai-docs/docs/_analysis"
 mkdir -p "ai-docs/docs/_research"
 mkdir -p "ai-docs/docs/_plans/mvp"
 mkdir -p "ai-docs/docs/_plans/features"
 mkdir -p "ai-docs/docs/_validation"
 
-# 2. Инициализация состояния (если не существует, v2 формат)
+# 2. Initialize state (if not exists, v2 format)
 [ -f ".pipeline-state.json" ] || echo '{"version":"2.0","project_name":"","mode":"CREATE","global_gates":{"BOOTSTRAP_READY":{"passed":true}},"active_pipelines":{},"next_feature_id":1}' > .pipeline-state.json
 
-# 3. Создание CLAUDE.md (если не существует)
-[ -f "CLAUDE.md" ] || echo "# Project\n\nСм. .aidd/CLAUDE.md" > CLAUDE.md
+# 3. Create CLAUDE.md (if not exists)
+[ -f "CLAUDE.md" ] || echo "# Project\n\nSee .aidd/CLAUDE.md" > CLAUDE.md
 ```
 
-**Примечание**: Этап 0 выполняется автоматически при первом `/aidd-analyze`, если проверки
-не были пройдены ранее. Явный запуск `/aidd-init` рекомендуется для диагностики.
+**Note**: Stage 0 is executed automatically on the first `/aidd-analyze` if checks
+were not passed earlier. Explicit `/aidd-init` is recommended for diagnostics.
 
 ---
 
-### Этап 1: Идея → PRD
+### Stage 1: Idea → PRD
 
-| Параметр | Значение |
-|----------|----------|
-| **Команда** | `/aidd-analyze "описание"` |
-| **Агент** | Аналитик |
-| **Вход** | Описание идеи от пользователя |
-| **Выход** | `ai-docs/docs/_analysis/{name}.md` |
-| **Ворота** | `PRD_READY` |
+| Parameter | Value |
+|-----------|-------|
+| **Command** | `/aidd-analyze "description"` |
+| **Agent** | Analyst |
+| **Input** | Idea description from user |
+| **Output** | `ai-docs/docs/_analysis/{name}.md` |
+| **Gate** | `PRD_READY` |
 
-**Критерии прохождения ворот PRD_READY**:
-- [ ] Все секции PRD заполнены
-- [ ] Требования имеют ID (FR-*, NF-*, UI-*, INT-*)
-- [ ] Определены критерии приёмки
-- [ ] Нет блокирующих открытых вопросов
+**PRD_READY gate passing criteria**:
+- [ ] All PRD sections filled in
+- [ ] Requirements have IDs (FR-*, NF-*, UI-*, INT-*)
+- [ ] Acceptance criteria defined
+- [ ] No blocking open questions
 
-**Артефакты** (в целевом проекте):
+**Artifacts** (in the target project):
 ```
 {project-name}/
 └── ai-docs/docs/_analysis/
@@ -281,27 +281,27 @@ mkdir -p "ai-docs/docs/_validation"
 
 ---
 
-### Этап 2: Исследование
+### Stage 2: Research
 
-| Параметр | Значение |
-|----------|----------|
-| **Команда** | `/aidd-research` |
-| **Агент** | Исследователь |
-| **Вход** | PRD, существующий код (для FEATURE) |
-| **Выход** | `ai-docs/docs/_research/{name}.md` |
-| **Ворота** | `RESEARCH_DONE` |
+| Parameter | Value |
+|-----------|-------|
+| **Command** | `/aidd-research` |
+| **Agent** | Researcher |
+| **Input** | PRD, existing code (for FEATURE) |
+| **Output** | `ai-docs/docs/_research/{name}.md` |
+| **Gate** | `RESEARCH_DONE` |
 
-**Критерии прохождения ворот RESEARCH_DONE**:
-- [ ] Существующий код проанализирован (для FEATURE)
-- [ ] Архитектурные паттерны выявлены и описаны в отчёте
-- [ ] Технические ограничения определены
-- [ ] Рекомендации по интеграции сформулированы
-- [ ] Отчёт исследования сохранён в `ai-docs/docs/_research/{name}.md`
+**RESEARCH_DONE gate passing criteria**:
+- [ ] Existing code analyzed (for FEATURE)
+- [ ] Architectural patterns identified and described in the report
+- [ ] Technical constraints defined
+- [ ] Integration recommendations formulated
+- [ ] Research report saved to `ai-docs/docs/_research/{name}.md`
 
-**Режим CREATE**: Анализ требований, выбор технологий, фиксация гипотез.
-**Режим FEATURE**: Анализ кода, выявление точек расширения, фиксация выводов.
+**CREATE mode**: Requirements analysis, technology selection, hypothesis capture.
+**FEATURE mode**: Code analysis, extension point identification, findings capture.
 
-**Артефакты** (в целевом проекте):
+**Artifacts** (in the target project):
 ```
 {project-name}/
 └── ai-docs/docs/_research/
@@ -310,25 +310,25 @@ mkdir -p "ai-docs/docs/_validation"
 
 ---
 
-### Этап 3: Архитектура
+### Stage 3: Architecture
 
-| Параметр | Значение |
-|----------|----------|
-| **Команда** | `/aidd-plan` (CREATE) или `/aidd-plan-feature` (FEATURE) |
-| **Агент** | Планировщик |
-| **Вход** | PRD, Research Report |
-| **Выход** | `ai-docs/docs/_plans/mvp/{name}.md` |
-| **Ворота** | `PLAN_APPROVED` |
+| Parameter | Value |
+|-----------|-------|
+| **Command** | `/aidd-plan` (CREATE) or `/aidd-plan-feature` (FEATURE) |
+| **Agent** | Planner |
+| **Input** | PRD, Research Report |
+| **Output** | `ai-docs/docs/_plans/mvp/{name}.md` |
+| **Gate** | `PLAN_APPROVED` |
 
-**Критерии прохождения ворот PLAN_APPROVED**:
-- [ ] Компоненты системы описаны
-- [ ] API контракты определены
-- [ ] NFR (нефункциональные требования) учтены
-- [ ] **План утверждён пользователем**
+**PLAN_APPROVED gate passing criteria**:
+- [ ] System components described
+- [ ] API contracts defined
+- [ ] NFR (non-functional requirements) accounted for
+- [ ] **Plan approved by user**
 
-**Важно**: Этот этап ТРЕБУЕТ явного подтверждения от пользователя!
+**Important**: This stage REQUIRES explicit user confirmation!
 
-**Артефакты** (в целевом проекте):
+**Artifacts** (in the target project):
 ```
 {project-name}/
 └── ai-docs/docs/
@@ -336,238 +336,238 @@ mkdir -p "ai-docs/docs/_validation"
         ├── mvp/
         │   └── booking-restaurant.md
         └── features/
-            └── notification-feature.md  # для FEATURE
+            └── notification-feature.md  # for FEATURE
 ```
 
 ---
 
-### Этап 4: Реализация
+### Stage 4: Implementation
 
-| Параметр | Значение |
-|----------|----------|
-| **Команда** | `/aidd-code` |
-| **Агент** | Программист |
-| **Вход** | Утверждённый план |
-| **Выход** | Код сервисов, тесты, инфраструктура |
-| **Ворота** | `IMPLEMENT_OK` |
+| Parameter | Value |
+|-----------|-------|
+| **Command** | `/aidd-code` |
+| **Agent** | Coder |
+| **Input** | Approved plan |
+| **Output** | Service code, tests, infrastructure |
+| **Gate** | `IMPLEMENT_OK` |
 
-**Критерии прохождения ворот IMPLEMENT_OK**:
-- [ ] Код написан согласно плану
-- [ ] Все unit-тесты проходят
-- [ ] Структура соответствует DDD/Hexagonal
-- [ ] HTTP-only: бизнес-сервисы НЕ обращаются к БД напрямую (только через Data API)
-- [ ] Type hints и docstrings присутствуют
+**IMPLEMENT_OK gate passing criteria**:
+- [ ] Code written according to plan
+- [ ] All unit tests pass
+- [ ] Structure follows DDD/Hexagonal
+- [ ] HTTP-only: business services do NOT access DB directly (only through Data API)
+- [ ] Type hints and docstrings present
 
-**Подэтапы реализации**:
+**Implementation sub-stages**:
 
-| # | Подэтап | Выход |
-|---|---------|-------|
-| 4.1 | Инфраструктура | docker-compose, Makefile, CI/CD |
-| 4.2 | Data Service | API для работы с БД |
-| 4.3 | Business API | REST API на FastAPI |
-| 4.4 | Background Worker | Фоновые задачи (если нужен) |
-| 4.5 | Telegram Bot | Бот (если нужен) |
-| 4.6 | Тесты | Unit + Integration тесты |
+| # | Sub-stage | Output |
+|---|-----------|--------|
+| 4.1 | Infrastructure | docker-compose, Makefile, CI/CD |
+| 4.2 | Data Service | API for DB operations |
+| 4.3 | Business API | REST API on FastAPI |
+| 4.4 | Background Worker | Background tasks (if needed) |
+| 4.5 | Telegram Bot | Bot (if needed) |
+| 4.6 | Tests | Unit + Integration tests |
 
 ---
 
-### Этап 5: Quality & Deploy
+### Stage 5: Quality & Deploy
 
-**Команда**: `/aidd-validate`
-**Роль**: Валидатор (`.claude/agents/validator.md`)
-**Предусловие**: `IMPLEMENT_OK` ✓
-**Артефакт**: `ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}.md`
+**Command**: `/aidd-validate`
+**Role**: Validator (`.claude/agents/validator.md`)
+**Precondition**: `IMPLEMENT_OK` ✓
+**Artifact**: `ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}.md`
 
-#### Описание
+#### Description
 
-Этап Quality & Deploy выполняет полный цикл проверки качества и деплоя в 4 последовательных шага:
+The Quality & Deploy stage performs a complete quality check and deployment cycle in 4 sequential steps:
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│  Шаг 1: Code Review                                          │
-│  ├─ Архитектура (DDD, HTTP-only)                             │
+│  Step 1: Code Review                                          │
+│  ├─ Architecture (DDD, HTTP-only)                             │
 │  ├─ Quality Cascade (QC-1...QC-17)                           │
 │  ├─ Log-Driven Design                                        │
 │  └─ Security checklist                                       │
-│  → Ворота: REVIEW_OK ✓                                       │
+│  → Gate: REVIEW_OK ✓                                          │
 ├──────────────────────────────────────────────────────────────┤
-│  Шаг 2: Testing                                              │
-│  ├─ Запуск pytest с coverage                                 │
-│  ├─ Проверка покрытия ≥75%                                   │
-│  └─ Верификация требований FR-*                              │
-│  → Ворота: QA_PASSED ✓                                       │
+│  Step 2: Testing                                              │
+│  ├─ Run pytest with coverage                                  │
+│  ├─ Verify coverage ≥75%                                      │
+│  └─ Requirements FR-* verification                            │
+│  → Gate: QA_PASSED ✓                                          │
 ├──────────────────────────────────────────────────────────────┤
-│  Шаг 3: Validation                                           │
-│  ├─ Проверка всех ворот (PRD_READY...QA_PASSED)              │
-│  ├─ Верификация артефактов                                   │
-│  └─ Финальная проверка security                              │
-│  → Ворота: ALL_GATES_PASSED ✓                                │
+│  Step 3: Validation                                           │
+│  ├─ Check all gates (PRD_READY...QA_PASSED)                  │
+│  ├─ Artifact verification                                     │
+│  └─ Final security check                                      │
+│  → Gate: ALL_GATES_PASSED ✓                                   │
 ├──────────────────────────────────────────────────────────────┤
-│  Шаг 4: Deploy & Completion Report                           │
+│  Step 4: Deploy & Completion Report                           │
 │  ├─ docker-compose build                                     │
 │  ├─ docker-compose up                                        │
 │  ├─ Health-check                                             │
-│  ├─ Базовые сценарии                                         │
-│  ├─ СОЗДАНИЕ COMPLETION REPORT (обязательно!)                │
-│  └─ Перенос в features_registry                              │
-│  → Ворота: DEPLOYED ✓                                        │
+│  ├─ Basic scenarios                                           │
+│  ├─ CREATE COMPLETION REPORT (mandatory!)                     │
+│  └─ Move to features_registry                                 │
+│  → Gate: DEPLOYED ✓                                           │
 └──────────────────────────────────────────────────────────────┘
 ```
 
-#### Два режима работы
+#### Two Operating Modes
 
-| Режим | Когда использовать | Ворота |
-|-------|-------------------|--------|
-| **Полный** (рекомендуется) | Production-ready MVP | `REVIEW_OK` → `QA_PASSED` → `ALL_GATES_PASSED` → `DEPLOYED` |
-| **Быстрый** | Документация, застопорившаяся фича | `DOCUMENTED` (только static analysis) |
+| Mode | When to use | Gates |
+|------|-------------|-------|
+| **Full** (recommended) | Production-ready MVP | `REVIEW_OK` → `QA_PASSED` → `ALL_GATES_PASSED` → `DEPLOYED` |
+| **Quick** | Documentation, stalled feature | `DOCUMENTED` (static analysis only) |
 
-**Быстрый режим**:
-- Выполняет только mypy, ruff, bandit (без тестов)
-- Создаёт DRAFT Completion Report с пометкой "⚠️ DRAFT — QA не выполнено"
-- Фича остаётся в `active_pipelines` (НЕ переносится в `features_registry`)
-- Позволяет переключиться на другую фичу без завершения текущей
+**Quick mode**:
+- Runs only mypy, ruff, bandit (without tests)
+- Creates DRAFT Completion Report with note "⚠️ DRAFT — QA not performed"
+- Feature stays in `active_pipelines` (NOT moved to `features_registry`)
+- Allows switching to another feature without completing the current one
 
-#### Библиотеки инструкций
+#### Instruction Libraries
 
-Валидатор использует две вспомогательные библиотеки:
+The Validator uses two auxiliary libraries:
 
-| Библиотека | Файл | Содержимое |
-|------------|------|-----------|
-| **Code Review** | `.claude/agents/code-review-library.md` | Quality Cascade (17 проверок), Log-Driven Design, Security |
-| **Testing** | `.claude/agents/testing-library.md` | Тестовые сценарии, Coverage, Верификация требований |
+| Library | File | Contents |
+|---------|------|----------|
+| **Code Review** | `.claude/agents/code-review-library.md` | Quality Cascade (17 checks), Log-Driven Design, Security |
+| **Testing** | `.claude/agents/testing-library.md` | Test scenarios, Coverage, Requirements verification |
 
 #### Completion Report
 
-Единственный артефакт этапа Quality & Deploy. Содержит:
+The sole artifact of the Quality & Deploy stage. Contains:
 
 - Executive Summary
-- Code Review Summary (результаты 17 проверок)
-- Testing Summary (coverage, требования)
-- Requirements Traceability (соответствие FR-*)
-- ADR (архитектурные решения)
-- Scope Changes (план vs факт)
+- Code Review Summary (results of 17 checks)
+- Testing Summary (coverage, requirements)
+- Requirements Traceability (FR-* compliance)
+- ADR (architectural decisions)
+- Scope Changes (plan vs actual)
 - Known Limitations
-- Метрики качества
+- Quality metrics
 
-**Путь**: `ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}.md`
+**Path**: `ai-docs/docs/_validation/{YYYY-MM-DD}_{FID}_{slug}.md`
 
-#### Команды
+#### Commands
 
 ```bash
-# Полный режим (рекомендуется)
+# Full mode (recommended)
 /aidd-validate
 
-# Быстрый режим (явное указание)
+# Quick mode (explicit)
 /aidd-validate --mode=quick
 ```
 
-#### Детальные инструкции
+#### Detailed Instructions
 
-См. `.claude/commands/aidd-validate.md` → секции по каждому шагу.
+See `.claude/commands/aidd-validate.md` → sections for each step.
 
 ---
 
-## Таблица команд и ворот
+## Commands and Gates Table
 
-| # | Этап | Команда | Агент | Ворота | Артефакт |
-|---|------|---------|-------|--------|----------|
-| 0 | Bootstrap | `/aidd-init` | — | `BOOTSTRAP_READY` | Структура ЦП |
-| 1 | Идея | `/aidd-analyze` | Аналитик | `PRD_READY` | `_analysis/{name}.md` |
-| 2 | Исследование | `/aidd-research` | Исследователь | `RESEARCH_DONE` | `_research/{name}.md` |
-| 3 | Архитектура (CREATE) | `/aidd-plan` | Планировщик | `PLAN_APPROVED` | `_plans/mvp/{name}.md` |
-| 3 | Архитектура (FEATURE) | `/aidd-plan-feature` | Планировщик | `PLAN_APPROVED` | `_plans/features/{name}.md` |
-| 4 | Реализация | `/aidd-code` | Программист | `IMPLEMENT_OK` | `services/`, тесты |
-| 5 | Quality & Deploy | `/aidd-validate` | Валидатор | **Full**: `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED` <br> **Quick**: `DOCUMENTED` | `_validation/{name}.md` |
+| # | Stage | Command | Agent | Gate | Artifact |
+|---|-------|---------|-------|------|----------|
+| 0 | Bootstrap | `/aidd-init` | — | `BOOTSTRAP_READY` | TP Structure |
+| 1 | Idea | `/aidd-analyze` | Analyst | `PRD_READY` | `_analysis/{name}.md` |
+| 2 | Research | `/aidd-research` | Researcher | `RESEARCH_DONE` | `_research/{name}.md` |
+| 3 | Architecture (CREATE) | `/aidd-plan` | Planner | `PLAN_APPROVED` | `_plans/mvp/{name}.md` |
+| 3 | Architecture (FEATURE) | `/aidd-plan-feature` | Planner | `PLAN_APPROVED` | `_plans/features/{name}.md` |
+| 4 | Implementation | `/aidd-code` | Coder | `IMPLEMENT_OK` | `services/`, tests |
+| 5 | Quality & Deploy | `/aidd-validate` | Validator | **Full**: `REVIEW_OK`, `QA_PASSED`, `ALL_GATES_PASSED`, `DEPLOYED` <br> **Quick**: `DOCUMENTED` | `_validation/{name}.md` |
 
-> **Примечание**: `/aidd-validate` поддерживает два режима:
-> - **Полный (рекомендуется)**: Review → Test → Validate → Deploy → Production-ready MVP
-> - **Быстрый**: Только DRAFT Completion Report + Static Analysis → для документации или незавершённых фич
+> **Note**: `/aidd-validate` supports two modes:
+> - **Full (recommended)**: Review → Test → Validate → Deploy → Production-ready MVP
+> - **Quick**: Only DRAFT Completion Report + Static Analysis → for documentation or stalled features
 >
-> Файлы команд: [docs/INDEX.md](docs/INDEX.md#slash-команды)
+> Command files: [docs/INDEX.md](docs/INDEX.md#slash-commands)
 
 
-## Артефакты по этапам (в целевом проекте)
+## Artifacts by Stage (in the Target Project)
 
-> **ВАЖНО**: Все артефакты создаются в ЦЕЛЕВОМ ПРОЕКТЕ, не в генераторе!
+> **IMPORTANT**: All artifacts are created in the TARGET PROJECT, not in the generator!
 
 ```
-{project-name}/                      ← Целевой проект
+{project-name}/                      ← Target Project
 │
-├── .pipeline-state.json             # Состояние пайплайна
+├── .pipeline-state.json             # Pipeline state
 │
 └── ai-docs/docs/
     ├── _analysis/
-    │   └── {name}.md                # Этап 1: PRD документ
+    │   └── {name}.md                # Stage 1: PRD document
     │
     ├── _research/
-    │   └── {name}.md                # Этап 2: Research Report
+    │   └── {name}.md                # Stage 2: Research Report
     │
     ├── _plans/
     │   ├── mvp/
-    │   │   └── {name}.md            # Этап 3: Архитектурный план (CREATE)
+    │   │   └── {name}.md            # Stage 3: Architecture plan (CREATE)
     │   └── features/
-    │       └── {name}.md            # Этап 3: План фичи (FEATURE)
+    │       └── {name}.md            # Stage 3: Feature plan (FEATURE)
     │
     └── _validation/
-        └── {date}_{FID}_{slug}.md   # Этап 5: Единый Completion Report
+        └── {date}_{FID}_{slug}.md   # Stage 5: Single Completion Report
 ```
 
 ---
 
-## Пример полного прохода (режим CREATE)
+## Full Pass-through Example (CREATE mode)
 
 ```bash
-# 1. Описываем идею
-/aidd-analyze "Создать сервис бронирования столиков в ресторанах.
-Пользователи могут искать рестораны, смотреть свободные столики,
-бронировать на определённое время. Рестораны получают уведомления
-о новых бронях через Telegram."
+# 1. Describe the idea
+/aidd-analyze "Create a restaurant table booking service.
+Users can search for restaurants, view available tables,
+book for a specific time. Restaurants receive notifications
+about new bookings via Telegram."
 
-# Агент: Аналитик создаёт PRD
-# Ворота: PRD_READY ✓
+# Agent: Analyst creates PRD
+# Gate: PRD_READY ✓
 
-# 2. Исследование
+# 2. Research
 /aidd-research
 
-# Агент: Исследователь анализирует требования
-# Ворота: RESEARCH_DONE ✓
+# Agent: Researcher analyzes requirements
+# Gate: RESEARCH_DONE ✓
 
-# 3. Архитектура
+# 3. Architecture
 /aidd-plan
 
-# Агент: Планировщик создаёт план
-# Пользователь утверждает план
-# Ворота: PLAN_APPROVED ✓
+# Agent: Planner creates plan
+# User approves the plan
+# Gate: PLAN_APPROVED ✓
 
-# 4. Реализация
+# 4. Implementation
 /aidd-code
 
-# Агент: Программист генерирует код
-# Создаются: infrastructure, data-api, business-api, bot
-# Ворота: IMPLEMENT_OK ✓
+# Agent: Coder generates code
+# Created: infrastructure, data-api, business-api, bot
+# Gate: IMPLEMENT_OK ✓
 
 # 5. Quality & Deploy
 /aidd-validate
 
-# Агент: Валидатор выполняет 4 шага
+# Agent: Validator performs 4 steps
 # ✓ Step 1/4: Code Review → REVIEW_OK
 # ✓ Step 2/4: Testing (Coverage 82%) → QA_PASSED
 # ✓ Step 3/4: Validation → ALL_GATES_PASSED
 # ✓ Step 4/4: Deploy + Completion Report → DEPLOYED
 # ✓ Completion Report: ai-docs/docs/_validation/2025-12-23_F001_table-booking.md
 
-# Готово! MVP запущен за ~10 минут
+# Done! MVP launched in ~10 minutes
 ```
 
 ---
 
-## Состояние пайплайна (.pipeline-state.json)
+## Pipeline State (.pipeline-state.json)
 
-> **Философия**: Артефакты = Память. Состояние пайплайна — единый источник истины.
+> **Philosophy**: Artifacts = Memory. Pipeline state is the single source of truth.
 
-### Формат файла (v2 — параллельные пайплайны)
+### File Format (v2 — parallel pipelines)
 
-Файл `.pipeline-state.json` создаётся в корне ЦЕЛЕВОГО ПРОЕКТА при первом `/aidd-analyze`.
+The `.pipeline-state.json` file is created in the root of the TARGET PROJECT on the first `/aidd-analyze`.
 
 ```json
 {
@@ -583,7 +583,7 @@ mkdir -p "ai-docs/docs/_validation"
     "F042": {
       "branch": "feature/F042-oauth-auth",
       "name": "oauth-auth",
-      "title": "OAuth авторизация",
+      "title": "OAuth authorization",
       "stage": "IMPLEMENT",
       "created": "2025-12-25",
       "gates": {
@@ -607,45 +607,45 @@ mkdir -p "ai-docs/docs/_validation"
 }
 ```
 
-**Ключевые изменения v2**:
-- `active_pipelines` — словарь активных фич (вместо `current_feature`)
-- `global_gates` — ворота уровня проекта (BOOTSTRAP_READY)
-- Ворота изолированы в `active_pipelines[FID].gates`
-- `features_registry` — реестр завершённых фич
+**Key v2 changes**:
+- `active_pipelines` — dictionary of active features (instead of `current_feature`)
+- `global_gates` — project-level gates (BOOTSTRAP_READY)
+- Gates are isolated in `active_pipelines[FID].gates`
+- `features_registry` — registry of completed features
 
-**Шаблон**: [templates/documents/pipeline-state-template.json](templates/documents/pipeline-state-template.json)
-**Спецификация v2**: [knowledge/pipeline/state-v2.md](knowledge/pipeline/state-v2.md)
+**Template**: [templates/documents/pipeline-state-template.json](templates/documents/pipeline-state-template.json)
+**v2 Specification**: [knowledge/pipeline/state-v2.md](knowledge/pipeline/state-v2.md)
 
-### Обновление состояния
+### State Update
 
-Каждая команда ОБЯЗАНА обновить `.pipeline-state.json`:
-1. При старте — проверить предусловия
-2. При успехе — отметить ворота пройденными
-3. При создании артефакта — записать путь
+Each command MUST update `.pipeline-state.json`:
+1. On start — check preconditions
+2. On success — mark gates as passed
+3. On artifact creation — record the path
 
 ---
 
-## Алгоритм обнаружения артефактов
+## Artifact Discovery Algorithm
 
-Команды используют следующий алгоритм для поиска входных артефактов:
+Commands use the following algorithm to find input artifacts:
 
 ```python
 def find_artifact(artifact_type: str) -> Path | None:
     """
-    Алгоритм поиска артефакта в целевом проекте.
+    Algorithm for finding an artifact in the target project.
 
     Args:
         artifact_type: 'prd', 'plan', 'feature_plan', 'review_report', etc.
 
     Returns:
-        Path к артефакту или None
+        Path to artifact or None
     """
-    # 1. Проверить .pipeline-state.json
+    # 1. Check .pipeline-state.json
     state = read_json(".pipeline-state.json")
     if state and state.get("artifacts", {}).get(artifact_type):
         return Path(state["artifacts"][artifact_type])
 
-    # 2. Glob по стандартным паттернам
+    # 2. Glob by standard patterns
     patterns = {
         "prd": "ai-docs/docs/_analysis/*.md",
         "research": "ai-docs/docs/_research/*.md",
@@ -658,43 +658,43 @@ def find_artifact(artifact_type: str) -> Path | None:
 
     files = glob(patterns.get(artifact_type, ""))
     if files:
-        # Вернуть самый свежий
+        # Return the most recent
         return max(files, key=lambda f: f.stat().st_mtime)
 
     return None
 ```
 
-### Паттерны поиска
+### Search Patterns
 
-| Артефакт | Паттерн |
+| Artifact | Pattern |
 |----------|---------|
 | PRD | `ai-docs/docs/_analysis/*.md` |
 | Research Report | `ai-docs/docs/_research/*.md` |
-| План архитектуры | `ai-docs/docs/_plans/mvp/*.md` |
-| План фичи | `ai-docs/docs/_plans/features/*.md` |
-| Отчёт ревью | `ai-docs/docs/_validation/review-*.md` |
-| Отчёт QA | `ai-docs/docs/_validation/qa-*.md` |
+| Architecture Plan | `ai-docs/docs/_plans/mvp/*.md` |
+| Feature Plan | `ai-docs/docs/_plans/features/*.md` |
+| Review Report | `ai-docs/docs/_validation/review-*.md` |
+| QA Report | `ai-docs/docs/_validation/qa-*.md` |
 | RTM | `ai-docs/docs/rtm.md` |
 
 ---
 
-## Проверка предусловий (Gate Check)
+## Precondition Check (Gate Check)
 
-Каждая команда ОБЯЗАНА проверить предусловия перед выполнением:
+Each command MUST check preconditions before execution:
 
 ```python
 def check_preconditions(command: str) -> bool:
-    """Проверка предусловий перед выполнением команды."""
+    """Check preconditions before executing the command."""
 
     preconditions = {
-        "/aidd-init": [],  # Нет предусловий — первый этап
-        "/aidd-analyze": ["BOOTSTRAP_READY"],  # Авто-bootstrap если не пройден
+        "/aidd-init": [],  # No preconditions — first stage
+        "/aidd-analyze": ["BOOTSTRAP_READY"],  # Auto-bootstrap if not passed
         "/aidd-research": ["PRD_READY"],
         "/aidd-plan": ["PRD_READY", "RESEARCH_DONE"],
         "/aidd-plan-feature": ["PRD_READY", "RESEARCH_DONE"],
         "/aidd-code": ["PLAN_APPROVED"],
-        "/aidd-validate": ["IMPLEMENT_OK"],  # Full mode - требует реализации
-        # Quick mode (/aidd-validate --quick) - без предусловий
+        "/aidd-validate": ["IMPLEMENT_OK"],  # Full mode - requires implementation
+        # Quick mode (/aidd-validate --quick) - no preconditions
     }
 
     state = read_json(".pipeline-state.json")
@@ -703,40 +703,40 @@ def check_preconditions(command: str) -> bool:
 
     for gate in preconditions.get(command, []):
         if not state.get("gates", {}).get(gate, {}).get("passed"):
-            print(f"❌ Ворота {gate} не пройдены")
+            print(f"❌ Gate {gate} not passed")
             return False
 
     return True
 ```
 
-### Матрица предусловий
+### Precondition Matrix
 
-| Команда | Требуемые ворота | Если не пройдены |
-|---------|-----------------|------------------|
+| Command | Required Gates | If Not Passed |
+|---------|---------------|---------------|
 | `/aidd-init` | — | — |
-| `/aidd-analyze` | BOOTSTRAP_READY | Авто-запуск bootstrap или "/aidd-init" |
-| `/aidd-research` | PRD_READY | "Сначала выполните /aidd-analyze" |
-| `/aidd-plan` | PRD_READY, RESEARCH_DONE | "Сначала выполните /aidd-research" |
-| `/aidd-plan-feature` | PRD_READY, RESEARCH_DONE | "Сначала выполните /aidd-research" |
-| `/aidd-code` | PLAN_APPROVED | "Сначала утвердите план" |
-| `/aidd-validate` (Full) | IMPLEMENT_OK | "Сначала выполните /aidd-code" |
-| `/aidd-validate` (Quick) | — | Создаёт DRAFT отчёт без предусловий |
+| `/aidd-analyze` | BOOTSTRAP_READY | Auto-run bootstrap or "/aidd-init" |
+| `/aidd-research` | PRD_READY | "First execute /aidd-analyze" |
+| `/aidd-plan` | PRD_READY, RESEARCH_DONE | "First execute /aidd-research" |
+| `/aidd-plan-feature` | PRD_READY, RESEARCH_DONE | "First execute /aidd-research" |
+| `/aidd-code` | PLAN_APPROVED | "First approve the plan" |
+| `/aidd-validate` (Full) | IMPLEMENT_OK | "First execute /aidd-code" |
+| `/aidd-validate` (Quick) | — | Creates DRAFT report without preconditions |
 
 ---
 
-## Правила прохождения ворот
+## Gate Passing Rules
 
-### Алгоритм проверки ворот (P-009)
+### Gate Check Algorithm (P-009)
 
-Каждые ворота проверяются по унифицированному алгоритму:
+Each gate is checked using a unified algorithm:
 
 ```python
 def check_gate(gate: str) -> GateResult:
     """
-    Алгоритм проверки ворот.
+    Gate check algorithm.
 
     Args:
-        gate: Название ворот
+        gate: Gate name
 
     Returns:
         GateResult: {passed: bool, reason: str, checklist: list}
@@ -752,48 +752,48 @@ def check_gate(gate: str) -> GateResult:
         ],
         "PRD_READY": [
             ("artifact_exists", "ai-docs/docs/_analysis/*.md"),
-            ("sections_complete", ["Обзор", "FR-*", "NF-*"]),
-            ("ids_present", "Все требования имеют ID"),
-            ("no_blockers", "Нет Open вопросов без решения"),
+            ("sections_complete", ["Overview", "FR-*", "NF-*"]),
+            ("ids_present", "All requirements have IDs"),
+            ("no_blockers", "No Open questions without resolution"),
         ],
         "RESEARCH_DONE": [
             ("artifact_exists", "ai-docs/docs/_research/*.md"),
-            ("analysis_complete", "Код проанализирован"),
-            ("patterns_identified", "Паттерны выявлены"),
-            ("constraints_defined", "Ограничения определены"),
+            ("analysis_complete", "Code analyzed"),
+            ("patterns_identified", "Patterns identified"),
+            ("constraints_defined", "Constraints defined"),
         ],
         "PLAN_APPROVED": [
             ("artifact_exists", "ai-docs/docs/_plans/mvp/*.md"),
-            ("components_defined", "Компоненты определены"),
-            ("api_contracts", "API контракты описаны"),
-            ("user_approved", "Пользователь подтвердил"),  # Требует interaction
+            ("components_defined", "Components defined"),
+            ("api_contracts", "API contracts described"),
+            ("user_approved", "User confirmed"),  # Requires interaction
         ],
         "IMPLEMENT_OK": [
             ("code_exists", "services/*/"),
             ("tests_pass", "pytest exit code 0"),
-            ("types_present", "Type hints в коде"),
-            ("structure_ok", "DDD структура соблюдена"),
+            ("types_present", "Type hints in code"),
+            ("structure_ok", "DDD structure followed"),
         ],
         "REVIEW_OK": [
             ("artifact_exists", "ai-docs/docs/_validation/review-*.md"),
-            ("no_blockers", "Нет Blocker замечаний"),
-            ("no_critical", "Нет Critical замечаний"),
+            ("no_blockers", "No Blocker findings"),
+            ("no_critical", "No Critical findings"),
         ],
         "QA_PASSED": [
             ("artifact_exists", "ai-docs/docs/_validation/qa-*.md"),
-            ("tests_pass", "Все тесты проходят"),
+            ("tests_pass", "All tests pass"),
             ("coverage_ok", "Coverage >= 75%"),
-            ("no_critical_bugs", "Нет Critical/Blocker багов"),
+            ("no_critical_bugs", "No Critical/Blocker bugs"),
         ],
         "ALL_GATES_PASSED": [
-            ("all_previous", "Все предыдущие ворота пройдены"),
-            ("artifacts_exist", "Все артефакты существуют"),
-            ("rtm_complete", "RTM актуальна"),
+            ("all_previous", "All previous gates passed"),
+            ("artifacts_exist", "All artifacts exist"),
+            ("rtm_complete", "RTM is up to date"),
         ],
         "DEPLOYED": [
             ("containers_up", "docker-compose ps: all running"),
             ("health_ok", "Health endpoints respond 200"),
-            ("logs_clean", "Нет ошибок в логах"),
+            ("logs_clean", "No errors in logs"),
         ],
     }
 
@@ -812,281 +812,281 @@ def check_gate(gate: str) -> GateResult:
     )
 ```
 
-### 1. Блокирующие ворота
+### 1. Blocking Gates
 
-AI-агент **НЕ МОЖЕТ** перейти к следующему этапу, если ворота не пройдены.
+AI agent **CANNOT** proceed to the next stage if gates are not passed.
 
 ```
-❌ PRD_READY не пройден → /aidd-plan заблокирована
-❌ PLAN_APPROVED не пройден → /aidd-code заблокирована
+❌ PRD_READY not passed → /aidd-plan is blocked
+❌ PLAN_APPROVED not passed → /aidd-code is blocked
 ```
 
-### 2. Откат и восстановление при неудаче (P-004)
+### 2. Rollback and Recovery on Failure (P-004)
 
-Если ворота не пройдены, AI-агент следует алгоритму восстановления:
+If gates are not passed, the AI agent follows a recovery algorithm:
 
 ```python
 def handle_gate_failure(gate: str, reason: str) -> Action:
     """
-    Алгоритм обработки непройденных ворот.
+    Algorithm for handling failed gates.
 
     Args:
-        gate: Название ворот (PRD_READY, PLAN_APPROVED, etc.)
-        reason: Причина неудачи
+        gate: Gate name (PRD_READY, PLAN_APPROVED, etc.)
+        reason: Failure reason
 
     Returns:
-        Action: Рекомендуемое действие
+        Action: Recommended action
     """
     recovery_actions = {
         "PRD_READY": {
-            "incomplete_sections": "Дополнить недостающие секции PRD",
-            "missing_criteria": "Добавить критерии приёмки к требованиям",
-            "open_questions": "Уточнить вопросы у пользователя",
+            "incomplete_sections": "Complete missing PRD sections",
+            "missing_criteria": "Add acceptance criteria to requirements",
+            "open_questions": "Clarify questions with user",
         },
         "PLAN_APPROVED": {
-            "not_approved": "Запросить подтверждение у пользователя",
-            "missing_components": "Дополнить архитектурный план",
+            "not_approved": "Request confirmation from user",
+            "missing_components": "Complete the architecture plan",
         },
         "IMPLEMENT_OK": {
-            "tests_failed": "Исправить код и перезапустить тесты",
-            "missing_types": "Добавить type hints",
-            "structure_error": "Исправить структуру DDD",
+            "tests_failed": "Fix code and rerun tests",
+            "missing_types": "Add type hints",
+            "structure_error": "Fix DDD structure",
         },
         "REVIEW_OK": {
-            "critical_issues": "Исправить критические замечания",
-            "convention_violations": "Привести код к conventions.md",
+            "critical_issues": "Fix critical findings",
+            "convention_violations": "Align code with conventions.md",
         },
         "QA_PASSED": {
-            "low_coverage": "Добавить тесты для увеличения coverage",
-            "tests_failed": "Исправить падающие тесты",
-            "bugs_found": "Исправить найденные баги",
+            "low_coverage": "Add tests to increase coverage",
+            "tests_failed": "Fix failing tests",
+            "bugs_found": "Fix discovered bugs",
         },
         "ALL_GATES_PASSED": {
-            "gates_missing": "Вернуться к непройденному этапу",
+            "gates_missing": "Return to the failed stage",
         },
         "DEPLOYED": {
-            "build_failed": "Исправить Dockerfile/docker-compose",
-            "health_failed": "Проверить конфигурацию сервисов",
+            "build_failed": "Fix Dockerfile/docker-compose",
+            "health_failed": "Check service configuration",
         },
     }
 
-    return recovery_actions.get(gate, {}).get(reason, "Обратиться к пользователю")
+    return recovery_actions.get(gate, {}).get(reason, "Contact the user")
 ```
 
-**Пример восстановления**:
+**Recovery example**:
 ```
 /aidd-validate
-→ ❌ Step 2/4: Testing failed (Coverage 68%, требуется ≥75%)
-→ Автоматическое действие: Добавить тесты
-[AI добавляет тесты]
+→ ❌ Step 2/4: Testing failed (Coverage 68%, required ≥75%)
+→ Automatic action: Add tests
+[AI adds tests]
 /aidd-validate
 → ✓ Step 2/4: Testing passed (Coverage 76%)
 → ✓ Step 3/4: Validation → ALL_GATES_PASSED
 → ✓ Step 4/4: Deploy → DEPLOYED
 ```
 
-**Принципы восстановления**:
-1. **Не пропускать этапы** — вернуться к проблемному этапу
-2. **Исправить, не обходить** — устранить причину, а не симптом
-3. **Сообщить пользователю** — если автоматическое восстановление невозможно
+**Recovery principles**:
+1. **Do not skip stages** — return to the problematic stage
+2. **Fix, don't bypass** — eliminate the cause, not the symptom
+3. **Notify the user** — if automatic recovery is not possible
 
-### 3. Явное подтверждение пользователя
+### 3. Explicit User Confirmation
 
-Некоторые ворота требуют явного подтверждения:
+Some gates require explicit confirmation:
 
-| Ворота | Требует подтверждения |
-|--------|----------------------|
-| `PRD_READY` | Нет (автоматическая проверка) |
-| `PLAN_APPROVED` | **ДА** (пользователь должен утвердить план) |
-| `REVIEW_OK` | Нет (автоматическая проверка) |
-| `QA_PASSED` | Нет (автоматическая проверка) |
-| `DEPLOYED` | Нет (автоматическая проверка) |
-
----
-
-## Разграничение ролей Reviewer и QA (P-005)
-
-Две роли выполняют разные функции в пайплайне:
-
-| Аспект | Ревьюер (Этап 5) | QA (Этап 6) |
-|--------|------------------|-------------|
-| **Фокус** | Качество кода | Функциональность |
-| **Что проверяет** | Архитектура, соглашения, DRY/KISS/YAGNI | Тесты, покрытие, соответствие PRD |
-| **Методы** | Статический анализ кода | Выполнение тестов |
-| **Артефакт** | `review-report.md` | `qa-report.md` |
-| **Ворота** | `REVIEW_OK` | `QA_PASSED` |
-
-### Ревьюер отвечает на:
-- Соответствует ли код архитектурному плану?
-- Соблюдены ли соглашения conventions.md?
-- Есть ли дублирование кода (DRY)?
-- Не переусложнён ли код (KISS)?
-- Нет ли лишнего функционала (YAGNI)?
-
-### QA отвечает на:
-- Все ли тесты проходят?
-- Достаточно ли покрытие кода (≥75%)?
-- Все ли требования из PRD реализованы и работают?
-- Есть ли баги?
-
-**Важно**: Ревью предшествует QA. Сначала проверяем качество кода, потом его функциональность.
+| Gate | Requires Confirmation |
+|------|----------------------|
+| `PRD_READY` | No (automatic check) |
+| `PLAN_APPROVED` | **YES** (user must approve the plan) |
+| `REVIEW_OK` | No (automatic check) |
+| `QA_PASSED` | No (automatic check) |
+| `DEPLOYED` | No (automatic check) |
 
 ---
 
-## Режим FEATURE: Полное описание (P-025)
+## Reviewer and QA Role Separation (P-005)
 
-Режим FEATURE предназначен для добавления функционала в существующий проект.
+Two roles perform different functions in the pipeline:
 
-### Отличия от CREATE
+| Aspect | Reviewer (Stage 5) | QA (Stage 6) |
+|--------|-------------------|---------------|
+| **Focus** | Code quality | Functionality |
+| **What is checked** | Architecture, conventions, DRY/KISS/YAGNI | Tests, coverage, PRD compliance |
+| **Methods** | Static code analysis | Test execution |
+| **Artifact** | `review-report.md` | `qa-report.md` |
+| **Gate** | `REVIEW_OK` | `QA_PASSED` |
 
-| Аспект | CREATE | FEATURE |
+### Reviewer answers:
+- Does the code match the architecture plan?
+- Are conventions.md standards followed?
+- Is there code duplication (DRY)?
+- Is the code overly complex (KISS)?
+- Is there unnecessary functionality (YAGNI)?
+
+### QA answers:
+- Do all tests pass?
+- Is code coverage sufficient (≥75%)?
+- Are all PRD requirements implemented and working?
+- Are there bugs?
+
+**Important**: Review precedes QA. First we check code quality, then its functionality.
+
+---
+
+## FEATURE Mode: Full Description (P-025)
+
+FEATURE mode is designed for adding functionality to an existing project.
+
+### Differences from CREATE
+
+| Aspect | CREATE | FEATURE |
 |--------|--------|---------|
-| Цель | Новый MVP с нуля | Добавление фичи |
-| Этап 2 | Анализ требований | Анализ кода |
-| Этап 3 | `/aidd-plan` — полная архитектура | `/aidd-plan-feature` — план интеграции |
-| Артефакты | Новый `ai-docs/` | Интеграция в существующий |
-| Тесты | Создание с нуля | Расширение существующих |
+| Goal | New MVP from scratch | Adding a feature |
+| Stage 2 | Requirements analysis | Code analysis |
+| Stage 3 | `/aidd-plan` — full architecture | `/aidd-plan-feature` — integration plan |
+| Artifacts | New `ai-docs/` | Integration into existing |
+| Tests | Created from scratch | Extending existing |
 
-### Полный процесс FEATURE
+### Full FEATURE Process
 
 ```
-Этап 1: /aidd-analyze "Добавить email уведомления"
-├── Аналитик создаёт FEATURE_PRD
-├── Фокус на интеграции с существующим функционалом
-└── Артефакт: ai-docs/docs/_analysis/notifications.md
+Stage 1: /aidd-analyze "Add email notifications"
+├── Analyst creates FEATURE_PRD
+├── Focus on integration with existing functionality
+└── Artifact: ai-docs/docs/_analysis/notifications.md
 
-Этап 2: /aidd-research
-├── Исследователь анализирует СУЩЕСТВУЮЩИЙ код
-├── Выявляет точки расширения
-├── Определяет зависимости
-└── Рекомендации по интеграции
+Stage 2: /aidd-research
+├── Researcher analyzes EXISTING code
+├── Identifies extension points
+├── Determines dependencies
+└── Integration recommendations
 
-Этап 3: /aidd-plan-feature (НЕ /aidd-plan!)
-├── Планировщик создаёт план ИНТЕГРАЦИИ
-├── Учитывает существующие компоненты
-├── Минимизирует изменения в существующем коде
-└── Артефакт: ai-docs/docs/_plans/features/notifications.md
+Stage 3: /aidd-plan-feature (NOT /aidd-plan!)
+├── Planner creates INTEGRATION plan
+├── Accounts for existing components
+├── Minimizes changes to existing code
+└── Artifact: ai-docs/docs/_plans/features/notifications.md
 
-Этап 4: /aidd-code
-├── Программист создаёт новый код
-├── Интегрирует с существующими сервисами
-├── Расширяет, не ломает
-└── Новые тесты + обновление существующих
+Stage 4: /aidd-code
+├── Coder creates new code
+├── Integrates with existing services
+├── Extends, does not break
+└── New tests + update existing
 
-Этапы 5-8: Аналогично CREATE
+Stages 5-8: Same as CREATE
 ```
 
-### Пример FEATURE pipeline
+### FEATURE Pipeline Example
 
 ```bash
-# 1. Запуск в директории существующего проекта
+# 1. Launch in existing project directory
 cd booking-service/
 
-# 2. Описываем фичу
-/aidd-analyze "Добавить систему email уведомлений.
-При бронировании отправлять подтверждение на email.
-При отмене — уведомление об отмене."
+# 2. Describe the feature
+/aidd-analyze "Add email notification system.
+When booking, send confirmation to email.
+When cancelling — send cancellation notification."
 
-# 3. Исследование существующего кода
+# 3. Research existing code
 /aidd-research
-# Агент анализирует:
-# - Структуру сервисов
-# - Точки, где нужны уведомления
-# - Существующие интеграции
+# Agent analyzes:
+# - Service structure
+# - Points where notifications are needed
+# - Existing integrations
 
-# 4. План фичи (НЕ /aidd-plan!)
+# 4. Feature plan (NOT /aidd-plan!)
 /aidd-plan-feature
-# Агент создаёт план интеграции:
-# - NotificationService в booking_api
-# - Интеграция с BookingService
-# - Новый HTTP клиент для email
+# Agent creates integration plan:
+# - NotificationService in booking_api
+# - Integration with BookingService
+# - New HTTP client for email
 
-# 4-5. Генерация и финализация
+# 4-5. Generation and finalization
 /aidd-code
 /aidd-validate
 ```
 
-### Маркеры режима FEATURE
+### FEATURE Mode Markers
 
-AI определяет режим FEATURE при наличии:
+AI detects FEATURE mode when the following are present:
 
 ```
 {project}/
-├── services/           ← Существующие сервисы
-├── docker-compose.yml  ← Инфраструктура
-├── ai-docs/docs/       ← Предыдущие артефакты
-└── Makefile            ← Сборка
+├── services/           ← Existing services
+├── docker-compose.yml  ← Infrastructure
+├── ai-docs/docs/       ← Previous artifacts
+└── Makefile            ← Build
 ```
 
 ---
 
-## Параллельные пайплайны (Pipeline State v2)
+## Parallel Pipelines (Pipeline State v2)
 
-Фреймворк поддерживает одновременную разработку нескольких фич в отдельных git ветках.
+The framework supports simultaneous development of multiple features in separate git branches.
 
-### Концепция
+### Concept
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────┐
-│                         ПАРАЛЛЕЛЬНЫЙ WORKFLOW                           │
+│                         PARALLEL WORKFLOW                                │
 ├─────────────────────────────────────────────────────────────────────────┤
 │                                                                         │
 │  main                                                                   │
 │    │                                                                    │
 │    ├──┬── feature/F042-oauth ─────────────────────────▶ merge           │
-│    │  │     ├── /aidd-analyze      ← Создаёт ветку автоматически          │
+│    │  │     ├── /aidd-analyze      ← Creates branch automatically         │
 │    │  │     ├── /aidd-research                                          │
 │    │  │     ├── /aidd-plan                                              │
 │    │  │     ├── /aidd-code                                          │
 │    │  │     └── /aidd-validate ───────────▶ DEPLOYED                   │
 │    │  │                                                                 │
 │    │  └── feature/F043-payments ──────────────────────▶ merge           │
-│    │        ├── /aidd-analyze      (параллельно с F042!)                  │
+│    │        ├── /aidd-analyze      (in parallel with F042!)               │
 │    │        └── ...                                                     │
 │    ▼                                                                    │
-│  main (с обеими фичами)                                                 │
+│  main (with both features)                                              │
 │                                                                         │
 └─────────────────────────────────────────────────────────────────────────┘
 ```
 
-### Именование веток
+### Branch Naming
 
 ```
 feature/{FID}-{slug}
 
-Примеры:
+Examples:
 - feature/F001-table-booking
 - feature/F042-oauth-auth
 - feature/F043-payments
 ```
 
-### Определение контекста фичи
+### Feature Context Detection
 
-AI автоматически определяет текущую фичу по git ветке:
+AI automatically determines the current feature by git branch:
 
 ```python
 def get_current_feature_context(state: dict) -> tuple[str, dict] | None:
     """
-    1. Получить текущую git ветку
-    2. Найти FID в active_pipelines по branch
-    3. Если одна активная фича — использовать её
-    4. Иначе — вернуть None (требуется явное указание)
+    1. Get current git branch
+    2. Find FID in active_pipelines by branch
+    3. If one active feature — use it
+    4. Otherwise — return None (explicit specification required)
     """
 ```
 
-### Изоляция ворот
+### Gate Isolation
 
-Каждая фича имеет свои ворота в `active_pipelines[FID].gates`:
+Each feature has its own gates in `active_pipelines[FID].gates`:
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│  ВОРОТА: Глобальные vs Локальные                                │
+│  GATES: Global vs Local                                          │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                 │
-│  ГЛОБАЛЬНЫЕ (один раз на проект):                               │
+│  GLOBAL (once per project):                                      │
 │  └── BOOTSTRAP_READY                                            │
 │                                                                 │
-│  ЛОКАЛЬНЫЕ (для каждой фичи отдельно):                          │
+│  LOCAL (separate for each feature):                              │
 │  ├── PRD_READY                                                  │
 │  ├── RESEARCH_DONE                                              │
 │  ├── PLAN_APPROVED                                              │
@@ -1099,100 +1099,100 @@ def get_current_feature_context(state: dict) -> tuple[str, dict] | None:
 └─────────────────────────────────────────────────────────────────┘
 ```
 
-### Завершение фичи
+### Feature Completion
 
-После `/aidd-validate` фича переносится из `active_pipelines` в `features_registry`:
+After `/aidd-validate`, the feature is moved from `active_pipelines` to `features_registry`:
 
 ```python
 def complete_feature_deploy(state: dict, fid: str):
     """
-    1. Отметить DEPLOYED в gates
-    2. Создать Completion Report (итоговый документ)
-    3. Добавить путь к completion в artifacts
-    4. Перенести в features_registry
-    5. Удалить из active_pipelines
+    1. Mark DEPLOYED in gates
+    2. Create Completion Report (final document)
+    3. Add completion path to artifacts
+    4. Move to features_registry
+    5. Remove from active_pipelines
     """
 ```
 
-> **Completion Report** — единый документ, который AI ОБЯЗАН читать при работе
-> с deployed фичами. Содержит: ADR, scope changes, known limitations, метрики.
-> **Путь**: `_validation/{date}_{FID}_{slug}.md`
+> **Completion Report** — a single document that AI MUST read when working
+> with deployed features. Contains: ADR, scope changes, known limitations, metrics.
+> **Path**: `_validation/{date}_{FID}_{slug}.md`
 
-### Git-хелперы
+### Git Helpers
 
 ```bash
-# Показать текущий контекст
+# Show current context
 python3 scripts/git_helpers.py context
 
-# Проверить конфликты между фичами
+# Check conflicts between features
 python3 scripts/git_helpers.py conflicts F042 F043
 
-# Завершить фичу и подготовить к merge
+# Complete feature and prepare for merge
 python3 scripts/git_helpers.py merge F042
 ```
 
-**Документация**: [knowledge/pipeline/git-integration.md](knowledge/pipeline/git-integration.md)
+**Documentation**: [knowledge/pipeline/git-integration.md](knowledge/pipeline/git-integration.md)
 
 ---
 
-## Версионирование артефактов (P-028)
+## Artifact Versioning (P-028)
 
-При итеративной разработке артефакты могут иметь версии.
+During iterative development, artifacts may have versions.
 
-### Именование версий
+### Version Naming
 
 ```
 ai-docs/docs/_analysis/
-├── booking.md               ← Текущая версия
-├── booking-v1.md            ← Архив v1
-└── booking-v2.md            ← Архив v2
+├── booking.md               ← Current version
+├── booking-v1.md            ← Archive v1
+└── booking-v2.md            ← Archive v2
 
 ai-docs/docs/_plans/mvp/
-├── booking.md               ← Текущая версия
-└── booking-v1.md            ← Архив v1
+├── booking.md               ← Current version
+└── booking-v1.md            ← Archive v1
 ```
 
-### Когда создавать версию
+### When to Create a Version
 
-| Ситуация | Действие |
-|----------|----------|
-| Изменение требований | Новая версия PRD |
-| Редизайн архитектуры | Новая версия плана |
-| Значительные изменения | Архивировать старую версию |
+| Situation | Action |
+|-----------|--------|
+| Requirements change | New PRD version |
+| Architecture redesign | New plan version |
+| Significant changes | Archive old version |
 
-### Алгоритм версионирования
+### Versioning Algorithm
 
 ```python
 def version_artifact(artifact_path: Path) -> Path:
     """
-    Создать версию артефакта перед значительным изменением.
+    Create an artifact version before significant changes.
 
     Args:
-        artifact_path: Путь к текущему артефакту
+        artifact_path: Path to current artifact
 
     Returns:
-        Path к заархивированной версии
+        Path to archived version
     """
-    # 1. Определить текущую версию
+    # 1. Determine current version
     versions = glob(f"{artifact_path.stem}-v*.md")
     next_version = len(versions) + 1
 
-    # 2. Создать архивную копию
+    # 2. Create archive copy
     archive_name = f"{artifact_path.stem}-v{next_version}.md"
     archive_path = artifact_path.parent / archive_name
 
-    # 3. Скопировать текущий в архив
+    # 3. Copy current to archive
     shutil.copy(artifact_path, archive_path)
 
-    # 4. Добавить заголовок в архив
+    # 4. Add header to archive
     content = archive_path.read_text()
-    header = f"<!-- Архивная версия v{next_version}. См. {artifact_path.name} -->\n\n"
+    header = f"<!-- Archive version v{next_version}. See {artifact_path.name} -->\n\n"
     archive_path.write_text(header + content)
 
     return archive_path
 ```
 
-### Обновление .pipeline-state.json
+### Updating .pipeline-state.json
 
 ```json
 {
@@ -1208,18 +1208,18 @@ def version_artifact(artifact_path: Path) -> Path:
 
 ---
 
-## Связанные документы
+## Related Documents
 
-| Документ | Описание |
-|----------|----------|
-| [CLAUDE.md](CLAUDE.md) | Главная точка входа |
-| [conventions.md](conventions.md) | Соглашения о коде |
-| [.claude/agents/](.claude/agents/) | Определения AI-ролей |
-| [.claude/commands/](.claude/commands/) | Определения команд |
+| Document | Description |
+|----------|-------------|
+| [CLAUDE.md](CLAUDE.md) | Main Entry Point |
+| [conventions.md](conventions.md) | Code Conventions |
+| [.claude/agents/](.claude/agents/) | AI Role Definitions |
+| [.claude/commands/](.claude/commands/) | Command Definitions |
 
 ---
 
-**Версия документа**: 1.2
-**Создан**: 2025-12-19
-**Обновлён**: 2025-12-25
-**Назначение**: Процесс разработки AIDD-MVP Generator
+**Document version**: 1.2
+**Created**: 2025-12-19
+**Updated**: 2025-12-25
+**Purpose**: AIDD-MVP Generator Development Process

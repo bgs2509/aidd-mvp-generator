@@ -1,13 +1,13 @@
-# Паттерны обработчиков Aiogram
+# Aiogram Handler Patterns
 
-> **Назначение**: Организация обработчиков сообщений.
+> **Purpose**: Organizing message handlers.
 
 ---
 
-## Базовый роутер
+## Basic Router
 
 ```python
-"""Обработчики команд."""
+"""Command handlers."""
 
 from aiogram import Router, F
 from aiogram.filters import Command, CommandStart
@@ -18,27 +18,27 @@ router = Router()
 
 @router.message(CommandStart())
 async def start_handler(message: Message) -> None:
-    """Обработать /start."""
-    await message.answer("Привет! Я бот для бронирования.")
+    """Handle /start."""
+    await message.answer("Hello! I'm a booking bot.")
 
 
 @router.message(Command("help"))
 async def help_handler(message: Message) -> None:
-    """Обработать /help."""
+    """Handle /help."""
     await message.answer(
-        "Доступные команды:\n"
-        "/start - Начать работу\n"
-        "/help - Помощь\n"
-        "/menu - Главное меню"
+        "Available commands:\n"
+        "/start - Get started\n"
+        "/help - Help\n"
+        "/menu - Main menu"
     )
 ```
 
 ---
 
-## Фильтры сообщений
+## Message Filters
 
 ```python
-"""Различные фильтры сообщений."""
+"""Various message filters."""
 
 from aiogram import Router, F
 from aiogram.types import Message
@@ -46,48 +46,48 @@ from aiogram.types import Message
 router = Router()
 
 
-# Текстовые сообщения
-@router.message(F.text == "Меню")
+# Text messages
+@router.message(F.text == "Menu")
 async def menu_text_handler(message: Message) -> None:
-    """Обработать текст 'Меню'."""
-    await message.answer("Открываю меню...")
+    """Handle text 'Menu'."""
+    await message.answer("Opening menu...")
 
 
-# Содержит текст
-@router.message(F.text.contains("привет"))
+# Contains text
+@router.message(F.text.contains("hello"))
 async def hello_handler(message: Message) -> None:
-    """Обработать сообщение с 'привет'."""
-    await message.answer("Привет!")
+    """Handle message containing 'hello'."""
+    await message.answer("Hello!")
 
 
-# Регулярное выражение
+# Regular expression
 @router.message(F.text.regexp(r"^\d{4}$"))
 async def code_handler(message: Message) -> None:
-    """Обработать 4-значный код."""
+    """Handle 4-digit code."""
     code = message.text
-    await message.answer(f"Получен код: {code}")
+    await message.answer(f"Code received: {code}")
 
 
-# Фото
+# Photo
 @router.message(F.photo)
 async def photo_handler(message: Message) -> None:
-    """Обработать фото."""
-    await message.answer("Фото получено!")
+    """Handle photo."""
+    await message.answer("Photo received!")
 
 
-# Документ
+# Document
 @router.message(F.document)
 async def document_handler(message: Message) -> None:
-    """Обработать документ."""
-    await message.answer(f"Документ: {message.document.file_name}")
+    """Handle document."""
+    await message.answer(f"Document: {message.document.file_name}")
 ```
 
 ---
 
-## Callback обработчики
+## Callback Handlers
 
 ```python
-"""Обработчики callback query."""
+"""Callback query handlers."""
 
 from aiogram import Router, F
 from aiogram.types import CallbackQuery
@@ -95,26 +95,26 @@ from aiogram.types import CallbackQuery
 router = Router()
 
 
-# Точное совпадение
+# Exact match
 @router.callback_query(F.data == "menu")
 async def menu_callback(callback: CallbackQuery) -> None:
-    """Обработать нажатие кнопки 'menu'."""
+    """Handle 'menu' button press."""
     await callback.answer()
-    await callback.message.edit_text("Главное меню")
+    await callback.message.edit_text("Main menu")
 
 
-# Префикс
+# Prefix
 @router.callback_query(F.data.startswith("order:"))
 async def order_callback(callback: CallbackQuery) -> None:
-    """Обработать callback заказа."""
+    """Handle order callback."""
     order_id = callback.data.split(":")[1]
     await callback.answer()
-    await callback.message.edit_text(f"Заказ: {order_id}")
+    await callback.message.edit_text(f"Order: {order_id}")
 
 
-# Кастомный фильтр
+# Custom filter
 class OrderCallbackData:
-    """Фильтр для callback заказов."""
+    """Filter for order callbacks."""
 
     def __init__(self, action: str):
         self.action = action
@@ -128,8 +128,8 @@ class OrderCallbackData:
 
 @router.callback_query(OrderCallbackData("confirm"))
 async def confirm_order(callback: CallbackQuery) -> None:
-    """Подтвердить заказ."""
-    await callback.answer("Заказ подтверждён!")
+    """Confirm order."""
+    await callback.answer("Order confirmed!")
 ```
 
 ---
@@ -137,7 +137,7 @@ async def confirm_order(callback: CallbackQuery) -> None:
 ## Callback Data Factory
 
 ```python
-"""Использование CallbackData."""
+"""Using CallbackData."""
 
 from aiogram import Router, F
 from aiogram.filters.callback_data import CallbackData
@@ -145,7 +145,7 @@ from aiogram.types import CallbackQuery, InlineKeyboardButton, InlineKeyboardMar
 
 
 class OrderAction(CallbackData, prefix="order"):
-    """Callback data для действий с заказом."""
+    """Callback data for order actions."""
 
     action: str
     order_id: int
@@ -156,26 +156,26 @@ router = Router()
 
 def get_order_keyboard(order_id: int) -> InlineKeyboardMarkup:
     """
-    Создать клавиатуру заказа.
+    Create order keyboard.
 
     Args:
-        order_id: ID заказа.
+        order_id: Order ID.
 
     Returns:
-        Inline клавиатура.
+        Inline keyboard.
     """
     return InlineKeyboardMarkup(
         inline_keyboard=[
             [
                 InlineKeyboardButton(
-                    text="✅ Подтвердить",
+                    text="Confirm",
                     callback_data=OrderAction(
                         action="confirm",
                         order_id=order_id,
                     ).pack(),
                 ),
                 InlineKeyboardButton(
-                    text="❌ Отменить",
+                    text="Cancel",
                     callback_data=OrderAction(
                         action="cancel",
                         order_id=order_id,
@@ -192,15 +192,15 @@ async def confirm_order(
     callback_data: OrderAction,
 ) -> None:
     """
-    Подтвердить заказ.
+    Confirm order.
 
     Args:
         callback: Callback query.
-        callback_data: Распарсенные данные.
+        callback_data: Parsed data.
     """
-    await callback.answer("Подтверждаю...")
+    await callback.answer("Confirming...")
     await callback.message.edit_text(
-        f"Заказ #{callback_data.order_id} подтверждён!"
+        f"Order #{callback_data.order_id} confirmed!"
     )
 
 
@@ -210,24 +210,24 @@ async def cancel_order(
     callback_data: OrderAction,
 ) -> None:
     """
-    Отменить заказ.
+    Cancel order.
 
     Args:
         callback: Callback query.
-        callback_data: Распарсенные данные.
+        callback_data: Parsed data.
     """
-    await callback.answer("Отменяю...")
+    await callback.answer("Cancelling...")
     await callback.message.edit_text(
-        f"Заказ #{callback_data.order_id} отменён!"
+        f"Order #{callback_data.order_id} cancelled!"
     )
 ```
 
 ---
 
-## Доступ к зависимостям
+## Accessing Dependencies
 
 ```python
-"""Доступ к зависимостям через workflow_data."""
+"""Accessing dependencies via workflow_data."""
 
 from aiogram import Router
 from aiogram.types import Message
@@ -240,45 +240,45 @@ router = Router()
 @router.message(Command("orders"))
 async def list_orders(
     message: Message,
-    api_client: BusinessApiClient,  # Инъекция из workflow_data
+    api_client: BusinessApiClient,  # Injected from workflow_data
 ) -> None:
     """
-    Показать список заказов.
+    Show order list.
 
     Args:
-        message: Входящее сообщение.
-        api_client: HTTP клиент.
+        message: Incoming message.
+        api_client: HTTP client.
     """
     user_id = message.from_user.id
     orders = await api_client.get_user_orders(user_id)
 
     if not orders:
-        await message.answer("У вас нет заказов.")
+        await message.answer("You have no orders.")
         return
 
-    text = "Ваши заказы:\n\n"
+    text = "Your orders:\n\n"
     for order in orders:
-        text += f"• #{order['id']} - {order['status']}\n"
+        text += f"- #{order['id']} - {order['status']}\n"
 
     await message.answer(text)
 ```
 
 ---
 
-## Организация роутеров
+## Router Organization
 
 ```python
-"""Организация роутеров по модулям."""
+"""Organizing routers by module."""
 
 # handlers/__init__.py
 from aiogram import Router
 
 from . import start, menu, orders, profile
 
-# Главный роутер
+# Main router
 main_router = Router()
 
-# Подключение модулей
+# Include modules
 main_router.include_router(start.router)
 main_router.include_router(menu.router)
 main_router.include_router(orders.router)
@@ -294,11 +294,11 @@ dp.include_router(main_router)
 
 ---
 
-## Правила
+## Rules
 
-| Элемент | Файл | Пример |
-|---------|------|--------|
-| Команды | `start.py` | /start, /help |
-| Меню | `menu.py` | Главное меню |
-| Фича | `{feature}_handlers.py` | orders_handlers.py |
-| Callback | В том же файле | order:confirm |
+| Element | File | Example |
+|---------|------|---------|
+| Commands | `start.py` | /start, /help |
+| Menu | `menu.py` | Main menu |
+| Feature | `{feature}_handlers.py` | orders_handlers.py |
+| Callback | Same file | order:confirm |

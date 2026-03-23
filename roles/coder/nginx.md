@@ -1,45 +1,45 @@
-# Функция: Nginx (Level ≥ 3)
+# Function: Nginx (Level >= 3)
 
-> **Назначение**: Настройка Nginx как reverse proxy.
+> **Purpose**: Setting up Nginx as a reverse proxy.
 
 ---
 
-## Уровень применения
+## Applicability Level
 
 ```
-Level 2 (MVP): НЕ ТРЕБУЕТСЯ
-Level 3+:      ОБЯЗАТЕЛЬНО
+Level 2 (MVP): NOT REQUIRED
+Level 3+:      MANDATORY
 ```
 
 ---
 
-## Цель
+## Goal
 
-Настроить Nginx как reverse proxy и API gateway
-для production окружения.
+Set up Nginx as a reverse proxy and API gateway
+for the production environment.
 
 ---
 
-## Когда применяется
+## When to Apply
 
 ```
 if MATURITY_LEVEL >= 3:
-    → Добавить Nginx
-    → Настроить SSL
-    → Настроить rate limiting
+    → Add Nginx
+    → Configure SSL
+    → Configure rate limiting
 else:
-    → Пропустить (прямой доступ к API)
+    → Skip (direct API access)
 ```
 
 ---
 
-## Компоненты
+## Components
 
-### 1. nginx.conf (базовая конфигурация)
+### 1. nginx.conf (base configuration)
 
 ```nginx
 # nginx.conf
-# Конфигурация Nginx для {context}
+# Nginx configuration for {context}
 
 worker_processes auto;
 error_log /var/log/nginx/error.log warn;
@@ -55,7 +55,7 @@ http {
     include /etc/nginx/mime.types;
     default_type application/octet-stream;
 
-    # Логирование
+    # Logging
     log_format json escape=json '{'
         '"time": "$time_iso8601",'
         '"remote_addr": "$remote_addr",'
@@ -72,7 +72,7 @@ http {
 
     access_log /var/log/nginx/access.log json;
 
-    # Оптимизации
+    # Optimizations
     sendfile on;
     tcp_nopush on;
     tcp_nodelay on;
@@ -90,7 +90,7 @@ http {
     limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/s;
     limit_conn_zone $binary_remote_addr zone=conn_limit:10m;
 
-    # Upstream сервисы
+    # Upstream services
     upstream business_api {
         server {context}-api:8000;
         keepalive 32;
@@ -101,19 +101,19 @@ http {
         keepalive 32;
     }
 
-    # Основной сервер
+    # Main server
     server {
         listen 80;
         server_name _;
 
-        # Редирект на HTTPS (для production)
+        # Redirect to HTTPS (for production)
         # return 301 https://$host$request_uri;
 
-        # Или прямой proxy (для development)
+        # Or direct proxy (for development)
         include /etc/nginx/conf.d/locations.conf;
     }
 
-    # HTTPS сервер (для production)
+    # HTTPS server (for production)
     # server {
     #     listen 443 ssl http2;
     #     server_name example.com;
@@ -129,13 +129,13 @@ http {
 }
 ```
 
-### 2. locations.conf (маршруты)
+### 2. locations.conf (routes)
 
 ```nginx
 # /etc/nginx/conf.d/locations.conf
-# Маршруты API
+# API routes
 
-# Генерация Request ID
+# Request ID generation
 set $request_id $request_id;
 if ($http_x_request_id) {
     set $request_id $http_x_request_id;
@@ -161,7 +161,7 @@ location /api/v1/ {
     proxy_set_header X-Forwarded-Proto $scheme;
     proxy_set_header X-Request-ID $request_id;
 
-    # Proxy настройки
+    # Proxy settings
     proxy_connect_timeout 30s;
     proxy_send_timeout 60s;
     proxy_read_timeout 60s;
@@ -175,9 +175,9 @@ location /api/v1/ {
     proxy_set_header Connection "";
 }
 
-# Data API (только внутренний доступ)
+# Data API (internal access only)
 location /internal/data/ {
-    # Запретить внешний доступ
+    # Deny external access
     allow 10.0.0.0/8;
     allow 172.16.0.0/12;
     allow 192.168.0.0/16;
@@ -192,7 +192,7 @@ location /internal/data/ {
     proxy_set_header Connection "";
 }
 
-# Документация API (OpenAPI)
+# API documentation (OpenAPI)
 location /docs {
     proxy_pass http://business_api/docs;
     proxy_set_header Host $host;
@@ -203,14 +203,14 @@ location /openapi.json {
     proxy_set_header Host $host;
 }
 
-# Статика (если есть)
+# Static files (if any)
 location /static/ {
     alias /var/www/static/;
     expires 30d;
     add_header Cache-Control "public, immutable";
 }
 
-# Обработка ошибок
+# Error handling
 error_page 500 502 503 504 /50x.html;
 location = /50x.html {
     root /usr/share/nginx/html;
@@ -218,17 +218,17 @@ location = /50x.html {
 }
 ```
 
-### 3. Dockerfile для Nginx
+### 3. Dockerfile for Nginx
 
 ```dockerfile
 # nginx/Dockerfile
 FROM nginx:1.25-alpine
 
-# Копирование конфигурации
+# Copy configuration
 COPY nginx.conf /etc/nginx/nginx.conf
 COPY conf.d/ /etc/nginx/conf.d/
 
-# SSL сертификаты (для production)
+# SSL certificates (for production)
 # COPY ssl/ /etc/nginx/ssl/
 
 # Health check
@@ -238,10 +238,10 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
 EXPOSE 80 443
 ```
 
-### 4. docker-compose сервис
+### 4. docker-compose Service
 
 ```yaml
-# docker-compose.yml (добавить к существующему)
+# docker-compose.yml (add to existing)
 
 services:
   nginx:
@@ -257,33 +257,33 @@ services:
       - {context}-network
     restart: unless-stopped
     volumes:
-      # Для development - live reload конфигурации
+      # For development - live reload configuration
       # - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
       # - ./nginx/conf.d:/etc/nginx/conf.d:ro
-      # SSL сертификаты
+      # SSL certificates
       # - ./nginx/ssl:/etc/nginx/ssl:ro
-      # Статические файлы
+      # Static files
       # - ./static:/var/www/static:ro
       pass
 ```
 
-### 5. SSL конфигурация (Level 3+)
+### 5. SSL Configuration (Level 3+)
 
 ```nginx
 # /etc/nginx/conf.d/ssl.conf
-# SSL настройки
+# SSL settings
 
-# SSL сессии
+# SSL sessions
 ssl_session_timeout 1d;
 ssl_session_cache shared:SSL:50m;
 ssl_session_tickets off;
 
-# Современные протоколы
+# Modern protocols
 ssl_protocols TLSv1.2 TLSv1.3;
 ssl_ciphers ECDHE-ECDSA-AES128-GCM-SHA256:ECDHE-RSA-AES128-GCM-SHA256:ECDHE-ECDSA-AES256-GCM-SHA384:ECDHE-RSA-AES256-GCM-SHA384:ECDHE-ECDSA-CHACHA20-POLY1305:ECDHE-RSA-CHACHA20-POLY1305:DHE-RSA-AES128-GCM-SHA256:DHE-RSA-AES256-GCM-SHA384;
 ssl_prefer_server_ciphers off;
 
-# HSTS (раскомментировать для production)
+# HSTS (uncomment for production)
 # add_header Strict-Transport-Security "max-age=63072000" always;
 
 # OCSP Stapling
@@ -295,7 +295,7 @@ resolver_timeout 5s;
 
 ---
 
-## Структура директорий
+## Directory Structure
 
 ```
 nginx/
@@ -313,24 +313,24 @@ nginx/
 
 ## Rate Limiting
 
-### Настройка зон
+### Zone Configuration
 
 ```nginx
-# В http блоке
+# In http block
 limit_req_zone $binary_remote_addr zone=api_limit:10m rate=10r/s;
 limit_req_zone $binary_remote_addr zone=auth_limit:10m rate=5r/s;
 ```
 
-### Применение к locations
+### Applying to Locations
 
 ```nginx
-# Общий API - 10 запросов в секунду
+# General API - 10 requests per second
 location /api/v1/ {
     limit_req zone=api_limit burst=20 nodelay;
     ...
 }
 
-# Авторизация - 5 запросов в секунду
+# Authorization - 5 requests per second
 location /api/v1/auth/ {
     limit_req zone=auth_limit burst=10 nodelay;
     ...
@@ -342,24 +342,24 @@ location /api/v1/auth/ {
 ## Security Headers
 
 ```nginx
-# В server или location блоке
+# In server or location block
 add_header X-Frame-Options "SAMEORIGIN" always;
 add_header X-Content-Type-Options "nosniff" always;
 add_header X-XSS-Protection "1; mode=block" always;
 add_header Referrer-Policy "strict-origin-when-cross-origin" always;
 
-# Для API (убрать для статики)
+# For API (remove for static files)
 add_header Content-Security-Policy "default-src 'none'" always;
 ```
 
 ---
 
-## Мониторинг
+## Monitoring
 
-### Status endpoint
+### Status Endpoint
 
 ```nginx
-# Добавить в server блок
+# Add to server block
 location /nginx_status {
     stub_status;
     allow 127.0.0.1;
@@ -370,25 +370,25 @@ location /nginx_status {
 
 ---
 
-## Качественные ворота
+## Quality Gates
 
 ### NGINX_READY (Level 3+)
 
-- [ ] nginx.conf создан и валиден
-- [ ] Locations настроены для всех сервисов
-- [ ] Rate limiting настроен
-- [ ] SSL настроен (если production)
-- [ ] Security headers добавлены
-- [ ] `docker-compose up nginx` запускается
-- [ ] Health check проходит
-- [ ] API доступен через Nginx
+- [ ] nginx.conf created and valid
+- [ ] Locations configured for all services
+- [ ] Rate limiting configured
+- [ ] SSL configured (if production)
+- [ ] Security headers added
+- [ ] `docker-compose up nginx` starts successfully
+- [ ] Health check passes
+- [ ] API is accessible through Nginx
 
 ---
 
-## Источники
+## References
 
-| Документ | Описание |
-|----------|----------|
-| `knowledge/infrastructure/nginx.md` | Настройка Nginx |
-| `knowledge/infrastructure/ssl.md` | SSL конфигурация |
-| `templates/infrastructure/nginx/` | Шаблоны |
+| Document | Description |
+|----------|-------------|
+| `knowledge/infrastructure/nginx.md` | Nginx setup |
+| `knowledge/infrastructure/ssl.md` | SSL configuration |
+| `templates/infrastructure/nginx/` | Templates |

@@ -1,71 +1,71 @@
-# Функция: Проверка Quality Gates
+# Function: Quality Gates Verification
 
-> **Назначение**: Верификация прохождения всех качественных ворот.
-
----
-
-## Цель
-
-Проверить, что все качественные ворота пайплайна
-были успешно пройдены перед релизом.
+> **Purpose**: Verifying that all Quality Gates have been passed.
 
 ---
 
-## Качественные ворота AIDD-MVP
+## Goal
 
-### Полный список ворот
-
-| # | Ворота | Этап | Описание |
-|---|--------|------|----------|
-| 1 | PRD_READY | Анализ | PRD документ готов |
-| 2 | RESEARCH_DONE | Исследование | Анализ кода завершён |
-| 3 | PLAN_APPROVED | Архитектура | План утверждён |
-| 4 | IMPLEMENT_OK | Реализация | Код написан |
-| 5 | REVIEW_OK | Ревью | Код прошёл ревью |
-| 6 | QA_PASSED | Тестирование | Тесты прошли |
-| 7 | ALL_GATES_PASSED | Валидация | Всё проверено |
-| 8 | DEPLOYED | Деплой | Задеплоено |
+Verify that all pipeline Quality Gates
+have been successfully passed before release.
 
 ---
 
-## Критерии каждых ворот
+## AIDD-MVP Quality Gates
+
+### Full List of Gates
+
+| # | Gate | Stage | Description |
+|---|------|-------|-------------|
+| 1 | PRD_READY | Analysis | PRD document is ready |
+| 2 | RESEARCH_DONE | Research | Code analysis completed |
+| 3 | PLAN_APPROVED | Architecture | Plan approved |
+| 4 | IMPLEMENT_OK | Implementation | Code written |
+| 5 | REVIEW_OK | Review | Code passed review |
+| 6 | QA_PASSED | Testing | Tests passed |
+| 7 | ALL_GATES_PASSED | Validation | Everything verified |
+| 8 | DEPLOYED | Deploy | Deployed |
+
+---
+
+## Criteria for Each Gate
 
 ### 1. PRD_READY
 
 ```markdown
-Критерии:
-- [ ] Все секции PRD заполнены
-- [ ] Требования имеют уникальные ID
-- [ ] Приоритеты расставлены (Must/Should/Could)
-- [ ] Критерии приёмки определены для Must
-- [ ] Нет блокирующих открытых вопросов
+Criteria:
+- [ ] All PRD sections filled in
+- [ ] Requirements have unique IDs
+- [ ] Priorities set (Must/Should/Could)
+- [ ] Acceptance criteria defined for Must
+- [ ] No blocking open questions
 
-Артефакт: ai-docs/docs/_analysis/{name}-prd.md
+Artifact: ai-docs/docs/_analysis/{name}-prd.md
 ```
 
 ### 2. RESEARCH_DONE
 
 ```markdown
-Критерии:
-- [ ] Структура кода проанализирована
-- [ ] Паттерны идентифицированы
-- [ ] Ограничения выявлены
-- [ ] Пайплайн уточнён
+Criteria:
+- [ ] Code structure analyzed
+- [ ] Patterns identified
+- [ ] Constraints identified
+- [ ] Pipeline refined
 
-Артефакт: ai-docs/docs/research/{name}-research.md
+Artifact: ai-docs/docs/research/{name}-research.md
 ```
 
 ### 3. PLAN_APPROVED
 
 ```markdown
-Критерии:
-- [ ] Архитектура спроектирована
-- [ ] Компоненты определены
-- [ ] API контракты описаны
-- [ ] Implementation Plan создан
-- [ ] Трассировка требований есть
+Criteria:
+- [ ] Architecture designed
+- [ ] Components defined
+- [ ] API contracts described
+- [ ] Implementation Plan created
+- [ ] Requirements traceability exists
 
-Артефакты:
+Artifacts:
 - ai-docs/docs/_plans/mvp/{name}-arch.md
 - ai-docs/docs/_plans/features/{name}-plan.md
 ```
@@ -73,96 +73,96 @@
 ### 4. IMPLEMENT_OK
 
 ```markdown
-Критерии:
-- [ ] Все сервисы созданы по плану
-- [ ] Код соответствует архитектуре
-- [ ] Docker compose работает
-- [ ] Health checks проходят
-- [ ] Базовые тесты написаны
+Criteria:
+- [ ] All services created per plan
+- [ ] Code matches architecture
+- [ ] Docker compose works
+- [ ] Health checks pass
+- [ ] Basic tests written
 
-Артефакт: services/
+Artifact: services/
 ```
 
 ### 5. REVIEW_OK
 
 ```markdown
-Критерии:
-- [ ] Архитектурные принципы соблюдены
-- [ ] Конвенции соблюдены
-- [ ] Нет критических проблем
-- [ ] Автоматические проверки проходят
+Criteria:
+- [ ] Architectural principles followed
+- [ ] Conventions followed
+- [ ] No critical issues
+- [ ] Automated checks pass
 
-Артефакт: ai-docs/docs/_validation/review-report.md
+Artifact: ai-docs/docs/_validation/review-report.md
 ```
 
 ### 6. QA_PASSED
 
 ```markdown
-Критерии:
-- [ ] 100% тестов проходят
+Criteria:
+- [ ] 100% of tests pass
 - [ ] Coverage ≥75%
-- [ ] 100% Must требований покрыто тестами
-- [ ] Нет критических дефектов
-- [ ] CI pipeline проходит (если настроен)
+- [ ] 100% of Must requirements covered by tests
+- [ ] No critical defects
+- [ ] CI pipeline passes (if configured)
 
-Артефакт: ai-docs/docs/_validation/qa-report.md
+Artifact: ai-docs/docs/_validation/qa-report.md
 ```
 
 ### 7. ALL_GATES_PASSED
 
 ```markdown
-Критерии:
-- [ ] Все предыдущие ворота пройдены
-- [ ] RTM актуальна и полна
-- [ ] Все артефакты на месте
-- [ ] Нет открытых блокирующих вопросов
+Criteria:
+- [ ] All previous gates passed
+- [ ] RTM is up to date and complete
+- [ ] All artifacts are in place
+- [ ] No open blocking questions
 
-Артефакт: ai-docs/docs/_validation/validation-report.md
+Artifact: ai-docs/docs/_validation/validation-report.md
 ```
 
 ### 8. DEPLOYED
 
 ```markdown
-Критерии:
-- [ ] Приложение задеплоено
-- [ ] Smoke тесты прошли
-- [ ] Мониторинг настроен (Level 3+)
+Criteria:
+- [ ] Application deployed
+- [ ] Smoke tests passed
+- [ ] Monitoring configured (Level 3+)
 
-Артефакт: Deployment URL / CI/CD logs
+Artifact: Deployment URL / CI/CD logs
 ```
 
 ---
 
-## Процесс верификации
+## Verification Process
 
-### Шаг 1: Проверка артефактов
+### Step 1: Checking Artifacts
 
 ```bash
-# Проверить наличие всех артефактов
+# Check for all artifacts
 
 # PRD
 ls ai-docs/docs/_analysis/
 
-# Архитектура
+# Architecture
 ls ai-docs/docs/_plans/mvp/
 
-# План
+# Plan
 ls ai-docs/docs/_plans/features/
 
-# Отчёты
+# Reports
 ls ai-docs/docs/_validation/
 
 # RTM
 cat ai-docs/docs/rtm.md
 ```
 
-### Шаг 2: Проверка статусов
+### Step 2: Checking Statuses
 
 ```markdown
-## Статус ворот
+## Gate Status
 
-| Ворота | Артефакт | Статус | Дата |
-|--------|----------|--------|------|
+| Gate | Artifact | Status | Date |
+|------|----------|--------|------|
 | PRD_READY | prd.md | ✓ | 2024-01-10 |
 | RESEARCH_DONE | research.md | ✓ | 2024-01-10 |
 | PLAN_APPROVED | plan.md | ✓ | 2024-01-11 |
@@ -171,10 +171,10 @@ cat ai-docs/docs/rtm.md
 | QA_PASSED | qa-report.md | ✓ | 2024-01-15 |
 ```
 
-### Шаг 3: Валидация каждых ворот
+### Step 3: Validating Each Gate
 
 ```python
-# Псевдокод валидации
+# Validation pseudocode
 
 def validate_prd_ready():
     prd = read("ai-docs/docs/_analysis/*.md")
@@ -210,17 +210,17 @@ def validate_all_gates():
 
 ---
 
-## Результат проверки
+## Verification Result
 
 ```markdown
-## Верификация Quality Gates
+## Quality Gates Verification
 
-### Общий статус: ALL_GATES_PASSED / BLOCKED
+### Overall Status: ALL_GATES_PASSED / BLOCKED
 
-### Детальный статус
+### Detailed Status
 
-| Ворота | Статус | Артефакт | Комментарий |
-|--------|--------|----------|-------------|
+| Gate | Status | Artifact | Comment |
+|------|--------|----------|---------|
 | PRD_READY | ✓ PASSED | prd.md | — |
 | RESEARCH_DONE | ✓ PASSED | research.md | — |
 | PLAN_APPROVED | ✓ PASSED | plan.md | — |
@@ -228,34 +228,34 @@ def validate_all_gates():
 | REVIEW_OK | ✓ PASSED | review-report.md | — |
 | QA_PASSED | ✓ PASSED | qa-report.md | — |
 
-### Блокирующие проблемы
+### Blocking Issues
 
-| # | Ворота | Проблема | Действие |
-|---|--------|----------|----------|
-| — | — | Нет блокирующих проблем | — |
+| # | Gate | Issue | Action |
+|---|------|-------|--------|
+| — | — | No blocking issues | — |
 ```
 
 ---
 
-## Критерии прохождения
+## Passing Criteria
 
 ```
 ALL_GATES_PASSED:
-- Все 6 ворот (PRD → QA) пройдены
-- Все артефакты существуют и актуальны
-- Нет блокирующих проблем
+- All 6 gates (PRD → QA) passed
+- All artifacts exist and are up to date
+- No blocking issues
 
 BLOCKED:
-- Хотя бы одни ворота не пройдены
-- Отсутствует обязательный артефакт
-- Есть блокирующие проблемы
+- At least one gate not passed
+- A required artifact is missing
+- There are blocking issues
 ```
 
 ---
 
-## Источники
+## Sources
 
-| Документ | Описание |
-|----------|----------|
-| `workflow.md` | Описание ворот |
-| `.claude/settings.json` | Хуки для проверки |
+| Document | Description |
+|----------|-------------|
+| `workflow.md` | Gates description |
+| `.claude/settings.json` | Hooks for verification |

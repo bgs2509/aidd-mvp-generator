@@ -1,254 +1,254 @@
-# Именование в Python
+# Python Naming
 
-> **Назначение**: Правила именования в Python коде.
+> **Purpose**: Naming rules for Python code.
 
 ---
 
-## Сводная таблица
+## Summary Table
 
-| Элемент | Стиль | Пример |
+| Element | Style | Example |
 |---------|-------|--------|
-| Пакет | snake_case | `booking_api` |
-| Модуль | snake_case | `user_service.py` |
-| Класс | PascalCase | `UserService` |
-| Функция | snake_case | `create_user` |
-| Метод | snake_case | `get_by_id` |
-| Переменная | snake_case | `user_id` |
-| Константа | UPPER_SNAKE | `MAX_RETRIES` |
-| Приватный | _prefix | `_internal_method` |
+| Package | snake_case | `booking_api` |
+| Module | snake_case | `user_service.py` |
+| Class | PascalCase | `UserService` |
+| Function | snake_case | `create_user` |
+| Method | snake_case | `get_by_id` |
+| Variable | snake_case | `user_id` |
+| Constant | UPPER_SNAKE | `MAX_RETRIES` |
+| Private | _prefix | `_internal_method` |
 | Protected | _prefix | `_calculate_total` |
 | Type Variable | PascalCase | `T`, `ModelType` |
 
 ---
 
-## Классы
+## Classes
 
-### Сервисы
+### Services
 
 ```python
-# Паттерн: {Entity}Service
+# Pattern: {Entity}Service
 class UserService:
-    """Сервис пользователей."""
+    """User service."""
     pass
 
 class OrderService:
-    """Сервис заказов."""
+    """Order service."""
     pass
 
 class RestaurantService:
-    """Сервис ресторанов."""
+    """Restaurant service."""
     pass
 ```
 
-### Репозитории
+### Repositories
 
 ```python
-# Паттерн: {Entity}Repository
+# Pattern: {Entity}Repository
 class UserRepository:
-    """Репозиторий пользователей."""
+    """User repository."""
     pass
 
 class OrderRepository:
-    """Репозиторий заказов."""
+    """Order repository."""
     pass
 ```
 
-### HTTP клиенты
+### HTTP Clients
 
 ```python
-# Паттерн: {Service}Client или {Service}ApiClient
+# Pattern: {Service}Client or {Service}ApiClient
 class DataApiClient:
-    """Клиент для Data API."""
+    """Client for Data API."""
     pass
 
 class BusinessApiClient:
-    """Клиент для Business API."""
+    """Client for Business API."""
     pass
 ```
 
-### Исключения
+### Exceptions
 
 ```python
-# Паттерн: {Name}Error
+# Pattern: {Name}Error
 class NotFoundError(Exception):
-    """Ресурс не найден."""
+    """Resource not found."""
     pass
 
 class ValidationError(Exception):
-    """Ошибка валидации."""
+    """Validation error."""
     pass
 
 class DataApiError(Exception):
-    """Ошибка Data API."""
+    """Data API error."""
     pass
 ```
 
-### Pydantic схемы
+### Pydantic Schemas
 
 ```python
-# Паттерн: {Entity}{Action}
+# Pattern: {Entity}{Action}
 class UserCreate(BaseModel):
-    """Схема создания пользователя."""
+    """User creation schema."""
     pass
 
 class UserUpdate(BaseModel):
-    """Схема обновления пользователя."""
+    """User update schema."""
     pass
 
 class UserResponse(BaseModel):
-    """Схема ответа с пользователем."""
+    """User response schema."""
     pass
 
 class UserListResponse(BaseModel):
-    """Схема списка пользователей."""
+    """User list schema."""
     pass
 ```
 
 ### DTO (Data Transfer Objects)
 
 ```python
-# Паттерн: {Action}{Entity}DTO
+# Pattern: {Action}{Entity}DTO
 class CreateUserDTO(BaseModel):
-    """DTO для создания пользователя."""
+    """DTO for user creation."""
     pass
 
 class UpdateUserDTO(BaseModel):
-    """DTO для обновления пользователя."""
+    """DTO for user update."""
     pass
 
 class UserDTO(BaseModel):
-    """DTO пользователя."""
+    """User DTO."""
     pass
 ```
 
 ---
 
-## Функции и методы
+## Functions and Methods
 
-### CRUD операции
+### CRUD Operations
 
 ```python
-# Паттерн: {action}_{entity}
+# Pattern: {action}_{entity}
 async def create_user(data: UserCreate) -> User:
-    """Создать пользователя."""
+    """Create a user."""
     pass
 
 async def get_user(user_id: UUID) -> User:
-    """Получить пользователя."""
+    """Get a user."""
     pass
 
 async def update_user(user_id: UUID, data: UserUpdate) -> User:
-    """Обновить пользователя."""
+    """Update a user."""
     pass
 
 async def delete_user(user_id: UUID) -> None:
-    """Удалить пользователя."""
+    """Delete a user."""
     pass
 
 async def list_users(page: int = 1) -> list[User]:
-    """Получить список пользователей."""
+    """Get a list of users."""
     pass
 ```
 
-### Репозиторий методы
+### Repository Methods
 
 ```python
 class UserRepository:
     async def get_by_id(self, user_id: UUID) -> User | None:
-        """Получить по ID."""
+        """Get by ID."""
         pass
 
     async def get_by_email(self, email: str) -> User | None:
-        """Получить по email."""
+        """Get by email."""
         pass
 
     async def get_all(self, offset: int = 0, limit: int = 100) -> list[User]:
-        """Получить все записи."""
+        """Get all records."""
         pass
 
     async def create(self, **kwargs) -> User:
-        """Создать запись."""
+        """Create a record."""
         pass
 
     async def update(self, user_id: UUID, **kwargs) -> User | None:
-        """Обновить запись."""
+        """Update a record."""
         pass
 
     async def delete(self, user_id: UUID) -> bool:
-        """Удалить запись."""
+        """Delete a record."""
         pass
 
     async def count(self) -> int:
-        """Подсчитать записи."""
+        """Count records."""
         pass
 
     async def exists(self, user_id: UUID) -> bool:
-        """Проверить существование."""
+        """Check existence."""
         pass
 ```
 
-### Валидация
+### Validation
 
 ```python
-# Паттерн: validate_{what} или is_{condition}
+# Pattern: validate_{what} or is_{condition}
 def validate_email(email: str) -> bool:
-    """Валидировать email."""
+    """Validate email."""
     pass
 
 def is_valid_phone(phone: str) -> bool:
-    """Проверить телефон."""
+    """Check phone number."""
     pass
 
 async def check_user_exists(user_id: UUID) -> bool:
-    """Проверить существование пользователя."""
+    """Check user existence."""
     pass
 ```
 
-### Приватные методы
+### Private Methods
 
 ```python
 class OrderService:
     async def create_order(self, data: CreateOrderDTO) -> Order:
-        """Публичный метод."""
+        """Public method."""
         await self._validate_items(data.items)
         total = self._calculate_total(data.items)
         return await self._save_order(data, total)
 
     async def _validate_items(self, items: list) -> None:
-        """Приватная валидация."""
+        """Private validation."""
         pass
 
     def _calculate_total(self, items: list) -> Decimal:
-        """Приватный расчёт."""
+        """Private calculation."""
         pass
 
     async def _save_order(self, data, total) -> Order:
-        """Приватное сохранение."""
+        """Private save."""
         pass
 ```
 
 ---
 
-## Переменные
+## Variables
 
-### Общие правила
+### General Rules
 
 ```python
-# snake_case для переменных
+# snake_case for variables
 user_id = UUID("...")
 order_items = []
 total_amount = Decimal("0")
 is_active = True
 has_permission = False
 
-# UPPER_SNAKE для констант
+# UPPER_SNAKE for constants
 MAX_RETRIES = 3
 DEFAULT_PAGE_SIZE = 20
 API_VERSION = "v1"
 HTTP_TIMEOUT = 30.0
 ```
 
-### Типизация
+### Typing
 
 ```python
 from typing import TypeVar
@@ -259,7 +259,7 @@ T = TypeVar("T")
 ModelType = TypeVar("ModelType", bound=Base)
 EntityType = TypeVar("EntityType")
 
-# Типизированные переменные
+# Typed variables
 user_ids: list[UUID] = []
 settings: dict[str, str] = {}
 optional_name: str | None = None
@@ -267,9 +267,9 @@ optional_name: str | None = None
 
 ---
 
-## Файлы и модули
+## Files and Modules
 
-### Структура пакета
+### Package Structure
 
 ```
 {context}_api/
@@ -294,7 +294,7 @@ optional_name: str | None = None
 │   ├── __init__.py
 │   └── entities/
 │       ├── __init__.py
-│       └── user.py            # snake_case (единственное число)
+│       └── user.py            # snake_case (singular)
 ├── infrastructure/
 │   ├── __init__.py
 │   └── http/
@@ -314,12 +314,12 @@ optional_name: str | None = None
 
 ---
 
-## Примеры
+## Examples
 
-### Полный пример сервиса
+### Full Service Example
 
 ```python
-"""Сервис пользователей."""
+"""User service."""
 
 from uuid import UUID
 
@@ -333,27 +333,27 @@ from booking_api.infrastructure.http.data_api_client import DataApiClient
 
 
 class UserService:
-    """Сервис для работы с пользователями."""
+    """Service for working with users."""
 
     def __init__(self, data_client: DataApiClient):
-        """Инициализация сервиса."""
+        """Initialize service."""
         self.data_client = data_client
 
     async def create_user(self, dto: CreateUserDTO) -> UserDTO:
-        """Создать нового пользователя."""
+        """Create a new user."""
         await self._validate_email_unique(dto.email)
         result = await self.data_client.create_user(dto.model_dump())
         return UserDTO.model_validate(result)
 
     async def get_user(self, user_id: UUID) -> UserDTO:
-        """Получить пользователя по ID."""
+        """Get a user by ID."""
         result = await self.data_client.get_user(user_id)
         if result is None:
             raise NotFoundError(f"User {user_id} not found")
         return UserDTO.model_validate(result)
 
     async def _validate_email_unique(self, email: str) -> None:
-        """Проверить уникальность email."""
+        """Check email uniqueness."""
         existing = await self.data_client.get_user_by_email(email)
         if existing:
             raise ValueError(f"Email {email} already exists")

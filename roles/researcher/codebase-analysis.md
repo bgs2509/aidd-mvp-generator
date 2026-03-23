@@ -1,147 +1,147 @@
-# Функция: Анализ кодовой базы
+# Function: Codebase Analysis
 
-> **Назначение**: Изучение существующего кода для режима FEATURE.
-
----
-
-## Цель
-
-Понять структуру и паттерны существующего проекта для корректной
-интеграции новой функциональности.
-
-**Артефакт**: все выводы фиксируются в `ai-docs/docs/research/{name}-research.md`
-в секциях «Структура», «Сервисы», «API», «Данные», чтобы путь к решениям
-был прозрачен для следующих ролей.
+> **Purpose**: Studying existing code for FEATURE mode.
 
 ---
 
-## Когда применяется
+## Goal
+
+Understand the structure and patterns of the existing project for correct
+integration of new functionality.
+
+**Artifact**: all findings are recorded in `ai-docs/docs/research/{name}-research.md`
+in the "Structure", "Services", "API", "Data" sections, so the path to decisions
+is transparent for subsequent roles.
+
+---
+
+## When Applied
 
 ```
 if MODE == FEATURE:
-    → Выполнить полный анализ кода
+    → Perform full code analysis
 else:  # MODE == CREATE
-    → Пропустить (нет существующего кода)
+    → Skip (no existing code)
 ```
 
 ---
 
-## Шаги анализа
+## Analysis Steps
 
-### 1. Структура проекта
+### 1. Project Structure
 
 ```bash
-# Определить структуру
+# Determine structure
 Glob: **/*.py
 Glob: **/*.md
 Glob: **/Dockerfile
 
-# Понять организацию
+# Understand organization
 ls -la src/ services/
 ```
 
-**Что искать**:
-- DDD структура (api/application/domain/infrastructure)
-- Монолит или микросервисы
-- Разделение по сервисам
+**What to look for**:
+- DDD structure (api/application/domain/infrastructure)
+- Monolith or microservices
+- Separation by services
 
-### 2. Сервисы и компоненты
+### 2. Services and Components
 
 ```bash
-# Найти сервисы
+# Find services
 Grep: "class.*Service"
 Grep: "class.*Repository"
 Grep: "class.*Client"
 ```
 
-**Что определить**:
-- Какие сервисы существуют
-- Как организована бизнес-логика
-- Какие внешние клиенты используются
+**What to determine**:
+- What services exist
+- How business logic is organized
+- What external clients are used
 
-### 3. API эндпоинты
+### 3. API Endpoints
 
 ```bash
-# Найти роуты
+# Find routes
 Grep: "@router"
 Grep: "@app.get"
 Grep: "@app.post"
 ```
 
-**Что определить**:
-- Существующие эндпоинты
-- Версионирование API (v1, v2)
-- Паттерны роутинга
+**What to determine**:
+- Existing endpoints
+- API versioning (v1, v2)
+- Routing patterns
 
-### 4. Модели данных
+### 4. Data Models
 
 ```bash
-# Найти модели
+# Find models
 Grep: "class.*BaseModel"
 Grep: "class.*Base"
 Grep: "Column("
 ```
 
-**Что определить**:
-- Структура данных
-- Связи между моделями
-- Используемые типы
+**What to determine**:
+- Data structure
+- Relationships between models
+- Types used
 
-### 5. Зависимости
+### 5. Dependencies
 
 ```bash
-# Проверить зависимости
+# Check dependencies
 Read: requirements.txt
 Read: pyproject.toml
 ```
 
-**Что определить**:
-- Используемые библиотеки
-- Версии
-- Совместимость
+**What to determine**:
+- Libraries used
+- Versions
+- Compatibility
 
 ---
 
-## Результат анализа
+## Analysis Result
 
 ```markdown
-## Структура проекта
+## Project Structure
 
-Тип: {DDD/Hexagonal | Monolith | Microservices}
-Сервисы: {Список сервисов}
+Type: {DDD/Hexagonal | Monolith | Microservices}
+Services: {Service list}
 
-## Компоненты
+## Components
 
-| Компонент | Тип | Файл |
-|-----------|-----|------|
+| Component | Type | File |
+|-----------|------|------|
 | UserService | Application Service | user_service.py |
 | OrderRepository | Repository | order_repository.py |
 
 ## API
 
-| Метод | Путь | Описание |
-|-------|------|----------|
-| GET | /api/v1/users | Список пользователей |
+| Method | Path | Description |
+|--------|------|-------------|
+| GET | /api/v1/users | List of users |
 
-## Модели данных
+## Data Models
 
-| Модель | Поля |
-|--------|------|
+| Model | Fields |
+|-------|--------|
 | User | id, name, email |
 
-## Зависимости
+## Dependencies
 
-| Библиотека | Версия |
-|------------|--------|
+| Library | Version |
+|---------|---------|
 | FastAPI | 0.100+ |
 | SQLAlchemy | 2.0+ |
 ```
 
 ---
 
-## Источники
+## Sources
 
-| Документ | Описание |
-|----------|----------|
-| `.ai-framework/docs/reference/project-structure.md` | Структура проекта |
-| `.ai-framework/ARCHITECTURE.md` | Архитектура |
+| Document | Description |
+|----------|-------------|
+| `.ai-framework/docs/reference/project-structure.md` | Project structure |
+| `.ai-framework/ARCHITECTURE.md` | Architecture |

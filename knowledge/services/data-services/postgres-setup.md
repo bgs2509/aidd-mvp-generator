@@ -1,13 +1,13 @@
-# Настройка PostgreSQL Data Service
+# PostgreSQL Data Service Setup
 
-> **Назначение**: Настройка Data API с PostgreSQL и SQLAlchemy.
+> **Purpose**: Setting up Data API with PostgreSQL and SQLAlchemy.
 
 ---
 
-## Точка входа
+## Entry Point
 
 ```python
-"""Точка входа Data API."""
+"""Data API entry point."""
 
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
@@ -20,15 +20,15 @@ from {context}_data.infrastructure.database.connection import engine
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    """Управление жизненным циклом."""
+    """Manage application lifecycle."""
     setup_logging()
     yield
-    # Закрытие подключений к БД
+    # Close database connections
     await engine.dispose()
 
 
 def create_app() -> FastAPI:
-    """Создать приложение Data API."""
+    """Create Data API application."""
     app = FastAPI(
         title=settings.service_name,
         version="1.0.0",
@@ -45,16 +45,16 @@ app = create_app()
 
 ---
 
-## Конфигурация
+## Configuration
 
 ```python
-"""Конфигурация Data API."""
+"""Data API configuration."""
 
 from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    """Настройки Data API."""
+    """Data API settings."""
 
     service_name: str = "{Context} Data API"
     debug: bool = False
@@ -76,10 +76,10 @@ settings = Settings()
 
 ---
 
-## Подключение к БД
+## Database Connection
 
 ```python
-"""Подключение к PostgreSQL."""
+"""PostgreSQL connection."""
 
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
@@ -91,7 +91,7 @@ from sqlalchemy.ext.asyncio import (
 from {context}_data.core.config import settings
 
 
-# Создание движка
+# Create engine
 engine: AsyncEngine = create_async_engine(
     settings.database_url,
     pool_size=settings.db_pool_size,
@@ -99,7 +99,7 @@ engine: AsyncEngine = create_async_engine(
     echo=settings.debug,
 )
 
-# Фабрика сессий
+# Session factory
 async_session_factory = async_sessionmaker(
     engine,
     class_=AsyncSession,
@@ -109,10 +109,10 @@ async_session_factory = async_sessionmaker(
 
 async def get_session() -> AsyncSession:
     """
-    Получить сессию БД.
+    Get a database session.
 
     Yields:
-        Асинхронная сессия SQLAlchemy.
+        Async SQLAlchemy session.
     """
     async with async_session_factory() as session:
         try:
@@ -125,10 +125,10 @@ async def get_session() -> AsyncSession:
 
 ---
 
-## Базовая модель
+## Base Model
 
 ```python
-"""Базовая модель SQLAlchemy."""
+"""SQLAlchemy base model."""
 
 from datetime import datetime
 from uuid import uuid4
@@ -139,13 +139,13 @@ from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 
 class Base(DeclarativeBase):
-    """Базовый класс для всех моделей."""
+    """Base class for all models."""
 
     pass
 
 
 class TimestampMixin:
-    """Миксин с временными метками."""
+    """Mixin with timestamps."""
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
@@ -160,7 +160,7 @@ class TimestampMixin:
 
 
 class UUIDMixin:
-    """Миксин с UUID первичным ключом."""
+    """Mixin with UUID primary key."""
 
     id: Mapped[UUID] = mapped_column(
         UUID(as_uuid=True),
@@ -171,10 +171,10 @@ class UUIDMixin:
 
 ---
 
-## Модель сущности
+## Entity Model
 
 ```python
-"""Модель пользователя."""
+"""User model."""
 
 from sqlalchemy import String, Boolean
 from sqlalchemy.orm import Mapped, mapped_column
@@ -183,7 +183,7 @@ from {context}_data.domain.entities.base import Base, TimestampMixin, UUIDMixin
 
 
 class User(Base, UUIDMixin, TimestampMixin):
-    """Модель пользователя в БД."""
+    """User database model."""
 
     __tablename__ = "users"
 
@@ -193,13 +193,13 @@ class User(Base, UUIDMixin, TimestampMixin):
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
 
     def __repr__(self) -> str:
-        """Строковое представление."""
+        """String representation."""
         return f"<User(id={self.id}, email={self.email})>"
 ```
 
 ---
 
-## Структура проекта
+## Project Structure
 
 ```
 {context}_data/
@@ -251,7 +251,7 @@ migrations/
 
 ---
 
-## Alembic настройка
+## Alembic Setup
 
 ```python
 """migrations/env.py"""
@@ -266,7 +266,7 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 from {context}_data.core.config import settings
 from {context}_data.domain.entities.base import Base
 
-# Импорт всех моделей для автогенерации
+# Import all models for autogeneration
 from {context}_data.domain.entities import user  # noqa
 
 config = context.config
@@ -279,7 +279,7 @@ target_metadata = Base.metadata
 
 
 def run_migrations_offline() -> None:
-    """Миграции в offline режиме."""
+    """Run migrations in offline mode."""
     url = config.get_main_option("sqlalchemy.url")
     context.configure(
         url=url,
@@ -293,7 +293,7 @@ def run_migrations_offline() -> None:
 
 
 def do_run_migrations(connection):
-    """Выполнить миграции."""
+    """Execute migrations."""
     context.configure(connection=connection, target_metadata=target_metadata)
 
     with context.begin_transaction():
@@ -301,7 +301,7 @@ def do_run_migrations(connection):
 
 
 async def run_async_migrations() -> None:
-    """Миграции в async режиме."""
+    """Run migrations in async mode."""
     connectable = async_engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
@@ -315,7 +315,7 @@ async def run_async_migrations() -> None:
 
 
 def run_migrations_online() -> None:
-    """Миграции в online режиме."""
+    """Run migrations in online mode."""
     asyncio.run(run_async_migrations())
 
 
@@ -327,22 +327,22 @@ else:
 
 ---
 
-## Команды Alembic
+## Alembic Commands
 
 ```bash
-# Создание миграции
+# Create migration
 alembic revision --autogenerate -m "Add users table"
 
-# Применение миграций
+# Apply migrations
 alembic upgrade head
 
-# Откат миграции
+# Rollback migration
 alembic downgrade -1
 
-# Просмотр текущей версии
+# View current version
 alembic current
 
-# История миграций
+# Migration history
 alembic history
 ```
 
@@ -355,7 +355,7 @@ FROM python:3.11-slim
 
 WORKDIR /app
 
-# Установка зависимостей для psycopg2
+# Install dependencies for psycopg2
 RUN apt-get update && apt-get install -y \
     libpq-dev \
     && rm -rf /var/lib/apt/lists/*
@@ -367,17 +367,17 @@ COPY migrations/ ./migrations/
 COPY alembic.ini .
 COPY src/ ./src/
 
-# Команда запуска с миграциями
+# Startup command with migrations
 CMD alembic upgrade head && uvicorn src.{context}_data.main:app --host 0.0.0.0 --port 8001
 ```
 
 ---
 
-## Чек-лист
+## Checklist
 
-- [ ] AsyncEngine создан с пулом подключений
-- [ ] async_sessionmaker настроен
-- [ ] Base класс с миксинами создан
-- [ ] Модели определены
-- [ ] Alembic настроен для async
-- [ ] Миграции созданы
+- [ ] AsyncEngine created with connection pool
+- [ ] async_sessionmaker configured
+- [ ] Base class with mixins created
+- [ ] Models defined
+- [ ] Alembic configured for async
+- [ ] Migrations created
