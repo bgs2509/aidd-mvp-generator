@@ -1,112 +1,112 @@
 # AIDD-MVP Generator
 
-> Фреймворк для быстрой генерации production-ready MVP проектов
-> с использованием методологии AI-Driven Development (AIDD)
+> A framework for rapid generation of production-ready MVP projects
+> using the AI-Driven Development (AIDD) methodology
 
 ---
 
-## Что это?
+## What is it?
 
-**AIDD-MVP Generator** объединяет:
-- **Методологию AIDD** — структурированный процесс разработки с AI-агентами
-- **Архитектурные шаблоны** — готовые паттерны для микросервисов
-- **Качественные ворота** — автоматическая проверка качества на каждом этапе
+**AIDD-MVP Generator** combines:
+- **AIDD Methodology** — a structured development process with AI agents
+- **Architectural Templates** — ready-made patterns for microservices
+- **Quality Gates** — automatic quality checks at every stage
 
-**Результат**: Production-ready MVP за ~10 минут.
-
----
-
-## Характеристики
-
-| Параметр | Значение |
-|----------|----------|
-| Уровень зрелости | Level 2 (MVP) |
-| Покрытие тестами | ≥75% |
-| Архитектура | DDD/Hexagonal, HTTP-only |
-| Сервисы | FastAPI, Aiogram, AsyncIO Workers |
-| Базы данных | PostgreSQL, MongoDB |
-| Инфраструктура | Docker, Nginx, CI/CD |
+**Result**: Production-ready MVP in ~10 minutes.
 
 ---
 
-## Быстрый старт
+## Characteristics
 
-### Требования
+| Parameter | Value |
+|-----------|-------|
+| Maturity Level | Level 2 (MVP) |
+| Test Coverage | ≥75% |
+| Architecture | DDD/Hexagonal, HTTP-only |
+| Services | FastAPI, Aiogram, AsyncIO Workers |
+| Databases | PostgreSQL, MongoDB |
+| Infrastructure | Docker, Nginx, CI/CD |
+
+---
+
+## Quick Start
+
+### Requirements
 
 - Python 3.11+
 - Docker & Docker Compose
 - Claude Code CLI
 - Git 2.40+
 
-### Установка фреймворка (рекомендуется)
+### Framework Installation (recommended)
 
 ```bash
-# 1. Создать и инициализировать целевой проект
+# 1. Create and initialize the target project
 mkdir restaurant-booking && cd restaurant-booking
 git init
 
-# 2. Подключить фреймворк как Git Submodule
+# 2. Add the framework as a Git Submodule
 git submodule add git@github.com:bgs2509/aidd-mvp-generator.git .aidd
 git submodule update --init --recursive
 
-# 3. Запустить Claude Code
+# 3. Launch Claude Code
 claude
 ```
 
 ```bash
-# 4. Инициализировать фреймворк (создаёт CLAUDE.md, регистрирует /aidd-* команды)
+# 4. Initialize the framework (creates CLAUDE.md, registers /aidd-* commands)
 /aidd-init
 
-# /aidd-init выполняет:
-#   - Создаёт CLAUDE.md с инструкциями для AI
-#   - Копирует команды в .claude/commands/
-#   - Создаёт структуру проекта (ai-docs/, .pipeline-state.json)
+# /aidd-init performs:
+#   - Creates CLAUDE.md with AI instructions
+#   - Copies commands to .claude/commands/
+#   - Creates project structure (ai-docs/, .pipeline-state.json)
 ```
 
 ```bash
-# 5. Следовать 6-этапному процессу (этапы 0-5)
-/aidd-analyze "Создать сервис бронирования столиков в ресторанах"
+# 5. Follow the 6-stage process (stages 0-5)
+/aidd-analyze "Create a restaurant table booking service"
 /aidd-research
 /aidd-plan
-# ... утвердить план ...
+# ... approve the plan ...
 /aidd-code
 /aidd-validate
 
-# 6. Запустить сгенерированный проект
+# 6. Run the generated project
 make build && make up
 ```
 
-### Добавление фичи в существующий проект
+### Adding a Feature to an Existing Project
 
 ```bash
-# 1. Перейти в директорию проекта (где уже есть .aidd/)
+# 1. Navigate to the project directory (where .aidd/ already exists)
 cd my-existing-project
 
-# 2. Запустить Claude Code
+# 2. Launch Claude Code
 claude
 
-# 3. Если команды /aidd-* ещё не зарегистрированы — инициализировать
+# 3. If /aidd-* commands are not yet registered — initialize
 /aidd-init
 
-# 4. Описать фичу (Claude автоматически определит режим FEATURE)
-/aidd-analyze "Добавить систему уведомлений по email"
+# 4. Describe the feature (Claude automatically detects FEATURE mode)
+/aidd-analyze "Add email notification system"
 
-# 5. Следовать пайплайну: /aidd-research → /aidd-plan-feature → /aidd-code → ...
+# 5. Follow the pipeline: /aidd-research → /aidd-plan-feature → /aidd-code → ...
 ```
 
 ---
 
-## Процесс разработки
+## Development Process
 
-6-этапный пайплайн (этапы 0-5) с качественными воротами.
+A 6-stage pipeline (stages 0-5) with quality gates.
 
-**Этап 0 — Bootstrap (`/aidd-init`)**: Регистрирует `/aidd-*` команды, создаёт структуру проекта.
-Без этого этапа остальные команды **не будут работать**.
+**Stage 0 — Bootstrap (`/aidd-init`)**: Registers `/aidd-*` commands, creates the project structure.
+Without this stage, the remaining commands **will not work**.
 
 ```
 ┌───────────┐  ┌───────────┐  ┌───────────┐  ┌───────────┐
-│   ИДЕЯ    │─▶│ ИССЛЕДО-  │─▶│ АРХИТЕК-  │─▶│ РЕАЛИЗА-  │
-│           │  │   ВАНИЕ   │  │   ТУРА    │  │    ЦИЯ    │
+│   IDEA    │─▶│ RESEARCH  │─▶│ARCHITEC-  │─▶│IMPLEMEN-  │
+│           │  │           │  │   TURE    │  │  TATION   │
 │/aidd-analyze │  │ /aidd-    │  │  /aidd-   │  │  /aidd-   │
 │           │  │ research  │  │   plan    │  │ generate  │
 └─────┬─────┘  └─────┬─────┘  └─────┬─────┘  └─────┬─────┘
@@ -115,101 +115,101 @@ claude
 │ PRD_READY │  │ RESEARCH  │  │   PLAN    │  │IMPLEMENT  │
 │           │  │   _DONE   │  │ APPROVED  │  │   _OK     │
 └───────────┘  └───────────┘  └───────────┘  └───────────┘
-                                                     │
-                                                     ▼
-                      ┌──────────────────────────────────────┐
-                      │      QUALITY & DEPLOY                │
-                      │      /aidd-validate                  │
-                      │                                      │
-                      │  Review → Test → Validate → Deploy   │
-                      └───────────────┬──────────────────────┘
-                                      │
-                           ┌──────────▼───────────┐
-                           │  REVIEW_OK           │
-                           │  QA_PASSED           │
-                           │  ALL_GATES_PASSED    │
-                           │  DEPLOYED            │
-                           └──────────────────────┘
+                                                    │
+                                                    ▼
+                     ┌──────────────────────────────────────┐
+                     │      QUALITY & DEPLOY                │
+                     │      /aidd-validate                  │
+                     │                                      │
+                     │  Review → Test → Validate → Deploy   │
+                     └───────────────┬──────────────────────┘
+                                     │
+                          ┌──────────▼───────────┐
+                          │  REVIEW_OK           │
+                          │  QA_PASSED           │
+                          │  ALL_GATES_PASSED    │
+                          │  DEPLOYED            │
+                          └──────────────────────┘
 ```
 
 ---
 
-## 5 AI-ролей
+## 5 AI Roles
 
-| Роль | Команда | Задача |
-|------|---------|--------|
-| **Аналитик** | `/aidd-analyze` | Создание PRD из идеи |
-| **Исследователь** | `/aidd-research` | Анализ кода и технологий |
-| **Планировщик** | `/aidd-plan` | Проектирование системы |
-| **Программист** | `/aidd-code` | Генерация кода |
-| **Валидатор** | `/aidd-validate` | Quality & Deploy (Review → Test → Validate → Deploy) |
+| Role | Command | Task |
+|------|---------|------|
+| **Analyst** | `/aidd-analyze` | Create PRD from an idea |
+| **Researcher** | `/aidd-research` | Analyze code and technologies |
+| **Planner** | `/aidd-plan` | System design |
+| **Coder** | `/aidd-code` | Code generation |
+| **Validator** | `/aidd-validate` | Quality & Deploy (Review → Test → Validate → Deploy) |
 
 ---
 
-## Типы генерируемых сервисов
+## Generated Service Types
 
-| Тип | Технология | Описание |
-|-----|------------|----------|
+| Type | Technology | Description |
+|------|------------|-------------|
 | **Business API** | FastAPI | REST API |
-| **Business Bot** | Aiogram | Telegram бот |
-| **Background Worker** | AsyncIO | Фоновые задачи |
-| **Data API PostgreSQL** | FastAPI + SQLAlchemy | CRUD для PostgreSQL |
-| **Data API MongoDB** | FastAPI + Motor | CRUD для MongoDB |
+| **Business Bot** | Aiogram | Telegram bot |
+| **Background Worker** | AsyncIO | Background tasks |
+| **Data API PostgreSQL** | FastAPI + SQLAlchemy | CRUD for PostgreSQL |
+| **Data API MongoDB** | FastAPI + Motor | CRUD for MongoDB |
 
 ---
 
-## Структура проекта
+## Project Structure
 
 ```
 aidd-mvp-generator/
 │
-├── CLAUDE.md              # Точка входа для AI
-├── conventions.md         # Соглашения о коде
-├── workflow.md            # Процесс разработки
-├── README.md              # Этот файл
+├── CLAUDE.md              # Entry point for AI
+├── conventions.md         # Code conventions
+├── workflow.md            # Development process
+├── README.md              # This file
 │
-├── .claude/               # Интеграция Claude Code
-│   ├── agents/            # 7 AI-ролей
-│   └── commands/          # 9 slash-команд
+├── .claude/               # Claude Code integration
+│   ├── agents/            # 7 AI roles
+│   └── commands/          # 9 slash commands
 │
-├── roles/                 # Детальные инструкции ролей
-├── knowledge/             # База знаний
-├── templates/             # Шаблоны сервисов
+├── roles/                 # Detailed role instructions
+├── knowledge/             # Knowledge base
+├── templates/             # Service templates
 │   ├── services/          # FastAPI, Aiogram, Workers
-│   ├── shared/            # Общие компоненты
+│   ├── shared/            # Shared components
 │   └── infrastructure/    # Docker, Nginx, CI/CD
 │
-└── docs/                  # Шаблоны документов
+└── docs/                  # Document templates
 ```
 
 ---
 
-## Документация
+## Documentation
 
-| Документ | Описание |
-|----------|----------|
-| [CLAUDE.md](CLAUDE.md) | Главная точка входа для AI-агентов |
-| [conventions.md](conventions.md) | Соглашения о коде и стиле |
-| [workflow.md](workflow.md) | 6-этапный процесс разработки (этапы 0-5) |
-
----
-
-## Архитектурные принципы
-
-- **HTTP-only доступ к данным** — бизнес-сервисы не обращаются к БД напрямую
-- **DDD/Hexagonal** — разделение на слои (api/application/domain/infrastructure)
-- **Async-First** — все I/O операции асинхронные
-- **Типобезопасность** — полные type hints для всех функций
+| Document | Description |
+|----------|-------------|
+| [CLAUDE.md](CLAUDE.md) | Main entry point for AI agents |
+| [conventions.md](conventions.md) | Code and style conventions |
+| [workflow.md](workflow.md) | 6-stage development process (stages 0-5) |
 
 ---
 
-## Лицензия
+## Architectural Principles
+
+- **HTTP-only data access** — business services never access the database directly
+- **DDD/Hexagonal** — layered separation (api/application/domain/infrastructure)
+- **Async-First** — all I/O operations are asynchronous
+- **Type Safety** — full type hints for all functions
+
+---
+
+## License
 
 MIT
 
 ---
 
-## Авторы
+## Authors
 
-Создано с использованием методологии AIDD
+Created using the AIDD methodology
 (AI-Driven Development)
